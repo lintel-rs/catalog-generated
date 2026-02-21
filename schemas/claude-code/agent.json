@@ -1,0 +1,526 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claude Code Subagent",
+  "description": "Frontmatter schema for [Claude Code subagent](https://code.claude.com/docs/en/sub-agents) definitions (`.claude/agents/*.md`). Subagents are specialized AI assistants that run in their own context window with a custom system prompt, specific tool access, and independent permissions. The markdown body after the `---` frontmatter becomes the subagent's **system prompt** (not the full Claude Code system prompt — only the body plus basic environment details). Subagents are stored at `~/.claude/agents/` (personal), `.claude/agents/` (project), `<plugin>/agents/` (plugin), or passed via `--agents` CLI flag (session-only). When multiple subagents share the same name, higher-priority locations win: CLI > project > personal > plugin. Subagents cannot spawn other subagents.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique identifier for the subagent using lowercase letters, numbers, and hyphens. Used to reference the subagent in `Task(agent-name)` tool restrictions, [permission deny rules](https://code.claude.com/docs/en/permissions#tool-specific-permission-rules), hook matchers, and the `/agents` interface. Plugin subagents appear namespaced as `plugin-name:agent-name`.",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "examples": [
+        "code-reviewer",
+        "debugger",
+        "data-scientist"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Describes when and how Claude should delegate to this subagent. Claude uses this to decide **automatic delegation** — write it as a triggering guide with concrete task patterns. Include phrases like *\"use proactively\"* to encourage automatic delegation. This is the single most important field for subagent behavior — a vague description means Claude won't know when to delegate. See [automatic delegation](https://code.claude.com/docs/en/sub-agents#understand-automatic-delegation).",
+      "examples": [
+        "Expert code reviewer. Proactively reviews code for quality, security, and maintainability. Use immediately after writing or modifying code.",
+        "Debugging specialist for errors, test failures, and unexpected behavior. Use proactively when encountering any issues.",
+        "Data analysis expert for SQL queries, BigQuery operations, and data insights."
+      ]
+    },
+    "tools": {
+      "description": "[Tools](https://code.claude.com/docs/en/settings#tools-available-to-claude) the subagent can use. If omitted, inherits **all** tools from the main conversation (including MCP tools). Specify a subset to restrict access. Built-in tools: `Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `WebFetch`, `WebSearch`, `Task`, `NotebookEdit`. Supports patterns: `Bash(git *)` allows only `git` subcommands, `Task(worker, researcher)` restricts spawnable subagent types (only meaningful for agents run as main thread via `claude --agent`). MCP tools follow the pattern `mcp__<server>__<tool>`.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Comma-separated list of tool names.",
+          "examples": [
+            "Read, Grep, Glob, Bash"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of tool names.",
+          "examples": [
+            [
+              "Read",
+              "Grep",
+              "Glob",
+              "Bash"
+            ]
+          ]
+        }
+      ]
+    },
+    "disallowedTools": {
+      "description": "Tools to explicitly deny, removed from the inherited or specified tool list. Use when you want to grant most tools but block a few specific ones (e.g. block `Write` and `Edit` for a read-only agent). Supports the same tool name formats as `tools`.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Comma-separated list of tool names to deny.",
+          "examples": [
+            "Write, Edit"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of tool names to deny.",
+          "examples": [
+            [
+              "Write",
+              "Edit"
+            ]
+          ]
+        }
+      ]
+    },
+    "model": {
+      "type": "string",
+      "description": "Which [Claude model](https://code.claude.com/docs/en/model-config) the subagent uses. Set to `inherit` (default) to use the same model as the main conversation. Use `haiku` for fast, low-latency tasks (search, exploration). Use `sonnet` for balanced capability. Use `opus` for the most capable reasoning.",
+      "enum": [
+        "opus",
+        "sonnet",
+        "haiku",
+        "inherit"
+      ],
+      "default": "inherit",
+      "examples": [
+        "sonnet",
+        "inherit"
+      ]
+    },
+    "permissionMode": {
+      "type": "string",
+      "description": "Controls how the subagent handles [permission prompts](https://code.claude.com/docs/en/permissions). Subagents inherit the permission context from the main conversation but can override the mode. If the parent uses `bypassPermissions`, it takes precedence and cannot be overridden. Background subagents auto-deny unpermitted actions rather than prompting.\n\n- `default`: Standard permission prompts\n- `acceptEdits`: Auto-accept file edits (`Write`, `Edit`)\n- `dontAsk`: Auto-deny permission prompts (explicitly allowed tools still work)\n- `bypassPermissions`: Skip all permission checks (**use with caution**)\n- `plan`: Read-only exploration, requires approval before implementation",
+      "enum": [
+        "default",
+        "acceptEdits",
+        "dontAsk",
+        "bypassPermissions",
+        "plan"
+      ],
+      "examples": [
+        "default",
+        "plan"
+      ]
+    },
+    "maxTurns": {
+      "type": "integer",
+      "description": "Maximum number of agentic turns (API round-trips) before the subagent automatically stops and returns results. Each tool use counts as one turn. Use to prevent runaway subagents or control cost.",
+      "minimum": 1,
+      "examples": [
+        10,
+        25,
+        50
+      ]
+    },
+    "skills": {
+      "description": "[Skills](https://code.claude.com/docs/en/skills) to [preload](https://code.claude.com/docs/en/sub-agents#preload-skills-into-subagents) into the subagent's context at startup. The **full content** of each skill is injected (not just made available for invocation). Subagents do **not** inherit skills from the parent conversation — you must list them explicitly. This is the inverse of [running a skill in a subagent](https://code.claude.com/docs/en/skills#run-skills-in-a-subagent) (`context: fork`).",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Single skill name."
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of skill names."
+        }
+      ],
+      "examples": [
+        [
+          "api-conventions",
+          "error-handling-patterns"
+        ],
+        "code-review-checklist"
+      ]
+    },
+    "mcpServers": {
+      "type": "object",
+      "description": "[MCP servers](https://code.claude.com/docs/en/mcp) available to this subagent. Each key is a server name — the value is either an empty object `{}` to reference an already-configured server by name, or an inline definition with a full [MCP server config](https://code.claude.com/docs/en/mcp#configure-mcp-servers). MCP tools are **not** available in [background subagents](https://code.claude.com/docs/en/sub-agents#run-subagents-in-foreground-or-background).",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string",
+            "description": "Reference to an already-configured MCP server by name."
+          },
+          {
+            "$ref": "#/$defs/McpServerConfig",
+            "description": "Inline MCP server definition."
+          }
+        ]
+      },
+      "examples": [
+        {
+          "github": "github",
+          "slack": "slack"
+        },
+        {
+          "custom-db": {
+            "command": "python",
+            "args": [
+              "/path/to/mcp-server.py"
+            ],
+            "env": {
+              "DB_URL": "postgresql://localhost:5432"
+            }
+          }
+        }
+      ]
+    },
+    "hooks": {
+      "$ref": "#/$defs/Hooks",
+      "description": "Lifecycle [hooks](https://code.claude.com/docs/en/hooks) scoped to this subagent. Hooks defined here only fire while this subagent is active and are cleaned up when it finishes. `Stop` hooks in frontmatter are automatically converted to `SubagentStop` events at runtime. See [hooks in skills and agents](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)."
+    },
+    "memory": {
+      "type": "string",
+      "description": "Enable [persistent memory](https://code.claude.com/docs/en/sub-agents#enable-persistent-memory) that survives across conversations. The subagent gets a dedicated memory directory to build knowledge over time (codebase patterns, debugging insights, architectural decisions). When enabled, the first 200 lines of `MEMORY.md` are included in the system prompt, and `Read`/`Write`/`Edit` tools are automatically enabled.\n\n- `user`: `~/.claude/agent-memory/<name>/` — learnings across all projects\n- `project`: `.claude/agent-memory/<name>/` — project-specific, shareable via VCS\n- `local`: `.claude/agent-memory-local/<name>/` — project-specific, gitignored",
+      "enum": [
+        "user",
+        "project",
+        "local"
+      ],
+      "examples": [
+        "user"
+      ]
+    },
+    "background": {
+      "type": "boolean",
+      "description": "When `true`, always run this subagent as a [background task](https://code.claude.com/docs/en/sub-agents#run-subagents-in-foreground-or-background). Background subagents run concurrently while the main conversation continues. Before launching, Claude prompts for needed tool permissions upfront. Background subagents auto-deny unpermitted actions and cannot use MCP tools or ask clarifying questions via `AskUserQuestion`. Set `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` to disable all background tasks. Users can also press **Ctrl+B** to background a running foreground subagent.",
+      "default": false,
+      "examples": [
+        true
+      ]
+    },
+    "isolation": {
+      "type": "string",
+      "description": "Set to `worktree` to run the subagent in a temporary [git worktree](https://code.claude.com/docs/en/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), giving it an isolated copy of the repository. The subagent can make changes without affecting the main working tree. The worktree is automatically cleaned up if the subagent makes no changes. Useful for parallel exploration or risky operations that should be isolated.",
+      "enum": [
+        "worktree"
+      ],
+      "examples": [
+        "worktree"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "description"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "McpServerConfig": {
+      "type": "object",
+      "description": "[MCP server](https://code.claude.com/docs/en/mcp) configuration for a stdio-based server process. Use `${CLAUDE_PLUGIN_ROOT}` for plugin-relative paths.",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "Executable to run (must be in `PATH` or an absolute/relative path).",
+          "examples": [
+            "node",
+            "python",
+            "npx",
+            "${CLAUDE_PLUGIN_ROOT}/servers/db-server"
+          ]
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Command-line arguments for the server process.",
+          "examples": [
+            [
+              "./servers/db-server.js",
+              "--config",
+              "./config.json"
+            ]
+          ]
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Environment variables set when starting the server. Values support `${CLAUDE_PLUGIN_ROOT}`.",
+          "examples": [
+            {
+              "DB_PATH": "${CLAUDE_PLUGIN_ROOT}/data"
+            }
+          ]
+        },
+        "cwd": {
+          "type": "string",
+          "description": "Working directory for the server process.",
+          "examples": [
+            "${CLAUDE_PLUGIN_ROOT}"
+          ]
+        },
+        "timeout": {
+          "type": "number",
+          "description": "Connection timeout in milliseconds.",
+          "examples": [
+            30000
+          ]
+        }
+      },
+      "required": [
+        "command"
+      ]
+    },
+    "Hooks": {
+      "type": "object",
+      "description": "Map of [hook event](https://code.claude.com/docs/en/hooks#hook-events) names to arrays of matcher groups. Each matcher group optionally filters by a regex pattern and contains an array of hook handlers that execute when the event fires.",
+      "properties": {
+        "SessionStart": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when a session starts. Matcher filters by source: `startup`, `resume`, `clear`, `compact`. Command hooks have access to `$CLAUDE_ENV_FILE` for [persisting environment variables](https://code.claude.com/docs/en/hooks#persist-environment-variables)."
+        },
+        "UserPromptSubmit": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when the user submits a prompt, before Claude processes it. **No matcher support** — always fires."
+        },
+        "PreToolUse": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires before a tool is executed. Matcher filters by tool name (e.g. `Bash`, `Edit|Write`, `mcp__.*`). See [PreToolUse decision control](https://code.claude.com/docs/en/hooks#pretooluse-decision-control)."
+        },
+        "PermissionRequest": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when a tool requests user permission. Matcher filters by tool name. See [PermissionRequest decision control](https://code.claude.com/docs/en/hooks#permissionrequest-decision-control)."
+        },
+        "PostToolUse": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires after a tool executes successfully. Matcher filters by tool name. Supports [async hooks](https://code.claude.com/docs/en/hooks#run-hooks-in-the-background)."
+        },
+        "PostToolUseFailure": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires after a tool execution fails. Matcher filters by tool name. Supports [async hooks](https://code.claude.com/docs/en/hooks#run-hooks-in-the-background)."
+        },
+        "Notification": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires on notifications. Matcher filters by type: `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`."
+        },
+        "SubagentStart": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when a [subagent](https://code.claude.com/docs/en/sub-agents) is spawned. Matcher filters by agent type name."
+        },
+        "SubagentStop": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when a [subagent](https://code.claude.com/docs/en/sub-agents) stops. Matcher filters by agent type name."
+        },
+        "Stop": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when Claude's turn ends. **No matcher support** — always fires. In subagent frontmatter, `Stop` hooks are automatically converted to `SubagentStop` events at runtime. Hooks can force Claude to continue working by returning `{decision: \"block\", reason: \"...\"}`. Does not fire on user interrupt."
+        },
+        "TeammateIdle": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when an [agent team](https://code.claude.com/docs/en/agent-teams) teammate is about to go idle. **No matcher support**."
+        },
+        "TaskCompleted": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when a task is being marked as completed. **No matcher support**. Exit code 2 prevents the task from being marked completed."
+        },
+        "ConfigChange": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when a configuration file changes during a session. Matcher filters by source: `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`. Can block configuration changes from taking effect (except `policy_settings`)."
+        },
+        "PreCompact": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires before context compaction. Matcher filters by trigger: `manual`, `auto`."
+        },
+        "SessionEnd": {
+          "$ref": "#/$defs/MatcherGroupArray",
+          "description": "Fires when a session ends. Matcher filters by exit reason: `clear`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`. Cannot block session termination."
+        }
+      },
+      "additionalProperties": false
+    },
+    "MatcherGroupArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MatcherGroup"
+      }
+    },
+    "MatcherGroup": {
+      "type": "object",
+      "description": "A matcher group pairs an optional regex filter with an array of hook handlers. If `matcher` is omitted, hooks fire on every occurrence. See [matcher patterns](https://code.claude.com/docs/en/hooks#matcher-patterns).",
+      "properties": {
+        "matcher": {
+          "type": "string",
+          "description": "Regex pattern to filter when hooks fire. Use `|` for OR (e.g. `Edit|Write`), `.*` for wildcards (e.g. `mcp__.*`). MCP tools follow the pattern `mcp__<server>__<tool>`. Omit to match all.",
+          "examples": [
+            "Bash",
+            "Edit|Write",
+            "mcp__.*"
+          ]
+        },
+        "hooks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HookHandler"
+          }
+        }
+      },
+      "required": [
+        "hooks"
+      ]
+    },
+    "HookHandler": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CommandHook"
+        },
+        {
+          "$ref": "#/$defs/PromptHook"
+        },
+        {
+          "$ref": "#/$defs/AgentHook"
+        }
+      ]
+    },
+    "CommandHook": {
+      "type": "object",
+      "description": "Runs a shell command or script. Receives [hook context as JSON on stdin](https://code.claude.com/docs/en/hooks#common-input-fields). **Exit 0**: success — stdout parsed as JSON for [decision control](https://code.claude.com/docs/en/hooks#json-output). **Exit 2**: blocking error — stderr fed to Claude. **Other**: non-blocking error.",
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "command": {
+          "type": "string",
+          "description": "Shell command or script path. Use `$CLAUDE_PROJECT_DIR` for the project root (always quote it: `\"$CLAUDE_PROJECT_DIR\"/path`) and `${CLAUDE_PLUGIN_ROOT}` for plugin-relative paths.",
+          "examples": [
+            "${CLAUDE_PLUGIN_ROOT}/scripts/format-code.sh",
+            "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/validate.sh"
+          ]
+        },
+        "timeout": {
+          "type": "number",
+          "description": "Max execution time in seconds.",
+          "default": 600,
+          "examples": [
+            10,
+            30,
+            120
+          ]
+        },
+        "statusMessage": {
+          "type": "string",
+          "description": "Custom spinner message displayed while the hook runs.",
+          "examples": [
+            "Validating command...",
+            "Running lint check..."
+          ]
+        },
+        "async": {
+          "type": "boolean",
+          "description": "Run in background without blocking. Only for `PostToolUse`/`PostToolUseFailure`. See [async hooks](https://code.claude.com/docs/en/hooks#run-hooks-in-the-background).",
+          "default": false
+        },
+        "once": {
+          "type": "boolean",
+          "description": "Run once per session then remove. Primarily useful in skill-scoped hooks.",
+          "default": false
+        }
+      },
+      "required": [
+        "type",
+        "command"
+      ],
+      "additionalProperties": false
+    },
+    "PromptHook": {
+      "type": "object",
+      "description": "Evaluates a single-turn LLM [prompt-based hook](https://code.claude.com/docs/en/hooks#prompt-based-hooks). Must respond `{ok: true}` or `{ok: false, reason: \"...\"}`. Cannot use tools — decides based solely on prompt content.",
+      "properties": {
+        "type": {
+          "const": "prompt"
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Evaluation prompt. Use `$ARGUMENTS` to interpolate the hook's full input context as JSON.",
+          "examples": [
+            "Is this Bash command safe to run? Review for destructive operations: $ARGUMENTS",
+            "Does this file edit follow our coding standards? $ARGUMENTS"
+          ]
+        },
+        "model": {
+          "type": "string",
+          "description": "Model for evaluation. Defaults to a fast model for low latency.",
+          "examples": [
+            "haiku"
+          ]
+        },
+        "timeout": {
+          "type": "number",
+          "description": "Max execution time in seconds.",
+          "default": 30
+        },
+        "statusMessage": {
+          "type": "string",
+          "description": "Custom spinner message displayed while the hook runs.",
+          "examples": [
+            "Evaluating safety..."
+          ]
+        },
+        "once": {
+          "type": "boolean",
+          "description": "Run once per session then remove.",
+          "default": false
+        }
+      },
+      "required": [
+        "type",
+        "prompt"
+      ],
+      "additionalProperties": false
+    },
+    "AgentHook": {
+      "type": "object",
+      "description": "Runs a multi-turn LLM [agent-based hook](https://code.claude.com/docs/en/hooks#agent-based-hooks) with tool access (`Read`, `Grep`, `Glob`, `Bash`, etc.). Can explore the codebase and run commands to verify conditions. Must respond `{ok: true}` or `{ok: false, reason: \"...\"}`. Best for complex validations requiring file reads or external checks.",
+      "properties": {
+        "type": {
+          "const": "agent"
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Verification prompt. Use `$ARGUMENTS` to interpolate the hook's full input context as JSON. The agent can then use tools to investigate further before deciding.",
+          "examples": [
+            "Verify this operation is safe and won't cause data loss: $ARGUMENTS"
+          ]
+        },
+        "model": {
+          "type": "string",
+          "description": "Model for the agent. Defaults to a fast model.",
+          "examples": [
+            "sonnet"
+          ]
+        },
+        "timeout": {
+          "type": "number",
+          "description": "Max execution time in seconds.",
+          "default": 60
+        },
+        "statusMessage": {
+          "type": "string",
+          "description": "Custom spinner message displayed while the hook runs.",
+          "examples": [
+            "Verifying operation..."
+          ]
+        },
+        "once": {
+          "type": "boolean",
+          "description": "Run once per session then remove.",
+          "default": false
+        }
+      },
+      "required": [
+        "type",
+        "prompt"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
