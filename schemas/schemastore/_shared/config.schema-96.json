@@ -208,6 +208,11 @@
                 }
               ]
             },
+            "can_interrupt": {
+              "type": "boolean",
+              "default": false,
+              "description": "If enabled allows the web hook to interrupt / abort the self-service flow. It only applies to certain flows (registration/verification/login/settings) and requires a valid response format."
+            },
             "auth": {
               "type": "object",
               "title": "Auth mechanisms",
@@ -223,6 +228,41 @@
             },
             "additionalProperties": false
           },
+          "anyOf": [
+            {
+              "not": {
+                "properties": {
+                  "response": {
+                    "properties": {
+                      "ignore": {
+                        "enum": [
+                          true
+                        ]
+                      }
+                    },
+                    "required": [
+                      "ignore"
+                    ]
+                  }
+                },
+                "required": [
+                  "response"
+                ]
+              }
+            },
+            {
+              "properties": {
+                "can_interrupt": {
+                  "enum": [
+                    false
+                  ]
+                }
+              },
+              "require": [
+                "can_interrupt"
+              ]
+            }
+          ],
           "additionalProperties": false,
           "required": [
             "url",
@@ -323,7 +363,7 @@
         },
         "provider": {
           "title": "Provider",
-          "description": "Can be one of github, github-app, gitlab, generic, google, microsoft, discord, slack, facebook, auth0, vk, yandex, spotify.",
+          "description": "Can be one of github, github-app, gitlab, generic, google, microsoft, discord, slack, facebook, auth0, vk, yandex, spotify, dingtalk.",
           "type": "string",
           "enum": [
             "github",
@@ -339,7 +379,9 @@
             "vk",
             "yandex",
             "apple",
-            "spotify"
+            "spotify",
+            "netid",
+            "dingtalk"
           ],
           "examples": [
             "google"
@@ -407,6 +449,19 @@
             "consumers",
             "8eaef023-2b34-4da1-9baa-8bc8c9d6a490",
             "contoso.onmicrosoft.com"
+          ]
+        },
+        "subject_source": {
+          "title": "Microsoft subject source",
+          "description": "Controls which source the subject identifier is taken from by microsoft provider. If set to `userinfo` (the default) then the identifier is taken from the `sub` field of OIDC ID token or data received from `/userinfo` standard OIDC endpoint. If set to `me` then the `id` field of data structure received from `https://graph.microsoft.com/v1.0/me` is taken as an identifier.",
+          "type": "string",
+          "enum": [
+            "userinfo",
+            "me"
+          ],
+          "default": "userinfo",
+          "examples": [
+            "userinfo"
           ]
         },
         "apple_team_id": {
@@ -740,6 +795,33 @@
         }
       }
     },
+    "selfServiceBeforeSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hooks": {
+          "$ref": "#/definitions/selfServiceHooks"
+        }
+      }
+    },
+    "selfServiceBeforeRecovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hooks": {
+          "$ref": "#/definitions/selfServiceHooks"
+        }
+      }
+    },
+    "selfServiceBeforeVerification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hooks": {
+          "$ref": "#/definitions/selfServiceHooks"
+        }
+      }
+    },
     "selfServiceAfterRegistration": {
       "type": "object",
       "additionalProperties": false,
@@ -973,6 +1055,9 @@
                 },
                 "after": {
                   "$ref": "#/definitions/selfServiceAfterSettings"
+                },
+                "before": {
+                  "$ref": "#/definitions/selfServiceBeforeSettings"
                 }
               }
             },
@@ -1096,6 +1181,19 @@
                     "1m",
                     "1s"
                   ]
+                },
+                "before": {
+                  "$ref": "#/definitions/selfServiceBeforeVerification"
+                },
+                "use": {
+                  "title": "Verification Strategy",
+                  "description": "The strategy to use for verification requests",
+                  "type": "string",
+                  "enum": [
+                    "link",
+                    "code"
+                  ],
+                  "default": "code"
                 }
               }
             },
@@ -1134,6 +1232,19 @@
                     "1m",
                     "1s"
                   ]
+                },
+                "before": {
+                  "$ref": "#/definitions/selfServiceBeforeRecovery"
+                },
+                "use": {
+                  "title": "Recovery Strategy",
+                  "description": "The strategy to use for recovery requests",
+                  "type": "string",
+                  "enum": [
+                    "link",
+                    "code"
+                  ],
+                  "default": "code"
                 }
               }
             },
@@ -1177,7 +1288,7 @@
                 "enabled": {
                   "type": "boolean",
                   "title": "Enables Link Method",
-                  "default": true
+                  "default": false
                 },
                 "config": {
                   "type": "object",
@@ -1193,6 +1304,35 @@
                     },
                     "lifespan": {
                       "title": "How long a link is valid for",
+                      "type": "string",
+                      "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
+                      "default": "1h",
+                      "examples": [
+                        "1h",
+                        "1m",
+                        "1s"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "code": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "title": "Enables Code Method",
+                  "default": true
+                },
+                "config": {
+                  "type": "object",
+                  "title": "Code Configuration",
+                  "description": "Additional configuration for the code strategy.",
+                  "properties": {
+                    "lifespan": {
+                      "title": "How long a code is valid for",
                       "type": "string",
                       "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
                       "default": "1h",
@@ -1420,6 +1560,49 @@
         }
       }
     },
+    "database": {
+      "type": "object",
+      "title": "Database related configuration",
+      "description": "Miscellaneous settings used in database related tasks (cleanup, etc.)",
+      "properties": {
+        "cleanup": {
+          "type": "object",
+          "title": "Database cleanup settings",
+          "description": "Settings that controls how the database cleanup process is configured (delays, batch size, etc.)",
+          "properties": {
+            "batch_size": {
+              "type": "integer",
+              "title": "Number of records to clean in one iteration",
+              "description": "Controls how many records should be purged from one table during database cleanup task",
+              "minimum": 1,
+              "default": 100
+            },
+            "sleep": {
+              "type": "object",
+              "title": "Delays between various database cleanup phases",
+              "description": "Configures delays between each step of the cleanup process. It is useful to tune the process so it will be efficient and performant.",
+              "properties": {
+                "tables": {
+                  "type": "string",
+                  "title": "Delay between each table cleanups",
+                  "description": "Controls the delay time between cleaning each table in one cleanup iteration",
+                  "pattern": "^[0-9]+(ns|us|ms|s|m|h)$",
+                  "default": "1m"
+                }
+              }
+            },
+            "older_than": {
+              "type": "string",
+              "title": "Remove records older than",
+              "description": "Controls how old records do we want to leave",
+              "pattern": "^[0-9]+(ns|us|ms|s|m|h)$",
+              "default": "0s"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "dsn": {
       "type": "string",
       "title": "Data Source Name",
@@ -1443,7 +1626,13 @@
             "recovery": {
               "$ref": "#/definitions/courierTemplates"
             },
+            "recovery_code": {
+              "$ref": "#/definitions/courierTemplates"
+            },
             "verification": {
+              "$ref": "#/definitions/courierTemplates"
+            },
+            "verification_code": {
               "$ref": "#/definitions/courierTemplates"
             }
           }
@@ -1456,15 +1645,13 @@
             "/conf/courier-templates"
           ]
         },
-        "message_ttl": {
-          "description": "Defines a Time-To-Live for courier messages that could not be delivered. After the defined TTL has expired for a message that message is abandoned.",
-          "type": "string",
-          "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
-          "default": "1h",
+        "message_retries": {
+          "description": "Defines the maximum number of times the sending of a message is retried after it failed before it is marked as abandoned",
+          "type": "integer",
+          "default": 5,
           "examples": [
-            "1h",
-            "1m",
-            "1s"
+            10,
+            60
           ]
         },
         "smtp": {
@@ -1481,10 +1668,23 @@
                 "smtp://foo:bar@my-mailserver:1234/ (Explicit StartTLS with certificate trust verification)",
                 "smtp://foo:bar@my-mailserver:1234/?skip_ssl_verify=true (NOT RECOMMENDED: Explicit StartTLS without certificate trust verification)",
                 "smtps://foo:bar@my-mailserver:1234/ (Implicit TLS with certificate trust verification)",
-                "smtps://foo:bar@my-mailserver:1234/?skip_ssl_verify=true (NOT RECOMMENDED: Implicit TLS without certificate trust verification)"
+                "smtps://foo:bar@my-mailserver:1234/?skip_ssl_verify=true (NOT RECOMMENDED: Implicit TLS without certificate trust verification)",
+                "smtps://subdomain.my-mailserver:1234/?server_name=my-mailserver (allows TLS to work if the server is hosted on a sudomain that uses a non-wildcard domain certificate)"
               ],
               "type": "string",
               "pattern": "^smtps?:\\/\\/.*"
+            },
+            "client_cert_path": {
+              "title": "SMTP Client certificate path",
+              "description": "Path of the client X.509 certificate, in case of certificate based client authentication to the SMTP server.",
+              "type": "string",
+              "default": ""
+            },
+            "client_key_path": {
+              "title": "SMTP Client private key path",
+              "description": "Path of the client certificate private key, in case of certificate based client authentication to the SMTP server",
+              "type": "string",
+              "default": ""
             },
             "from_address": {
               "title": "SMTP Sender Address",
@@ -1505,6 +1705,9 @@
               "title": "SMTP Headers",
               "description": "These headers will be passed in the SMTP conversation -- e.g. when using the AWS SES SMTP interface for cross-account sending.",
               "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
               "examples": [
                 {
                   "X-SES-SOURCE-ARN": "arn:aws:ses:us-west-2:123456789012:identity/example.com",
@@ -1512,6 +1715,12 @@
                   "X-SES-RETURN-PATH-ARN": "arn:aws:ses:us-west-2:123456789012:identity/example.com"
                 }
               ]
+            },
+            "local_name": {
+              "title": "SMTP HELO/EHLO name",
+              "description": "Identifier used in the SMTP HELO/EHLO command. Some SMTP relays require a unique identifier.",
+              "type": "string",
+              "default": "localhost"
             }
           },
           "required": [
@@ -1551,7 +1760,7 @@
                   "type": "string",
                   "description": "The HTTP method to use (GET, POST, etc)."
                 },
-                "header": {
+                "headers": {
                   "type": "object",
                   "description": "The HTTP headers that must be applied to request",
                   "additionalProperties": {
@@ -1598,6 +1807,36 @@
       "required": [
         "smtp"
       ],
+      "additionalProperties": false
+    },
+    "oauth2_provider": {
+      "title": "OAuth2 Provider Configuration",
+      "type": "object",
+      "properties": {
+        "url": {
+          "title": "OAuth 2.0 Provider URL.",
+          "description": "If set, the login and registration flows will handle the Ory OAuth 2.0 & OpenID `login_challenge` query parameter to serve as an OpenID Connect Provider. This URL should point to Ory Hydra when you are not running on the Ory Network and be left untouched otherwise.",
+          "type": "string",
+          "format": "uri",
+          "examples": [
+            "https://some-slug.projects.oryapis.com",
+            "https://domain-of-ory-hydra:4445"
+          ]
+        },
+        "headers": {
+          "title": "HTTP Request Headers",
+          "description": "These headers will be passed in HTTP request to the OAuth2 Provider.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "examples": [
+            {
+              "Authorization": "Bearer some-token"
+            }
+          ]
+        }
+      },
       "additionalProperties": false
     },
     "serve": {
@@ -1814,160 +2053,7 @@
       "additionalProperties": false
     },
     "tracing": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Ory Kratos supports distributed tracing.",
-      "properties": {
-        "provider": {
-          "type": "string",
-          "description": "Set this to the tracing backend you wish to use. Supports Jaeger, Zipkin, DataDog, elastic-apm and instana. If omitted or empty, tracing will be disabled. Use environment variables to configure DataDog (see https://docs.datadoghq.com/tracing/setup/go/#configuration).",
-          "enum": [
-            "jaeger",
-            "zipkin",
-            "datadog",
-            "elastic-apm",
-            "instana"
-          ],
-          "examples": [
-            "jaeger"
-          ]
-        },
-        "service_name": {
-          "type": "string",
-          "description": "Specifies the service name to use on the tracer.",
-          "examples": [
-            "Ory Kratos"
-          ]
-        },
-        "providers": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "jaeger": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the jaeger tracing backend.",
-              "properties": {
-                "local_agent_address": {
-                  "type": "string",
-                  "description": "The address of the jaeger-agent where spans should be sent to.",
-                  "oneOf": [
-                    {
-                      "pattern": "^\\[(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))]:([0-9]*)$"
-                    },
-                    {
-                      "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}:([0-9]*)$"
-                    },
-                    {
-                      "format": "uri"
-                    }
-                  ],
-                  "examples": [
-                    "127.0.0.1:6831"
-                  ]
-                },
-                "propagation": {
-                  "type": "string",
-                  "description": "The tracing header format",
-                  "examples": [
-                    "jaeger"
-                  ]
-                },
-                "sampling": {
-                  "type": "object",
-                  "propertyNames": {
-                    "enum": [
-                      "type",
-                      "value",
-                      "server_url"
-                    ]
-                  },
-                  "allOf": [
-                    {
-                      "oneOf": [
-                        {
-                          "properties": {
-                            "type": {
-                              "description": "The type of the sampler you want to use.",
-                              "const": "const"
-                            },
-                            "value": {
-                              "type": "integer",
-                              "description": "The value passed to the sampler type that has been configured.",
-                              "minimum": 0,
-                              "maximum": 1
-                            }
-                          }
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "description": "The type of the sampler you want to use.",
-                              "const": "rateLimiting"
-                            },
-                            "value": {
-                              "type": "integer",
-                              "description": "The value passed to the sampler type that has been configured.",
-                              "minimum": 0
-                            }
-                          }
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "description": "The type of the sampler you want to use.",
-                              "const": "probabilistic"
-                            },
-                            "value": {
-                              "type": "number",
-                              "description": "The value passed to the sampler type that has been configured.",
-                              "minimum": 0,
-                              "maximum": 1
-                            }
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "properties": {
-                        "server_url": {
-                          "type": "string",
-                          "description": "The address of jaeger-agent's HTTP sampling server",
-                          "format": "uri"
-                        }
-                      }
-                    }
-                  ],
-                  "examples": [
-                    {
-                      "type": "const",
-                      "value": 1,
-                      "server_url": "http://localhost:5778/sampling"
-                    }
-                  ]
-                }
-              }
-            },
-            "zipkin": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the zipkin tracing backend.",
-              "properties": {
-                "server_url": {
-                  "type": "string",
-                  "description": "The address of Zipkin server where spans should be sent to.",
-                  "format": "uri"
-                }
-              },
-              "examples": [
-                {
-                  "server_url": "http://localhost:9411/api/v2/spans"
-                }
-              ]
-            }
-          }
-        }
-      }
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-110.json"
     },
     "log": {
       "title": "Log",
@@ -2021,6 +2107,7 @@
         "schemas": {
           "type": "array",
           "title": "All JSON Schemas for Identity Traits",
+          "description": "Note that identities that used the \"default_schema_url\" field in older kratos versions will be corrupted unless you specify their schema url with the id \"default\" in this list.",
           "examples": [
             [
               {
@@ -2282,7 +2369,7 @@
             },
             "persistent": {
               "title": "Make Session Cookie Persistent",
-              "description": "If set to true will persist the cookie in the end-user's browser using the `max-age` parameter which is set to the `session.lifespan` value. Persistent cookies are not deleted when the browser is closed (e.g. on reboot or alt+f4).",
+              "description": "If set to true will persist the cookie in the end-user's browser using the `max-age` parameter which is set to the `session.lifespan` value. Persistent cookies are not deleted when the browser is closed (e.g. on reboot or alt+f4). This option affects the Ory OAuth2 and OpenID Provider's remember feature as well.",
               "type": "boolean",
               "default": true
             },
@@ -2303,6 +2390,18 @@
             }
           },
           "additionalProperties": false
+        },
+        "earliest_possible_extend": {
+          "title": "Earliest Possible Session Extension",
+          "description": "Sets when a session can be extended. Settings this value to `24h` will prevent the session from being extended before until 24 hours before it expires. This setting prevents excessive writes to the database. We highly recommend setting this value.",
+          "type": "string",
+          "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
+          "default": "24h",
+          "examples": [
+            "1h",
+            "1m",
+            "1s"
+          ]
         }
       }
     },
@@ -2364,10 +2463,32 @@
               "description": "Disallow all outgoing HTTP calls to private IP ranges. This feature can help protect against SSRF attacks.",
               "type": "boolean",
               "default": false
+            },
+            "private_ip_exception_urls": {
+              "title": "Add exempt URLs to private IP ranges",
+              "description": "Allows the given URLs to be called despite them being in the private IP range. URLs need to have an exact and case-sensitive match to be excempt.",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri-reference"
+              },
+              "default": []
             }
           }
         }
       }
+    },
+    "feature_flags": {
+      "title": "Feature flags",
+      "properties": {
+        "cacheable_sessions": {
+          "type": "boolean",
+          "title": "Enable Ory Sessions caching",
+          "description": "If enabled allows Ory Sessions to be cached. Only effective in the Ory Network.",
+          "default": false
+        }
+      },
+      "additionalProperties": false
     }
   },
   "allOf": [

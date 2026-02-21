@@ -574,6 +574,26 @@
             ]
           ]
         },
+        "jwks_max_wait": {
+          "title": "Max await interval for the JWK fetch",
+          "type": "string",
+          "description": "The configuration which sets the max wait threshold when fetching new JWKs",
+          "default": "1s",
+          "examples": [
+            "100ms",
+            "1s"
+          ]
+        },
+        "jwks_ttl": {
+          "title": "JWK cache TTL configuration",
+          "type": "string",
+          "description": "The time interval for which fetched JWKs are cached",
+          "default": "30s",
+          "examples": [
+            "30m",
+            "6h"
+          ]
+        },
         "scope_strategy": {
           "$ref": "#/definitions/scopeStrategy"
         },
@@ -695,6 +715,15 @@
               "format": "uri",
               "title": "OAuth 2.0 Token URL",
               "description": "The OAuth 2.0 Token Endpoint where the OAuth 2.0 Client Credentials Grant will be performed.\n\n>If pre-authorization is enabled, this value is required."
+            },
+            "audience": {
+              "type": "string",
+              "title": "OAuth 2.0 Audience",
+              "description": "The OAuth 2.0 Audience to be requested during the OAuth 2.0 Client Credentials Grant.",
+              "examples": [
+                "http://www.example.com",
+                "services:my-app"
+              ]
             },
             "scope": {
               "type": "array",
@@ -852,6 +881,12 @@
               "examples": [
                 "5s"
               ]
+            },
+            "max_cost": {
+              "type": "integer",
+              "default": 1000,
+              "title": "Max Cost",
+              "description": "Max number of tokens to cache."
             }
           }
         }
@@ -914,6 +949,17 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "forward_response_headers_to_upstream": {
+          "description": "A list of non simple headers the remote is allowed to return to mutate requests.",
+          "title": "Allowed Remote HTTP Headers for his Responses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minLength": 0,
+          "uniqueItems": true,
+          "default": []
         }
       },
       "required": [
@@ -942,6 +988,17 @@
           "examples": [
             "{\"subject\":\"{{ .Subject }}\"}"
           ]
+        },
+        "forward_response_headers_to_upstream": {
+          "description": "A list of non simple headers the remote is allowed to return to mutate requests.",
+          "title": "Allowed Remote HTTP Headers for his Responses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minLength": 0,
+          "uniqueItems": true,
+          "default": []
         }
       },
       "required": [
@@ -1591,7 +1648,7 @@
         },
         "deny": {
           "title": "Deny",
-          "description": "The [`deny` authorizer](https://www.ory.sh/oathkeeper/docs/pipeline/authz#allow).",
+          "description": "The [`deny` authorizer](https://www.ory.sh/oathkeeper/docs/pipeline/authz#deny).",
           "type": "object",
           "additionalProperties": false,
           "properties": {
