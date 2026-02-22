@@ -1,154 +1,73 @@
 {
-  "$id": "https://raw.githubusercontent.com/roadrunner-server/logger/refs/heads/master/schema.json",
+  "$id": "https://raw.githubusercontent.com/roadrunner-server/boltdb/refs/heads/master/schema.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "description": "All the valid configuration parameters for the Logger plugin for RoadRunner.",
-  "type": "object",
-  "title": "roadrunner-logger",
-  "minProperties": 1,
-  "additionalProperties": false,
-  "properties": {
-    "mode": {
-      "$ref": "#/$defs/LogMode"
+  "title": "roadrunner-boltdb",
+  "description": "The schema contains all the valid configuration parameters for the BoltDB plugin for the roadrunner job system.",
+  "definitions": {
+    "permissions": {
+      "description": "Permissions for the BoltDB database file, if created by RR.",
+      "type": "integer",
+      "default": 755,
+      "minimum": 0,
+      "maximum": 777
     },
-    "level": {
-      "$ref": "#/$defs/LogLevel"
+    "file": {
+      "description": "BoltDB database file to create or use.",
+      "type": "string",
+      "default": "rr.db"
     },
-    "line_ending": {
-      "$ref": "#/$defs/LogLineEnding"
-    },
-    "encoding": {
-      "$ref": "#/$defs/LogEncoding"
-    },
-    "output": {
-      "$ref": "#/$defs/LogOutput"
-    },
-    "err_output": {
-      "$ref": "#/$defs/LogOutput"
-    },
-    "file_logger_options": {
-      "$ref": "#/$defs/FileLoggerOptions"
-    },
-    "channels": {
-      "description": "You can configure logging for each plugin individually. The key is the plugin name and the value is logging options in same format as the parent.",
+    "pipeline": {
       "type": "object",
+      "required": [
+        "driver"
+      ],
       "additionalProperties": false,
-      "minProperties": 1,
-      "patternProperties": {
-        "^[a-zA-Z0-9._-]+$": {
-          "description": "Custom logging options for the plugin specified as this object's key.",
+      "properties": {
+        "driver": {
+          "type": "string",
+          "enum": [
+            "boltdb"
+          ]
+        },
+        "config": {
           "type": "object",
+          "description": "Configuration for the BoltDB pipeline.",
           "additionalProperties": false,
-          "minProperties": 1,
           "properties": {
-            "mode": {
-              "$ref": "#/$defs/LogMode"
+            "priority": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-25.json#/definitions/PipelineProperties/priority"
             },
-            "level": {
-              "$ref": "#/$defs/LogLevel"
+            "prefetch": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-25.json#/definitions/PipelineProperties/prefetch"
             },
-            "line_ending": {
-              "$ref": "#/$defs/LogLineEnding"
+            "permissions": {
+              "$ref": "#/definitions/permissions"
             },
-            "encoding": {
-              "$ref": "#/$defs/LogEncoding"
-            },
-            "output": {
-              "$ref": "#/$defs/LogOutput"
-            },
-            "err_output": {
-              "$ref": "#/$defs/LogOutput"
-            },
-            "file_logger_options": {
-              "$ref": "#/$defs/FileLoggerOptions"
+            "file": {
+              "$ref": "#/definitions/file"
             }
           }
         }
       }
-    }
-  },
-  "$defs": {
-    "FileLoggerOptions": {
-      "description": "File logger options.",
+    },
+    "driver": {
       "type": "object",
       "additionalProperties": false,
+      "description": "Configuration options for the BoltDB driver.",
       "properties": {
-        "log_output": {
-          "type": "string",
-          "description": "Path to the log file. Uses <processname>-lumberjack.log and the OS temp (i.e. `/tmp`) directory if empty."
+        "file": {
+          "$ref": "#/definitions/file"
         },
-        "max_size": {
+        "permissions": {
+          "$ref": "#/definitions/permissions"
+        },
+        "interval": {
+          "description": "TTL keys check interval in seconds. It's safe to use 1 second here, but can be a little costly to performance. If you set this to zero, 60 will be used.",
           "type": "integer",
-          "description": "Maximum file size in MB.",
-          "minimum": 0,
-          "default": 100
-        },
-        "max_age": {
-          "type": "integer",
-          "description": "The maximum number of days to retain old log files based on the timestamp encoded in their filename. Empty or zero defaults to 24 days.",
-          "minimum": 0,
-          "default": 24
-        },
-        "max_backups": {
-          "type": "integer",
-          "description": "The maximum number of old log files to retain. Empty or zero defaults to 10.",
-          "minimum": 0,
-          "default": 10
-        },
-        "compress": {
-          "type": "boolean",
-          "description": "Whether to compress log files.",
-          "default": false
+          "minimum": 1,
+          "default": 60
         }
       }
-    },
-    "LogMode": {
-      "description": "Logging mode",
-      "type": "string",
-      "default": "development",
-      "enum": [
-        "none",
-        "off",
-        "production",
-        "development",
-        "raw"
-      ]
-    },
-    "LogLevel": {
-      "description": "Logging level",
-      "type": "string",
-      "default": "debug",
-      "enum": [
-        "debug",
-        "info",
-        "warn",
-        "error",
-        "panic"
-      ]
-    },
-    "LogEncoding": {
-      "description": "Encoding format. Default depends on logging mode. For production, `json` is the default, else `console`. Also supports any third-party encodings registered via RegisterEncoder.",
-      "type": "string",
-      "enum": [
-        "console",
-        "json"
-      ]
-    },
-    "LogOutput": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1,
-        "examples": [
-          "stdout",
-          "stderr",
-          "/var/log/rr_errors.log"
-        ]
-      }
-    },
-    "LogLineEnding": {
-      "description": "Line-ending to use for logging.",
-      "type": "string",
-      "default": "\n"
     }
   }
 }

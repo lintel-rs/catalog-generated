@@ -1,5 +1,5 @@
 {
-  "$id": "/.schema/config.schema.json",
+  "$id": "https://github.com/ory/oathkeeper/schema/config.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "ORY Oathkeeper Configuration",
   "type": "object",
@@ -535,6 +535,11 @@
             }
           ]
         },
+        "prefix": {
+          "title": "Token Prefix",
+          "type": "string",
+          "description": "The token is considered only if it starts with this string."
+        },
         "preserve_query": {
           "title": "Preserve Query",
           "type": "boolean",
@@ -912,6 +917,17 @@
             "type": "string"
           }
         },
+        "prefix": {
+          "title": "Token Prefix",
+          "type": "string",
+          "description": "The token is considered only if it starts with this string."
+        },
+        "preserve_host": {
+          "title": "Preserve Host",
+          "type": "boolean",
+          "description": "When set to true the HTTP Header X-Forwarded-Host will be set to the original HTTP host.",
+          "default": false
+        },
         "introspection_request_headers": {
           "title": "Introspection Request Headers",
           "description": "Additional headers to be added to the introspection request.",
@@ -980,9 +996,9 @@
             },
             "max_cost": {
               "type": "integer",
-              "default": 1000,
+              "default": 100000000,
               "title": "Max Cost",
-              "description": "Max number of tokens to cache."
+              "description": "Max cost to cache."
             }
           }
         }
@@ -1079,6 +1095,12 @@
           "examples": [
             "https://host/path"
           ]
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "payload": {
           "title": "JSON Payload",
@@ -1310,6 +1332,12 @@
               ],
               "title": "Host",
               "description": "The network interface to listen on. Leave empty to listen on all interfaces."
+            },
+            "trust_forwarded_headers": {
+              "type": "boolean",
+              "default": false,
+              "title": "Trust X-Forwarded Headers",
+              "description": "Trust the X-Forwarded-* headers from the reverse proxy. This is useful when running behind a load balancer or similar. Set this to false if you are not running behind a reverse proxy that prevents Hop-by-Hop attacks."
             },
             "timeout": {
               "$ref": "#/definitions/serverTimeout"
@@ -2021,215 +2049,11 @@
         }
       }
     },
-    "tracing": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "$id": "ory://tracing-config",
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Configure distributed tracing using OpenTelemetry",
-      "properties": {
-        "provider": {
-          "type": "string",
-          "description": "Set this to the tracing backend you wish to use. Supports Jaeger, Zipkin, and OTEL.",
-          "enum": [
-            "jaeger",
-            "otel",
-            "zipkin"
-          ],
-          "examples": [
-            "jaeger"
-          ]
-        },
-        "service_name": {
-          "type": "string",
-          "description": "Specifies the service name to use on the tracer.",
-          "examples": [
-            "Ory Oathkeeper"
-          ]
-        },
-        "providers": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "jaeger": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the jaeger tracing backend.",
-              "properties": {
-                "local_agent_address": {
-                  "type": "string",
-                  "description": "The address of the jaeger-agent where spans should be sent to.",
-                  "anyOf": [
-                    {
-                      "title": "IPv6 Address and Port",
-                      "pattern": "^\\[(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))]:([0-9]*)$"
-                    },
-                    {
-                      "title": "IPv4 Address and Port",
-                      "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}:([0-9]*)$"
-                    },
-                    {
-                      "title": "Hostname and Port",
-                      "pattern": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9]):([0-9]*)$"
-                    }
-                  ],
-                  "examples": [
-                    "127.0.0.1:6831"
-                  ]
-                },
-                "sampling": {
-                  "type": "object",
-                  "propertyNames": {
-                    "enum": [
-                      "server_url",
-                      "trace_id_ratio"
-                    ]
-                  },
-                  "additionalProperties": false,
-                  "properties": {
-                    "server_url": {
-                      "type": "string",
-                      "description": "The address of jaeger-agent's HTTP sampling server",
-                      "format": "uri",
-                      "examples": [
-                        "http://localhost:5778/sampling"
-                      ]
-                    },
-                    "trace_id_ratio": {
-                      "type": "number",
-                      "description": "Initial sampling ratio before contacting the sampling server.",
-                      "minimum": 0,
-                      "maximum": 1,
-                      "default": 1,
-                      "examples": [
-                        0.5
-                      ]
-                    }
-                  }
-                }
-              }
-            },
-            "zipkin": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the zipkin tracing backend.",
-              "properties": {
-                "server_url": {
-                  "type": "string",
-                  "description": "The address of the Zipkin server where spans should be sent to.",
-                  "format": "uri",
-                  "examples": [
-                    "http://localhost:9411/api/v2/spans"
-                  ]
-                },
-                "sampling": {
-                  "type": "object",
-                  "propertyNames": {
-                    "enum": [
-                      "sampling_ratio"
-                    ]
-                  },
-                  "additionalProperties": false,
-                  "properties": {
-                    "sampling_ratio": {
-                      "type": "number",
-                      "description": "Sampling ratio for spans.",
-                      "examples": [
-                        0.4
-                      ]
-                    }
-                  }
-                }
-              }
-            },
-            "otlp": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the OTLP tracing backend.",
-              "properties": {
-                "server_url": {
-                  "type": "string",
-                  "description": "The endpoint of the OTLP exporter (HTTP) where spans should be sent to.",
-                  "anyOf": [
-                    {
-                      "title": "IPv6 Address and Port",
-                      "pattern": "^\\[(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))]:([0-9]*)$"
-                    },
-                    {
-                      "title": "IPv4 Address and Port",
-                      "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}:([0-9]*)$"
-                    },
-                    {
-                      "title": "Hostname and Port",
-                      "pattern": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9]):([0-9]*)$"
-                    }
-                  ],
-                  "examples": [
-                    "localhost:4318"
-                  ]
-                },
-                "insecure": {
-                  "type": "boolean",
-                  "description": "Will use HTTP if set to true; defaults to HTTPS."
-                },
-                "sampling": {
-                  "type": "object",
-                  "propertyNames": {
-                    "enum": [
-                      "sampling_ratio"
-                    ]
-                  },
-                  "additionalProperties": false,
-                  "properties": {
-                    "sampling_ratio": {
-                      "type": "number",
-                      "description": "Sampling ratio for spans.",
-                      "examples": [
-                        0.4
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "log": {
-      "title": "Log",
-      "description": "Configure logging using the following options. Logging will always be sent to stdout and stderr.",
-      "type": "object",
-      "properties": {
-        "level": {
-          "description": "Debug enables stack traces on errors. Can also be set using environment variable LOG_LEVEL.",
-          "type": "string",
-          "default": "info",
-          "enum": [
-            "trace",
-            "debug",
-            "info",
-            "warning",
-            "error",
-            "fatal",
-            "panic"
-          ]
-        },
-        "leak_sensitive_values": {
-          "type": "boolean",
-          "title": "Leak Sensitive Log Values",
-          "description": "If set will leak sensitive values (e.g. emails) in the logs."
-        },
-        "format": {
-          "description": "The log format can either be text or JSON.",
-          "type": "string",
-          "enum": [
-            "json",
-            "text"
-          ]
-        }
-      },
-      "additionalProperties": false
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-38.json"
+    },
+    "tracing": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-39.json"
     },
     "profiling": {
       "title": "Profiling",
