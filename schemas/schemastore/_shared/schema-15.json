@@ -1,21 +1,9 @@
 {
-  "$id": "https://raw.githubusercontent.com/roadrunner-server/boltdb/refs/heads/master/schema.json",
+  "$id": "https://raw.githubusercontent.com/roadrunner-server/nats/refs/heads/master/schema.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "title": "roadrunner-boltdb",
-  "description": "The schema contains all the valid configuration parameters for the BoltDB plugin for the roadrunner job system.",
+  "title": "roadrunner-nats",
+  "description": "The schema contains all the valid configuration parameters for the NATS plugin for the roadrunner job system.",
   "definitions": {
-    "permissions": {
-      "description": "Permissions for the BoltDB database file, if created by RR.",
-      "type": "integer",
-      "default": 755,
-      "minimum": 0,
-      "maximum": 777
-    },
-    "file": {
-      "description": "BoltDB database file to create or use.",
-      "type": "string",
-      "default": "rr.db"
-    },
     "pipeline": {
       "type": "object",
       "required": [
@@ -26,25 +14,50 @@
         "driver": {
           "type": "string",
           "enum": [
-            "boltdb"
+            "nats"
           ]
         },
         "config": {
           "type": "object",
-          "description": "Configuration for the BoltDB pipeline.",
+          "description": "Configuration for the NATS driver.",
           "additionalProperties": false,
           "properties": {
             "priority": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-25.json#/definitions/PipelineProperties/priority"
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-11.json#/definitions/PipelineProperties/priority"
             },
             "prefetch": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-25.json#/definitions/PipelineProperties/prefetch"
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-11.json#/definitions/PipelineProperties/prefetch"
             },
-            "permissions": {
-              "$ref": "#/definitions/permissions"
+            "subject": {
+              "description": "NATS subject",
+              "type": "string",
+              "default": "default"
             },
-            "file": {
-              "$ref": "#/definitions/file"
+            "stream": {
+              "description": "NATS stream",
+              "type": "string",
+              "default": "default-stream"
+            },
+            "deliver_new": {
+              "description": "Whether to only receive messages that were created after the consumer was created.",
+              "type": "boolean",
+              "default": false
+            },
+            "rate_limit": {
+              "description": "Consumer rate-limiter in bytes. See https://docs.nats.io/jetstream/concepts/consumers#ratelimit",
+              "type": "integer",
+              "default": 1000,
+              "minimum": 0
+            },
+            "delete_stream_on_stop": {
+              "description": "Whether to delete the stream after the pipeline is stopped.",
+              "type": "boolean",
+              "default": false
+            },
+            "delete_after_ack": {
+              "description": "Whether to delete messages from the stream after successful acknowledgement.",
+              "type": "boolean",
+              "default": false
             }
           }
         }
@@ -53,19 +66,12 @@
     "driver": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Configuration options for the BoltDB driver.",
+      "description": "Configuration options for the NATS driver.",
       "properties": {
-        "file": {
-          "$ref": "#/definitions/file"
-        },
-        "permissions": {
-          "$ref": "#/definitions/permissions"
-        },
-        "interval": {
-          "description": "TTL keys check interval in seconds. It's safe to use 1 second here, but can be a little costly to performance. If you set this to zero, 60 will be used.",
-          "type": "integer",
-          "minimum": 1,
-          "default": 60
+        "addr": {
+          "description": "NATS server address.",
+          "type": "string",
+          "default": "nats://127.0.0.1:4222"
         }
       }
     }

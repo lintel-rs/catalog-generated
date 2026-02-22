@@ -72,18 +72,6 @@
         "hook"
       ]
     },
-    "selfServiceRequireVerifiedAddressHook": {
-      "type": "object",
-      "properties": {
-        "hook": {
-          "const": "require_verified_address"
-        }
-      },
-      "additionalProperties": false,
-      "required": [
-        "hook"
-      ]
-    },
     "webHookAuthBasicAuthProperties": {
       "properties": {
         "type": {
@@ -175,25 +163,7 @@
             },
             "body": {
               "type": "string",
-              "oneOf": [
-                {
-                  "format": "uri",
-                  "pattern": "^(http|https|file|base64)://",
-                  "description": "URI pointing to the jsonnet template used for payload generation. Only used for those HTTP methods, which support HTTP body payloads",
-                  "examples": [
-                    "file:///path/to/body.jsonnet",
-                    "file://./body.jsonnet",
-                    "base64://ZnVuY3Rpb24oY3R4KSB7CiAgaWRlbnRpdHlfaWQ6IGlmIGN0eFsiaWRlbnRpdHkiXSAhPSBudWxsIHRoZW4gY3R4LmlkZW50aXR5LmlkLAp9=",
-                    "https://oryapis.com/default_body.jsonnet"
-                  ]
-                },
-                {
-                  "description": "DEPRECATED: please use a URI instead (i.e. prefix your filepath with 'file://')",
-                  "not": {
-                    "pattern": "^(http|https|file|base64)://"
-                  }
-                }
-              ]
+              "description": "Path to the jsonnet template used for payload generation. Only used for those HTTP methods, which support HTTP body payloads"
             },
             "auth": {
               "type": "object",
@@ -310,12 +280,11 @@
         },
         "provider": {
           "title": "Provider",
-          "description": "Can be one of github, github-app, gitlab, generic, google, microsoft, discord, slack, facebook, auth0, vk, yandex.",
+          "description": "Can be one of github, gitlab, generic, google, microsoft, discord, slack, facebook, auth0, vk, yandex.",
           "type": "string",
           "enum": [
             "github",
             "gitlab",
-            "gitlab-app",
             "generic",
             "google",
             "microsoft",
@@ -465,34 +434,7 @@
         }
       }
     },
-    "selfServiceAfterPasswordLoginMethod": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "default_browser_return_url": {
-          "$ref": "#/definitions/defaultReturnTo"
-        },
-        "hooks": {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              {
-                "$ref": "#/definitions/selfServiceSessionRevokerHook"
-              },
-              {
-                "$ref": "#/definitions/selfServiceRequireVerifiedAddressHook"
-              },
-              {
-                "$ref": "#/definitions/selfServiceWebHook"
-              }
-            ]
-          },
-          "uniqueItems": true,
-          "additionalItems": false
-        }
-      }
-    },
-    "selfServiceAfterOIDCLoginMethod": {
+    "selfServiceAfterLoginMethod": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -575,10 +517,10 @@
           "$ref": "#/definitions/defaultReturnTo"
         },
         "password": {
-          "$ref": "#/definitions/selfServiceAfterPasswordLoginMethod"
+          "$ref": "#/definitions/selfServiceAfterLoginMethod"
         },
         "oidc": {
-          "$ref": "#/definitions/selfServiceAfterOIDCLoginMethod"
+          "$ref": "#/definitions/selfServiceAfterLoginMethod"
         },
         "hooks": {
           "$ref": "#/definitions/selfServiceHooks"
@@ -1827,17 +1769,15 @@
     },
     "sqa-opt-out": {
       "type": "boolean",
-      "default": false,
-      "description": "This is a CLI flag and environment variable and can not be set using the config file."
+      "default": false
     },
     "watch-courier": {
       "type": "boolean",
-      "default": false,
-      "description": "This is a CLI flag and environment variable and can not be set using the config file."
+      "default": false
     },
     "expose-metrics-port": {
       "title": "Metrics port",
-      "description": "The port the courier's metrics endpoint listens on (0/disabled by default). This is a CLI flag and environment variable and can not be set using the config file.",
+      "description": "The port the courier's metrics endpoint listens on (0/disabled by default).",
       "type": "integer",
       "minimum": 0,
       "maximum": 65535,
@@ -1850,8 +1790,7 @@
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "This is a CLI flag and environment variable and can not be set using the config file."
+      }
     }
   },
   "allOf": [
@@ -1912,6 +1851,47 @@
         "required": [
           "courier"
         ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "session": {
+            "properties": {
+              "cookie": {
+                "properties": {
+                  "domain": {
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "domain"
+                ]
+              }
+            },
+            "required": [
+              "cookie"
+            ]
+          }
+        },
+        "required": [
+          "session"
+        ]
+      },
+      "then": {
+        "properties": {
+          "serve": {
+            "properties": {
+              "public": {
+                "properties": {
+                  "domain_aliases": {
+                    "maxItems": 0
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   ],

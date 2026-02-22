@@ -1,8 +1,8 @@
 {
-  "$id": "https://raw.githubusercontent.com/roadrunner-server/memory/refs/heads/master/schema.json",
+  "$id": "https://raw.githubusercontent.com/roadrunner-server/beanstalk/refs/heads/master/schema.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "title": "roadrunner-memory",
-  "description": "The schema contains all the valid configuration parameters for the Memory plugin for the roadrunner job system.",
+  "title": "roadrunner-beanstalk",
+  "description": "The schema contains all the valid configuration parameters for the Beanstalk plugin for the roadrunner job system.",
   "definitions": {
     "pipeline": {
       "type": "object",
@@ -14,21 +14,55 @@
         "driver": {
           "type": "string",
           "enum": [
-            "memory"
+            "beanstalk"
           ]
         },
         "config": {
           "type": "object",
-          "description": "Configuration options for the Memory pipeline.",
+          "description": "Configuration options for the Beanstalk pipeline.",
           "additionalProperties": false,
           "properties": {
             "priority": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-25.json#/definitions/PipelineProperties/priority"
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-11.json#/definitions/PipelineProperties/priority"
             },
             "prefetch": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-25.json#/definitions/PipelineProperties/prefetch"
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-11.json#/definitions/PipelineProperties/prefetch"
+            },
+            "tube_priority": {
+              "description": "Beanstalk internal tube priority",
+              "type": "integer",
+              "default": 1
+            },
+            "tube": {
+              "description": "Tube name",
+              "type": "string",
+              "default": "default"
+            },
+            "reserve_timeout": {
+              "description": "If no job is available before this timeout has passed, Reserve returns a ConnError recording ErrTimeout",
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration",
+              "default": "5s"
             }
           }
+        }
+      }
+    },
+    "driver": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Configuration options for the Beanstalk driver.",
+      "properties": {
+        "addr": {
+          "title": "Beanstalk Server Address",
+          "description": "The address of the Beanstalk server.",
+          "type": "string",
+          "default": "tcp://127.0.0.1:11300"
+        },
+        "timeout": {
+          "title": "Connection Timeout",
+          "description": "Connection timeout for the Beanstalk server.",
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration",
+          "default": "30s"
         }
       }
     }
