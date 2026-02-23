@@ -1,320 +1,63 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "title": "Web Test Runner Target",
-  "description": "Web Test Runner target options for Build Facade.",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/angular-json--schema-2.json",
+  "title": "Angular Resolver Options Schema",
   "type": "object",
+  "additionalProperties": false,
+  "description": "Creates a new resolver in your project. Resolvers are used to pre-fetch data before a route is activated, ensuring that the necessary data is available before the component is displayed. This can improve the user experience by preventing delays and loading states. This schematic generates a new resolver with the specified name and options.",
   "properties": {
-    "main": {
+    "name": {
       "type": "string",
-      "description": "The name of the main entry-point file."
-    },
-    "tsConfig": {
-      "type": "string",
-      "description": "The name of the TypeScript configuration file."
-    },
-    "polyfills": {
-      "description": "Polyfills to be included in the build.",
-      "oneOf": [
-        {
-          "type": "array",
-          "description": "A list of polyfills to include in the build. Can be a full path for a file, relative to the current workspace or module specifier. Example: 'zone.js'.",
-          "items": {
-            "type": "string",
-            "uniqueItems": true
-          },
-          "default": []
-        },
-        {
-          "type": "string",
-          "description": "The full path for the polyfills file, relative to the current workspace or a module specifier. Example: 'zone.js'."
-        }
-      ]
-    },
-    "assets": {
-      "type": "array",
-      "description": "List of static application assets.",
-      "default": [],
-      "items": {
-        "$ref": "#/definitions/assetPattern"
-      }
-    },
-    "scripts": {
-      "description": "Global scripts to be included in the build.",
-      "type": "array",
-      "default": [],
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "input": {
-                "type": "string",
-                "description": "The file to include.",
-                "pattern": "\\.[cm]?jsx?$"
-              },
-              "bundleName": {
-                "type": "string",
-                "pattern": "^[\\w\\-.]*$",
-                "description": "The bundle name for this extra entry point."
-              },
-              "inject": {
-                "type": "boolean",
-                "description": "If the bundle will be referenced in the HTML file.",
-                "default": true
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "input"
-            ]
-          },
-          {
-            "type": "string",
-            "description": "The file to include.",
-            "pattern": "\\.[cm]?jsx?$"
-          }
-        ]
-      }
-    },
-    "styles": {
-      "description": "Global styles to be included in the build.",
-      "type": "array",
-      "default": [],
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "input": {
-                "type": "string",
-                "description": "The file to include.",
-                "pattern": "\\.(?:css|scss|sass|less)$"
-              },
-              "bundleName": {
-                "type": "string",
-                "pattern": "^[\\w\\-.]*$",
-                "description": "The bundle name for this extra entry point."
-              },
-              "inject": {
-                "type": "boolean",
-                "description": "If the bundle will be referenced in the HTML file.",
-                "default": true
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "input"
-            ]
-          },
-          {
-            "type": "string",
-            "description": "The file to include.",
-            "pattern": "\\.(?:css|scss|sass|less)$"
-          }
-        ]
-      }
-    },
-    "inlineStyleLanguage": {
-      "description": "The stylesheet language to use for the application's inline component styles.",
-      "type": "string",
-      "default": "css",
-      "enum": [
-        "css",
-        "less",
-        "sass",
-        "scss"
-      ]
-    },
-    "stylePreprocessorOptions": {
-      "description": "Options to pass to style preprocessors",
-      "type": "object",
-      "properties": {
-        "includePaths": {
-          "description": "Paths to include. Paths will be resolved to workspace root.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": []
-        }
+      "description": "The name for the new resolver. This will be used to create the resolver's class and spec files (e.g., `my-resolver.resolver.ts` and `my-resolver.resolver.spec.ts`).",
+      "$default": {
+        "$source": "argv",
+        "index": 0
       },
-      "additionalProperties": false
+      "x-prompt": "What name would you like to use for the resolver?"
     },
-    "include": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "default": [
-        "**/*.spec.ts"
-      ],
-      "description": "Globs of files to include, relative to project root. \nThere are 2 special cases:\n - when a path to directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists it will be included instead."
-    },
-    "exclude": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "default": [],
-      "description": "Globs of files to exclude, relative to the project root."
-    },
-    "sourceMap": {
-      "description": "Output source maps for scripts and styles. For more information, see https://angular.dev/reference/configs/workspace-config#source-map-configuration.",
-      "default": true,
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "scripts": {
-              "type": "boolean",
-              "description": "Output source maps for all scripts.",
-              "default": true
-            },
-            "styles": {
-              "type": "boolean",
-              "description": "Output source maps for all styles.",
-              "default": true
-            },
-            "vendor": {
-              "type": "boolean",
-              "description": "Resolve vendor packages source maps.",
-              "default": false
-            }
-          },
-          "additionalProperties": false
-        },
-        {
-          "type": "boolean"
-        }
-      ]
-    },
-    "progress": {
+    "skipTests": {
       "type": "boolean",
-      "description": "Log progress to the console while building.",
+      "description": "Skip the generation of a unit test file `spec.ts` for the new resolver.",
+      "default": false
+    },
+    "flat": {
+      "type": "boolean",
+      "description": "Creates the new resolver files at the top level of the current project. If set to false, a new folder with the resolver's name will be created to contain the files.",
       "default": true
     },
-    "watch": {
+    "functional": {
       "type": "boolean",
-      "description": "Run build when files change."
+      "description": "Creates the resolver as a function `ResolveFn` instead of a class. Functional resolvers can be simpler for basic scenarios.",
+      "default": true
     },
-    "poll": {
-      "type": "number",
-      "description": "Enable and define the file watching poll time period in milliseconds."
-    },
-    "preserveSymlinks": {
-      "type": "boolean",
-      "description": "Do not use the real path when resolving modules. If unset then will default to `true` if NodeJS option --preserve-symlinks is set."
-    },
-    "browsers": {
+    "path": {
       "type": "string",
-      "description": "Override which browsers tests are run against."
-    },
-    "codeCoverage": {
-      "type": "boolean",
-      "description": "Output a code coverage report.",
-      "default": false
-    },
-    "codeCoverageExclude": {
-      "type": "array",
-      "description": "Globs to exclude from code coverage.",
-      "items": {
-        "type": "string"
+      "format": "path",
+      "$default": {
+        "$source": "workingDirectory"
       },
-      "default": []
+      "description": "The path where the resolver files should be created, relative to the current workspace. If not provided, the resolver will be created in the current directory.",
+      "visible": false
     },
-    "fileReplacements": {
-      "description": "Replace compilation source files with other compilation source files in the build.",
-      "type": "array",
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "src": {
-                "type": "string"
-              },
-              "replaceWith": {
-                "type": "string"
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "src",
-              "replaceWith"
-            ]
-          },
-          {
-            "type": "object",
-            "properties": {
-              "replace": {
-                "type": "string"
-              },
-              "with": {
-                "type": "string"
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "replace",
-              "with"
-            ]
-          }
-        ]
-      },
-      "default": []
-    },
-    "webWorkerTsConfig": {
+    "project": {
       "type": "string",
-      "description": "TypeScript configuration for Web Worker modules."
+      "description": "The name of the project where the resolver should be created. If not specified, the CLI will determine the project from the current directory.",
+      "$default": {
+        "$source": "projectName"
+      }
     },
-    "aot": {
-      "type": "boolean",
-      "description": "Run tests using Ahead of Time compilation.",
-      "default": false
+    "typeSeparator": {
+      "type": "string",
+      "default": "-",
+      "enum": [
+        "-",
+        "."
+      ],
+      "description": "The separator character to use before the type within the generated file's name. For example, if you set the option to `.`, the file will be named `example.resolver.ts`."
     }
   },
-  "additionalProperties": false,
   "required": [
-    "tsConfig"
-  ],
-  "definitions": {
-    "assetPattern": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "glob": {
-              "type": "string",
-              "description": "The pattern to match."
-            },
-            "input": {
-              "type": "string",
-              "description": "The input directory path in which to apply 'glob'. Defaults to the project root."
-            },
-            "output": {
-              "type": "string",
-              "default": "",
-              "description": "Absolute path within the output."
-            },
-            "ignore": {
-              "description": "An array of globs to ignore.",
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "additionalProperties": false,
-          "required": [
-            "glob",
-            "input"
-          ]
-        },
-        {
-          "type": "string"
-        }
-      ]
-    }
-  },
-  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/angular-json--schema-2.json"
+    "name",
+    "project"
+  ]
 }

@@ -84,6 +84,35 @@
         "hook"
       ]
     },
+    "selfServiceShowVerificationUIHook": {
+      "type": "object",
+      "properties": {
+        "hook": {
+          "const": "show_verification_ui"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "hook"
+      ]
+    },
+    "b2bSSOHook": {
+      "type": "object",
+      "properties": {
+        "hook": {
+          "const": "b2b_sso"
+        },
+        "config": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "hook",
+        "config"
+      ]
+    },
     "webHookAuthBasicAuthProperties": {
       "properties": {
         "type": {
@@ -113,6 +142,60 @@
         "type",
         "config"
       ]
+    },
+    "httpRequestConfig": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "title": "HTTP address of API endpoint",
+          "description": "This URL will be used to send the emails to.",
+          "examples": [
+            "https://example.com/api/v1/email"
+          ],
+          "type": "string",
+          "pattern": "^https?://"
+        },
+        "method": {
+          "type": "string",
+          "description": "The HTTP method to use (GET, POST, etc). Defaults to POST.",
+          "default": "POST"
+        },
+        "headers": {
+          "type": "object",
+          "description": "The HTTP headers that must be applied to request",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "body": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^(http|https|file|base64)://",
+          "description": "URI pointing to the jsonnet template used for payload generation. Only used for those HTTP methods, which support HTTP body payloads",
+          "default": "base64://ZnVuY3Rpb24oY3R4KSB7CiAgcmVjaXBpZW50OiBjdHgucmVjaXBpZW50LAogIHRlbXBsYXRlX3R5cGU6IGN0eC50ZW1wbGF0ZV90eXBlLAogIHRvOiBpZiAidGVtcGxhdGVfZGF0YSIgaW4gY3R4ICYmICJ0byIgaW4gY3R4LnRlbXBsYXRlX2RhdGEgdGhlbiBjdHgudGVtcGxhdGVfZGF0YS50byBlbHNlIG51bGwsCiAgcmVjb3ZlcnlfY29kZTogaWYgInRlbXBsYXRlX2RhdGEiIGluIGN0eCAmJiAicmVjb3ZlcnlfY29kZSIgaW4gY3R4LnRlbXBsYXRlX2RhdGEgdGhlbiBjdHgudGVtcGxhdGVfZGF0YS5yZWNvdmVyeV9jb2RlIGVsc2UgbnVsbCwKICByZWNvdmVyeV91cmw6IGlmICJ0ZW1wbGF0ZV9kYXRhIiBpbiBjdHggJiYgInJlY292ZXJ5X3VybCIgaW4gY3R4LnRlbXBsYXRlX2RhdGEgdGhlbiBjdHgudGVtcGxhdGVfZGF0YS5yZWNvdmVyeV91cmwgZWxzZSBudWxsLAogIHZlcmlmaWNhdGlvbl91cmw6IGlmICJ0ZW1wbGF0ZV9kYXRhIiBpbiBjdHggJiYgInZlcmlmaWNhdGlvbl91cmwiIGluIGN0eC50ZW1wbGF0ZV9kYXRhIHRoZW4gY3R4LnRlbXBsYXRlX2RhdGEudmVyaWZpY2F0aW9uX3VybCBlbHNlIG51bGwsCiAgdmVyaWZpY2F0aW9uX2NvZGU6IGlmICJ0ZW1wbGF0ZV9kYXRhIiBpbiBjdHggJiYgInZlcmlmaWNhdGlvbl9jb2RlIiBpbiBjdHgudGVtcGxhdGVfZGF0YSB0aGVuIGN0eC50ZW1wbGF0ZV9kYXRhLnZlcmlmaWNhdGlvbl9jb2RlIGVsc2UgbnVsbCwKICBzdWJqZWN0OiBjdHguc3ViamVjdCwKICBib2R5OiBjdHguYm9keQp9Cg==",
+          "examples": [
+            "file:///path/to/body.jsonnet",
+            "file://./body.jsonnet",
+            "base64://ZnVuY3Rpb24oY3R4KSB7CiAgaWRlbnRpdHlfaWQ6IGlmIGN0eFsiaWRlbnRpdHkiXSAhPSBudWxsIHRoZW4gY3R4LmlkZW50aXR5LmlkLAp9=",
+            "https://oryapis.com/default_body.jsonnet"
+          ]
+        },
+        "auth": {
+          "type": "object",
+          "title": "Auth mechanisms",
+          "description": "Define which auth mechanism to use for auth with the HTTP email provider",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/webHookAuthApiKeyProperties"
+            },
+            {
+              "$ref": "#/definitions/webHookAuthBasicAuthProperties"
+            }
+          ]
+        },
+        "additionalProperties": false
+      },
+      "additionalProperties": false
     },
     "webHookAuthApiKeyProperties": {
       "properties": {
@@ -174,7 +257,26 @@
                   "type": "boolean",
                   "description": "Ignore the response from the web hook. If enabled the request will be made asynchronously which can be useful if you only wish to notify another system but do not parse the response.",
                   "default": false
+                },
+                "parse": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "If enabled parses the response before saving the flow result. Set this value to true if you would like to modify the identity, for example identity metadata, before saving it during registration. When enabled, you may also abort the registration, verification, login or settings flow due to, for example, a validation flow. Head over to the [web hook documentation](https://www.ory.sh/docs/kratos/hooks/configure-hooks) for more information."
                 }
+              },
+              "not": {
+                "properties": {
+                  "ignore": {
+                    "const": true
+                  },
+                  "parse": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "ignore",
+                  "parse"
+                ]
               }
             },
             "url": {
@@ -208,6 +310,16 @@
                 }
               ]
             },
+            "can_interrupt": {
+              "type": "boolean",
+              "default": false,
+              "description": "Deprecated, please use `response.parse` instead. If enabled allows the web hook to interrupt / abort the self-service flow. It only applies to certain flows (registration/verification/login/settings) and requires a valid response format."
+            },
+            "emit_analytics_event": {
+              "type": "boolean",
+              "default": true,
+              "description": "Emit tracing events for this webhook on delivery or error"
+            },
             "auth": {
               "type": "object",
               "title": "Auth mechanisms",
@@ -223,6 +335,41 @@
             },
             "additionalProperties": false
           },
+          "anyOf": [
+            {
+              "not": {
+                "properties": {
+                  "response": {
+                    "properties": {
+                      "ignore": {
+                        "enum": [
+                          true
+                        ]
+                      }
+                    },
+                    "required": [
+                      "ignore"
+                    ]
+                  }
+                },
+                "required": [
+                  "response"
+                ]
+              }
+            },
+            {
+              "properties": {
+                "can_interrupt": {
+                  "enum": [
+                    false
+                  ]
+                }
+              },
+              "require": [
+                "can_interrupt"
+              ]
+            }
+          ],
           "additionalProperties": false,
           "required": [
             "url",
@@ -323,7 +470,7 @@
         },
         "provider": {
           "title": "Provider",
-          "description": "Can be one of github, github-app, gitlab, generic, google, microsoft, discord, slack, facebook, auth0, vk, yandex, spotify.",
+          "description": "Can be one of github, github-app, gitlab, generic, google, microsoft, discord, slack, facebook, auth0, vk, yandex, apple, spotify, netid, dingtalk, patreon.",
           "type": "string",
           "enum": [
             "github",
@@ -339,7 +486,12 @@
             "vk",
             "yandex",
             "apple",
-            "spotify"
+            "spotify",
+            "netid",
+            "dingtalk",
+            "patreon",
+            "linkedin",
+            "lark"
           ],
           "examples": [
             "google"
@@ -409,6 +561,19 @@
             "contoso.onmicrosoft.com"
           ]
         },
+        "subject_source": {
+          "title": "Microsoft subject source",
+          "description": "Controls which source the subject identifier is taken from by microsoft provider. If set to `userinfo` (the default) then the identifier is taken from the `sub` field of OIDC ID token or data received from `/userinfo` standard OIDC endpoint. If set to `me` then the `id` field of data structure received from `https://graph.microsoft.com/v1.0/me` is taken as an identifier.",
+          "type": "string",
+          "enum": [
+            "userinfo",
+            "me"
+          ],
+          "default": "userinfo",
+          "examples": [
+            "userinfo"
+          ]
+        },
         "apple_team_id": {
           "title": "Apple Developer Team ID",
           "description": "Apple Developer Team ID needed for generating a JWT token for client secret",
@@ -435,6 +600,38 @@
         },
         "requested_claims": {
           "$ref": "#/definitions/OIDCClaims"
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "description": "The ID of the organization that this provider belongs to. Only effective in the Ory Network.",
+          "type": "string",
+          "examples": [
+            "12345678-1234-1234-1234-123456789012"
+          ]
+        },
+        "additional_id_token_audiences": {
+          "title": "Additional client ids allowed when using ID token submission",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "examples": [
+              "12345678-1234-1234-1234-123456789012"
+            ]
+          }
+        },
+        "claims_source": {
+          "title": "Claims source",
+          "description": "Can be either `userinfo` (calls the userinfo endpoint to get the claims) or `id_token` (takes the claims from the id token). It defaults to `id_token`",
+          "type": "string",
+          "enum": [
+            "id_token",
+            "userinfo"
+          ],
+          "default": "id_token",
+          "examples": [
+            "id_token",
+            "userinfo"
+          ]
         }
       },
       "additionalProperties": false,
@@ -556,6 +753,9 @@
         "anyOf": [
           {
             "$ref": "#/definitions/selfServiceWebHook"
+          },
+          {
+            "$ref": "#/definitions/b2bSSOHook"
           }
         ]
       },
@@ -590,6 +790,30 @@
             "anyOf": [
               {
                 "$ref": "#/definitions/selfServiceWebHook"
+              }
+            ]
+          },
+          "uniqueItems": true,
+          "additionalItems": false
+        }
+      }
+    },
+    "selfServiceAfterSettingsAuthMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default_browser_return_url": {
+          "$ref": "#/definitions/defaultReturnTo"
+        },
+        "hooks": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/selfServiceWebHook"
+              },
+              {
+                "$ref": "#/definitions/selfServiceSessionRevokerHook"
               }
             ]
           },
@@ -641,6 +865,12 @@
               },
               {
                 "$ref": "#/definitions/selfServiceWebHook"
+              },
+              {
+                "$ref": "#/definitions/selfServiceRequireVerifiedAddressHook"
+              },
+              {
+                "$ref": "#/definitions/b2bSSOHook"
               }
             ]
           },
@@ -665,6 +895,12 @@
               },
               {
                 "$ref": "#/definitions/selfServiceWebHook"
+              },
+              {
+                "$ref": "#/definitions/selfServiceShowVerificationUIHook"
+              },
+              {
+                "$ref": "#/definitions/b2bSSOHook"
               }
             ]
           },
@@ -691,7 +927,19 @@
           "$ref": "#/definitions/defaultReturnTo"
         },
         "password": {
-          "$ref": "#/definitions/selfServiceAfterSettingsMethod"
+          "$ref": "#/definitions/selfServiceAfterSettingsAuthMethod"
+        },
+        "totp": {
+          "$ref": "#/definitions/selfServiceAfterSettingsAuthMethod"
+        },
+        "oidc": {
+          "$ref": "#/definitions/selfServiceAfterSettingsAuthMethod"
+        },
+        "webauthn": {
+          "$ref": "#/definitions/selfServiceAfterSettingsAuthMethod"
+        },
+        "lookup_secret": {
+          "$ref": "#/definitions/selfServiceAfterSettingsAuthMethod"
         },
         "profile": {
           "$ref": "#/definitions/selfServiceAfterSettingsMethod"
@@ -726,12 +974,66 @@
         "oidc": {
           "$ref": "#/definitions/selfServiceAfterOIDCLoginMethod"
         },
+        "code": {
+          "$ref": "#/definitions/selfServiceAfterDefaultLoginMethod"
+        },
+        "totp": {
+          "$ref": "#/definitions/selfServiceAfterDefaultLoginMethod"
+        },
+        "lookup_secret": {
+          "$ref": "#/definitions/selfServiceAfterDefaultLoginMethod"
+        },
+        "hooks": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/selfServiceWebHook"
+              },
+              {
+                "$ref": "#/definitions/selfServiceSessionRevokerHook"
+              },
+              {
+                "$ref": "#/definitions/selfServiceRequireVerifiedAddressHook"
+              },
+              {
+                "$ref": "#/definitions/b2bSSOHook"
+              }
+            ]
+          },
+          "uniqueItems": true,
+          "additionalItems": false
+        }
+      }
+    },
+    "selfServiceBeforeRegistration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
         "hooks": {
           "$ref": "#/definitions/selfServiceHooks"
         }
       }
     },
-    "selfServiceBeforeRegistration": {
+    "selfServiceBeforeSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hooks": {
+          "$ref": "#/definitions/selfServiceHooks"
+        }
+      }
+    },
+    "selfServiceBeforeRecovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hooks": {
+          "$ref": "#/definitions/selfServiceHooks"
+        }
+      }
+    },
+    "selfServiceBeforeVerification": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -754,6 +1056,9 @@
           "$ref": "#/definitions/selfServiceAfterRegistrationMethod"
         },
         "oidc": {
+          "$ref": "#/definitions/selfServiceAfterRegistrationMethod"
+        },
+        "code": {
           "$ref": "#/definitions/selfServiceAfterRegistrationMethod"
         },
         "hooks": {
@@ -852,11 +1157,35 @@
           "properties": {
             "email": {
               "$ref": "#/definitions/emailCourierTemplate"
+            },
+            "sms": {
+              "$ref": "#/definitions/smsCourierTemplate"
             }
           },
           "required": [
             "email"
           ]
+        }
+      }
+    },
+    "smsCourierTemplate": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "body": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "plaintext": {
+              "type": "string",
+              "description": "A template send to the SMS provider.",
+              "format": "uri",
+              "examples": [
+                "file://path/to/body.plaintext.gotmpl",
+                "https://foo.bar.com/path/to/body.plaintext.gotmpl"
+              ]
+            }
+          }
         }
       }
     },
@@ -925,10 +1254,10 @@
             [
               "https://app.my-app.com/dashboard",
               "/dashboard",
-              "https://www.my-app.com/"
+              "https://www.my-app.com/",
+              "https://*.my-app.com/"
             ]
-          ],
-          "uniqueItems": true
+          ]
         },
         "flows": {
           "type": "object",
@@ -973,6 +1302,9 @@
                 },
                 "after": {
                   "$ref": "#/definitions/selfServiceAfterSettings"
+                },
+                "before": {
+                  "$ref": "#/definitions/selfServiceBeforeSettings"
                 }
               }
             },
@@ -1000,6 +1332,12 @@
                   "title": "Enable User Registration",
                   "description": "If set to true will enable [User Registration](https://www.ory.sh/kratos/docs/self-service/flows/user-registration/).",
                   "default": true
+                },
+                "login_hints": {
+                  "type": "boolean",
+                  "title": "Provide Login Hints on Failed Registration",
+                  "description": "When registration fails because an account with the given credentials or addresses previously signed up, provide login hints about available methods to sign in to the user.",
+                  "default": false
                 },
                 "ui_url": {
                   "title": "Registration UI URL",
@@ -1096,6 +1434,25 @@
                     "1m",
                     "1s"
                   ]
+                },
+                "before": {
+                  "$ref": "#/definitions/selfServiceBeforeVerification"
+                },
+                "use": {
+                  "title": "Verification Strategy",
+                  "description": "The strategy to use for verification requests",
+                  "type": "string",
+                  "enum": [
+                    "link",
+                    "code"
+                  ],
+                  "default": "code"
+                },
+                "notify_unknown_recipients": {
+                  "title": "Notify unknown recipients",
+                  "description": "Whether to notify recipients, if verification was requested for their address.",
+                  "type": "boolean",
+                  "default": false
                 }
               }
             },
@@ -1134,6 +1491,25 @@
                     "1m",
                     "1s"
                   ]
+                },
+                "before": {
+                  "$ref": "#/definitions/selfServiceBeforeRecovery"
+                },
+                "use": {
+                  "title": "Recovery Strategy",
+                  "description": "The strategy to use for recovery requests",
+                  "type": "string",
+                  "enum": [
+                    "link",
+                    "code"
+                  ],
+                  "default": "code"
+                },
+                "notify_unknown_recipients": {
+                  "title": "Notify unknown recipients",
+                  "description": "Whether to notify recipients, if recovery was requested for their account.",
+                  "type": "boolean",
+                  "default": false
                 }
               }
             },
@@ -1177,7 +1553,7 @@
                 "enabled": {
                   "type": "boolean",
                   "title": "Enables Link Method",
-                  "default": true
+                  "default": false
                 },
                 "config": {
                   "type": "object",
@@ -1193,6 +1569,84 @@
                     },
                     "lifespan": {
                       "title": "How long a link is valid for",
+                      "type": "string",
+                      "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
+                      "default": "1h",
+                      "examples": [
+                        "1h",
+                        "1m",
+                        "1s"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "code": {
+              "type": "object",
+              "additionalProperties": false,
+              "anyOf": [
+                {
+                  "properties": {
+                    "passwordless_enabled": {
+                      "const": true
+                    },
+                    "mfa_enabled": {
+                      "const": false
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "mfa_enabled": {
+                      "const": true
+                    },
+                    "passwordless_enabled": {
+                      "const": false
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "mfa_enabled": {
+                      "const": false
+                    },
+                    "passwordless_enabled": {
+                      "const": false
+                    }
+                  }
+                }
+              ],
+              "properties": {
+                "passwordless_enabled": {
+                  "type": "boolean",
+                  "title": "Enables login and registration with the code method.",
+                  "description": "If set to true, code.enabled will be set to true as well.",
+                  "default": false
+                },
+                "mfa_enabled": {
+                  "type": "boolean",
+                  "title": "Enables login flows code method to fulfil MFA requests",
+                  "default": false
+                },
+                "passwordless_login_fallback_enabled": {
+                  "type": "boolean",
+                  "title": "Passwordless Login Fallback Enabled",
+                  "description": "This setting allows the code method to always login a user with code if they have registered with another authentication method such as password or social sign in.",
+                  "default": false
+                },
+                "enabled": {
+                  "type": "boolean",
+                  "title": "Enables Code Method",
+                  "default": true
+                },
+                "config": {
+                  "type": "object",
+                  "title": "Code Configuration",
+                  "description": "Additional configuration for the code strategy.",
+                  "properties": {
+                    "lifespan": {
+                      "title": "How long a code is valid for",
                       "type": "string",
                       "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
                       "default": "1h",
@@ -1318,10 +1772,6 @@
                     },
                     "rp": {
                       "title": "Relying Party (RP) Config",
-                      "required": [
-                        "id",
-                        "display_name"
-                      ],
                       "properties": {
                         "display_name": {
                           "type": "string",
@@ -1342,23 +1792,87 @@
                         "origin": {
                           "type": "string",
                           "title": "Relying Party Origin",
-                          "description": "An explicit RP origin. If left empty, this defaults to `id`.",
+                          "description": "An explicit RP origin. If left empty, this defaults to `id`, prepended with the current protocol schema (HTTP or HTTPS).",
                           "format": "uri",
+                          "deprecationMessage": "This field is deprecated. Use `origins` instead.",
                           "examples": [
-                            "https://www.ory.sh/login"
+                            "https://www.ory.sh"
                           ]
+                        },
+                        "origins": {
+                          "type": "array",
+                          "title": "Relying Party Origins",
+                          "description": "A list of explicit RP origins. If left empty, this defaults to either `origin` or `id`, prepended with the current protocol schema (HTTP or HTTPS).",
+                          "items": {
+                            "type": "string",
+                            "format": "uri",
+                            "examples": [
+                              "https://www.ory.sh",
+                              "https://auth.ory.sh"
+                            ]
+                          }
                         },
                         "icon": {
                           "type": "string",
                           "title": "Relying Party Icon",
                           "description": "An icon to help the user identify this RP.",
                           "format": "uri",
+                          "deprecationMessage": "This field is deprecated and ignored due to security considerations.",
                           "examples": [
                             "https://www.ory.sh/an-icon.png"
                           ]
                         }
                       },
-                      "type": "object"
+                      "type": "object",
+                      "oneOf": [
+                        {
+                          "required": [
+                            "id",
+                            "display_name"
+                          ],
+                          "properties": {
+                            "origin": {
+                              "not": {}
+                            },
+                            "origins": {
+                              "not": {}
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "id",
+                            "display_name",
+                            "origin"
+                          ],
+                          "properties": {
+                            "origin": {
+                              "type": "string"
+                            },
+                            "origins": {
+                              "not": {}
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "id",
+                            "display_name",
+                            "origins"
+                          ],
+                          "properties": {
+                            "origin": {
+                              "not": {}
+                            },
+                            "origins": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      ]
                     }
                   },
                   "additionalProperties": false
@@ -1420,6 +1934,49 @@
         }
       }
     },
+    "database": {
+      "type": "object",
+      "title": "Database related configuration",
+      "description": "Miscellaneous settings used in database related tasks (cleanup, etc.)",
+      "properties": {
+        "cleanup": {
+          "type": "object",
+          "title": "Database cleanup settings",
+          "description": "Settings that controls how the database cleanup process is configured (delays, batch size, etc.)",
+          "properties": {
+            "batch_size": {
+              "type": "integer",
+              "title": "Number of records to clean in one iteration",
+              "description": "Controls how many records should be purged from one table during database cleanup task",
+              "minimum": 1,
+              "default": 100
+            },
+            "sleep": {
+              "type": "object",
+              "title": "Delays between various database cleanup phases",
+              "description": "Configures delays between each step of the cleanup process. It is useful to tune the process so it will be efficient and performant.",
+              "properties": {
+                "tables": {
+                  "type": "string",
+                  "title": "Delay between each table cleanups",
+                  "description": "Controls the delay time between cleaning each table in one cleanup iteration",
+                  "pattern": "^[0-9]+(ns|us|ms|s|m|h)$",
+                  "default": "1m"
+                }
+              }
+            },
+            "older_than": {
+              "type": "string",
+              "title": "Remove records older than",
+              "description": "Controls how old records do we want to leave",
+              "pattern": "^[0-9]+(ns|us|ms|s|m|h)$",
+              "default": "0s"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "dsn": {
       "type": "string",
       "title": "Data Source Name",
@@ -1443,8 +2000,53 @@
             "recovery": {
               "$ref": "#/definitions/courierTemplates"
             },
+            "recovery_code": {
+              "$ref": "#/definitions/courierTemplates"
+            },
             "verification": {
               "$ref": "#/definitions/courierTemplates"
+            },
+            "verification_code": {
+              "$ref": "#/definitions/courierTemplates"
+            },
+            "registration_code": {
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "$ref": "#/definitions/emailCourierTemplate"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ]
+                }
+              }
+            },
+            "login_code": {
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "$ref": "#/definitions/emailCourierTemplate"
+                    },
+                    "sms": {
+                      "$ref": "#/definitions/smsCourierTemplate"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ]
+                }
+              }
             }
           }
         },
@@ -1456,16 +2058,52 @@
             "/conf/courier-templates"
           ]
         },
-        "message_ttl": {
-          "description": "Defines a Time-To-Live for courier messages that could not be delivered. After the defined TTL has expired for a message that message is abandoned.",
-          "type": "string",
-          "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
-          "default": "1h",
+        "message_retries": {
+          "description": "Defines the maximum number of times the sending of a message is retried after it failed before it is marked as abandoned",
+          "type": "integer",
+          "default": 5,
           "examples": [
-            "1h",
-            "1m",
-            "1s"
+            10,
+            60
           ]
+        },
+        "worker": {
+          "description": "Configures the dispatch worker.",
+          "type": "object",
+          "properties": {
+            "pull_count": {
+              "description": "Defines how many messages are pulled from the queue at once.",
+              "type": "integer",
+              "default": 10
+            },
+            "pull_wait": {
+              "description": "Defines how long the worker waits before pulling messages from the queue again.",
+              "type": "string",
+              "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
+              "default": "1s"
+            }
+          }
+        },
+        "delivery_strategy": {
+          "title": "Delivery Strategy",
+          "description": "Defines how emails will be sent, either through SMTP (default) or HTTP.",
+          "type": "string",
+          "enum": [
+            "smtp",
+            "http"
+          ],
+          "default": "smtp"
+        },
+        "http": {
+          "title": "HTTP Configuration",
+          "description": "Configures outgoing emails using HTTP.",
+          "type": "object",
+          "properties": {
+            "request_config": {
+              "$ref": "#/definitions/httpRequestConfig"
+            }
+          },
+          "additionalProperties": false
         },
         "smtp": {
           "title": "SMTP Configuration",
@@ -1481,10 +2119,23 @@
                 "smtp://foo:bar@my-mailserver:1234/ (Explicit StartTLS with certificate trust verification)",
                 "smtp://foo:bar@my-mailserver:1234/?skip_ssl_verify=true (NOT RECOMMENDED: Explicit StartTLS without certificate trust verification)",
                 "smtps://foo:bar@my-mailserver:1234/ (Implicit TLS with certificate trust verification)",
-                "smtps://foo:bar@my-mailserver:1234/?skip_ssl_verify=true (NOT RECOMMENDED: Implicit TLS without certificate trust verification)"
+                "smtps://foo:bar@my-mailserver:1234/?skip_ssl_verify=true (NOT RECOMMENDED: Implicit TLS without certificate trust verification)",
+                "smtps://subdomain.my-mailserver:1234/?server_name=my-mailserver (allows TLS to work if the server is hosted on a sudomain that uses a non-wildcard domain certificate)"
               ],
               "type": "string",
               "pattern": "^smtps?:\\/\\/.*"
+            },
+            "client_cert_path": {
+              "title": "SMTP Client certificate path",
+              "description": "Path of the client X.509 certificate, in case of certificate based client authentication to the SMTP server.",
+              "type": "string",
+              "default": ""
+            },
+            "client_key_path": {
+              "title": "SMTP Client private key path",
+              "description": "Path of the client certificate private key, in case of certificate based client authentication to the SMTP server",
+              "type": "string",
+              "default": ""
             },
             "from_address": {
               "title": "SMTP Sender Address",
@@ -1505,6 +2156,9 @@
               "title": "SMTP Headers",
               "description": "These headers will be passed in the SMTP conversation -- e.g. when using the AWS SES SMTP interface for cross-account sending.",
               "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
               "examples": [
                 {
                   "X-SES-SOURCE-ARN": "arn:aws:ses:us-west-2:123456789012:identity/example.com",
@@ -1512,6 +2166,12 @@
                   "X-SES-RETURN-PATH-ARN": "arn:aws:ses:us-west-2:123456789012:identity/example.com"
                 }
               ]
+            },
+            "local_name": {
+              "title": "SMTP HELO/EHLO name",
+              "description": "Identifier used in the SMTP HELO/EHLO command. Some SMTP relays require a unique identifier.",
+              "type": "string",
+              "default": "localhost"
             }
           },
           "required": [
@@ -1551,7 +2211,7 @@
                   "type": "string",
                   "description": "The HTTP method to use (GET, POST, etc)."
                 },
-                "header": {
+                "headers": {
                   "type": "object",
                   "description": "The HTTP headers that must be applied to request",
                   "additionalProperties": {
@@ -1593,12 +2253,95 @@
             }
           },
           "additionalProperties": false
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "title": "Courier channel configuration",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Channel id",
+                "description": "The channel id. Corresponds to the .via property of the identity schema for recovery, verification, etc. Currently only phone is supported.",
+                "maxLength": 32,
+                "enum": [
+                  "sms"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "title": "Channel type",
+                "description": "The channel type. Currently only http is supported.",
+                "enum": [
+                  "http"
+                ]
+              },
+              "request_config": {
+                "$ref": "#/definitions/httpRequestConfig"
+              }
+            },
+            "required": [
+              "id",
+              "request_config"
+            ],
+            "additionalProperties": false
+          }
         }
       },
-      "required": [
-        "smtp"
-      ],
       "additionalProperties": false
+    },
+    "oauth2_provider": {
+      "title": "OAuth2 Provider Configuration",
+      "type": "object",
+      "properties": {
+        "url": {
+          "title": "OAuth 2.0 Provider URL.",
+          "description": "If set, the login and registration flows will handle the Ory OAuth 2.0 & OpenID `login_challenge` query parameter to serve as an OpenID Connect Provider. This URL should point to Ory Hydra when you are not running on the Ory Network and be left untouched otherwise.",
+          "type": "string",
+          "format": "uri",
+          "examples": [
+            "https://some-slug.projects.oryapis.com",
+            "https://domain-of-ory-hydra:4445"
+          ]
+        },
+        "headers": {
+          "title": "HTTP Request Headers",
+          "description": "These headers will be passed in HTTP request to the OAuth2 Provider.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "examples": [
+            {
+              "Authorization": "Bearer some-token"
+            }
+          ]
+        },
+        "override_return_to": {
+          "title": "Persist OAuth2 request between flows",
+          "type": "boolean",
+          "default": false,
+          "description": "Override the return_to query parameter with the OAuth2 provider request URL when perfoming an OAuth2 login flow."
+        }
+      },
+      "additionalProperties": false
+    },
+    "preview": {
+      "title": "Configure Preview Features",
+      "type": "object",
+      "properties": {
+        "default_read_consistency_level": {
+          "type": "string",
+          "title": "Default Read Consistency Level",
+          "description": "The default consistency level to use when reading from the database. Defaults to `strong` to not break existing API contracts. Only set this to `eventual` if you can accept that other read APIs will suddenly return eventually consistent results. It is only effective in Ory Network.",
+          "enum": [
+            "strong",
+            "eventual"
+          ],
+          "default": "strong"
+        }
+      }
     },
     "serve": {
       "type": "object",
@@ -1742,7 +2485,10 @@
                   "default": [
                     "Authorization",
                     "Content-Type",
-                    "X-Session-Token"
+                    "Max-Age",
+                    "X-Session-Token",
+                    "X-XSRF-TOKEN",
+                    "X-CSRF-TOKEN"
                   ],
                   "items": {
                     "type": "string"
@@ -1814,160 +2560,7 @@
       "additionalProperties": false
     },
     "tracing": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Ory Kratos supports distributed tracing.",
-      "properties": {
-        "provider": {
-          "type": "string",
-          "description": "Set this to the tracing backend you wish to use. Supports Jaeger, Zipkin, DataDog, elastic-apm and instana. If omitted or empty, tracing will be disabled. Use environment variables to configure DataDog (see https://docs.datadoghq.com/tracing/setup/go/#configuration).",
-          "enum": [
-            "jaeger",
-            "zipkin",
-            "datadog",
-            "elastic-apm",
-            "instana"
-          ],
-          "examples": [
-            "jaeger"
-          ]
-        },
-        "service_name": {
-          "type": "string",
-          "description": "Specifies the service name to use on the tracer.",
-          "examples": [
-            "Ory Kratos"
-          ]
-        },
-        "providers": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "jaeger": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the jaeger tracing backend.",
-              "properties": {
-                "local_agent_address": {
-                  "type": "string",
-                  "description": "The address of the jaeger-agent where spans should be sent to.",
-                  "oneOf": [
-                    {
-                      "pattern": "^\\[(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))]:([0-9]*)$"
-                    },
-                    {
-                      "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}:([0-9]*)$"
-                    },
-                    {
-                      "format": "uri"
-                    }
-                  ],
-                  "examples": [
-                    "127.0.0.1:6831"
-                  ]
-                },
-                "propagation": {
-                  "type": "string",
-                  "description": "The tracing header format",
-                  "examples": [
-                    "jaeger"
-                  ]
-                },
-                "sampling": {
-                  "type": "object",
-                  "propertyNames": {
-                    "enum": [
-                      "type",
-                      "value",
-                      "server_url"
-                    ]
-                  },
-                  "allOf": [
-                    {
-                      "oneOf": [
-                        {
-                          "properties": {
-                            "type": {
-                              "description": "The type of the sampler you want to use.",
-                              "const": "const"
-                            },
-                            "value": {
-                              "type": "integer",
-                              "description": "The value passed to the sampler type that has been configured.",
-                              "minimum": 0,
-                              "maximum": 1
-                            }
-                          }
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "description": "The type of the sampler you want to use.",
-                              "const": "rateLimiting"
-                            },
-                            "value": {
-                              "type": "integer",
-                              "description": "The value passed to the sampler type that has been configured.",
-                              "minimum": 0
-                            }
-                          }
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "description": "The type of the sampler you want to use.",
-                              "const": "probabilistic"
-                            },
-                            "value": {
-                              "type": "number",
-                              "description": "The value passed to the sampler type that has been configured.",
-                              "minimum": 0,
-                              "maximum": 1
-                            }
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "properties": {
-                        "server_url": {
-                          "type": "string",
-                          "description": "The address of jaeger-agent's HTTP sampling server",
-                          "format": "uri"
-                        }
-                      }
-                    }
-                  ],
-                  "examples": [
-                    {
-                      "type": "const",
-                      "value": 1,
-                      "server_url": "http://localhost:5778/sampling"
-                    }
-                  ]
-                }
-              }
-            },
-            "zipkin": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the zipkin tracing backend.",
-              "properties": {
-                "server_url": {
-                  "type": "string",
-                  "description": "The address of Zipkin server where spans should be sent to.",
-                  "format": "uri"
-                }
-              },
-              "examples": [
-                {
-                  "server_url": "http://localhost:9411/api/v2/spans"
-                }
-              ]
-            }
-          }
-        }
-      }
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/ory-kratos-configuration--config.schema-22--config.schema.json"
     },
     "log": {
       "title": "Log",
@@ -2021,6 +2614,7 @@
         "schemas": {
           "type": "array",
           "title": "All JSON Schemas for Identity Traits",
+          "description": "Note that identities that used the \"default_schema_url\" field in older kratos versions will be corrupted unless you specify their schema url with the id \"default\" in this list.",
           "examples": [
             [
               {
@@ -2250,6 +2844,44 @@
           "properties": {
             "required_aal": {
               "$ref": "#/definitions/featureRequiredAal"
+            },
+            "tokenizer": {
+              "title": "Tokenizer configuration",
+              "description": "Configure the tokenizer, responsible for converting a session into a token format such as JWT.",
+              "type": "object",
+              "properties": {
+                "templates": {
+                  "title": "Tokenizer templates",
+                  "description": "A list of different templates that govern how a session is converted to a token format.",
+                  "type": "object",
+                  "patternProperties": {
+                    "[a-zA-Z0-9-_.]+": {
+                      "type": "object",
+                      "required": [
+                        "jwks_url"
+                      ],
+                      "properties": {
+                        "ttl": {
+                          "type": "string",
+                          "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
+                          "default": "1m",
+                          "title": "Token time to live"
+                        },
+                        "claims_mapper_url": {
+                          "type": "string",
+                          "format": "uri",
+                          "title": "JsonNet mapper URL"
+                        },
+                        "jwks_url": {
+                          "type": "string",
+                          "format": "uri",
+                          "title": "JSON Web Key Set URL"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "additionalProperties": false
@@ -2282,7 +2914,7 @@
             },
             "persistent": {
               "title": "Make Session Cookie Persistent",
-              "description": "If set to true will persist the cookie in the end-user's browser using the `max-age` parameter which is set to the `session.lifespan` value. Persistent cookies are not deleted when the browser is closed (e.g. on reboot or alt+f4).",
+              "description": "If set to true will persist the cookie in the end-user's browser using the `max-age` parameter which is set to the `session.lifespan` value. Persistent cookies are not deleted when the browser is closed (e.g. on reboot or alt+f4). This option affects the Ory OAuth2 and OpenID Provider's remember feature as well.",
               "type": "boolean",
               "default": true
             },
@@ -2303,6 +2935,17 @@
             }
           },
           "additionalProperties": false
+        },
+        "earliest_possible_extend": {
+          "title": "Earliest Possible Session Extension",
+          "description": "Sets when a session can be extended. Settings this value to `24h` will prevent the session from being extended before until 24 hours before it expires. This setting prevents excessive writes to the database. We highly recommend setting this value.",
+          "type": "string",
+          "pattern": "^([0-9]+(ns|us|ms|s|m|h))+$",
+          "examples": [
+            "1h",
+            "1m",
+            "1s"
+          ]
         }
       }
     },
@@ -2364,10 +3007,44 @@
               "description": "Disallow all outgoing HTTP calls to private IP ranges. This feature can help protect against SSRF attacks.",
               "type": "boolean",
               "default": false
+            },
+            "private_ip_exception_urls": {
+              "title": "Add exempt URLs to private IP ranges",
+              "description": "Allows the given URLs to be called despite them being in the private IP range. URLs need to have an exact and case-sensitive match to be excempt.",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri-reference"
+              },
+              "default": []
             }
           }
         }
       }
+    },
+    "feature_flags": {
+      "title": "Feature flags",
+      "properties": {
+        "cacheable_sessions": {
+          "type": "boolean",
+          "title": "Enable Ory Sessions caching",
+          "description": "If enabled allows Ory Sessions to be cached. Only effective in the Ory Network.",
+          "default": false
+        },
+        "use_continue_with_transitions": {
+          "type": "boolean",
+          "title": "Enable new flow transitions using `continue_with` items",
+          "description": "If enabled allows new flow transitions using `continue_with` items.",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "organizations": {
+      "title": "Organizations",
+      "description": "Secifies which organizations are available. Only effective in the Ory Network.",
+      "type": "array",
+      "default": []
     }
   },
   "allOf": [

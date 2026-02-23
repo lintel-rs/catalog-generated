@@ -1,166 +1,154 @@
 {
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/roadrunner--schema-9.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "description": "All the valid configuration parameters for the Temporal plugin for RoadRunner.",
+  "description": "All the valid configuration parameters for the Logger plugin for RoadRunner.",
   "type": "object",
-  "title": "roadrunner-temporal",
+  "title": "roadrunner-logger",
+  "minProperties": 1,
   "additionalProperties": false,
   "properties": {
-    "address": {
-      "description": "Address of the Temporal server. Defaults to localhost:7233 if not provided.",
-      "type": "string",
-      "default": "localhost:7233",
-      "minLength": 1
+    "mode": {
+      "$ref": "#/$defs/LogMode"
     },
-    "cache_size": {
-      "description": "Sticky cache size. Sticky workflow execution is the affinity between workflow tasks of a specific workflow execution to a specific worker. The benefit of sticky execution is that the workflow does not have to reconstruct state by replaying history from the beginning. The cache is shared between workers running within same process. This must be called before any worker is started. If not called, the default size of 10K (which may change) will be used.",
-      "type": "integer",
-      "default": 10000
+    "level": {
+      "$ref": "#/$defs/LogLevel"
     },
-    "namespace": {
-      "description": "Namespace for this client to work with.",
-      "type": "string",
-      "default": "default"
+    "line_ending": {
+      "$ref": "#/$defs/LogLineEnding"
     },
-    "metrics": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "driver": {
-              "description": "The Prometheus driver.",
-              "type": "string",
-              "enum": [
-                "prometheus"
-              ]
-            },
-            "prometheus": {
-              "$ref": "#/$defs/Prometheus"
-            }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "driver": {
-              "description": "The Statsd driver.",
-              "type": "string",
-              "enum": [
-                "statsd"
-              ]
-            },
-            "statsd": {
-              "$ref": "#/$defs/Statsd"
-            }
-          }
-        }
-      ]
+    "encoding": {
+      "$ref": "#/$defs/LogEncoding"
     },
-    "activities": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/roadrunner--schema-6.json"
+    "output": {
+      "$ref": "#/$defs/LogOutput"
     },
-    "tls": {
-      "description": "Temporal TLS configuration.",
+    "err_output": {
+      "$ref": "#/$defs/LogOutput"
+    },
+    "file_logger_options": {
+      "$ref": "#/$defs/FileLoggerOptions"
+    },
+    "channels": {
+      "description": "You can configure logging for each plugin individually. The key is the plugin name and the value is logging options in same format as the parent.",
       "type": "object",
-      "required": [
-        "key",
-        "cert"
-      ],
-      "properties": {
-        "key": {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/roadrunner--schema-2.json#/$defs/SSL/properties/key"
-        },
-        "cert": {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/roadrunner--schema-2.json#/$defs/SSL/properties/cert"
-        },
-        "root_ca": {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/roadrunner--schema-2.json#/$defs/SSL/properties/root_ca"
-        },
-        "client_auth_type": {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/roadrunner--schema-2.json#/$defs/ClientAuthType"
-        },
-        "server_name": {
-          "description": "ServerName is used to verify the hostname on the returned certificates unless InsecureSkipVerify is given. It is also included in the client's handshake to support virtual hosting unless it is an IP address.",
-          "type": "string"
+      "additionalProperties": false,
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-zA-Z0-9._-]+$": {
+          "description": "Custom logging options for the plugin specified as this object's key.",
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "mode": {
+              "$ref": "#/$defs/LogMode"
+            },
+            "level": {
+              "$ref": "#/$defs/LogLevel"
+            },
+            "line_ending": {
+              "$ref": "#/$defs/LogLineEnding"
+            },
+            "encoding": {
+              "$ref": "#/$defs/LogEncoding"
+            },
+            "output": {
+              "$ref": "#/$defs/LogOutput"
+            },
+            "err_output": {
+              "$ref": "#/$defs/LogOutput"
+            },
+            "file_logger_options": {
+              "$ref": "#/$defs/FileLoggerOptions"
+            }
+          }
         }
       }
     }
   },
   "$defs": {
-    "Statsd": {
+    "FileLoggerOptions": {
+      "description": "File logger options.",
       "type": "object",
-      "description": "Properties for Temporal Statsd integration.",
       "additionalProperties": false,
       "properties": {
-        "host_port": {
-          "description": "The host and port of the statsd server.",
+        "log_output": {
           "type": "string",
-          "default": "127.0.0.1:8125",
-          "minLength": 1
+          "description": "Path to the log file. Uses <processname>-lumberjack.log and the OS temp (i.e. `/tmp`) directory if empty."
         },
-        "prefix": {
-          "description": "The prefix to use in reporting to statsd.",
-          "type": "string"
-        },
-        "flush_interval": {
-          "description": "The maximum interval between sending packets.",
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/roadrunner--3.0.schema.json#/definitions/Duration",
-          "default": "1s"
-        },
-        "flush_bytes": {
-          "description": "The maximum UDP packet size you wish to send. Defaults to 1432 bytes if zero or undefined, which is considered safe for local traffic.",
+        "max_size": {
           "type": "integer",
-          "default": 1432
+          "description": "Maximum file size in MB.",
+          "minimum": 0,
+          "default": 100
         },
-        "tags": {
-          "description": "A map of tags consisting of keys and values.",
-          "type": "object",
-          "minProperties": 1,
-          "additionalProperties": false,
-          "patternProperties": {
-            "^[a-zA-Z0-9._-]+$": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
+        "max_age": {
+          "type": "integer",
+          "description": "The maximum number of days to retain old log files based on the timestamp encoded in their filename. Empty or zero defaults to 24 days.",
+          "minimum": 0,
+          "default": 24
         },
-        "tag_prefix": {
-          "description": "Prefix for the tags.",
-          "type": "string"
+        "max_backups": {
+          "type": "integer",
+          "description": "The maximum number of old log files to retain. Empty or zero defaults to 10.",
+          "minimum": 0,
+          "default": 10
         },
-        "tag_separator": {
-          "description": "The tag separator allows tags to be appended with a separator. If not specified, tag keys and values are embedded in the stat name directly.",
-          "type": "string"
+        "compress": {
+          "type": "boolean",
+          "description": "Whether to compress log files.",
+          "default": false
         }
       }
     },
-    "Prometheus": {
-      "type": "object",
-      "description": "Properties for Temporal Prometheus integration.",
-      "additionalProperties": false,
-      "properties": {
-        "address": {
-          "description": "Server metrics address.",
-          "type": "string",
-          "default": "127.0.0.1:9091",
-          "minLength": 1
-        },
-        "type": {
-          "type": "string",
-          "description": "Metrics type to use. Defaults to `summary`.",
-          "enum": [
-            "summary",
-            "histogram"
-          ],
-          "default": "summary"
-        },
-        "prefix": {
-          "description": "Temporal metrics prefix.",
-          "type": "string"
-        }
+    "LogMode": {
+      "description": "Logging mode",
+      "type": "string",
+      "default": "development",
+      "enum": [
+        "none",
+        "off",
+        "production",
+        "development",
+        "raw"
+      ]
+    },
+    "LogLevel": {
+      "description": "Logging level",
+      "type": "string",
+      "default": "debug",
+      "enum": [
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "panic"
+      ]
+    },
+    "LogEncoding": {
+      "description": "Encoding format. Default depends on logging mode. For production, `json` is the default, else `console`. Also supports any third-party encodings registered via RegisterEncoder.",
+      "type": "string",
+      "enum": [
+        "console",
+        "json"
+      ]
+    },
+    "LogOutput": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "examples": [
+          "stdout",
+          "stderr",
+          "/var/log/rr_errors.log"
+        ]
       }
+    },
+    "LogLineEnding": {
+      "description": "Line-ending to use for logging.",
+      "type": "string",
+      "default": "\n"
     }
   }
 }
