@@ -1,125 +1,95 @@
 {
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-19.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "description": "All the valid configuration parameters for the pool plugin for RoadRunner.",
-  "title": "roadrunner-pool",
+  "description": "All the valid configuration parameters for the jobs plugin for RoadRunner.",
+  "title": "roadrunner-jobs",
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "debug": {
-      "description": "In debug mode, workers are created immediately before RR passes jobs to them, exiting once the job completes. This defeats the purpose of a worker pool and should only be used during development.",
-      "type": "boolean",
-      "default": false
-    },
-    "command": {
-      "type": "string",
-      "description": "The command to use for the pool. If defined, this will override the value in `server.command` for this pool only.",
+    "num_pollers": {
+      "description": "Number of threads which will try to obtain jobs from the priority queue. Default is the number of workers in the pool +1. **Deprecated:** This will be removed in a future version.",
+      "type": "integer",
+      "minimum": 1,
       "examples": [
-        "php worker.php"
-      ]
+        10,
+        32
+      ],
+      "deprecated": true
     },
-    "num_workers": {
-      "description": "The number of worker processes to start. Zero or undefined defaults to the number of logical CPUs.",
+    "timeout": {
+      "description": "Request timeout (in seconds) when attempting to send jobs to the queue. If zero or omitted, this defaults to 60 seconds.",
       "type": "integer",
-      "minimum": 0,
-      "default": 0
+      "default": 60
     },
-    "max_jobs": {
-      "description": "The maximum number of executions a worker may perform before it is terminated and a new process is started. Zero or undefined means no limit.",
+    "pipeline_size": {
+      "description": "Size of the internal priority queue. If the internal priority queue is full, you cannot send (push) additional jobs to the queue. If you set this value to zero or omit it, it defaults to 1 million.",
       "type": "integer",
-      "minimum": 0,
-      "default": 0
+      "default": 1000000,
+      "minimum": 0
     },
-    "max_queue_size": {
-      "description": "The maximum size of the internal job queue. This is the limit of pending, incoming jobs that await worker allocation. After the limit is reached, all additional jobs will be rejected with an error. Zero or undefined means no limit.",
-      "type": "integer",
-      "minimum": 0,
-      "default": 0
-    },
-    "allocate_timeout": {
-      "description": "The maximum duration an incoming job is allowed to wait for a worker. Zero or undefined defaults to 60s.",
-      "$ref": "#/$defs/duration",
-      "default": "60s"
-    },
-    "reset_timeout": {
-      "description": "The maximum duration to wait for the `pool.Reset` operation (`./rr reset`) to complete. Zero or undefined defaults to 60s.",
-      "$ref": "#/$defs/duration",
-      "default": "60s"
-    },
-    "stream_timeout": {
-      "description": "The maximum duration to wait for stream cancellation. Zero or undefined defaults to 60s.",
-      "$ref": "#/$defs/duration",
-      "default": "60s"
-    },
-    "destroy_timeout": {
-      "description": "The maximum duration to wait for worker termination/deallocation. If a worker has not stopped after this period, the process will be killed. Zero or undefined defaults to 60s.",
-      "$ref": "#/$defs/duration",
-      "default": "60s"
-    },
-    "dynamic_allocator": {
-      "title": "Auto-scaling/dynamic Workers",
-      "description": "Configuration options for auto-scaling/dynamic workers. If not defined, worker auto-scaling is disabled.",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "max_workers": {
-          "description": "The maximum number of workers that may be dynamically allocated.",
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100,
-          "default": 10
-        },
-        "spawn_rate": {
-          "description": "The maximum number of workers that may be spawned per NoFreeWorkers error (limited to `max_workers`).",
-          "type": "integer",
-          "minimum": 1,
-          "default": 5
-        },
-        "idle_timeout": {
-          "description": "The duration after which idle dynamically allocated workers will be deallocated.",
-          "$ref": "#/$defs/duration",
-          "default": "1m"
-        }
+    "consume": {
+      "description": "A list of pipelines to be consumed by the server automatically when starting. You can omit this list if you want to start consuming manually. Each item in this list must be defined as a key under `pipelines`.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9._-]+$"
       }
     },
-    "supervisor": {
-      "title": "Pool Supervisor",
-      "description": "The pool supervisor is used to control workers. If not defined, the pool has no supervision.",
+    "pool": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-15.json"
+    },
+    "pipelines": {
+      "description": "List of broker pipelines associated with the configured drivers. This option is not required since you can declare pipelines at runtime. The selected pipeline `driver` must be configured in the root of your configuration file.",
       "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "watch_tick": {
-          "description": "Duration between worker state checks. Defaults to 5s.",
-          "$ref": "#/$defs/duration",
-          "default": "5s"
-        },
-        "ttl": {
-          "description": "The maximum duration a worker is allowed to live (soft limit). If a worker exceeds this limit while processing a job, it will be terminated afterward. Zero or undefined means no limit.",
-          "$ref": "#/$defs/duration",
-          "default": "0s"
-        },
-        "idle_ttl": {
-          "description": "The maximum duration a worker may spend in idle mode after first processing a job (soft limit). If a worker exceeds this value during execution, it will be terminated afterward. Zero or undefined means no limit.",
-          "$ref": "#/$defs/duration",
-          "default": "0s"
-        },
-        "max_worker_memory": {
-          "description": "The maximum memory allocation allowed for a worker (soft limit) in MB. If a worker exceeds this value during execution, it will be terminated afterward. This should generally be set to a value lower than your PHP memory_limit, if one is specified. Zero or undefined means no limit.",
-          "type": "integer",
-          "minimum": 0,
-          "default": 0
-        },
-        "exec_ttl": {
-          "description": "The maximum duration any job (hard limit) is allowed to take. If a job exceeds this time limit, the worker processing it will be terminated. Zero or undefined means no limit.",
-          "$ref": "#/$defs/duration",
-          "default": "0s"
+      "patternProperties": {
+        "additionalProperties": false,
+        "^[a-zA-Z0-9._-]+$": {
+          "oneOf": [
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-20.json#/definitions/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-10.json#/definitions/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-25.json#/definitions/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-17.json#/definitions/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-12.json#/definitions/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-23.json#/definitions/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-13.json#/definitions/pipeline"
+            }
+          ]
         }
       }
     }
   },
-  "$defs": {
-    "duration": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration"
+  "definitions": {
+    "PipelineProperties": {
+      "description": "Common configuration options for queues/pipelines.",
+      "priority": {
+        "description": "Pipeline priority. If the job pushed to the pipeline has priority set to 0, it will inherit the pipeline's priority.",
+        "type": "integer",
+        "minimum": 0,
+        "default": 10
+      },
+      "prefetch": {
+        "description": "Number of jobs to prefetch from the driver. Please consult the driver for the maximum and default values. For instance, SQS allows only 10.",
+        "type": "integer",
+        "minimum": 0
+      },
+      "queue": {
+        "type": "string",
+        "description": "The name of the queue.",
+        "default": "default"
+      }
     }
   }
 }
