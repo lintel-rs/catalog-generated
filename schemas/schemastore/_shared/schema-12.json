@@ -1,9 +1,21 @@
 {
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-12.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "title": "roadrunner-beanstalk",
-  "description": "The schema contains all the valid configuration parameters for the Beanstalk plugin for the roadrunner job system.",
+  "title": "roadrunner-boltdb",
+  "description": "The schema contains all the valid configuration parameters for the BoltDB plugin for the roadrunner job system.",
   "definitions": {
+    "permissions": {
+      "description": "Permissions for the BoltDB database file, if created by RR.",
+      "type": "integer",
+      "default": 755,
+      "minimum": 0,
+      "maximum": 777
+    },
+    "file": {
+      "description": "BoltDB database file to create or use.",
+      "type": "string",
+      "default": "rr.db"
+    },
     "pipeline": {
       "type": "object",
       "required": [
@@ -14,34 +26,25 @@
         "driver": {
           "type": "string",
           "enum": [
-            "beanstalk"
+            "boltdb"
           ]
         },
         "config": {
           "type": "object",
-          "description": "Configuration options for the Beanstalk pipeline.",
+          "description": "Configuration for the BoltDB pipeline.",
           "additionalProperties": false,
           "properties": {
             "priority": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-15.json#/definitions/PipelineProperties/priority"
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-23.json#/definitions/PipelineProperties/priority"
             },
             "prefetch": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-15.json#/definitions/PipelineProperties/prefetch"
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-23.json#/definitions/PipelineProperties/prefetch"
             },
-            "tube_priority": {
-              "description": "Beanstalk internal tube priority",
-              "type": "integer",
-              "default": 1
+            "permissions": {
+              "$ref": "#/definitions/permissions"
             },
-            "tube": {
-              "description": "Tube name",
-              "type": "string",
-              "default": "default"
-            },
-            "reserve_timeout": {
-              "description": "If no job is available before this timeout has passed, Reserve returns a ConnError recording ErrTimeout",
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration",
-              "default": "5s"
+            "file": {
+              "$ref": "#/definitions/file"
             }
           }
         }
@@ -50,19 +53,19 @@
     "driver": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Configuration options for the Beanstalk driver.",
+      "description": "Configuration options for the BoltDB driver.",
       "properties": {
-        "addr": {
-          "title": "Beanstalk Server Address",
-          "description": "The address of the Beanstalk server.",
-          "type": "string",
-          "default": "tcp://127.0.0.1:11300"
+        "file": {
+          "$ref": "#/definitions/file"
         },
-        "timeout": {
-          "title": "Connection Timeout",
-          "description": "Connection timeout for the Beanstalk server.",
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration",
-          "default": "30s"
+        "permissions": {
+          "$ref": "#/definitions/permissions"
+        },
+        "interval": {
+          "description": "TTL keys check interval in seconds. It's safe to use 1 second here, but can be a little costly to performance. If you set this to zero, 60 will be used.",
+          "type": "integer",
+          "minimum": 1,
+          "default": 60
         }
       }
     }

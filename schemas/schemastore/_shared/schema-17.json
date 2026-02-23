@@ -1,173 +1,335 @@
 {
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-17.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "description": "All the valid configuration parameters for the Redis plugin for RoadRunner.",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "addrs": {
-      "title": "Redis Endpoint",
-      "description": "The addresses or hostnames of the Redis server/cluster to connect to. If the number of addresses is 1 and master_name is empty, a single-node Redis Client will be returned, otherwise a ClusterClient or FailoverClient will be returned, depending on whether `master_name` is provided.",
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
-      "default": [
-        "localhost:6379"
-      ]
+  "title": "roadrunner-kafka",
+  "description": "The schema contains all the valid configuration parameters for the Kafka plugin for the roadrunner job system.",
+  "definitions": {
+    "pipeline": {
+      "type": "object",
+      "required": [
+        "driver"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "driver": {
+          "type": "string",
+          "enum": [
+            "kafka"
+          ]
+        },
+        "config": {
+          "type": "object",
+          "description": "Configuration for the Kafka pipeline.",
+          "additionalProperties": false,
+          "properties": {
+            "priority": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-23.json#/definitions/PipelineProperties/priority"
+            },
+            "auto_create_topics_enable": {
+              "description": "Auto create topic for the consumer/producer",
+              "type": "boolean",
+              "default": false
+            },
+            "producer_options": {
+              "description": "Kafka producer options.",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "disable_idempotent": {
+                  "description": "Disables idempotent produce requests, opting out of Kafka server-side deduplication in the face of reissued requests due to transient network problems. Idempotent production is strictly a win, but does require the IDEMPOTENT_WRITE permission on CLUSTER (pre Kafka 3.0), and not all clients can have that permission.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "partitioning_strategy": {
+                  "description": "The partitioning strategy to use for produced records.",
+                  "type": "string",
+                  "enum": [
+                    "Manual",
+                    "Uniform",
+                    "RoundRobin",
+                    "LeastBackup",
+                    "Sticky"
+                  ],
+                  "default": "Uniform"
+                },
+                "required_acks": {
+                  "description": "Sets the required acks for produced records",
+                  "type": "string",
+                  "default": "AllISRAck",
+                  "enum": [
+                    "NoAck",
+                    "LeaderAck",
+                    "AllISRAck"
+                  ]
+                },
+                "max_message_bytes": {
+                  "type": "integer",
+                  "default": 1000012,
+                  "minimum": 0
+                },
+                "request_timeout": {
+                  "description": "The maximum duration in seconds the broker will wait the receipt of the number of required_acks.",
+                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration",
+                  "default": "10s"
+                },
+                "compression_codec": {
+                  "description": "The compression codec to use, if any.",
+                  "type": "string",
+                  "enum": [
+                    "gzip",
+                    "snappy",
+                    "lz4",
+                    "zstd"
+                  ]
+                },
+                "delivery_timeout": {
+                  "description": "A rough duration of how long a record can sit around in a batch before timing out, overriding the unlimited default.",
+                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration"
+                },
+                "transaction_timeout": {
+                  "description": "The allowed duration for a transaction. It is a good idea to keep this less than a group's session timeout.",
+                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration",
+                  "default": "40s"
+                }
+              }
+            },
+            "group_options": {
+              "type": "object",
+              "required": [
+                "group_id"
+              ],
+              "description": "group_options sets the consumer group for the client to join and consume in. This option is required if using any other group options.",
+              "additionalProperties": false,
+              "properties": {
+                "instance_id": {
+                  "description": "InstanceID sets the group consumer's instance ID, switching the group member from 'dynamic' to 'static'.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "group_id": {
+                  "description": "Kafka Group ID",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "block_rebalance_on_poll": {
+                  "description": "Switches the client to block rebalances whenever you poll.",
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            },
+            "consumer_options": {
+              "description": "Kafka consumer options",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "topics": {
+                  "description": "List of the topics to consume. Regex also supported. At least a `topic` or a partition in `consume_partitions` should be provided.",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "consume_regexp": {
+                  "description": "Sets the client to parse all topics passed to `topics` as regular expressions. When consuming via regex, every metadata request loads *all* topics, so that all topics can be passed to any regular expressions. Every topic is evaluated only once ever across all regular expressions; either it permanently is known to match, or is permanently known to not match.",
+                  "type": "boolean",
+                  "default": false
+                },
+                "max_fetch_message_size": {
+                  "type": "integer",
+                  "default": 50000
+                },
+                "min_fetch_message_size": {
+                  "type": "integer",
+                  "default": 1
+                },
+                "consumer_offset": {
+                  "$ref": "#/definitions/Offset"
+                },
+                "consume_partitions": {
+                  "type": "object",
+                  "minProperties": 1,
+                  "additionalProperties": false,
+                  "patternProperties": {
+                    "^[a-zA-Z0-9._-]+$": {
+                      "description": "Topic to consume.",
+                      "type": "object",
+                      "minProperties": 1,
+                      "additionalProperties": false,
+                      "patternProperties": {
+                        "^[0-9]+$": {
+                          "$ref": "#/definitions/Offset"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "sasl_options": {
+              "$ref": "#/definitions/SASL"
+            }
+          }
+        }
+      }
     },
-    "master_name": {
-      "title": "Redis Master Node Name",
-      "description": "The name of the master Redis node. A Sentinel-backed FailoverClient will be returned if this value is provided.",
-      "type": "string"
+    "driver": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Configuration options for the Kafka driver.",
+      "properties": {
+        "brokers": {
+          "description": "Kafka broker addresses.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "examples": [
+              "127.0.0.1:9092",
+              "127.0.0.1:9002"
+            ]
+          }
+        },
+        "tls": {
+          "title": "TLS Configuration",
+          "description": "TLS configuration for TLS for Kafka.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "timeout": {
+              "description": "Timeout of TLS connections.",
+              "default": "10s",
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration"
+            },
+            "key": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-10.json#/$defs/SSL/properties/key"
+            },
+            "cert": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-10.json#/$defs/SSL/properties/cert"
+            },
+            "root_ca": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-10.json#/$defs/SSL/properties/root_ca"
+            },
+            "client_auth_type": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-10.json#/$defs/ClientAuthType"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "key",
+                "cert"
+              ]
+            },
+            {
+              "required": [
+                "root_ca"
+              ]
+            }
+          ]
+        },
+        "sasl": {
+          "$ref": "#/definitions/SASL"
+        },
+        "ping": {
+          "$ref": "#/definitions/Ping"
+        }
+      }
     },
-    "username": {
-      "title": "Redis AUTH username.",
-      "description": "The username to provide for Redis authentication.",
-      "type": "string",
-      "examples": [
-        "my_username"
-      ]
+    "Offset": {
+      "type": "object",
+      "description": "Sets the offset to start consuming from, or if OffsetOutOfRange is seen while fetching, to restart consuming from.",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Partition offset type.",
+          "type": "string",
+          "enum": [
+            "AtEnd",
+            "At",
+            "AfterMilli",
+            "AtStart",
+            "Relative",
+            "WithEpoch"
+          ]
+        },
+        "value": {
+          "description": "Value for the: At, AfterMilli, Relative and WithEpoch offsets.",
+          "type": "integer",
+          "default": 0
+        }
+      }
     },
-    "password": {
-      "title": "Redis AUTH password.",
-      "description": "The password to provide for Redis authentication.",
-      "type": "string",
-      "examples": [
-        "super-secret-password"
-      ]
+    "SASL": {
+      "title": "SASL Authentication",
+      "type": "object",
+      "description": "SASL configuration for Kafka.",
+      "additionalProperties": false,
+      "properties": {
+        "mechanism": {
+          "description": "Mechanism used for the authentication.",
+          "type": "string",
+          "enum": [
+            "aws_msk_iam",
+            "plain",
+            "SCRAM-SHA-256",
+            "SCRAM-SHA-512"
+          ]
+        },
+        "username": {
+          "description": "Username for authentication.",
+          "type": "string"
+        },
+        "password": {
+          "description": "Password for authentication.",
+          "type": "string"
+        },
+        "nonce": {
+          "description": "Optional for the SHA auth types. Empty by default.",
+          "type": "string"
+        },
+        "is_token": {
+          "description": "If true, suffixes the tokenauth=true extra attribute to the initial authentication message. Set this to true if the user and pass are from a delegation token. Optional for the SHA auth types. Defaults to false.",
+          "type": "boolean",
+          "default": false
+        },
+        "zid": {
+          "description": "Zid is an optional authorization ID to use in authentication.",
+          "type": "string"
+        },
+        "access_key": {
+          "description": "AWS Access Key ID",
+          "type": "string"
+        },
+        "secret_key": {
+          "description": "AWS Access Key Secret",
+          "type": "string"
+        },
+        "session_token": {
+          "description": "SessionToken, if non-empty, is a session / security token to use for authentication. See the following link for more details: https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html",
+          "type": "string"
+        },
+        "user_agent": {
+          "description": "UserAgent is the user agent to for the client to use when connecting to Kafka, overriding the default franz-go/<runtime.Version()>/<hostname>. Setting a UserAgent allows authorizing based on the aws:UserAgent condition key; see the following link for more details: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-useragent",
+          "type": "string"
+        }
+      }
     },
-    "db": {
-      "title": "Redis DB Index",
-      "description": "The Redis DB index to select when connecting.",
-      "type": "integer",
-      "default": 0,
-      "maximum": 10
-    },
-    "sentinel_password": {
-      "title": "Sentinel Password",
-      "description": "The password for Redis Sentinel.",
-      "type": "string",
-      "examples": [
-        "super-secret-password"
-      ]
-    },
-    "route_by_latency": {
-      "title": "Route by Latency",
-      "description": "Whether to route traffic to Redis nodes based on latency.",
-      "type": "boolean",
-      "default": false
-    },
-    "route_randomly": {
-      "title": "Route Randomly",
-      "description": "Whether to randomly route traffic to Redis nodes.",
-      "type": "boolean",
-      "default": false
-    },
-    "dial_timeout": {
-      "title": "Dial Timeout",
-      "description": "The timeout when attempting to connect to Redis. Default or zero means 5s.",
-      "$ref": "#/$defs/duration",
-      "default": 0
-    },
-    "max_retries": {
-      "title": "Maximum Retries",
-      "description": "The maximum number of retry attempts when connecting to Redis. Default or zero means 3.",
-      "type": "integer",
-      "default": 0
-    },
-    "min_retry_backoff": {
-      "title": "Minimum Retry Backoff",
-      "description": "The minimum backoff duration when retrying connection attempts. Default or zero means 8s.",
-      "$ref": "#/$defs/duration",
-      "default": 0
-    },
-    "max_retry_backoff": {
-      "title": "Maximum Retry Backoff",
-      "description": "The maximum backoff duration when retrying connection attempts. Default or zero means 512s.",
-      "$ref": "#/$defs/duration",
-      "default": 0
-    },
-    "pool_size": {
-      "title": "Connection Pool Size",
-      "description": "The number of connections to keep in the Redis connection pool. Default or zero means 10 per logical CPU.",
-      "type": "integer",
-      "default": 0
-    },
-    "min_idle_conns": {
-      "title": "Minimum Idle Connections",
-      "description": "The minimum number of connections to keep in the pool. Defaults to 0, which means no idle connection pool.",
-      "type": "integer",
-      "default": 0
-    },
-    "max_conn_age": {
-      "title": "Maximum Connection Age",
-      "description": "The maximum age of open Redis connections. Default or zero means no limit.",
-      "$ref": "#/$defs/duration",
-      "default": "0s"
-    },
-    "read_timeout": {
-      "title": "Read Timeout",
-      "description": "The timeout when reading from a Redis node. Default or zero means 3s.",
-      "$ref": "#/$defs/duration",
-      "default": "0s"
-    },
-    "write_timeout": {
-      "title": "Write Timeout",
-      "description": "The timeout when writing to a Redis node. Default or zero means equivalent to `read_timeout`.",
-      "$ref": "#/$defs/duration",
-      "default": "0s"
-    },
-    "pool_timeout": {
-      "title": "Pool Timeout",
-      "$ref": "#/$defs/duration"
-    },
-    "idle_timeout": {
-      "title": "Idle Timeout",
-      "description": "The timeout of idle connections to Redis. Default or zero means 5m.",
-      "$ref": "#/$defs/duration",
-      "default": "0s"
-    },
-    "idle_check_freq": {
-      "title": "Idle Check Frequency",
-      "description": "The time between checks for idle connections to Redis. Default or zero means 1m.",
-      "$ref": "#/$defs/duration",
-      "default": "0s"
-    },
-    "read_only": {
-      "title": "Read-only",
-      "description": "Whether the Redis connection is in read-only mode. See https://redis.io/docs/latest/commands/readonly.",
-      "type": "boolean",
-      "default": false
-    },
-    "tls": {
-      "description": "GRPC TLS configuration",
+    "Ping": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "key": {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-11.json#/$defs/SSL/properties/key"
-        },
-        "cert": {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-11.json#/$defs/SSL/properties/cert"
-        },
-        "root_ca": {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-11.json#/$defs/SSL/properties/root_ca"
-        },
-        "client_auth_type": {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-11.json#/$defs/ClientAuthType"
+        "timeout": {
+          "description": "Timeout when pinging Kafka.",
+          "default": "10s",
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration"
         }
-      },
-      "required": [
-        "root_ca"
-      ]
-    }
-  },
-  "$defs": {
-    "duration": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration"
+      }
     }
   }
 }

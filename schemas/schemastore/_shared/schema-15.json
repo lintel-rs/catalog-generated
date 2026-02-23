@@ -1,94 +1,35 @@
 {
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-15.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "description": "All the valid configuration parameters for the jobs plugin for RoadRunner.",
-  "title": "roadrunner-jobs",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "num_pollers": {
-      "description": "Number of threads which will try to obtain jobs from the priority queue. Default is the number of workers in the pool +1. **Deprecated:** This will be removed in a future version.",
-      "type": "integer",
-      "minimum": 1,
-      "examples": [
-        10,
-        32
-      ],
-      "deprecated": true
-    },
-    "timeout": {
-      "description": "Request timeout (in seconds) when attempting to send jobs to the queue. If zero or omitted, this defaults to 60 seconds.",
-      "type": "integer",
-      "default": 60
-    },
-    "pipeline_size": {
-      "description": "Size of the internal priority queue. If the internal priority queue is full, you cannot send (push) additional jobs to the queue. If you set this value to zero or omit it, it defaults to 1 million.",
-      "type": "integer",
-      "default": 1000000,
-      "minimum": 0
-    },
-    "consume": {
-      "description": "A list of pipelines to be consumed by the server automatically when starting. You can omit this list if you want to start consuming manually. Each item in this list must be defined as a key under `pipelines`.",
-      "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^[a-zA-Z0-9._-]+$"
-      }
-    },
-    "pool": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-13.json"
-    },
-    "pipelines": {
-      "description": "List of broker pipelines associated with the configured drivers. This option is not required since you can declare pipelines at runtime. The selected pipeline `driver` must be configured in the root of your configuration file.",
-      "type": "object",
-      "patternProperties": {
-        "additionalProperties": false,
-        "^[a-zA-Z0-9._-]+$": {
-          "oneOf": [
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-21.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-12.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-18.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-22.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-19.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-16.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-14.json#/definitions/pipeline"
-            }
-          ]
-        }
-      }
-    }
-  },
+  "title": "roadrunner-memory",
+  "description": "The schema contains all the valid configuration parameters for the Memory plugin for the roadrunner job system.",
   "definitions": {
-    "PipelineProperties": {
-      "description": "Common configuration options for queues/pipelines.",
-      "priority": {
-        "description": "Pipeline priority. If the job pushed to the pipeline has priority set to 0, it will inherit the pipeline's priority.",
-        "type": "integer",
-        "minimum": 0,
-        "default": 10
-      },
-      "prefetch": {
-        "description": "Number of jobs to prefetch from the driver. Please consult the driver for the maximum and default values. For instance, SQS allows only 10.",
-        "type": "integer",
-        "minimum": 0
-      },
-      "queue": {
-        "type": "string",
-        "description": "The name of the queue.",
-        "default": "default"
+    "pipeline": {
+      "type": "object",
+      "required": [
+        "driver"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "driver": {
+          "type": "string",
+          "enum": [
+            "memory"
+          ]
+        },
+        "config": {
+          "type": "object",
+          "description": "Configuration options for the Memory pipeline.",
+          "additionalProperties": false,
+          "properties": {
+            "priority": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-23.json#/definitions/PipelineProperties/priority"
+            },
+            "prefetch": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-23.json#/definitions/PipelineProperties/prefetch"
+            }
+          }
+        }
       }
     }
   }

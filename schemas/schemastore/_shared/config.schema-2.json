@@ -3,6 +3,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "ORY Hydra Configuration",
   "type": "object",
+  "additionalProperties": false,
   "definitions": {
     "http_method": {
       "type": "string",
@@ -18,7 +19,8 @@
         "TRACE"
       ]
     },
-    "portNumber": {
+    "port_number": {
+      "type": "integer",
       "description": "The port to listen on.",
       "minimum": 1,
       "maximum": 65535
@@ -252,10 +254,9 @@
           "properties": {
             "port": {
               "default": 4444,
-              "type": "integer",
               "allOf": [
                 {
-                  "$ref": "#/definitions/portNumber"
+                  "$ref": "#/definitions/port_number"
                 }
               ]
             },
@@ -293,10 +294,9 @@
           "properties": {
             "port": {
               "default": 4445,
-              "type": "integer",
               "allOf": [
                 {
-                  "$ref": "#/definitions/portNumber"
+                  "$ref": "#/definitions/port_number"
                 }
               ]
             },
@@ -429,32 +429,7 @@
           "additionalProperties": false,
           "description": "Configures OpenID Connect Discovery (/.well-known/openid-configuration).",
           "properties": {
-            "jwks_url": {
-              "type": "string",
-              "description": "Overwrites the JWKS URL",
-              "format": "uri",
-              "examples": [
-                "https://my-service.com/.well-known/jwks.json"
-              ]
-            },
-            "token_url": {
-              "type": "string",
-              "description": "Overwrites the OAuth2 Token URL",
-              "format": "uri",
-              "examples": [
-                "https://my-service.com/oauth2/token"
-              ]
-            },
-            "auth_url": {
-              "type": "string",
-              "description": "Overwrites the OAuth2 Auth URL",
-              "format": "uri",
-              "examples": [
-                "https://my-service.com/oauth2/auth"
-              ]
-            },
             "client_registration_url": {
-              "description": "Sets the OpenID Connect Dynamic Client Registration Endpoint",
               "type": "string",
               "format": "uri",
               "examples": [
@@ -510,7 +485,7 @@
           "additionalProperties": false,
           "description": "Configures the Subject Identifier algorithm. For more information please head over to the documentation: https://www.ory.sh/docs/hydra/advanced#subject-identifier-algorithms",
           "properties": {
-            "supported_types": {
+            "enabled": {
               "type": "array",
               "description": "A list of algorithms to enable.",
               "items": {
@@ -537,7 +512,7 @@
           },
           "if": {
             "properties": {
-              "supported_types": {
+              "enabled": {
                 "contains": {
                   "const": "pairwise"
                 }
@@ -549,9 +524,17 @@
               "pairwise"
             ]
           },
+          "else": {
+            "properties": {
+              "pairwise": {
+                "$comment": "This enforces pairwise to not be set iff 'enabled' does not contain 'pairwise'",
+                "not": {}
+              }
+            }
+          },
           "examples": [
             {
-              "supported_types": [
+              "enabled": [
                 "public",
                 "pairwise"
               ],
@@ -672,8 +655,7 @@
           "enum": [
             "opaque",
             "jwt"
-          ],
-          "default": "opaque"
+          ]
         }
       }
     },
@@ -747,25 +729,6 @@
             true
           ]
         },
-        "session": {
-          "type": "object",
-          "properties": {
-            "encrypt_at_rest": {
-              "type": "boolean",
-              "default": true,
-              "title": "Encrypt OAuth2 Session",
-              "description": "If set to true (default) ORY Hydra encrypt OAuth2 and OpenID Connect session data using AES-GCM and the system secret before persisting it in the database."
-            }
-          }
-        },
-        "include_legacy_error_fields": {
-          "type": "boolean",
-          "description": "Set this to true if you want to include the `error_hint` and `error_debug` legacy fields in error responses. We recommend to set this to `false` unless you have clients using these fields.",
-          "default": false,
-          "examples": [
-            true
-          ]
-        },
         "hashers": {
           "type": "object",
           "additionalProperties": false,
@@ -780,8 +743,7 @@
                   "type": "integer",
                   "description": "Sets the BCrypt cost. The higher the value, the more CPU time is being used to generate hashes.",
                   "default": 10,
-                  "minimum": 4,
-                  "maximum": 31
+                  "minimum": 8
                 }
               }
             }
@@ -803,19 +765,6 @@
               "description": "Sets whether PKCE should be enforced for public clients.",
               "examples": [
                 true
-              ]
-            }
-          }
-        },
-        "client_credentials": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "default_grant_allowed_scope": {
-              "type": "boolean",
-              "description": "Defines how scopes are added if the request doesn't contains any scope",
-              "examples": [
-                false
               ]
             }
           }
@@ -881,8 +830,7 @@
           "enum": [
             "jaeger",
             "zipkin",
-            "datadog",
-            "elastic-apm"
+            "datadog"
           ],
           "examples": [
             "jaeger"
@@ -944,20 +892,24 @@
                         {
                           "properties": {
                             "type": {
+                              "type": "string",
                               "description": "The type of the sampler you want to use.",
                               "const": "const"
                             },
                             "value": {
                               "type": "integer",
                               "description": "The value passed to the sampler type that has been configured.",
-                              "minimum": 0,
-                              "maximum": 1
+                              "enum": [
+                                0,
+                                1
+                              ]
                             }
                           }
                         },
                         {
                           "properties": {
                             "type": {
+                              "type": "string",
                               "description": "The type of the sampler you want to use.",
                               "const": "rateLimiting"
                             },
@@ -971,6 +923,7 @@
                         {
                           "properties": {
                             "type": {
+                              "type": "string",
                               "description": "The type of the sampler you want to use.",
                               "const": "probabilistic"
                             },
