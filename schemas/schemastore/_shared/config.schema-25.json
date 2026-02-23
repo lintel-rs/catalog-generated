@@ -1,19 +1,16 @@
 {
-  "$id": "https://raw.githubusercontent.com/ory/keto/master/.schema/config.schema.json",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-25.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "ORY Keto Configuration",
   "type": "object",
   "definitions": {
-    "$schema": {
-      "type": "string",
-      "format": "uri-reference",
-      "description": "Add this to allow defining the schema, useful for IDE integration"
-    },
     "namespace": {
       "type": "object",
       "properties": {
         "$schema": {
-          "$ref": "#/definitions/$schema"
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Add this to allow defining the schema, useful for IDE integration"
         },
         "name": {
           "type": "string",
@@ -27,8 +24,7 @@
         "id": {
           "type": "integer",
           "title": "The unique ID of the namespace. Can not be changed once set.",
-          "minimum": 0,
-          "maximum": 2147483647
+          "minimum": 0
         },
         "config": {
           "type": "object",
@@ -38,7 +34,8 @@
       },
       "additionalProperties": false,
       "required": [
-        "name"
+        "name",
+        "id"
       ]
     },
     "tlsxSource": {
@@ -192,14 +189,7 @@
       "additionalProperties": false
     }
   },
-  "required": [
-    "dsn"
-  ],
-  "additionalProperties": false,
   "properties": {
-    "$schema": {
-      "$ref": "#/definitions/$schema"
-    },
     "dsn": {
       "title": "Data Source Name",
       "type": "string",
@@ -237,15 +227,6 @@
               "title": "Host",
               "description": "The network interface to listen on."
             },
-            "write_listen_file": {
-              "type": "string",
-              "title": "Read Listen File",
-              "description": "The path to a file that will be created when the read API is ready to accept connections. The content of the file is the host:port of the read API. Use this to get the actual port when using port 0. The service might not yet be ready to accept connections when the file is created.",
-              "format": "uri",
-              "examples": [
-                "file:///tmp/keto-read-api"
-              ]
-            },
             "cors": {
               "$ref": "#/definitions/cors"
             },
@@ -276,15 +257,6 @@
               ],
               "title": "Host",
               "description": "The network interface to listen on."
-            },
-            "write_listen_file": {
-              "type": "string",
-              "title": "Write Listen File",
-              "description": "The path to a file that will be created when the write API is ready to accept connections. The content of the file is the host:port of the write API. Use this to get the actual port when using port 0. The service might not yet be ready to accept connections when the file is created.",
-              "format": "uri",
-              "examples": [
-                "file:///tmp/keto-write-api"
-              ]
             },
             "cors": {
               "$ref": "#/definitions/cors"
@@ -317,55 +289,6 @@
               "title": "Host",
               "description": "The network interface to listen on."
             },
-            "write_listen_file": {
-              "type": "string",
-              "title": "Metrics Listen File",
-              "description": "The path to a file that will be created when the metrics API is ready to accept connections. The content of the file is the host:port of the metrics API. Use this to get the actual port when using port 0. The service might not yet be ready to accept connections when the file is created.",
-              "format": "uri",
-              "examples": [
-                "file:///tmp/keto-metrics-api"
-              ]
-            },
-            "cors": {
-              "$ref": "#/definitions/cors"
-            },
-            "tls": {
-              "$ref": "#/definitions/tlsx"
-            }
-          }
-        },
-        "opl": {
-          "type": "object",
-          "title": "Ory Permission Language Syntax API (http and gRPC)",
-          "additionalProperties": false,
-          "properties": {
-            "port": {
-              "type": "integer",
-              "default": 4469,
-              "title": "Port",
-              "description": "The port to listen on.",
-              "minimum": 0,
-              "maximum": 65535
-            },
-            "host": {
-              "type": "string",
-              "default": "",
-              "examples": [
-                "localhost",
-                "127.0.0.1"
-              ],
-              "title": "Host",
-              "description": "The network interface to listen on."
-            },
-            "write_listen_file": {
-              "type": "string",
-              "title": "OPL Listen File",
-              "description": "The path to a file that will be created when the OPL API is ready to accept connections. The content of the file is the host:port of the OPL API. Use this to get the actual port when using port 0. The service might not yet be ready to accept connections when the file is created.",
-              "format": "uri",
-              "examples": [
-                "file:///tmp/keto-opl-api"
-              ]
-            },
             "cors": {
               "$ref": "#/definitions/cors"
             },
@@ -387,53 +310,26 @@
       ]
     },
     "log": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-38.json"
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-37.json"
     },
     "tracing": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-37.json"
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-36.json"
     },
     "namespaces": {
       "description": "Namespace configuration or it's location.",
       "default": "file://./keto_namespaces",
       "oneOf": [
         {
-          "title": "Legacy namespace Repo URI",
-          "description": "A URI that points to a directory of namespace files, a single file with all namespaces, or a websocket connection that provides former via `github.com/ory/x/watcherx.WatchAndServeWS`",
+          "title": "Namespace Repo URI",
+          "description": "URI that points to a directory of namespace files, a single file with all namespaces, or a websocket connection that provides former via `github.com/ory/x/watcherx.WatchAndServeWS`",
           "type": "string",
           "format": "uri"
         },
         {
           "type": "array",
-          "title": "Legacy namespace configuration",
           "items": {
             "$ref": "#/definitions/namespace"
           }
-        },
-        {
-          "type": "object",
-          "title": "Namespace configuration",
-          "properties": {
-            "location": {
-              "type": "string",
-              "title": "Ory Permission Language config file URI",
-              "description": "A URI that points to a directory of namespace files, a single file with all namespaces, or a websocket connection that provides former via `github.com/ory/x/watcherx.WatchAndServeWS`",
-              "format": "uri",
-              "examples": [
-                "file://./keto_namespaces.ts",
-                "file:///etc/configs/keto_namespaces.ts",
-                "ws://my.websocket.server/keto_namespaces.ts"
-              ]
-            },
-            "experimental_strict_mode": {
-              "type": "boolean",
-              "title": "Strict permission checking mode",
-              "description": "EXPERIMENTAL: If strict mode is enabled, then relation tuples for permits are not checked directly (but the rewrites are applied). Similarly, subject sets are only expanded if they were declared with SubjectSet<...>. These stricter rules result in much faster checks with fewer queries to the underlying database. The behavior of strict mode might change while it is experimental."
-            }
-          },
-          "additionalProperties": false,
-          "required": [
-            "location"
-          ]
         }
       ]
     },
@@ -449,53 +345,9 @@
           "description": "The global maximum depth on all read operations. Note that this does not affect how deeply nested the tuples can be. This value can be decreased for a request by a value specified on the request, only if the request-specific value is greater than 1 and less than the global maximum depth.",
           "minimum": 1,
           "maximum": 65535
-        },
-        "max_read_width": {
-          "type": "integer",
-          "default": 100,
-          "title": "Global maximum read width",
-          "description": "The global maximum width on all read operations. Note that this does not affect how deeply nested the tuples can be. This value can be decreased for a request by a value specified on the request, only if the request-specific value is greater than 1 and less than the global maximum width.",
-          "minimum": 1,
-          "maximum": 65535
-        },
-        "max_batch_check_size": {
-          "type": "integer",
-          "default": 10,
-          "title": "Maximum batch check size",
-          "description": "The maximum number of tuples that will be accepted by the batch check endpoint.",
-          "minimum": 1,
-          "maximum": 65535
-        },
-        "batch_check_max_parallelization": {
-          "type": "integer",
-          "default": 5,
-          "title": "Max concurrent checks during batch check",
-          "description": "The limit for the number of tuples that will be checked concurrently during a batch check.",
-          "minimum": 1,
-          "maximum": 65535
         }
       },
       "additionalProperties": false
-    },
-    "clients": {
-      "title": "Global outgoing network settings",
-      "description": "Configure how outgoing network calls behave.",
-      "type": "object",
-      "properties": {
-        "http": {
-          "title": "Global HTTP client configuration",
-          "description": "Configure how outgoing HTTP calls behave.",
-          "type": "object",
-          "properties": {
-            "disallow_private_ip_ranges": {
-              "title": "Disallow private IP ranges",
-              "description": "Disallow all outgoing HTTP calls to private IP ranges. This feature can help protect against SSRF attacks.",
-              "type": "boolean",
-              "default": false
-            }
-          }
-        }
-      }
     },
     "version": {
       "type": "string",

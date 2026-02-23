@@ -1,36 +1,115 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "$id": "dimerization-config",
-  "description": "Settings for TT-Dimerization",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/kimmdy-yaml-schema-4.json",
+  "description": "Settings for HAT reaction plugin",
   "additionalProperties": false,
   "properties": {
-    "k1": {
-      "description": "Distance scaling [1/nm]",
-      "type": "number",
-      "pytype": "float",
-      "default": 2.017017017017017
+    "arrhenius_equation": {
+      "title": "arrhenius_equation",
+      "type": "object",
+      "description": "For setting values in the arrhenius equation",
+      "properties": {
+        "frequency_factor": {
+          "type": "float",
+          "description": "Frequency factor",
+          "pytype": "float",
+          "minimum": 0,
+          "default": 0.288
+        },
+        "temperature": {
+          "type": "float",
+          "description": "Temperature",
+          "pytype": "float",
+          "minimum": 0,
+          "default": 300
+        }
+      },
+      "required": [
+        "frequency_factor",
+        "temperature"
+      ],
+      "additionalProperties": false
     },
-    "k2": {
-      "description": "Angle scaling [1/deg]",
-      "type": "number",
+    "h_cutoff": {
+      "type": "float",
+      "description": "Cutoff for H atom",
       "pytype": "float",
-      "default": 0.03003003003003003
+      "default": 3
     },
-    "d0": {
-      "description": "Optimal distance [nm]",
-      "type": "number",
-      "pytype": "float",
-      "default": 0.157177
+    "cap": {
+      "type": "boolean",
+      "description": "If true, cap structures for prediction. Default False.",
+      "pytype": "bool",
+      "default": false
     },
-    "n0": {
-      "description": "Optimal angle [deg]",
-      "type": "number",
-      "pytype": "float",
-      "default": 16.743651884789273
+    "model": {
+      "type": "string",
+      "description": "Model name, optional. If not defined, will choose based on grappa usage in KIMMDY.",
+      "pytype": "str",
+      "enum": [
+        "grappa",
+        "classic"
+      ],
+      "default": null
+    },
+    "ensemble_size": {
+      "type": "integer",
+      "description": "Number of models to use, defaults to all, optional",
+      "pytype": "int",
+      "default": null
+    },
+    "prediction_scheme": {
+      "type": "string",
+      "description": "How to predict the reaction barrier. Current options: `efficient`, `all_models` and `parallel`. `parallel` combines the underlying models into one. `efficient` first predicts the barriers with one model, and if a barrier is sufficiently low, recalculates it with the complete ensemble. In the `all_models` scheme, all reactions are evaluated using all models one after the other. Default: `parallel`",
+      "pytype": "str",
+      "enum": [
+        "all_models",
+        "efficient",
+        "parallel"
+      ],
+      "default": "parallel"
+    },
+    "polling_rate": {
+      "type": "integer",
+      "description": "Polling rate, defaults to 10",
+      "pytype": "int",
+      "default": 10
+    },
+    "n_unique": {
+      "type": "integer",
+      "description": "Only consider the n frames per reaction with the smallest translation distances. Set to 0 to consider all, defaults to 100",
+      "pytype": "int",
+      "default": 100
+    },
+    "trajectory_format": {
+      "type": "string",
+      "description": "Use either trr or xtc trajectory. Assumes no solvent atoms in xtc', defaults to xtc",
+      "pytype": "str",
+      "enum": [
+        "trr",
+        "xtc"
+      ],
+      "default": "xtc"
+    },
+    "radicals": {
+      "type": "integer",
+      "description": "Space-separated string of radical atom ids, can be empty, usually supplyed through kimmdy, optional",
+      "pytype": "str",
+      "default": null
+    },
+    "change_coords": {
+      "type": "string",
+      "description": "How to change coordinates. H can be placed at the new position, or a (lambda)-dynamics simulation can be performed. For lambda-dynamics, set up the coordinate changer with slow_growth=True. Default: place",
+      "pytype": "str",
+      "enum": [
+        "place",
+        "lambda"
+      ],
+      "default": "place"
     },
     "kmc": {
-      "description": "KMC algorithm for this reaction.",
+      "description": "KMC algorithm for this reaction. Default: extrande_mod",
       "type": "string",
       "pytype": "str",
       "enum": [
@@ -41,12 +120,14 @@
       ],
       "default": "extrande_mod"
     },
-    "reslist": {
-      "description": "Residues considered for reactions (dot-separated)",
-      "type": "string",
-      "pytype": "str",
-      "default": "all"
+    "keep_structures": {
+      "description": "For each reaction a structure is generated. If true, those are kept on disk, otherwise they are only kept in case of a failure. Default: False",
+      "type": "boolean",
+      "pytype": "bool",
+      "default": false
     }
   },
-  "required": []
+  "required": [
+    "frequency_factor"
+  ]
 }

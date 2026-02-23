@@ -1,19 +1,19 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/DataDog/schema/main/service-catalog/v2/schema.json",
-  "title": "Service Definition Schema v2",
-  "description": "A service definition for providing additional service metadata and integrations v2",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-8.json",
+  "title": "Service Definition Schema v2.2",
+  "description": "A service definition for providing additional service metadata and integrations v2.2",
   "type": "object",
   "properties": {
     "schema-version": {
       "description": "Schema version being used",
       "examples": [
-        "v2"
+        "v2.2"
       ],
       "type": "string",
-      "default": "v2",
+      "default": "v2.2",
       "enum": [
-        "v2"
+        "v2.2"
       ]
     },
     "dd-service": {
@@ -21,25 +21,87 @@
       "examples": [
         "my-service"
       ],
-      "type": "string",
-      "minLength": 1
+      "type": "string"
     },
     "team": {
-      "description": "Team that owns the service",
+      "description": "Team that owns the service. It is used to locate a team defined in Datadog Teams if it exists",
       "examples": [
         "my-team"
       ],
-      "type": "string",
-      "minLength": 1
+      "type": "string"
     },
-    "dd-team": {
-      "description": "Experimental feature. A Team handle that matches a Team in the Datadog Teams product.",
+    "application": {
+      "description": "Identifier for a group of related services serving a product feature, which the service is a part of",
       "examples": [
-        "my-team"
+        "my-app"
+      ],
+      "type": "string"
+    },
+    "description": {
+      "description": "A short description of the service",
+      "examples": [
+        "My app description"
+      ],
+      "type": "string"
+    },
+    "tier": {
+      "description": "Importance of the service",
+      "examples": [
+        "1",
+        "High"
+      ],
+      "type": "string"
+    },
+    "lifecycle": {
+      "description": "The current life cycle phase of the service.",
+      "examples": [
+        "sandbox",
+        "staging",
+        "production",
+        "deprecated"
+      ],
+      "type": "string"
+    },
+    "type": {
+      "description": "The type of service",
+      "examples": [
+        "web",
+        "db",
+        "cache",
+        "function",
+        "browser",
+        "mobile",
+        "custom"
       ],
       "type": "string",
-      "minLength": 1,
-      "pattern": "[^A-Z ]+"
+      "enum": [
+        "web",
+        "db",
+        "cache",
+        "function",
+        "browser",
+        "mobile",
+        "custom"
+      ]
+    },
+    "languages": {
+      "description": "The service's programming language. See examples for a list of recognizable languages",
+      "examples": [
+        [
+          "dotnet",
+          "go",
+          "java",
+          "js",
+          "php",
+          "python",
+          "ruby",
+          "c++"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "contacts": {
       "description": "A list of contacts related to the services. ",
@@ -53,20 +115,6 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/link"
-      }
-    },
-    "repos": {
-      "description": "A list of code repositories related to the services. ",
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/repo"
-      }
-    },
-    "docs": {
-      "description": "A list of documentations related to the services. ",
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/doc"
       }
     },
     "tags": {
@@ -86,12 +134,22 @@
       "type": "object",
       "properties": {
         "pagerduty": {
-          "description": "pagerduty service url for the service",
-          "examples": [
-            "https://my-org.pagerduty.com/service-directory/PMyService"
+          "description": "Pagerduty integration for the service",
+          "type": "object",
+          "properties": {
+            "service-url": {
+              "description": "Pagerduty Service URL",
+              "examples": [
+                "https://my-org.pagerduty.com/service-directory/PMyService"
+              ],
+              "type": "string",
+              "pattern": "^(https?://)?[a-zA-Z\\d_\\-.]+\\.pagerduty\\.com/service-directory/(P[a-zA-Z\\d_\\-]+)/?$"
+            }
+          },
+          "required": [
+            "service-url"
           ],
-          "type": "string",
-          "pattern": "^(https?://)?[a-zA-Z\\d_\\-.]+\\.pagerduty\\.com/service-directory/(P[a-zA-Z\\d_\\-]+)/?$"
+          "additionalProperties": false
         },
         "opsgenie": {
           "description": "Opsgenie integration for the service",
@@ -100,7 +158,7 @@
             "service-url": {
               "description": "Opsgenie Service URL",
               "examples": [
-                "https://www.opsgenies.com/service/123e4567-e89b-12d3-a456-426614174000"
+                "https://www.opsgenie.com/service/123e4567-e89b-12d3-a456-426614174000"
               ],
               "type": "string",
               "pattern": "^(https?://)?[a-zA-Z\\d_\\-.]+\\.opsgenie\\.com/service/([a-zA-Z\\d_\\-]+)/?$"
@@ -130,6 +188,19 @@
       "description": "Custom extensions",
       "type": "object",
       "additionalProperties": true
+    },
+    "ci-pipeline-fingerprints": {
+      "description": "A set of CI pipeline fingerprints related to the service",
+      "examples": [
+        [
+          "j88xdEy0J5lc",
+          "eZ7LMljCk8vo"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "additionalProperties": false,
@@ -148,27 +219,19 @@
             "Runbook",
             "Dashboard"
           ],
-          "type": "string",
-          "minLength": 1
+          "type": "string"
         },
         "type": {
-          "description": "Link type",
+          "description": "Link type. See examples for a list of recognizable types",
           "examples": [
             "runbook",
-            "dashboard"
-          ],
-          "type": "string",
-          "enum": [
             "doc",
-            "wiki",
-            "runbook",
-            "url",
             "repo",
             "dashboard",
-            "oncall",
-            "code",
-            "link"
-          ]
+            "other"
+          ],
+          "type": "string",
+          "default": "other"
         },
         "url": {
           "description": "Link url",
@@ -177,6 +240,14 @@
           ],
           "type": "string",
           "format": "uri"
+        },
+        "provider": {
+          "description": "Link provider. See examples for a list of recognizable providers",
+          "examples": [
+            "Github",
+            "Confluence"
+          ],
+          "type": "string"
         }
       },
       "required": [
@@ -199,18 +270,13 @@
           "minLength": 2
         },
         "type": {
-          "description": "Contact type",
+          "description": "Contact type. See examples for a list of recognizable types",
           "examples": [
             "email",
             "slack",
             "microsoft-teams"
           ],
-          "type": "string",
-          "enum": [
-            "email",
-            "slack",
-            "microsoft-teams"
-          ]
+          "type": "string"
         },
         "contact": {
           "description": "Contact value",
@@ -221,114 +287,30 @@
           "type": "string"
         }
       },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "email"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "contact": {
-                "format": "email"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "slack"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "contact": {
-                "pattern": "^https://.+"
-              }
-            }
+      "if": {
+        "properties": {
+          "type": {
+            "const": "email"
           }
         }
-      ],
+      },
+      "then": {
+        "properties": {
+          "contact": {
+            "format": "email"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "contact": {
+            "format": "uri"
+          }
+        }
+      },
       "required": [
         "type",
         "contact"
-      ]
-    },
-    "doc": {
-      "additionalProperties": false,
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Doc name",
-          "examples": [
-            "Architecture",
-            "RFC",
-            "Design"
-          ],
-          "type": "string",
-          "minLength": 1
-        },
-        "provider": {
-          "description": "Doc provider",
-          "examples": [
-            "google drive",
-            "figma"
-          ],
-          "type": "string",
-          "minLength": 1
-        },
-        "url": {
-          "description": "Doc url",
-          "examples": [
-            "https://gdrive/mydoc"
-          ],
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "required": [
-        "name",
-        "url"
-      ]
-    },
-    "repo": {
-      "additionalProperties": false,
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Repo name",
-          "examples": [
-            "Source Code"
-          ],
-          "type": "string",
-          "minLength": 1
-        },
-        "provider": {
-          "description": "Repo provider",
-          "examples": [
-            "Github"
-          ],
-          "type": "string",
-          "minLength": 1
-        },
-        "url": {
-          "description": "Repo url",
-          "examples": [
-            "https://github.com/DataDog/schema"
-          ],
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "required": [
-        "name",
-        "url"
       ]
     }
   }
