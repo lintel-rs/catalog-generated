@@ -34,8 +34,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "name",
-        "id"
+        "name"
       ]
     },
     "tlsxSource": {
@@ -189,6 +188,10 @@
       "additionalProperties": false
     }
   },
+  "required": [
+    "dsn"
+  ],
+  "additionalProperties": false,
   "properties": {
     "dsn": {
       "title": "Data Source Name",
@@ -265,6 +268,37 @@
               "$ref": "#/definitions/tlsx"
             }
           }
+        },
+        "metrics": {
+          "type": "object",
+          "title": "Metrics API (http only)",
+          "additionalProperties": false,
+          "properties": {
+            "port": {
+              "type": "integer",
+              "default": 4468,
+              "title": "Port",
+              "description": "The port to listen on.",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            "host": {
+              "type": "string",
+              "default": "",
+              "examples": [
+                "localhost",
+                "127.0.0.1"
+              ],
+              "title": "Host",
+              "description": "The network interface to listen on."
+            },
+            "cors": {
+              "$ref": "#/definitions/cors"
+            },
+            "tls": {
+              "$ref": "#/definitions/tlsx"
+            }
+          }
         }
       }
     },
@@ -279,28 +313,65 @@
       ]
     },
     "log": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-36.json"
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-42.json"
     },
     "tracing": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-37.json"
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-41.json"
     },
     "namespaces": {
       "description": "Namespace configuration or it's location.",
       "default": "file://./keto_namespaces",
       "oneOf": [
         {
-          "title": "Namespace Repo URI",
-          "description": "URI that points to a directory of namespace files, a single file with all namespaces, or a websocket connection that provides former via `github.com/ory/x/watcherx.WatchAndServeWS`",
+          "title": "Legacy namespace Repo URI",
+          "description": "A URI that points to a directory of namespace files, a single file with all namespaces, or a websocket connection that provides former via `github.com/ory/x/watcherx.WatchAndServeWS`",
           "type": "string",
           "format": "uri"
         },
         {
           "type": "array",
+          "title": "Legacy namespace configuration",
           "items": {
             "$ref": "#/definitions/namespace"
           }
+        },
+        {
+          "type": "object",
+          "title": "Namespace configuration",
+          "properties": {
+            "location": {
+              "type": "string",
+              "title": "Ory Permission Language config file URI",
+              "description": "A URI that points to a directory of namespace files, a single file with all namespaces, or a websocket connection that provides former via `github.com/ory/x/watcherx.WatchAndServeWS`",
+              "format": "uri",
+              "examples": [
+                "file://./keto_namespaces.ts",
+                "file:///etc/configs/keto_namespaces.ts",
+                "ws://my.websocket.server/keto_namespaces.ts"
+              ]
+            }
+          },
+          "required": [
+            "location"
+          ]
         }
       ]
+    },
+    "limit": {
+      "type": "object",
+      "title": "Limits",
+      "description": "Limits aiming to control the resource consumption. These limits are not a sufficient replacement for rate-limiting.",
+      "properties": {
+        "max_read_depth": {
+          "type": "integer",
+          "default": 5,
+          "title": "Global maximum read depth",
+          "description": "The global maximum depth on all read operations. Note that this does not affect how deeply nested the tuples can be. This value can be decreased for a request by a value specified on the request, only if the request-specific value is greater than 1 and less than the global maximum depth.",
+          "minimum": 1,
+          "maximum": 65535
+        }
+      },
+      "additionalProperties": false
     },
     "version": {
       "type": "string",

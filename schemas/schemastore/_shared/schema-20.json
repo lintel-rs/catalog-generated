@@ -1,95 +1,173 @@
 {
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-20.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "description": "All the valid configuration parameters for the jobs plugin for RoadRunner.",
-  "title": "roadrunner-jobs",
+  "description": "All the valid configuration parameters for the Redis plugin for RoadRunner.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "num_pollers": {
-      "description": "Number of threads which will try to obtain jobs from the priority queue. Default is the number of workers in the pool +1. **Deprecated:** This will be removed in a future version.",
-      "type": "integer",
-      "minimum": 1,
-      "examples": [
-        10,
-        32
-      ],
-      "deprecated": true
-    },
-    "timeout": {
-      "description": "Request timeout (in seconds) when attempting to send jobs to the queue. If zero or omitted, this defaults to 60 seconds.",
-      "type": "integer",
-      "default": 60
-    },
-    "pipeline_size": {
-      "description": "Size of the internal priority queue. If the internal priority queue is full, you cannot send (push) additional jobs to the queue. If you set this value to zero or omit it, it defaults to 1 million.",
-      "type": "integer",
-      "default": 1000000,
-      "minimum": 0
-    },
-    "consume": {
-      "description": "A list of pipelines to be consumed by the server automatically when starting. You can omit this list if you want to start consuming manually. Each item in this list must be defined as a key under `pipelines`.",
+    "addrs": {
+      "title": "Redis Endpoint",
+      "description": "The addresses or hostnames of the Redis server/cluster to connect to. If the number of addresses is 1 and master_name is empty, a single-node Redis Client will be returned, otherwise a ClusterClient or FailoverClient will be returned, depending on whether `master_name` is provided.",
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "string",
-        "pattern": "^[a-zA-Z0-9._-]+$"
-      }
+        "minLength": 1
+      },
+      "default": [
+        "localhost:6379"
+      ]
     },
-    "pool": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-13.json"
+    "master_name": {
+      "title": "Redis Master Node Name",
+      "description": "The name of the master Redis node. A Sentinel-backed FailoverClient will be returned if this value is provided.",
+      "type": "string"
     },
-    "pipelines": {
-      "description": "List of broker pipelines associated with the configured drivers. This option is not required since you can declare pipelines at runtime. The selected pipeline `driver` must be configured in the root of your configuration file.",
+    "username": {
+      "title": "Redis AUTH username.",
+      "description": "The username to provide for Redis authentication.",
+      "type": "string",
+      "examples": [
+        "my_username"
+      ]
+    },
+    "password": {
+      "title": "Redis AUTH password.",
+      "description": "The password to provide for Redis authentication.",
+      "type": "string",
+      "examples": [
+        "super-secret-password"
+      ]
+    },
+    "db": {
+      "title": "Redis DB Index",
+      "description": "The Redis DB index to select when connecting.",
+      "type": "integer",
+      "default": 0,
+      "maximum": 10
+    },
+    "sentinel_password": {
+      "title": "Sentinel Password",
+      "description": "The password for Redis Sentinel.",
+      "type": "string",
+      "examples": [
+        "super-secret-password"
+      ]
+    },
+    "route_by_latency": {
+      "title": "Route by Latency",
+      "description": "Whether to route traffic to Redis nodes based on latency.",
+      "type": "boolean",
+      "default": false
+    },
+    "route_randomly": {
+      "title": "Route Randomly",
+      "description": "Whether to randomly route traffic to Redis nodes.",
+      "type": "boolean",
+      "default": false
+    },
+    "dial_timeout": {
+      "title": "Dial Timeout",
+      "description": "The timeout when attempting to connect to Redis. Default or zero means 5s.",
+      "$ref": "#/$defs/duration",
+      "default": 0
+    },
+    "max_retries": {
+      "title": "Maximum Retries",
+      "description": "The maximum number of retry attempts when connecting to Redis. Default or zero means 3.",
+      "type": "integer",
+      "default": 0
+    },
+    "min_retry_backoff": {
+      "title": "Minimum Retry Backoff",
+      "description": "The minimum backoff duration when retrying connection attempts. Default or zero means 8s.",
+      "$ref": "#/$defs/duration",
+      "default": 0
+    },
+    "max_retry_backoff": {
+      "title": "Maximum Retry Backoff",
+      "description": "The maximum backoff duration when retrying connection attempts. Default or zero means 512s.",
+      "$ref": "#/$defs/duration",
+      "default": 0
+    },
+    "pool_size": {
+      "title": "Connection Pool Size",
+      "description": "The number of connections to keep in the Redis connection pool. Default or zero means 10 per logical CPU.",
+      "type": "integer",
+      "default": 0
+    },
+    "min_idle_conns": {
+      "title": "Minimum Idle Connections",
+      "description": "The minimum number of connections to keep in the pool. Defaults to 0, which means no idle connection pool.",
+      "type": "integer",
+      "default": 0
+    },
+    "max_conn_age": {
+      "title": "Maximum Connection Age",
+      "description": "The maximum age of open Redis connections. Default or zero means no limit.",
+      "$ref": "#/$defs/duration",
+      "default": "0s"
+    },
+    "read_timeout": {
+      "title": "Read Timeout",
+      "description": "The timeout when reading from a Redis node. Default or zero means 3s.",
+      "$ref": "#/$defs/duration",
+      "default": "0s"
+    },
+    "write_timeout": {
+      "title": "Write Timeout",
+      "description": "The timeout when writing to a Redis node. Default or zero means equivalent to `read_timeout`.",
+      "$ref": "#/$defs/duration",
+      "default": "0s"
+    },
+    "pool_timeout": {
+      "title": "Pool Timeout",
+      "$ref": "#/$defs/duration"
+    },
+    "idle_timeout": {
+      "title": "Idle Timeout",
+      "description": "The timeout of idle connections to Redis. Default or zero means 5m.",
+      "$ref": "#/$defs/duration",
+      "default": "0s"
+    },
+    "idle_check_freq": {
+      "title": "Idle Check Frequency",
+      "description": "The time between checks for idle connections to Redis. Default or zero means 1m.",
+      "$ref": "#/$defs/duration",
+      "default": "0s"
+    },
+    "read_only": {
+      "title": "Read-only",
+      "description": "Whether the Redis connection is in read-only mode. See https://redis.io/docs/latest/commands/readonly.",
+      "type": "boolean",
+      "default": false
+    },
+    "tls": {
+      "description": "GRPC TLS configuration",
       "type": "object",
-      "patternProperties": {
-        "additionalProperties": false,
-        "^[a-zA-Z0-9._-]+$": {
-          "oneOf": [
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-10.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-22.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-14.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-17.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-21.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-16.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-18.json#/definitions/pipeline"
-            }
-          ]
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-22.json#/$defs/SSL/properties/key"
+        },
+        "cert": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-22.json#/$defs/SSL/properties/cert"
+        },
+        "root_ca": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-22.json#/$defs/SSL/properties/root_ca"
+        },
+        "client_auth_type": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-22.json#/$defs/ClientAuthType"
         }
-      }
+      },
+      "required": [
+        "root_ca"
+      ]
     }
   },
-  "definitions": {
-    "PipelineProperties": {
-      "description": "Common configuration options for queues/pipelines.",
-      "priority": {
-        "description": "Pipeline priority. If the job pushed to the pipeline has priority set to 0, it will inherit the pipeline's priority.",
-        "type": "integer",
-        "minimum": 0,
-        "default": 10
-      },
-      "prefetch": {
-        "description": "Number of jobs to prefetch from the driver. Please consult the driver for the maximum and default values. For instance, SQS allows only 10.",
-        "type": "integer",
-        "minimum": 0
-      },
-      "queue": {
-        "type": "string",
-        "description": "The name of the queue.",
-        "default": "default"
-      }
+  "$defs": {
+    "duration": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration"
     }
   }
 }
