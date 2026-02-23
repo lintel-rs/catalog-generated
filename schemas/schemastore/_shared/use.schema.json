@@ -1,49 +1,31 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/use.schema.json",
-  "title": "schema for build job usage",
+  "title": "schema for build-kaniko job usage",
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "imagePackage"
+  ],
   "properties": {
     "dockerfile": {
       "description": "Path to the Dockerfile on the repository. Defaults to /Dockerfile",
-      "examples": [
-        "./packages/api/custom.Dockerfile"
-      ],
-      "default": "./Dockerfile",
       "type": "string"
     },
     "context": {
       "description": "Docker context (cwd) when building the image. Defaults to .",
-      "examples": [
-        "./packages/api"
-      ],
-      "default": ".",
       "type": "string"
     },
     "registrySecretRefName": {
       "description": "Name of the registry secret if you have a custom docker registry. Should contain CI_REGISTRY_USER, CI_REGISTRY_PASSWORD",
       "type": "string"
     },
-    "registry": {
-      "description": "Url of your custom docker registry",
-      "examples": [
-        "ghcr.io"
-      ],
-      "type": "string"
-    },
     "imagePackage": {
-      "description": "Name of the docker image on the registry",
-      "examples": [
-        "app"
-      ],
+      "description": "Name of the dockerfile on the registry",
       "type": "string"
     },
     "imageProject": {
       "description": "Optional project name in the docker registry",
-      "examples": [
-        "project"
-      ],
       "type": "string"
     },
     "imageRepository": {
@@ -52,6 +34,10 @@
     },
     "buildArgs": {
       "$ref": "#/definitions/build-args"
+    },
+    "skipExisting": {
+      "description": "Skip build if image already registerd",
+      "type": "boolean"
     },
     "buildOptions": {
       "description": "Build options",
@@ -64,33 +50,14 @@
       "description": "Set the target build stage to build.",
       "type": "string"
     },
-    "secrets": {
-      "description": "Use secrets securely at build time that will not be exposed in the image layers, keys are secrets ids, `secretName` and `secretKey` properties can be used to target the kubernetes secret",
-      "type": "object",
-      "properties": {
-        "additionalProperties": true
-      }
-    },
-    "buildkitServiceClientCertsSecretName": {
-      "description": "Use a specific secret for build kit service client cert. default to `buildkit-client-certs`",
-      "type": "string"
-    },
-    "buildkitServiceEnabled": {
-      "description": "Enable buildkit remote service. set to `true` to activate.",
-      "type": "string"
-    },
-    "buildkitServiceAddr": {
-      "description": "Address of the buildkit service. defaults to `tcp://buildkit-service.buildkit-service.svc:1234`",
-      "type": "string",
-      "examples": [
-        "tcp://buildkit-service.buildkit-service.svc:1234"
-      ]
+    "noPush": {
+      "description": "Disable registry push, just build",
+      "type": "boolean"
     }
   },
   "definitions": {
     "build-args": {
-      "title": "Docker image build arguments",
-      "markdownDescription": "Build args to customize the docker, see [docker documentation](https://docs.docker.com/engine/reference/commandline/build/#build-arg)",
+      "description": "Build args to customize the docker build",
       "type": "object",
       "additionalProperties": true
     }

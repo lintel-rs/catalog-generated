@@ -2,34 +2,52 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/kimmdy-yaml-schema-3.json",
-  "description": "Settings for TT-Dimerization",
+  "description": "Settings for homolysis reactions",
   "additionalProperties": false,
   "properties": {
-    "k1": {
-      "description": "Distance scaling [1/nm]",
-      "type": "number",
-      "pytype": "float",
-      "default": 2.017017017017017
+    "edis": {
+      "title": "edis",
+      "deprecated": true,
+      "description": "Dissociation energies data file now lives in the kimmdy root config as `config.edissoc`"
     },
-    "k2": {
-      "description": "Angle scaling [1/deg]",
-      "type": "number",
-      "pytype": "float",
-      "default": 0.03003003003003003
+    "itp": {
+      "title": "itp",
+      "deprecated": true,
+      "description": "Additional itp file with bonded parameters is no longer required and directly read from the forcefield."
     },
-    "d0": {
-      "description": "Optimal distance [nm]",
+    "dt_distances": {
+      "title": "dt_distances",
       "type": "number",
+      "description": "Stepsize in ps for reading distances from the plumed distances.dat file. 0 Means use every frame in the file.",
       "pytype": "float",
-      "default": 0.157177
+      "minimum": 0,
+      "default": 0
     },
-    "n0": {
-      "description": "Optimal angle [deg]",
+    "b0_overwrite": {
+      "title": "b0_overwrite",
       "type": "number",
+      "description": "Global equilibrium bond length used as an offset for calculating bond forces.",
       "pytype": "float",
-      "default": 16.743651884789273
+      "minimum": 0,
+      "default": 0
+    },
+    "f0_overwrite": {
+      "title": "f0_overwrite",
+      "type": "number",
+      "description": "Global equilibrium bond force used as an offset for calculating bond forces.",
+      "pytype": "float",
+      "minimum": 0,
+      "default": 0
+    },
+    "recompute_bondstats": {
+      "title": "recompute_bondstats",
+      "type": "boolean",
+      "description": "Recompute bondstats (mean distance and force) even if a .kimmdy.bondstats cache file is found.",
+      "pytype": "bool",
+      "default": false
     },
     "kmc": {
+      "title": "kmc",
       "description": "KMC algorithm for this reaction.",
       "type": "string",
       "pytype": "str",
@@ -37,16 +55,51 @@
         "rfkmc",
         "frm",
         "extrande",
-        "extrande_mod"
+        "extrande_mod",
+        "multi_rfkmc"
       ],
-      "default": "extrande_mod"
+      "default": "rfkmc"
     },
-    "reslist": {
-      "description": "Residues considered for reactions (dot-separated)",
-      "type": "string",
-      "pytype": "str",
-      "default": "all"
+    "check_bound": {
+      "type": "boolean",
+      "pytype": "bool",
+      "description": "Check the topology for bonds between plumed atom pairs and only attempt to break them if they are actually bonded.",
+      "default": true
+    },
+    "use_morse": {
+      "type": "boolean",
+      "pytype": "bool",
+      "description": "Calculate transition rates using a morse potential (the default). If set to `false`, a harmonic potential is used instead.",
+      "default": true
+    },
+    "arrhenius_equation": {
+      "title": "arrhenius_equation",
+      "type": "object",
+      "description": "For setting values in the arrhenius equation",
+      "properties": {
+        "frequency_factor": {
+          "type": "number",
+          "description": "Frequency factor",
+          "pytype": "float",
+          "minimum": 0,
+          "default": 0.288
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Temperature",
+          "pytype": "float",
+          "minimum": 0,
+          "default": 300
+        }
+      },
+      "required": [
+        "frequency_factor",
+        "temperature"
+      ],
+      "additionalProperties": false
     }
   },
-  "required": []
+  "required": [
+    "edis"
+  ]
 }

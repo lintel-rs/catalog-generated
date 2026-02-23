@@ -1,79 +1,103 @@
 {
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-23.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "title": "roadrunner-nats",
-  "description": "The schema contains all the valid configuration parameters for the NATS plugin for the roadrunner job system.",
-  "definitions": {
-    "pipeline": {
+  "description": "All the valid configuration parameters for the Server plugin for RoadRunner.",
+  "type": "object",
+  "title": "roadrunner-server",
+  "additionalProperties": false,
+  "required": [
+    "command"
+  ],
+  "properties": {
+    "on_init": {
+      "description": "Arbitrary command to execute before RR starts allocating workers.",
       "type": "object",
-      "required": [
-        "driver"
-      ],
       "additionalProperties": false,
+      "required": [
+        "command"
+      ],
       "properties": {
-        "driver": {
+        "command": {
+          "description": "Command to execute. It can be any script or binary that RoadRunner has access to.",
           "type": "string",
-          "enum": [
-            "nats"
+          "minLength": 1,
+          "examples": [
+            "php not-worker.php",
+            "sh script.sh",
+            "start script.bat"
           ]
         },
-        "config": {
-          "type": "object",
-          "description": "Configuration for the NATS driver.",
-          "additionalProperties": false,
-          "properties": {
-            "priority": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-19.json#/definitions/PipelineProperties/priority"
-            },
-            "prefetch": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-19.json#/definitions/PipelineProperties/prefetch"
-            },
-            "subject": {
-              "description": "NATS subject",
-              "type": "string",
-              "default": "default"
-            },
-            "stream": {
-              "description": "NATS stream",
-              "type": "string",
-              "default": "default-stream"
-            },
-            "deliver_new": {
-              "description": "Whether to only receive messages that were created after the consumer was created.",
-              "type": "boolean",
-              "default": false
-            },
-            "rate_limit": {
-              "description": "Consumer rate-limiter in bytes. See https://docs.nats.io/jetstream/concepts/consumers#ratelimit",
-              "type": "integer",
-              "default": 1000,
-              "minimum": 0
-            },
-            "delete_stream_on_stop": {
-              "description": "Whether to delete the stream after the pipeline is stopped.",
-              "type": "boolean",
-              "default": false
-            },
-            "delete_after_ack": {
-              "description": "Whether to delete messages from the stream after successful acknowledgement.",
-              "type": "boolean",
-              "default": false
-            }
-          }
+        "exec_timeout": {
+          "description": "Script execution timeout. Zero or empty defaults to 60s.",
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration",
+          "default": "60s"
+        },
+        "exit_on_error": {
+          "description": "Exit RR if the `on_init` command fails.",
+          "type": "boolean",
+          "default": "false"
+        },
+        "user": {
+          "$ref": "#/$defs/User"
+        },
+        "env": {
+          "$ref": "#/$defs/EnvironmentVariables"
         }
       }
     },
-    "driver": {
+    "command": {
+      "description": "The command used to start workers, including any required arguments. Any plugins that implement a worker pool will inherit this command if they do not specify an override.",
+      "type": "string",
+      "minLength": 1,
+      "examples": [
+        "php psr-worker.php"
+      ]
+    },
+    "user": {
+      "$ref": "#/$defs/User"
+    },
+    "group": {
+      "description": "Group name (not GID) for the worker processes. The RR process user group will be used if not provided. The RoadRunner process must be run as root for this to work.",
+      "type": "string",
+      "minLength": 1,
+      "examples": [
+        "www-data"
+      ]
+    },
+    "env": {
+      "$ref": "#/$defs/EnvironmentVariables"
+    },
+    "relay": {
+      "description": "Worker relay method. Can be 'pipes', a TCP address (e.g. tcp://127.0.0.1:6002) or a socket (e.g. unix:///var/run/rr.sock).",
+      "type": "string",
+      "default": "pipes",
+      "minLength": 1,
+      "examples": [
+        "pipes",
+        "tcp://127.0.0.1:6002",
+        "unix:///var/run/rr.sock"
+      ]
+    }
+  },
+  "$defs": {
+    "EnvironmentVariables": {
+      "description": "Environment variables for the process or command.",
       "type": "object",
+      "minProperties": 1,
       "additionalProperties": false,
-      "description": "Configuration options for the NATS driver.",
-      "properties": {
-        "addr": {
-          "description": "NATS server address.",
-          "type": "string",
-          "default": "nats://127.0.0.1:4222"
+      "patternProperties": {
+        "^[a-zA-Z0-9._-]+$": {
+          "type": "string"
         }
       }
+    },
+    "User": {
+      "description": "Username (not UID) of the user from whom the command or process is executed. The RoadRunner process user will be used if not provided. The RoadRunner process must be run as root in order to specify a different user.",
+      "type": "string",
+      "minLength": 1,
+      "examples": [
+        "www-data"
+      ]
     }
   }
 }

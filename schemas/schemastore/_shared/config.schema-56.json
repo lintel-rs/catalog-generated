@@ -420,10 +420,46 @@
           "title": "Only Cookies",
           "description": "A list of possible cookies to look for on incoming requests, and will fallthrough to the next authenticator if none of the passed cookies are set on the request."
         },
+        "preserve_query": {
+          "title": "Preserve Query",
+          "type": "boolean",
+          "default": true,
+          "description": "When unset or set to true, any query parameters specified in `check_session_url` will be preserved instead of overwriting them with the query parameters from the original request"
+        },
         "preserve_path": {
           "title": "Preserve Path",
           "type": "boolean",
-          "description": "When set to true, any path specified in `check_session_url` will be preserved instead of overwriting the path with the path from the original request"
+          "description": "When set to true, any path specified in `check_session_url` will be preserved instead of overwriting the path with the path from the original request."
+        },
+        "preserve_host": {
+          "title": "Preserve Host",
+          "type": "boolean",
+          "description": "When set to true the HTTP Header X-Forwarded-Host will be set to the original HTTP host."
+        },
+        "force_method": {
+          "title": "Force HTTP Method",
+          "type": "string",
+          "description": "When set uses the given HTTP method instead of the request HTTP method.",
+          "examples": [
+            "GET",
+            "POST"
+          ]
+        },
+        "forward_http_headers": {
+          "title": "Set Forward HTTP Headers",
+          "type": "array",
+          "description": "Set HTTP Headers allowed forwarding to upstream.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "additional_headers": {
+          "title": "Set Additional HTTP Headers",
+          "type": "object",
+          "description": "Set additional HTTP Headers for the Session Check URL.",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "extra_from": {
           "title": "Extra JSON Path",
@@ -499,10 +535,46 @@
             }
           ]
         },
+        "preserve_query": {
+          "title": "Preserve Query",
+          "type": "boolean",
+          "default": true,
+          "description": "When unset or set to true, any query parameters specified in `check_session_url` will be preserved instead of overwriting them with the query parameters from the original request"
+        },
         "preserve_path": {
           "title": "Preserve Path",
           "type": "boolean",
           "description": "When set to true, any path specified in `check_session_url` will be preserved instead of overwriting the path with the path from the original request"
+        },
+        "preserve_host": {
+          "title": "Preserve Host",
+          "type": "boolean",
+          "description": "When set to true the HTTP Header X-Forwarded-Host will be set to the original HTTP host."
+        },
+        "force_method": {
+          "title": "Force HTTP Method",
+          "type": "string",
+          "description": "When set uses the given HTTP method instead of the request HTTP method.",
+          "examples": [
+            "GET",
+            "POST"
+          ]
+        },
+        "forward_http_headers": {
+          "title": "Set Forward HTTP Headers",
+          "type": "array",
+          "description": "Set HTTP Headers allowed forwarding to upstream.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "additional_headers": {
+          "title": "Set Additional HTTP Headers",
+          "type": "object",
+          "description": "Set additional HTTP Headers for the Session Check URL.",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "extra_from": {
           "title": "Extra JSON Path",
@@ -572,6 +644,26 @@
               "https://my-other-website.com/.well-known/jwks.json",
               "file://path/to/local/jwks.json"
             ]
+          ]
+        },
+        "jwks_max_wait": {
+          "title": "Max await interval for the JWK fetch",
+          "type": "string",
+          "description": "The configuration which sets the max wait threshold when fetching new JWKs",
+          "default": "1s",
+          "examples": [
+            "100ms",
+            "1s"
+          ]
+        },
+        "jwks_ttl": {
+          "title": "JWK cache TTL configuration",
+          "type": "string",
+          "description": "The time interval for which fetched JWKs are cached",
+          "default": "30s",
+          "examples": [
+            "30m",
+            "6h"
           ]
         },
         "scope_strategy": {
@@ -645,6 +737,30 @@
         },
         "retry": {
           "$ref": "#/definitions/retry"
+        },
+        "cache": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "$ref": "#/definitions/handlerSwitch"
+            },
+            "ttl": {
+              "type": "string",
+              "pattern": "^[0-9]+(ns|us|ms|s|m|h)$",
+              "title": "Cache Time to Live",
+              "description": "Can override the default behaviour of using the token exp time, and specify a set time to live for the token in the cache. If the token exp time is lower than the set value the token exp time will be used instead.",
+              "examples": [
+                "5s"
+              ]
+            },
+            "max_tokens": {
+              "type": "integer",
+              "default": 1000,
+              "title": "Maximum Cached Tokens",
+              "description": "Max number of tokens to cache."
+            }
+          }
         }
       },
       "required": [
@@ -695,6 +811,15 @@
               "format": "uri",
               "title": "OAuth 2.0 Token URL",
               "description": "The OAuth 2.0 Token Endpoint where the OAuth 2.0 Client Credentials Grant will be performed.\n\n>If pre-authorization is enabled, this value is required."
+            },
+            "audience": {
+              "type": "string",
+              "title": "OAuth 2.0 Audience",
+              "description": "The OAuth 2.0 Audience to be requested during the OAuth 2.0 Client Credentials Grant.",
+              "examples": [
+                "http://www.example.com",
+                "services:my-app"
+              ]
             },
             "scope": {
               "type": "array",
@@ -852,6 +977,12 @@
               "examples": [
                 "5s"
               ]
+            },
+            "max_cost": {
+              "type": "integer",
+              "default": 1000,
+              "title": "Max Cost",
+              "description": "Max number of tokens to cache."
             }
           }
         }
@@ -914,6 +1045,20 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "forward_response_headers_to_upstream": {
+          "description": "A list of non simple headers the remote is allowed to return to mutate requests.",
+          "title": "Allowed Remote HTTP Headers for his Responses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minLength": 0,
+          "uniqueItems": true,
+          "default": []
+        },
+        "retry": {
+          "$ref": "#/definitions/retry"
         }
       },
       "required": [
@@ -942,6 +1087,20 @@
           "examples": [
             "{\"subject\":\"{{ .Subject }}\"}"
           ]
+        },
+        "forward_response_headers_to_upstream": {
+          "description": "A list of non simple headers the remote is allowed to return to mutate requests.",
+          "title": "Allowed Remote HTTP Headers for his Responses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minLength": 0,
+          "uniqueItems": true,
+          "default": []
+        },
+        "retry": {
+          "$ref": "#/definitions/retry"
         }
       },
       "required": [
@@ -1190,6 +1349,18 @@
               "title": "Path",
               "description": "The path to provide metrics on"
             },
+            "metric_name_prefix": {
+              "type": "string",
+              "default": "ory_oathkeeper_",
+              "title": "Metrix prefix",
+              "description": "Prefix appended to Prometheus request metrics"
+            },
+            "hide_request_paths": {
+              "type": "boolean",
+              "default": false,
+              "title": "HidePaths",
+              "description": "When set to true the request label will be set to an empty value"
+            },
             "collapse_request_paths": {
               "type": "boolean",
               "default": true,
@@ -1208,7 +1379,7 @@
       "properties": {
         "repositories": {
           "title": "Repositories",
-          "description": "Locations (list of URLs) where access rules should be fetched from on boot. It is expected that the documents at those locations return a JSON or YAML Array containing ORY Oathkeeper Access Rules:\n\n- If the URL Scheme is `file://`, the access rules (an array of access rules is expected) will be fetched from the local file system.\n- If the URL Scheme is `inline://`, the access rules (an array of access rules is expected) are expected to be a base64 encoded (with padding!) JSON/YAML string (base64_encode(`[{\"id\":\"foo-rule\",\"authenticators\":[....]}]`)).\n- If the URL Scheme is `http://` or `https://`, the access rules (an array of access rules is expected) will be fetched from the provided HTTP(s) location.",
+          "description": "Locations (list of URLs) where access rules should be fetched from on boot. It is expected that the documents at those locations return a JSON or YAML Array containing ORY Oathkeeper Access Rules:\n\n- If the URL Scheme is `file://`, the access rules (an array of access rules is expected) will be fetched from the local file system.\n- If the URL Scheme is `inline://`, the access rules (an array of access rules is expected) are expected to be a base64 encoded (with padding!) JSON/YAML string (base64_encode(`[{\"id\":\"foo-rule\",\"authenticators\":[....]}]`)).\n- If the URL Scheme is `http://` or `https://`, the access rules (an array of access rules is expected) will be fetched from the provided HTTP(s) location.\n- If the URL Scheme is `s3://`, `gs://` or `azblob://`, the access rules (an array of access rules is expected) will be fetched by an object storage (AWS S3, Google Cloud Storage, Azure Blob Storage).\n\nS3 storage also supports S3-compatible endpoints served by Minio or Ceph. See aws.ConfigFromURLParams (https://godoc.org/gocloud.dev/aws#ConfigFromURLParams) for more details on supported URL options for S3.",
           "type": "array",
           "items": {
             "type": "string",
@@ -1218,6 +1389,11 @@
             [
               "file://path/to/rules.json",
               "inline://W3siaWQiOiJmb28tcnVsZSIsImF1dGhlbnRpY2F0b3JzIjpbXX1d",
+              "https://path-to-my-rules/rules.json",
+              "s3://my-bucket-name/rules.json",
+              "s3://my-bucket-name/rules.json?endpoint=minio.my-server.net",
+              "gs://gcp-bucket-name/rules.json",
+              "azblob://my-blob-container/rules.json",
               "https://path-to-my-rules/rules.json"
             ]
           ]
@@ -1591,7 +1767,7 @@
         },
         "deny": {
           "title": "Deny",
-          "description": "The [`deny` authorizer](https://www.ory.sh/oathkeeper/docs/pipeline/authz#allow).",
+          "description": "The [`deny` authorizer](https://www.ory.sh/oathkeeper/docs/pipeline/authz#deny).",
           "type": "object",
           "additionalProperties": false,
           "properties": {
@@ -1846,39 +2022,10 @@
       }
     },
     "log": {
-      "title": "Log",
-      "description": "Configure logging using the following options. Logging will always be sent to stdout and stderr.",
-      "type": "object",
-      "properties": {
-        "level": {
-          "description": "Debug enables stack traces on errors. Can also be set using environment variable LOG_LEVEL.",
-          "type": "string",
-          "default": "info",
-          "enum": [
-            "trace",
-            "debug",
-            "info",
-            "warning",
-            "error",
-            "fatal",
-            "panic"
-          ]
-        },
-        "leak_sensitive_values": {
-          "type": "boolean",
-          "title": "Leak Sensitive Log Values",
-          "description": "If set will leak sensitive values (e.g. emails) in the logs."
-        },
-        "format": {
-          "description": "The log format can either be text or JSON.",
-          "type": "string",
-          "enum": [
-            "json",
-            "text"
-          ]
-        }
-      },
-      "additionalProperties": false
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-70.json"
+    },
+    "tracing": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/config.schema-69.json"
     },
     "profiling": {
       "title": "Profiling",

@@ -1,95 +1,124 @@
 {
   "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-19.json",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "description": "All the valid configuration parameters for the jobs plugin for RoadRunner.",
-  "title": "roadrunner-jobs",
+  "description": "All the valid configuration parameters for the gRPC plugin for RoadRunner.",
   "type": "object",
+  "title": "roadrunner-grpc",
   "additionalProperties": false,
+  "required": [
+    "proto",
+    "listen"
+  ],
   "properties": {
-    "num_pollers": {
-      "description": "Number of threads which will try to obtain jobs from the priority queue. Default is the number of workers in the pool +1. **Deprecated:** This will be removed in a future version.",
-      "type": "integer",
-      "minimum": 1,
+    "listen": {
+      "description": "gRPC address to listen on. Supports both TCP and Unix sockets.",
+      "type": "string",
+      "minLength": 1,
       "examples": [
-        10,
-        32
-      ],
-      "deprecated": true
+        "tcp://127.0.0.1:443",
+        "${TCP:-tcp://127.0.0.1:443}",
+        "tcp://127.0.0.1:${TCP_PORT}"
+      ]
     },
-    "timeout": {
-      "description": "Request timeout (in seconds) when attempting to send jobs to the queue. If zero or omitted, this defaults to 60 seconds.",
-      "type": "integer",
-      "default": 60
-    },
-    "pipeline_size": {
-      "description": "Size of the internal priority queue. If the internal priority queue is full, you cannot send (push) additional jobs to the queue. If you set this value to zero or omit it, it defaults to 1 million.",
-      "type": "integer",
-      "default": 1000000,
-      "minimum": 0
-    },
-    "consume": {
-      "description": "A list of pipelines to be consumed by the server automatically when starting. You can omit this list if you want to start consuming manually. Each item in this list must be defined as a key under `pipelines`.",
+    "proto": {
       "type": "array",
+      "minItems": 1,
+      "description": "Proto file(s) to use. Multiple files are supported. Wildcards are allowed in the proto field.",
       "items": {
         "type": "string",
-        "pattern": "^[a-zA-Z0-9._-]+$"
+        "minLength": 1,
+        "examples": [
+          "*.proto",
+          "first.proto",
+          "second.proto"
+        ]
       }
+    },
+    "interceptors": {
+      "description": "List of registered unary gRPC interceptor plugin names.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "examples": [
+        [
+          "sample-grpc-interceptor"
+        ],
+        [
+          "auth-interceptor",
+          "ratelimit-interceptor"
+        ]
+      ]
+    },
+    "tls": {
+      "description": "GRPC TLS configuration",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-15.json#/$defs/SSL/properties/key"
+        },
+        "cert": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-15.json#/$defs/SSL/properties/cert"
+        },
+        "root_ca": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-15.json#/$defs/SSL/properties/root_ca"
+        },
+        "client_auth_type": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-15.json#/$defs/ClientAuthType"
+        }
+      },
+      "required": [
+        "key",
+        "cert"
+      ]
+    },
+    "max_send_msg_size": {
+      "type": "integer",
+      "description": "Maximum send message size in MB.",
+      "default": 50
+    },
+    "max_recv_msg_size": {
+      "type": "integer",
+      "description": "Maximum receive message size in MB.",
+      "default": 50
+    },
+    "max_connection_idle": {
+      "description": " MaxConnectionIdle is a duration for the amount of time after which an idle connection would be closed by sending a GoAway. Idle duration is defined by the most recent time the number of outstanding RPCs became zero or since the connection was established. Defaults to infinite.",
+      "$ref": "#/$defs/duration"
+    },
+    "max_connection_age": {
+      "description": "The maximum duration a connection may exist before it will be closed by sending a GoAway. A random jitter of +/-10% will be added to MaxConnectionAge to spread out connection storms. Defaults to infinite.",
+      "$ref": "#/$defs/duration"
+    },
+    "max_connection_age_grace": {
+      "description": "The duration after MaxConnectionAge after which the connection will be forcibly closed. Defaults to infinite.",
+      "$ref": "#/$defs/duration"
+    },
+    "max_concurrent_streams": {
+      "description": "The maximum number of concurrent streams. Empty or 0 defaults to 10.",
+      "type": "integer",
+      "default": 10
+    },
+    "ping_time": {
+      "description": "Duration of no activity after which the server pings the client to see if the transport is still alive. If set below 1s, a minimum value of 1s will be used instead.",
+      "$ref": "#/$defs/duration",
+      "default": "2h"
+    },
+    "timeout": {
+      "description": "The duration to wait for a response to a keepalive check, after which the connection is closed.",
+      "$ref": "#/$defs/duration",
+      "default": "20s"
     },
     "pool": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-15.json"
-    },
-    "pipelines": {
-      "description": "List of broker pipelines associated with the configured drivers. This option is not required since you can declare pipelines at runtime. The selected pipeline `driver` must be configured in the root of your configuration file.",
-      "type": "object",
-      "patternProperties": {
-        "additionalProperties": false,
-        "^[a-zA-Z0-9._-]+$": {
-          "oneOf": [
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-20.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-10.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-25.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-17.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-12.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-23.json#/definitions/pipeline"
-            },
-            {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-13.json#/definitions/pipeline"
-            }
-          ]
-        }
-      }
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/schema-13.json"
     }
   },
-  "definitions": {
-    "PipelineProperties": {
-      "description": "Common configuration options for queues/pipelines.",
-      "priority": {
-        "description": "Pipeline priority. If the job pushed to the pipeline has priority set to 0, it will inherit the pipeline's priority.",
-        "type": "integer",
-        "minimum": 0,
-        "default": 10
-      },
-      "prefetch": {
-        "description": "Number of jobs to prefetch from the driver. Please consult the driver for the maximum and default values. For instance, SQS allows only 10.",
-        "type": "integer",
-        "minimum": 0
-      },
-      "queue": {
-        "type": "string",
-        "description": "The name of the queue.",
-        "default": "default"
-      }
+  "$defs": {
+    "duration": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/3.0.schema.json#/definitions/Duration"
     }
   }
 }
