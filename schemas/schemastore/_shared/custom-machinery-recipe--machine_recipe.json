@@ -1,0 +1,1031 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "BiomeRequirement": {
+      "type": "object",
+      "properties": {
+        "blacklist": {
+          "type": "boolean"
+        },
+        "filter": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+          }
+        },
+        "type": {
+          "const": "custommachinery:biome"
+        }
+      },
+      "required": [
+        "filter",
+        "type"
+      ]
+    },
+    "BlockRequirement": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "check",
+            "break",
+            "destroy",
+            "place",
+            "replace_break",
+            "replace_destroy"
+          ]
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        },
+        "block": {
+          "type": "string",
+          "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "comparator": {
+          "type": "string",
+          "enum": [
+            ">>",
+            ">=",
+            "==",
+            "<=",
+            "<<"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "filter": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "#?[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+          }
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "pos": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "whitelist": {
+          "type": "boolean"
+        },
+        "type": {
+          "const": "custommachinery:block"
+        }
+      },
+      "required": [
+        "action",
+        "mode",
+        "pos",
+        "type"
+      ]
+    },
+    "ButtonRequirement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "inverse": {
+          "type": "boolean"
+        },
+        "type": {
+          "const": "custommachinery:button"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ]
+    },
+    "ChunkloadRequirement": {
+      "type": "object",
+      "properties": {
+        "radius": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "type": {
+          "const": "custommachinery:chunkload"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "CommandRequirement": {
+      "type": "object",
+      "properties": {
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "command": {
+          "type": "string"
+        },
+        "delay": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "log": {
+          "type": "boolean"
+        },
+        "permissionlevel": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "starting",
+            "crafting_tickable",
+            "crafting_delayed",
+            "ending"
+          ]
+        },
+        "type": {
+          "const": "custommachinery:command"
+        }
+      },
+      "required": [
+        "command",
+        "phase",
+        "type"
+      ]
+    },
+    "DimensionRequirement": {
+      "type": "object",
+      "properties": {
+        "blacklist": {
+          "type": "boolean"
+        },
+        "filter": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+          }
+        },
+        "type": {
+          "const": "custommachinery:dimension"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "DropRequirement": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "check",
+            "consume",
+            "produce"
+          ]
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "delay": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "input": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ItemItem"
+              },
+              {
+                "$ref": "#/$defs/ItemTag"
+              },
+              {
+                "type": "string",
+                "pattern": "#?[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+              }
+            ]
+          }
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "nbt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {}
+          ]
+        },
+        "output": {
+          "type": "string",
+          "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        },
+        "radius": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        },
+        "whitelist": {
+          "type": "boolean"
+        },
+        "type": {
+          "const": "custommachinery:drop"
+        }
+      },
+      "required": [
+        "action",
+        "mode",
+        "type"
+      ]
+    },
+    "DurabilityRequirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        },
+        "break": {
+          "type": "boolean"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "item": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ItemItem"
+            },
+            {
+              "$ref": "#/$defs/ItemTag"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "nbt": {},
+        "slot": {
+          "type": "string"
+        },
+        "type": {
+          "const": "custommachinery:durability"
+        }
+      },
+      "required": [
+        "amount",
+        "item",
+        "mode",
+        "type"
+      ]
+    },
+    "EffectRequirement": {
+      "type": "object",
+      "properties": {
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "delay": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "effect": {
+          "type": "string",
+          "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        },
+        "filter": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+          }
+        },
+        "finish": {
+          "type": "boolean"
+        },
+        "level": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "radius": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "time": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "const": "custommachinery:effect"
+        }
+      },
+      "required": [
+        "effect",
+        "radius",
+        "time",
+        "type"
+      ]
+    },
+    "EnergyPerTickRequirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "type": {
+          "const": "custommachinery:energy_per_tick"
+        }
+      },
+      "required": [
+        "amount",
+        "mode",
+        "type"
+      ]
+    },
+    "EnergyRequirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "type": {
+          "const": "custommachinery:energy"
+        }
+      },
+      "required": [
+        "amount",
+        "mode",
+        "type"
+      ]
+    },
+    "EntityRequirement": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "check_amount",
+            "check_health",
+            "consume_health",
+            "kill"
+          ]
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "delay": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "radius": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "const": "custommachinery:entity"
+        }
+      },
+      "required": [
+        "action",
+        "amount",
+        "mode",
+        "radius",
+        "type"
+      ]
+    },
+    "ExperienceForm": {
+      "type": "string",
+      "enum": [
+        "level",
+        "point"
+      ]
+    },
+    "ExperiencePerTickRequirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "form": {
+          "$ref": "#/$defs/ExperienceForm"
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "type": {
+          "const": "custommachinery:experience_per_tick"
+        }
+      },
+      "required": [
+        "amount",
+        "mode",
+        "type"
+      ]
+    },
+    "ExperienceRequirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "form": {
+          "$ref": "#/$defs/ExperienceForm"
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "type": {
+          "const": "custommachinery:experience"
+        }
+      },
+      "required": [
+        "amount",
+        "mode",
+        "type"
+      ]
+    },
+    "FluidPerTickRequirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fluid": {
+          "type": "string",
+          "pattern": "#?[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "nbt": {},
+        "tank": {
+          "type": "string"
+        },
+        "type": {
+          "const": "custommachinery:fluid_per_tick"
+        }
+      },
+      "required": [
+        "amount",
+        "fluid",
+        "mode",
+        "type"
+      ]
+    },
+    "FluidRequirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fluid": {
+          "type": "string",
+          "pattern": "#?[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "nbt": {},
+        "tank": {
+          "type": "string"
+        },
+        "type": {
+          "const": "custommachinery:fluid"
+        }
+      },
+      "required": [
+        "amount",
+        "fluid",
+        "mode",
+        "type"
+      ]
+    },
+    "FuelRequirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        },
+        "type": {
+          "const": "custommachinery:fuel"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "ItemFilterRequirement": {
+      "type": "object",
+      "properties": {
+        "ingredient": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "item": {
+                      "type": "object",
+                      "properties": {
+                        "item": {
+                          "type": "string",
+                          "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+                        }
+                      },
+                      "required": [
+                        "item"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "item"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "tag": {
+                      "type": "string",
+                      "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+                    }
+                  },
+                  "required": [
+                    "tag"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "slot": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ingredient"
+      ]
+    },
+    "ItemItem": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        }
+      },
+      "required": [
+        "item"
+      ]
+    },
+    "ItemRequirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "item": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ItemItem"
+            },
+            {
+              "$ref": "#/$defs/ItemTag"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "mode": {
+          "$ref": "#/$defs/RequirementIOMode"
+        },
+        "nbt": {},
+        "slot": {
+          "type": "string"
+        },
+        "type": {
+          "const": "custommachinery:item"
+        }
+      },
+      "required": [
+        "amount",
+        "item",
+        "mode",
+        "type"
+      ]
+    },
+    "ItemTag": {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "type": "string",
+          "pattern": "#?[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        }
+      },
+      "required": [
+        "tag"
+      ]
+    },
+    "ItemTransformRequirement": {
+      "type": "object",
+      "properties": {
+        "chance": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "copy_nbt": {
+          "type": "boolean"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ItemItem"
+            },
+            {
+              "$ref": "#/$defs/ItemTag"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "input_amount": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        },
+        "input_nbt": {},
+        "input_slot": {
+          "type": "string"
+        },
+        "output": {
+          "type": "string",
+          "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        },
+        "output_amount": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        },
+        "output_slot": {
+          "type": "string"
+        },
+        "type": {
+          "const": "custommachinery:item_transform"
+        }
+      },
+      "required": [
+        "input",
+        "type"
+      ]
+    },
+    "LightRequirement": {
+      "type": "object",
+      "properties": {
+        "light": {
+          "type": "string",
+          "description": "see https://frinn.gitbook.io/custom-machinery-1.19/misc/range for valid ranges"
+        },
+        "sky": {
+          "type": "boolean"
+        },
+        "type": {
+          "const": "custommachinery:light"
+        }
+      },
+      "required": [
+        "light",
+        "type"
+      ]
+    },
+    "RequirementIOMode": {
+      "type": "string",
+      "enum": [
+        "INPUT",
+        "input",
+        "OUTPUT",
+        "output"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "appearance": {
+      "type": "object",
+      "properties": {
+        "block": {
+          "type": "string",
+          "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        },
+        "color": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "item": {
+          "type": "string",
+          "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+        },
+        "light": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 15
+        }
+      }
+    },
+    "error": {
+      "type": "boolean"
+    },
+    "hidden": {
+      "type": "boolean"
+    },
+    "jei": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/BiomeRequirement"
+          },
+          {
+            "$ref": "#/$defs/BlockRequirement"
+          },
+          {
+            "$ref": "#/$defs/ButtonRequirement"
+          },
+          {
+            "$ref": "#/$defs/ChunkloadRequirement"
+          },
+          {
+            "$ref": "#/$defs/CommandRequirement"
+          },
+          {
+            "$ref": "#/$defs/DimensionRequirement"
+          },
+          {
+            "$ref": "#/$defs/DropRequirement"
+          },
+          {
+            "$ref": "#/$defs/DurabilityRequirement"
+          },
+          {
+            "$ref": "#/$defs/EffectRequirement"
+          },
+          {
+            "$ref": "#/$defs/EnergyPerTickRequirement"
+          },
+          {
+            "$ref": "#/$defs/EnergyRequirement"
+          },
+          {
+            "$ref": "#/$defs/EntityRequirement"
+          },
+          {
+            "$ref": "#/$defs/ExperienceRequirement"
+          },
+          {
+            "$ref": "#/$defs/ExperiencePerTickRequirement"
+          },
+          {
+            "$ref": "#/$defs/FluidRequirement"
+          },
+          {
+            "$ref": "#/$defs/FluidPerTickRequirement"
+          },
+          {
+            "$ref": "#/$defs/FuelRequirement"
+          },
+          {
+            "$ref": "#/$defs/ItemFilterRequirement"
+          },
+          {
+            "$ref": "#/$defs/ItemRequirement"
+          },
+          {
+            "$ref": "#/$defs/ItemTransformRequirement"
+          },
+          {
+            "$ref": "#/$defs/LightRequirement"
+          }
+        ]
+      }
+    },
+    "jeiPriority": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "machine": {
+      "type": "string",
+      "pattern": "[a-z]+[a-z|_]*[a-z]:[a-z]+[a-z|_|/|#|,|=|\\.]*[a-z]$"
+    },
+    "priority": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/BiomeRequirement"
+          },
+          {
+            "$ref": "#/$defs/BlockRequirement"
+          },
+          {
+            "$ref": "#/$defs/ButtonRequirement"
+          },
+          {
+            "$ref": "#/$defs/ChunkloadRequirement"
+          },
+          {
+            "$ref": "#/$defs/CommandRequirement"
+          },
+          {
+            "$ref": "#/$defs/DimensionRequirement"
+          },
+          {
+            "$ref": "#/$defs/DropRequirement"
+          },
+          {
+            "$ref": "#/$defs/DurabilityRequirement"
+          },
+          {
+            "$ref": "#/$defs/EffectRequirement"
+          },
+          {
+            "$ref": "#/$defs/EnergyPerTickRequirement"
+          },
+          {
+            "$ref": "#/$defs/EnergyRequirement"
+          },
+          {
+            "$ref": "#/$defs/EntityRequirement"
+          },
+          {
+            "$ref": "#/$defs/ExperienceRequirement"
+          },
+          {
+            "$ref": "#/$defs/ExperiencePerTickRequirement"
+          },
+          {
+            "$ref": "#/$defs/FluidRequirement"
+          },
+          {
+            "$ref": "#/$defs/FluidPerTickRequirement"
+          },
+          {
+            "$ref": "#/$defs/FuelRequirement"
+          },
+          {
+            "$ref": "#/$defs/ItemFilterRequirement"
+          },
+          {
+            "$ref": "#/$defs/ItemRequirement"
+          },
+          {
+            "$ref": "#/$defs/ItemTransformRequirement"
+          },
+          {
+            "$ref": "#/$defs/LightRequirement"
+          }
+        ]
+      }
+    },
+    "time": {
+      "type": "integer",
+      "format": "int32",
+      "minimum": 1
+    }
+  },
+  "required": [
+    "machine",
+    "time"
+  ],
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/custom-machinery-recipe--machine_recipe.json",
+  "title": "CustomMachinery Machine Recipe",
+  "description": "CustomMachinery Machine recipe json schema definition"
+}

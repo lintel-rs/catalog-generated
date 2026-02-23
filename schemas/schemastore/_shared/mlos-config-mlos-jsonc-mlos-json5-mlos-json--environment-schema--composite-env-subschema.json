@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/mlos-config-mlos-jsonc-mlos-json5-mlos-json--environment-schema--composite-env-subschema.json",
+  "title": "mlos_bench Composite Environment config",
+  "description": "Config instance for a Composite mlos_bench Environment",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/mlos-config-mlos-jsonc-mlos-json5-mlos-json--environment-schema--leaf-environment-subschemas--base-environment-subschema.json"
+    },
+    {
+      "properties": {
+        "class": {
+          "enum": [
+            "mlos_bench.environments.CompositeEnv",
+            "mlos_bench.environments.composite_env.CompositeEnv"
+          ]
+        },
+        "config": {
+          "type": "object",
+          "$comment": "config objects need to specify their entire schema, so we need to include the unevaluatedProperties handling here.",
+          "allOf": [
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/mlos-config-mlos-jsonc-mlos-json5-mlos-json--environment-schema--leaf-environment-subschemas--mock-env-subschema--common-environment-subschemas.json#/$defs/common_environment_config"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "include_children": {
+                  "description": "List of child environment config files to include in the composite environment.",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "[.]json[c]?$"
+                  },
+                  "uniqueItems": true,
+                  "minItems": 1
+                },
+                "children": {
+                  "description": "List of inline child environment configs to include in the composite environment.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "anyOf": [
+                      {
+                        "$ref": "https://catalog.lintel.tools/schemas/schemastore/_shared/mlos-config-mlos-jsonc-mlos-json5-mlos-json--environment-schema--leaf-environment-subschemas.json"
+                      },
+                      {
+                        "$comment": "Allow inline nested composite envs as well.",
+                        "$ref": "#"
+                      }
+                    ],
+                    "unevaluatedProperties": false
+                  },
+                  "uniqueItems": true,
+                  "minItems": 1
+                }
+              },
+              "anyOf": [
+                {
+                  "required": [
+                    "include_children"
+                  ]
+                },
+                {
+                  "required": [
+                    "children"
+                  ]
+                }
+              ]
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      },
+      "required": [
+        "class",
+        "config"
+      ]
+    }
+  ]
+}

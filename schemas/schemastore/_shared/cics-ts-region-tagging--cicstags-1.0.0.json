@@ -1,0 +1,174 @@
+{
+  "copyright": [
+    "*----------------------------------------------------------------*",
+    "*  IBM Confidential                                              *",
+    "*  PID 5655-YA1                                                  *",
+    "*  Copyright IBM Corp. 2020, 2024                                *",
+    "*  @{[**]copyright.years=2020, 2024}                             *",
+    "*----------------------------------------------------------------*"
+  ],
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/cics-ts-region-tagging--cicstags-1.0.0.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CICS region tagging file JSON Schema.",
+  "description": "Schema that describes the contents of a CICS region tagging file.",
+  "definitions": {
+    "region-label": {
+      "description": "Define tag and applids, region userids or jobnames for that tag.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Tag": {
+            "type": "string",
+            "pattern": "^[^ :]*$",
+            "maxLength": 80
+          },
+          "APPLID": {
+            "type": "string",
+            "pattern": "^[A-Z0-9$@#*?]*$",
+            "maxLength": 8
+          },
+          "RegionUserID": {
+            "type": "string",
+            "pattern": "^[A-Z0-9$@#*?]*$",
+            "maxLength": 8
+          },
+          "Jobname": {
+            "type": "string",
+            "pattern": "^[A-Z0-9$@#*?]*$",
+            "maxLength": 8
+          }
+        },
+        "additionalProperties": false
+      },
+      "required": [
+        "Tag"
+      ]
+    },
+    "region-tags": {
+      "description": "CICS region tags.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Unique": {
+            "type": "string",
+            "enum": [
+              "Yes",
+              "No"
+            ]
+          },
+          "RegionTag": {
+            "$ref": "#/definitions/region-label"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "code-level-tags": {
+      "description": "Code level tags.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Unique": {
+            "type": "string",
+            "enum": [
+              "Yes",
+              "No"
+            ]
+          },
+          "UsageTag": {
+            "$ref": "#/definitions/region-label"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "application-tags": {
+      "description": "Application tags.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Unique": {
+            "type": "string",
+            "enum": [
+              "Yes",
+              "No"
+            ]
+          },
+          "AppTag": {
+            "$ref": "#/definitions/region-label"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "excluded-region-tags": {
+      "description": "Regions to be excluded from health checks.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ExcludeUsage": {
+            "type": "string",
+            "maxLength": 80
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "excluded-check-tags": {
+      "description": "Specific health checks to be excluded.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Check": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^DFHH([0-9]{4}).*$"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "description": "Specify the tagging file schema version.",
+      "type": "string",
+      "enum": [
+        "regionTagging/1.0.0",
+        "regionTagging/1.0"
+      ]
+    },
+    "regiontags": {
+      "description": "CICS region tags.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cicsts-RegionTypes": {
+            "$ref": "#/definitions/region-tags"
+          },
+          "cicsts-RegionUsage": {
+            "$ref": "#/definitions/code-level-tags"
+          },
+          "cicsts-Applications": {
+            "$ref": "#/definitions/application-tags"
+          },
+          "cicsts-HealthCheckExcludedRegions": {
+            "$ref": "#/definitions/excluded-region-tags"
+          },
+          "cicsts-ExcludedHealthChecks": {
+            "$ref": "#/definitions/excluded-check-tags"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

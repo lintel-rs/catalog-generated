@@ -1,0 +1,394 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/dwp-exchange-gateway--service-schema--plugins-schema--oidc_websso-plugin-schema.json",
+  "title": "OIDC Web SSO plugin",
+  "type": "object",
+  "properties": {
+    "identity_provider": {
+      "type": "string",
+      "description": "The identity provider the plugin will interact with to carry our the OpenId Connect auth code flow",
+      "enum": [
+        "dth-sandbox",
+        "dth-test",
+        "dth-live",
+        "dth-staging",
+        "dth-stub",
+        "azure-ad",
+        "dth2-sandbox",
+        "dth2-sandbox-sra",
+        "dth2-dev",
+        "dth2-test",
+        "dth2-staging",
+        "dth2-live",
+        "dth2-sra",
+        "dth2-dev-domino",
+        "dth2-dev-onelogin",
+        "dth2-test-onelogin",
+        "idt-dev-ol-sradam",
+        "idt-test-ol-sradam",
+        "idt-stage-ol-sradam",
+        "nhs-dev-simple",
+        "nhs-dev",
+        "nhs-int",
+        "nhs-live",
+        "keycloak-local",
+        "keycloak-local-rp-logout",
+        "ame-payments-dev",
+        "ame-payments-test",
+        "ame-payments-prestag",
+        "ame-payments-perf",
+        "syf-cognito-dev",
+        "syf-cognito-test",
+        "dam-dev"
+      ]
+    },
+    "use_internet": {
+      "type": "boolean",
+      "description": "Determines whether the JWKS endpoints for your IDP will be internet facing",
+      "default": false
+    },
+    "additional_scopes": {
+      "type": "array",
+      "description": "Additional scopes to request from the authorization endpoint",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "audience_required": {
+      "type": "array",
+      "description": "The audience required to be present in the access token (or introspection results) for successful authorization.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "authorization_cookie_name": {
+      "type": "string",
+      "description": "Specifies authorisation cookie name. This is necessary when same instance of Kong is used to protect multiple upstream services with different client ids."
+    },
+    "authorization_cookie_lifetime": {
+      "type": "integer",
+      "description": "Specifies authorisation cookie lifetime (in seconds).",
+      "default": 600
+    },
+    "client_id": {
+      "type": "string",
+      "description": "Reference to the client id env var in the gateway, refer to gateway module for details",
+      "minLength": 2,
+      "pattern": "^(\\{vault://env/|[^{]).*$"
+    },
+    "redirect_uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "The redirect URI passed to the authorization and token endpoints"
+    },
+    "uplift": {
+      "type": "object",
+      "description": "Uplift configuration to allow moving from a lower `confidence_level` to a higher one",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether to enable uplift",
+          "default": true
+        },
+        "redirect_uri": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^(http|https)://[^ \"]+$",
+          "description": "Gateway URI to redirect the user to for uplift. If omitted then redirect will default to the route’s host, path and any query args will be maintained"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "leeway": {
+      "type": "integer",
+      "description": "Defines leeway time (in seconds) when validating: time authentication occurred (auth_time), expiration time after which the token must not be accepted (exp), time at which the JWT was issued (iat) and not before claim which specifies time before which token must not be accepted (nbf).",
+      "default": 0,
+      "maximum": 2
+    },
+    "logout": {
+      "type": "boolean",
+      "description": "If true, this route will not forward to the upstream application. Instead, it will end the user's session and redirect to the IDP's logout URI. The IDP's logout URI will then redirect to the application's logout confirmation page, which should have a different path than the logout path, for example, /logout and /signed-out.",
+      "default": false
+    },
+    "logout_redirect_uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "Where to redirect the client on logout"
+    },
+    "post_logout_redirect_uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "Where to redirect the client on logout (for RP Initiated Logout)"
+    },
+    "logout_revoke": {
+      "type": "boolean",
+      "description": "If true, the plugin will attempt to revoke the token before redirecting to the IDP's logout URI",
+      "default": false
+    },
+    "logout_uri_suffix": {
+      "type": "string",
+      "description": "The request URI suffix that activates the logout process"
+    },
+    "logout_methods": {
+      "type": "array",
+      "description": "The request methods that can activate the logout process",
+      "items": {
+        "enum": [
+          "POST",
+          "GET",
+          "DELETE"
+        ]
+      }
+    },
+    "logout_query_arg": {
+      "type": "string",
+      "description": "The query argument that activates the logout process"
+    },
+    "stub_hostname": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "The hostname used for dth-stub"
+    },
+    "unauthorized_redirect_uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "Where to redirect the client on unauthorized requests"
+    },
+    "forbidden_redirect_uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "Where to redirect the client on forbidden requests"
+    },
+    "unexpected_redirect_uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "Where to redirect the client when unexpected errors happen with the requests"
+    },
+    "groups_required": {
+      "type": "array",
+      "description": "The groups required to be present in the access token (or introspection results) for successful authorization.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "preserve_query_args": {
+      "type": "boolean",
+      "description": "Whether to preserve query arguments even when doing authorization code flow",
+      "default": false
+    },
+    "verify_parameters": {
+      "type": "boolean",
+      "description": "Verify plugin configuration against discovery",
+      "default": true
+    },
+    "session": {
+      "title": "Session",
+      "type": "object",
+      "properties": {
+        "cookie_name": {
+          "type": "string",
+          "description": "The session cookie name",
+          "default": "exchange-gateway-session",
+          "minLength": 2
+        },
+        "cookie_idletime": {
+          "type": "number",
+          "description": "The session cookie idle time in seconds"
+        },
+        "cookie_renew": {
+          "type": "number",
+          "description": "The number of seconds prior to the `session_cookie_lifetime` that the session cookie will be renewed"
+        },
+        "cookie_lifetime": {
+          "type": "number",
+          "description": "The session cookie lifetime in seconds. Defaults is 1800 seconds (30 minutes)",
+          "default": 1800
+        },
+        "redis": {
+          "title": "Redis configuration",
+          "type": "object",
+          "properties": {
+            "prefix": {
+              "type": "string"
+            },
+            "host": {
+              "type": "string"
+            },
+            "port": {
+              "type": "integer"
+            },
+            "ssl": {
+              "type": "boolean"
+            },
+            "ssl_verify": {
+              "type": "boolean"
+            },
+            "connect_timeout": {
+              "type": "integer"
+            },
+            "read_timeout": {
+              "type": "integer"
+            },
+            "send_timeout": {
+              "type": "integer"
+            },
+            "auth_enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "username": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": []
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "redis"
+      ]
+    },
+    "client_secret": {
+      "title": "Client secrets",
+      "type": "array",
+      "description": "Reference to the client secret env var in the gateway, refer to gateway module for details",
+      "pattern": "^\\{vault://env/[\\w|-]+/?[\\w|-]+\\}$"
+    },
+    "confidence_level": {
+      "title": "Confidence level",
+      "description": "Extra query argument values passed to the authorization endpoint",
+      "enum": [
+        "zero",
+        "medium"
+      ]
+    },
+    "http_proxy": {
+      "title": "HTTP proxy URL",
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "The URL of the HTTP proxy to use for outgoing requests",
+      "examples": [
+        "https://proxy.example.com:3128"
+      ]
+    },
+    "https_proxy": {
+      "title": "HTTPS proxy URL",
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "The URL of the HTTPS proxy to use for outgoing requests",
+      "examples": [
+        "https://proxy.example.com:3128"
+      ]
+    },
+    "forward_query_args": {
+      "type": "array",
+      "description": "Extra query arguments passed from the client to the authorization endpoint.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "ui_locales": {
+      "title": "UI Locales",
+      "type": "string",
+      "description": "ui_locales URL query-parameter value(s) to pass to the logout endpoint",
+      "examples": [
+        "fr FR; en GB"
+      ]
+    }
+  },
+  "required": [
+    "identity_provider"
+  ],
+  "dependencies": {
+    "confidence_level": {
+      "not": {
+        "properties": {
+          "identity_provider": {
+            "description": "Confidence level is not supported for NHS providers",
+            "pattern": "^(nhs-).*$"
+          }
+        }
+      }
+    },
+    "identity_provider": {
+      "oneOf": [
+        {
+          "properties": {
+            "identity_provider": {
+              "const": "dth2-sandbox-sra"
+            }
+          },
+          "required": [
+            "confidence_level"
+          ]
+        },
+        {
+          "properties": {
+            "identity_provider": {
+              "const": "dth-stub"
+            }
+          },
+          "required": [
+            "stub_hostname"
+          ]
+        },
+        {
+          "not": {
+            "properties": {
+              "identity_provider": {
+                "anyOf": [
+                  {
+                    "const": "dth2-sandbox-sra"
+                  },
+                  {
+                    "const": "dth-stub"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "logout": {
+            "enum": [
+              true
+            ]
+          }
+        },
+        "then": {
+          "properties": {
+            "client_id": {
+              "pattern": "^[^/{].*",
+              "description": "client_id cannot be a vault reference when logout is true"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,318 @@
+{
+  "copyright": [
+    "*----------------------------------------------------------------*",
+    "*  notice='cics-lm-source-program'                               *",
+    "*  pids='5655-Y04'                                               *",
+    "*  years='2020'                                                  *",
+    "*  crc='3623749863'                                              *",
+    "*  Licensed Materials - Property of IBM                          *",
+    "*  5655-Y04                                                      *",
+    "*  (C) Copyright IBM Corp. 2020 All Rights Reserved.             *",
+    "*  US Government Users Restricted Rights - Use, duplication or   *",
+    "*  disclosure restricted by GSA ADP Schedule Contract with       *",
+    "*  IBM Corp.                                                     *",
+    "*  @{[**]copyright.years=2020}                                   *",
+    "*----------------------------------------------------------------*"
+  ],
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/_shared/cics-ts-resource-overrides--resourceoverrides-1.0.0.json",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "CICS resource overrides JSON Schema.",
+  "description": "Schema that describes the structure of a CICS resource overrides document.",
+  "definitions": {
+    "selectorAttrStrPattern": {
+      "type": "string",
+      "pattern": "^[^\\*]*\\*?[^\\*]*$"
+    },
+    "selectorAttributes": {
+      "type": "array",
+      "items": {
+        "properties": {
+          "not": {
+            "description": "Use 'not' to exclude resources that contain the specified value. The value can include a single '*' wildcard character at the start, in the middle or at the end.",
+            "oneOf": [
+              {
+                "$ref": "#/definitions/selectorAttrStrPattern"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "is": {
+            "description": "Use 'is' to include resources that contain the specified value. The value can include a single '*' wildcard character at the start, in the middle or at the end.",
+            "oneOf": [
+              {
+                "$ref": "#/definitions/selectorAttrStrPattern"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "literal": {
+            "description": "Use 'literal' to include resources that contain the specified value. The '*' character is treated as an asterisk character.",
+            "type": "string"
+          },
+          "literalNot": {
+            "description": "Use 'literalNot' to exclude resources that contain the specified value. The '*' character is treated as an asterisk character",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "selector": {
+      "description": "Use 'selector' to specify a resource that can have its attributes overridden.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The resource name can be selected by specifying a string or using the 'is', 'not', 'literal' and 'literalNot' list items.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/selectorAttrStrPattern"
+            },
+            {
+              "$ref": "#/definitions/selectorAttributes"
+            }
+          ]
+        },
+        "group": {
+          "description": "The resource group can be selected by specifying a string or using the 'is', 'not', 'literal' and 'literalNot' list items.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/selectorAttrStrPattern"
+            },
+            {
+              "$ref": "#/definitions/selectorAttributes"
+            }
+          ]
+        }
+      },
+      "additionalProperties": {
+        "description": "Resource attributes can be selected by specifying a string or using the 'is', 'not', 'literal' and 'literalNot' list items.",
+        "oneOf": [
+          {
+            "type": "number"
+          },
+          {
+            "$ref": "#/definitions/selectorAttrStrPattern"
+          },
+          {
+            "$ref": "#/definitions/selectorAttributes"
+          }
+        ]
+      }
+    },
+    "overrides": {
+      "description": "Use 'overrides' to specify how the attributes of a resource are overridden.",
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z][a-zA-Z0-9]{0,11}$": {
+          "description": "Attribute to override. This can be overridden by specifying a string or number or using 'prefix', 'set', 'suffix, or 'find' and 'replace' list items.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "prefix": {
+                        "description": "Prefix value.",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "suffix": {
+                        "description": "Suffix value.",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "set": {
+                        "description": "Set value.",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "find": {
+                        "description": "Find a specific value in the resource.",
+                        "type": "string"
+                      },
+                      "replace": {
+                        "description": "Replace all instances of the 'find' value with the 'replace' value.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "find",
+                      "replace"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "selector-overrides": {
+      "description": "CICS resource type. Specify 'selector' list items to select resources of this type.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "$ref": "#/definitions/selector"
+          },
+          "overrides": {
+            "$ref": "#/definitions/overrides"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "description": "Specify the resource overrides schema version.",
+      "type": "string",
+      "enum": [
+        "resourceOverrides/1.0"
+      ]
+    },
+    "resourceOverrides": {
+      "description": "Resources to be overridden are list items after the resourceOverrides mapping.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "atomservice": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "bundle": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "connection": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "db2conn": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "db2entry": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "db2tran": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "doctemplate": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "dumpcode": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "enqmodel": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "file": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "ipconn": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "journalmodel": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "jvmserver": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "library": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "lsrpool": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "mapset": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "mqconn": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "mqmonitor": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "partitionset": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "partner": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "pipeline": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "processtype": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "profile": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "program": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "sessions": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "tcpipservice": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "tdqueue": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "terminal": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "tranclass": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "transaction": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "tsmodel": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "typeterm": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "urimap": {
+            "$ref": "#/definitions/selector-overrides"
+          },
+          "webservice": {
+            "$ref": "#/definitions/selector-overrides"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
