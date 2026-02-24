@@ -3,8 +3,8 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/ory-hydra-configuration/_shared/latest--config.json",
   "title": "ORY Hydra Configuration",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/ory/hydra/v1.10.2/spec/config.json",
-    "sourceSha256": "fafeaa68ae280721fe0b47323e872b7d76857473709fce5ba51b6679ac042d65"
+    "source": "https://raw.githubusercontent.com/ory/hydra/v1.10.7/spec/config.json",
+    "sourceSha256": "985f2ebca9f8c50a3c8fd0f9c82c39c1e13743b7a4260e2e820c6722ef2527e5"
   },
   "type": "object",
   "properties": {
@@ -560,6 +560,20 @@
             true
           ]
         },
+        "allowed_top_level_claims": {
+          "type": "array",
+          "description": "A list of custom claims which are allowed to be added top level to the Access Token. They cannot override reserved claims.",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            [
+              "username",
+              "email",
+              "user_uuid"
+            ]
+          ]
+        },
         "hashers": {
           "type": "object",
           "additionalProperties": false,
@@ -613,6 +627,14 @@
               ]
             }
           }
+        },
+        "refresh_token_hook": {
+          "type": "string",
+          "description": "Sets the refresh token hook endpoint. If set it will be called during token refresh to receive updated token claims.",
+          "format": "uri",
+          "examples": [
+            "https://my-example.app/token-refresh-hook"
+          ]
         }
       }
     },
@@ -671,12 +693,13 @@
       "properties": {
         "provider": {
           "type": "string",
-          "description": "Set this to the tracing backend you wish to use. Supports Jaeger, Zipkin and DataDog. If omitted or empty, tracing will be disabled. Use environment variables to configure DataDog (see https://docs.datadoghq.com/tracing/setup/go/#configuration).",
+          "description": "Set this to the tracing backend you wish to use. Supports Jaeger, Zipkin DataDog, Elastic APM and Instana. If omitted or empty, tracing will be disabled. Use environment variables to configure DataDog (see https://docs.datadoghq.com/tracing/setup/go/#configuration).",
           "enum": [
             "jaeger",
             "zipkin",
             "datadog",
-            "elastic-apm"
+            "elastic-apm",
+            "instana"
           ],
           "examples": [
             "jaeger"
@@ -1100,7 +1123,7 @@
           ]
         },
         "cert": {
-          "description": "Configures the private key (pem encoded).",
+          "description": "Configures the public certificate (pem encoded).",
           "allOf": [
             {
               "$ref": "#/$defs/pem_file"
