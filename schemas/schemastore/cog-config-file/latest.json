@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/cog-config-file/versions/1.0.json",
+  "title": "Schema for cog.yaml",
+  "description": "Defines how to build a Docker image and how to run predictions on your model inside that image.",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/replicate/cog/main/pkg/config/data/config_schema_v1.0.json",
+    "sourceSha256": "2294c8ae56c773008fd49acd1c0e41bd20c2eeda4b3ef99b6d4ade2c506a586f"
+  },
+  "type": "object",
+  "properties": {
+    "build": {
+      "additionalProperties": false,
+      "type": "object",
+      "description": "This stanza describes how to build the Docker image your model runs in.",
+      "properties": {
+        "cuda": {
+          "description": "Cog automatically picks the correct version of CUDA to install, but this lets you override it for whatever reason.",
+          "type": "string"
+        },
+        "cudnn": {
+          "description": "Cog automatically picks the correct version of cuDNN to install, but this lets you override it for whatever reason.",
+          "type": "string"
+        },
+        "gpu": {
+          "description": "Enable GPUs for this model. When enabled, the [nvidia-docker](https://github.com/NVIDIA/nvidia-docker) base image will be used, and Cog will automatically figure out what versions of CUDA and cuDNN to use based on the version of Python, PyTorch, and Tensorflow that you are using.",
+          "type": "boolean"
+        },
+        "python_version": {
+          "description": "The minor (`3.8`) or patch (`3.8.1`) version of Python to use.",
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "python_packages": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "A list of Python packages to install, in the format `package==version`.",
+          "additionalItems": true
+        },
+        "pre_install": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "A list of setup commands to run in the environment before your Python packages are installed.",
+          "additionalItems": true
+        },
+        "python_requirements": {
+          "description": "A pip requirements file specifying the Python packages to install.",
+          "type": "string"
+        },
+        "system_packages": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "A list of Ubuntu APT packages to install.",
+          "additionalItems": true
+        },
+        "run": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "required": [
+                  "command"
+                ],
+                "type": "object",
+                "properties": {
+                  "command": {
+                    "type": "string"
+                  },
+                  "mounts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "secret"
+                          ]
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "type",
+                        "id",
+                        "target"
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "A list of setup commands to run in the environment after your system packages and Python packages have been installed. If you're familiar with Docker, it's like a `RUN` instruction in your `Dockerfile`.",
+          "additionalItems": true
+        }
+      },
+      "required": [
+        "python_version"
+      ]
+    },
+    "image": {
+      "description": "The name given to built Docker images. If you want to push to a registry, this should also include the registry name.",
+      "type": "string"
+    },
+    "predict": {
+      "description": "The pointer to the `Predictor` object in your code, which defines how predictions are run on your model.",
+      "type": "string"
+    },
+    "train": {
+      "description": "The pointer to the `Predictor` object in your code, which defines how predictions are run on your model.",
+      "type": "string"
+    },
+    "concurrency": {
+      "properties": {
+        "max": {
+          "description": "The maximum number of concurrent predictions.",
+          "type": "integer"
+        },
+        "default_target": {
+          "description": "The default target for number of concurrent predictions. This setting can be used by an autoscaler to determine when to scale a deployment of a model up or down.",
+          "type": "integer"
+        }
+      },
+      "type": "object",
+      "description": "The concurrency settings for the model.",
+      "required": [
+        "max"
+      ],
+      "additionalProperties": false
+    },
+    "tests": {
+      "items": {
+        "type": "object",
+        "additionalItems": true
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "A list of test cog commands to run.",
+      "additionalItems": false
+    },
+    "environment": {
+      "items": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*=.*$",
+        "type": "string"
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "A list of environment variables to make available during builds and at runtime, in the format `NAME=value`",
+      "additionalItems": true
+    },
+    "weights": {
+      "items": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "A unique identifier for this weight entry."
+          },
+          "source": {
+            "type": "string",
+            "description": "Path to a weight file or directory (relative to cog.yaml)."
+          },
+          "target": {
+            "type": "string",
+            "description": "Target path in the container (must be under /cache/). Defaults to /cache/<basename>."
+          }
+        }
+      },
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "A list of weight files or directories to include in the model."
+    }
+  },
+  "additionalProperties": false
+}

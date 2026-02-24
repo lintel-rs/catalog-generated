@@ -1,0 +1,557 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/conjure/latest.json",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/palantir/conjure/master/conjure.schema.json",
+    "sourceSha256": "00bac1e33f5de0ee7011ab6a38eda96e05b30ab3484c12e309be80fe1370a5a6"
+  },
+  "type": "object",
+  "properties": {
+    "types": {
+      "$ref": "#/$defs/TypesDefinition"
+    },
+    "services": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/ServiceDefinition"
+      }
+    }
+  },
+  "$defs": {
+    "TypesDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "conjure-imports": {
+          "type": "object",
+          "description": "A map between a namespace and a relative path to a Conjure definition file.",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[_a-zA-Z][_a-zA-Z0-9]*$": {
+              "type": "string"
+            }
+          }
+        },
+        "imports": {
+          "type": "object",
+          "description": "A map between a type alias and its external definition. Type aliases MUST be in PascalCase.",
+          "additionalProperties": {
+            "$ref": "#/$defs/ExternalTypeDefinition"
+          }
+        },
+        "$defs": {
+          "$ref": "#/$defs/NamedTypesDefinition",
+          "description": "The types specified in this definition."
+        }
+      }
+    },
+    "ExternalTypeDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base-type": {
+          "$ref": "#/$defs/ConjureType",
+          "description": "A base-type is provided as a hint to generators for how to handle this type when no external type reference is provided. Note that the serialization format of the base-type fallback should match the format of the imported type. If the imported type is a non-primitive JSON object, then a base-type of any should be used."
+        },
+        "external": {
+          "$ref": "#/$defs/ExternalImportDefinition",
+          "description": "The external types to reference."
+        }
+      }
+    },
+    "ExternalImportDefinition": {
+      "type": "object",
+      "description": "References to types that are not defined within Conjure.",
+      "additionalProperties": false,
+      "properties": {
+        "java": {
+          "description": "The fully qualified Java type.",
+          "type": "string"
+        }
+      }
+    },
+    "NamedTypesDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default-package": {
+          "type": "string"
+        },
+        "objects": {
+          "type": "object",
+          "additionalProperties": false,
+          "propertyNames": {
+            "$ref": "#/$defs/TypeName"
+          },
+          "patternProperties": {
+            "": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/AliasDefinition"
+                },
+                {
+                  "$ref": "#/$defs/ObjectTypeDefinition"
+                },
+                {
+                  "$ref": "#/$defs/UnionTypeDefinition"
+                },
+                {
+                  "$ref": "#/$defs/EnumTypeDefinition"
+                }
+              ]
+            }
+          }
+        },
+        "errors": {
+          "type": "object",
+          "additionalProperties": false,
+          "propertyNames": {
+            "$ref": "#/$defs/TypeName"
+          },
+          "patternProperties": {
+            "": {
+              "$ref": "#/$defs/ErrorDefinition"
+            }
+          }
+        }
+      }
+    },
+    "ConjureType": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TypeName"
+        },
+        {
+          "$ref": "#/$defs/ContainerType"
+        },
+        {
+          "$ref": "#/$defs/BuiltIn"
+        }
+      ]
+    },
+    "TypeName": {
+      "description": "Named types must be in PascalCase and be unique within a package.",
+      "type": "string",
+      "pattern": "^([a-zA-Z]+[.])?[A-Z][a-z0-9]+([A-Z][a-z0-9]+)*$"
+    },
+    "ContainerType": {
+      "description": "Container types like optional<T>, list<T>, set<T> and map<K, V> can be referenced using their lowercase names, where variables like T, K and V can be substituted for a Conjure named type, a built-in or more container types:",
+      "type": "string",
+      "pattern": "^(optional|list|set|map)<.*>$"
+    },
+    "BuiltIn": {
+      "enum": [
+        "any",
+        "bearertoken",
+        "binary",
+        "boolean",
+        "datetime",
+        "double",
+        "integer",
+        "rid",
+        "safelong",
+        "string",
+        "uuid"
+      ]
+    },
+    "AliasDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alias": {
+          "description": "The Conjure type to be aliased.",
+          "$ref": "#/$defs/ConjureType"
+        },
+        "safety": {
+          "$ref": "#/$defs/LogSafety"
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        },
+        "package": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "alias"
+      ]
+    },
+    "ObjectTypeDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/FieldDefinition"
+              },
+              {
+                "$ref": "#/$defs/ConjureType"
+              }
+            ]
+          }
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        },
+        "package": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "FieldDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/ConjureType"
+        },
+        "safety": {
+          "$ref": "#/$defs/LogSafety"
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        },
+        "package": {
+          "type": "string"
+        },
+        "deprecated": {
+          "$ref": "#/$defs/DocString"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "UnionTypeDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "union": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/FieldDefinition"
+              },
+              {
+                "$ref": "#/$defs/ConjureType"
+              }
+            ]
+          }
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        },
+        "package": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "union"
+      ]
+    },
+    "EnumTypeDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "values": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/UpperCase"
+              },
+              {
+                "$ref": "#/$defs/EnumValueDefinition"
+              }
+            ]
+          }
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        },
+        "package": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "values"
+      ]
+    },
+    "EnumValueDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "#/$defs/UpperCase"
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        },
+        "package": {
+          "type": "string"
+        },
+        "deprecated": {
+          "$ref": "#/$defs/DocString"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "ErrorDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "$ref": "#/$defs/PascalCase"
+        },
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "package": {
+          "type": "string"
+        },
+        "safe-args": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/FieldDefinition"
+              },
+              {
+                "$ref": "#/$defs/ConjureType"
+              }
+            ]
+          }
+        },
+        "unsafe-args": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/FieldDefinition"
+              },
+              {
+                "$ref": "#/$defs/ConjureType"
+              }
+            ]
+          }
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        }
+      },
+      "required": [
+        "namespace",
+        "code"
+      ]
+    },
+    "ErrorCode": {
+      "enum": [
+        "PERMISSION_DENIED",
+        "INVALID_ARGUMENT",
+        "NOT_FOUND",
+        "CONFLICT",
+        "REQUEST_ENTITY_TOO_LARGE",
+        "FAILED_PRECONDITION",
+        "INTERNAL",
+        "TIMEOUT",
+        "CUSTOM_CLIENT",
+        "CUSTOM_SERVER"
+      ]
+    },
+    "ServiceDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "package": {
+          "type": "string"
+        },
+        "base-path": {
+          "$ref": "#/$defs/PathString"
+        },
+        "default-auth": {
+          "$ref": "#/$defs/AuthDefinition"
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        },
+        "endpoints": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/EndpointDefinition"
+          }
+        }
+      },
+      "required": [
+        "package",
+        "endpoints"
+      ]
+    },
+    "PathString": {
+      "type": "string"
+    },
+    "AuthDefinition": {
+      "oneOf": [
+        {
+          "enum": [
+            "none",
+            "header"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^cookie:[a-zA-Z0-9]+$"
+        }
+      ]
+    },
+    "EndpointDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "http": {
+          "type": "string",
+          "pattern": "^(GET|DELETE|POST|PUT) .*$"
+        },
+        "auth": {
+          "$ref": "#/$defs/AuthDefinition"
+        },
+        "returns": {
+          "$ref": "#/$defs/ConjureType"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TypeName"
+              },
+              {
+                "$ref": "#/$defs/EndpointError"
+              }
+            ]
+          }
+        },
+        "args": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ArgumentDefinition"
+              },
+              {
+                "$ref": "#/$defs/ConjureType"
+              }
+            ]
+          }
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        },
+        "deprecated": {
+          "$ref": "#/$defs/DocString"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "http"
+      ]
+    },
+    "ArgumentDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/ConjureType"
+        },
+        "param-id": {
+          "type": "string"
+        },
+        "param-type": {
+          "$ref": "#/$defs/ArgumentDefinitionParamType"
+        },
+        "safety": {
+          "$ref": "#/$defs/LogSafety"
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "markers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "ArgumentDefinitionParamType": {
+      "enum": [
+        "auto",
+        "path",
+        "body",
+        "header",
+        "query"
+      ]
+    },
+    "EndpointError": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "error": {
+          "$ref": "#/$defs/TypeName"
+        },
+        "docs": {
+          "$ref": "#/$defs/DocString"
+        }
+      },
+      "required": [
+        "error"
+      ]
+    },
+    "DocString": {
+      "type": "string"
+    },
+    "LogSafety": {
+      "enum": [
+        "safe",
+        "unsafe",
+        "do-not-log"
+      ]
+    },
+    "UpperCase": {
+      "pattern": "^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"
+    },
+    "PascalCase": {
+      "type": "string",
+      "pattern": "^[A-Z][a-z0-9]+([A-Z][a-z0-9]+)*$"
+    }
+  },
+  "additionalProperties": false
+}

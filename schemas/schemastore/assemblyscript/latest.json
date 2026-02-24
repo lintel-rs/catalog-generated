@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/assemblyscript/latest.json",
+  "title": "JSON schema for asconfig.json",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/asconfig-schema.json",
+    "sourceSha256": "75d3a29f943b849292a49ac260c44515338245b9f1ab9684c1555795468441f4",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "extends": {
+      "$ref": "#/$defs/nonEmptyString"
+    },
+    "entries": {
+      "$ref": "#/$defs/arrayOfNonEmptyStrings"
+    },
+    "options": {
+      "$ref": "#/$defs/compilerOptions"
+    },
+    "targets": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/compilerOptions"
+      }
+    }
+  },
+  "id": "https://json.schemastore.org/asconfig-schema.json",
+  "additionalProperties": false,
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "arrayOfNonEmptyStrings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      }
+    },
+    "nonEmptyStringOrArrayOfNonEmptyStrings": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        {
+          "$ref": "#/$defs/arrayOfNonEmptyStrings"
+        }
+      ]
+    },
+    "webAssemblyFeatures": {
+      "enum": [
+        "sign-extension",
+        "mutable-globals",
+        "nontrapping-f2i",
+        "bulk-memory",
+        "simd",
+        "threads",
+        "exception-handling",
+        "tail-calls",
+        "reference-types",
+        "multi-value",
+        "gc",
+        "memory64"
+      ]
+    },
+    "compilerOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "optimize": {
+          "description": "Optimizes the module",
+          "type": "boolean"
+        },
+        "optimizeLevel": {
+          "description": "How much to focus on optimizing code",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "shrinkLevel": {
+          "description": "How much to focus on shrinking code size",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "converge": {
+          "description": "Re-optimizes until no further improvements can be made",
+          "type": "boolean"
+        },
+        "baseDir": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "Specifies the base directory of input and output files"
+        },
+        "outFile": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "Specifies the WebAssembly output file (.wasm)"
+        },
+        "textFile": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "Specifies the WebAssembly text output file (.wat)"
+        },
+        "bindings": {
+          "description": "Specified the bindings to generate",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/compilerOptions/properties/bindings/definitions/bindings"
+            },
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/compilerOptions/properties/bindings/definitions/bindings"
+              }
+            }
+          ],
+          "$defs": {
+            "bindings": {
+              "enum": [
+                "esm",
+                "raw"
+              ]
+            }
+          }
+        },
+        "sourceMap": {
+          "description": "Enables source map generation. Optionally takes the URL",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          ]
+        },
+        "runtime": {
+          "description": "Specifies the runtime variant to include in the program",
+          "anyOf": [
+            {
+              "enum": [
+                "incremental",
+                "minimal",
+                "stub"
+              ]
+            },
+            {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          ]
+        },
+        "noUnsafe": {
+          "description": "Disallows the use of unsafe features in user code",
+          "type": "boolean"
+        },
+        "debug": {
+          "description": "Enables debug information in emitted binaries",
+          "type": "boolean"
+        },
+        "noAssert": {
+          "description": "Replaces assertions with just their value without trapping",
+          "type": "boolean"
+        },
+        "noEmit": {
+          "description": "Performs compilation as usual but does not emit code",
+          "type": "boolean"
+        },
+        "importMemory": {
+          "description": "Imports the memory provided as 'env.memory'",
+          "type": "boolean"
+        },
+        "noExportMemory": {
+          "description": "Does not export the memory as 'memory'",
+          "type": "boolean"
+        },
+        "initialMemory": {
+          "description": "Sets the initial memory size in pages",
+          "type": "number"
+        },
+        "maximumMemory": {
+          "description": "Sets the maximum memory size in pages",
+          "type": "number"
+        },
+        "sharedMemory": {
+          "description": "Declare memory as shared. Requires maximumMemory",
+          "type": "number"
+        },
+        "zeroFilledMemory": {
+          "description": "Assume that imported memory is zero filled. Requires importMemory",
+          "type": "boolean"
+        },
+        "memoryBase": {
+          "description": "Sets the start offset of compiler-generated static memory",
+          "type": "number"
+        },
+        "importTable": {
+          "description": "Imports the function table provided as 'env.table'",
+          "type": "boolean"
+        },
+        "exportTable": {
+          "description": "Exports the function table as 'table'",
+          "type": "boolean"
+        },
+        "exportStart": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "Exports the start function instead of calling it implicitly"
+        },
+        "lib": {
+          "$ref": "#/$defs/nonEmptyStringOrArrayOfNonEmptyStrings",
+          "description": "Adds one or multiple paths to custom library components"
+        },
+        "path": {
+          "$ref": "#/$defs/nonEmptyStringOrArrayOfNonEmptyStrings",
+          "description": "Adds one or multiple paths to package resolution"
+        },
+        "use": {
+          "$ref": "#/$defs/nonEmptyStringOrArrayOfNonEmptyStrings",
+          "description": "Aliases a global object under another name"
+        },
+        "trapMode": {
+          "description": "Sets the trap mode to use",
+          "enum": [
+            "allow",
+            "clamp",
+            "js"
+          ]
+        },
+        "runPasses": {
+          "$ref": "#/$defs/nonEmptyStringOrArrayOfNonEmptyStrings",
+          "description": "Specifies additional Binaryen passes to run"
+        },
+        "noValidate": {
+          "description": "Skips validating the module using Binaryen",
+          "type": "boolean"
+        },
+        "enable": {
+          "description": "Enables WebAssembly features that are disabled by default",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/webAssemblyFeatures"
+            },
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/webAssemblyFeatures"
+              }
+            }
+          ]
+        },
+        "disable": {
+          "description": "Disables WebAssembly features that are enabled by default",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/webAssemblyFeatures"
+            },
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/webAssemblyFeatures"
+              }
+            }
+          ]
+        },
+        "transform": {
+          "$ref": "#/$defs/nonEmptyStringOrArrayOfNonEmptyStrings",
+          "description": "Specifies the path to a custom transform to 'require'"
+        },
+        "pedantic": {
+          "description": "Make yourself sad for no good reason",
+          "type": "boolean"
+        },
+        "stats": {
+          "description": "Prints measuring information on I/O and compile times",
+          "type": "boolean"
+        },
+        "noColors": {
+          "description": "Disables terminal colors",
+          "type": "boolean"
+        },
+        "exportRuntime": {
+          "description": "Exports the runtime helpers (__new, __collect etc.)",
+          "type": "boolean"
+        },
+        "stackSize": {
+          "description": "Exports the runtime helpers (__new, __collect etc.)",
+          "type": "number",
+          "minimum": 0
+        },
+        "lowMemoryLimit": {
+          "description": "Enforces very low (<64k) memory constraints",
+          "type": "number",
+          "minimum": 0
+        },
+        "tableBase": {
+          "description": "Sets the start offset of emitted table elements",
+          "type": "number",
+          "minimum": 0
+        },
+        "wasm": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "Uses the specified Wasm binary of the compiler"
+        }
+      }
+    }
+  }
+}

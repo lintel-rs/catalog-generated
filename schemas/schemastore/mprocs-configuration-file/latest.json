@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/mprocs-configuration-file/latest.json",
+  "title": "mprocs Configuration Schema",
+  "description": "Schema for mprocs (https://github.com/pvolok/mprocs) configuration files (YAML/JSON).",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/mprocs-0.6.4.json",
+    "sourceSha256": "57c48003c9b82271ae73a79e54b745161daab59220859ac074dc0fedb529f1a2"
+  },
+  "type": "object",
+  "properties": {
+    "procs": {
+      "type": "object",
+      "description": "Processes to run. Only allowed in local config.",
+      "patternProperties": {
+        "^[a-zA-Z0-9_-]+$": {
+          "type": "object",
+          "title": "Process Configuration",
+          "properties": {
+            "shell": {
+              "description": "Shell command to run (exactly one of shell or cmd must be provided).",
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/selectOperator"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "cmd": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Array of command and args to run (exactly one of shell or cmd must be provided)."
+            },
+            "cwd": {
+              "type": "string",
+              "description": "Set working directory for the process. Prefix <CONFIG_DIR> will be replaced with the path of the directory where the config is located."
+            },
+            "env": {
+              "type": "object",
+              "description": "Set env variables. Object keys are variable names. Assign variable to null, to clear variables inherited from parent process.",
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/$defs/selectOperator"
+                  }
+                ]
+              }
+            },
+            "add_path": {
+              "description": "Add entries to the PATH environment variable.",
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "$ref": "#/$defs/selectOperator"
+                }
+              ]
+            },
+            "autostart": {
+              "type": "boolean",
+              "description": "Start process when mprocs starts. Default: true."
+            },
+            "autorestart": {
+              "type": "boolean",
+              "description": "Restart process when it exits. Default: false. Note: If process exits within 1 second of starting, it will not be restarted."
+            },
+            "stop": {
+              "description": "A way to stop a process (using `x` key or when quitting mprocs).",
+              "oneOf": [
+                {
+                  "enum": [
+                    "SIGINT",
+                    "SIGTERM",
+                    "SIGKILL",
+                    "hard-kill"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "send-keys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "send-keys"
+                  ]
+                }
+              ]
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "shell"
+              ]
+            },
+            {
+              "required": [
+                "cmd"
+              ]
+            }
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "hide_keymap_window": {
+      "type": "boolean",
+      "description": "Hide the pane at the bottom of the screen showing key bindings."
+    },
+    "mouse_scroll_speed": {
+      "type": "integer",
+      "description": "Number of lines to scroll per one mouse scroll."
+    },
+    "proc_list_width": {
+      "type": "integer",
+      "description": "Process list window width."
+    },
+    "keymap_procs": {
+      "$ref": "#/$defs/keymap",
+      "description": "Key bindings for process list."
+    },
+    "keymap_term": {
+      "$ref": "#/$defs/keymap",
+      "description": "Key bindings for terminal window."
+    },
+    "keymap_copy": {
+      "$ref": "#/$defs/keymap",
+      "description": "Key bindings for copy mode."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "c": {
+      "type": "string",
+      "description": "Command to run when keybind is triggered."
+    },
+    "keymap": {
+      "type": "object",
+      "description": "Keymap configuration",
+      "properties": {
+        "reset": {
+          "type": "boolean",
+          "description": "Clear key bindings from previous levels."
+        }
+      },
+      "patternProperties": {
+        "^<[^>]+>$": {
+          "description": "Keybind to target",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "c": {
+                  "$ref": "#/$defs/c"
+                },
+                "cmds": {
+                  "type": "array",
+                  "description": "Commands to run when keybind is triggered.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "c": {
+                        "$ref": "#/$defs/c"
+                      }
+                    },
+                    "required": [
+                      "c"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "c"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "selectOperator": {
+      "type": "object",
+      "description": "Operator for OS-specific configurations",
+      "properties": {
+        "$else": {
+          "description": "Default value",
+          "type": "string"
+        },
+        "$select": {
+          "description": "This is the parameter select is targeting.",
+          "const": "os"
+        }
+      },
+      "patternProperties": {
+        "^(windows|macos|linux|android|freebsd|openbsd|netbsd|dragonfly|solaris|illumos|ios)$": {
+          "type": "string",
+          "description": "Value specific to OS"
+        }
+      },
+      "required": [
+        "$select"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

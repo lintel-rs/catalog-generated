@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/landing-zone-accelerator-on-aws-replacements-config/latest.json",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/awslabs/landing-zone-accelerator-on-aws/main/source/packages/@aws-accelerator/config/lib/schemas/replacements-config.json",
+    "sourceSha256": "d6f0b2a44268155e1d37f054420a82b3792d0315a53e7b03a8793f3ec752e500"
+  },
+  "$ref": "#/$defs/IReplacementsConfig",
+  "$defs": {
+    "IParameterReplacement": {
+      "additionalProperties": false,
+      "description": "Fixed replacement value to apply throughout config files. Loaded from SSM\nparameters in the management account in the HOME_REGION.",
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/NonEmptyString",
+          "description": "Key of the replacement placeholder"
+        },
+        "path": {
+          "$ref": "#/$defs/NonEmptyString",
+          "description": "Path of the SSM Parameter containing the value to replace"
+        }
+      },
+      "required": [
+        "key",
+        "path"
+      ],
+      "type": "object"
+    },
+    "IParameterReplacementV2": {
+      "additionalProperties": false,
+      "description": "Fixed replacement value to apply throughout config files. Loaded from SSM\nparameters in the management account in the HOME_REGION.",
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/NonEmptyString",
+          "description": "Key of the replacement placeholder"
+        },
+        "path": {
+          "$ref": "#/$defs/NonEmptyString",
+          "description": "Path of the SSM Parameter containing the value to replace"
+        },
+        "type": {
+          "$ref": "#/$defs/ParameterReplacementType",
+          "description": "Type of the global parameters"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NonEmptyString"
+            },
+            {
+              "items": {
+                "$ref": "#/$defs/NonEmptyString"
+              },
+              "type": "array"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "description": "Value of the parameter if type is string or array"
+        }
+      },
+      "required": [
+        "key",
+        "type"
+      ],
+      "type": "object"
+    },
+    "IReplacementsConfig": {
+      "additionalProperties": false,
+      "description": "Accelerator replacements configuration",
+      "properties": {
+        "globalReplacements": {
+          "description": "The set of placeholder parameters (key/path pairs) that will be merged with yaml configuration files.",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/IParameterReplacement"
+              },
+              {
+                "$ref": "#/$defs/IParameterReplacementV2"
+              }
+            ]
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "NonEmptyString": {
+      "description": "A string that has at least 1 character",
+      "minLength": 1,
+      "type": "string"
+    },
+    "ParameterReplacementType": {
+      "enum": [
+        "SSM",
+        "String",
+        "StringList",
+        "Number"
+      ],
+      "type": "string"
+    }
+  }
+}

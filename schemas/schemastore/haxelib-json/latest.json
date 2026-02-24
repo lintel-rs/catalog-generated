@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/haxelib-json/latest.json",
+  "title": "Haxelib project configuration",
+  "description": "A haxelib project",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/HaxeFoundation/haxelib/master/schema.json",
+    "sourceSha256": "d51b8c59237a6ea95565413232d73116a76050f58f42e9390dfdc3bf83046652"
+  },
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "#/$defs/projectName"
+    },
+    "url": {
+      "description": "Project's website",
+      "type": "string",
+      "format": "uri"
+    },
+    "description": {
+      "description": "Short description of the project",
+      "type": "string"
+    },
+    "license": {
+      "description": "Open source license under which the project is licensed",
+      "enum": [
+        "GPL",
+        "LGPL",
+        "BSD",
+        "Public",
+        "MIT",
+        "Apache"
+      ]
+    },
+    "version": {
+      "$ref": "#/$defs/semver"
+    },
+    "classPath": {
+      "description": "Folder in the package which contains the source files for this project",
+      "type": "string"
+    },
+    "main": {
+      "description": "A class to run on `haxelib run libraryname` command.\nRelative to library root. E.g. to run `tools/Main.hx` the value should be `tools.Main`.\nDefault value since Haxe 4: Run",
+      "type": "string"
+    },
+    "contributors": {
+      "description": "List of project contributors that are allowed to upload to haxelib",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/userName"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "tags": {
+      "description": "List of tags for easier finding the project on haxelib",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/haxelibTag"
+      },
+      "uniqueItems": true
+    },
+    "releasenote": {
+      "description": "Short description of changes made in this version",
+      "type": "string"
+    },
+    "documentation": {
+      "type": "object",
+      "description": "Project's documentation resources",
+      "properties": {
+        "defines": {
+          "type": "string",
+          "description": "Relative path to json file describing this project's custom defines"
+        },
+        "metadata": {
+          "type": "string",
+          "description": "Relative path to json file describing this project's custom metadata"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dependentSchemas": {
+      "type": "object",
+      "description": "Project's dependencies",
+      "patternProperties": {
+        "^[A-Za-z0-9_.-]{3,}$": {
+          "$ref": "#/$defs/dependencyVersion"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "userName": {
+      "description": "The name of a user",
+      "type": "string",
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9_.-]{3,}$"
+    },
+    "projectName": {
+      "description": "The name of a haxelib project",
+      "type": "string",
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9_.-]{3,}$",
+      "not": {
+        "anyOf": [
+          {
+            "enum": [
+              "haxe",
+              "all"
+            ]
+          },
+          {
+            "pattern": "\\.(zip|hxml)$"
+          }
+        ]
+      }
+    },
+    "haxelibTag": {
+      "description": "A keyword or term associated with a haxelib project",
+      "type": "string",
+      "minLength": 2,
+      "pattern": "^[A-Za-z0-9_.-]{2,}$"
+    },
+    "semver": {
+      "type": "string",
+      "description": "Project's version",
+      "pattern": "^(\\d|[1-9]\\d*)\\.(\\d|[1-9]\\d*)\\.(\\d|[1-9]\\d*)(-(alpha|beta|rc)(\\.(\\d|[1-9]\\d*))?)?$"
+    },
+    "dependencyVersion": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/semver"
+        },
+        {
+          "type": "string",
+          "maxLength": 0
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "license",
+    "releasenote",
+    "contributors",
+    "version"
+  ]
+}

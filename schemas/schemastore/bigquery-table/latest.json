@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/bigquery-table/latest.json",
+  "description": "BigQuery lets you specify a table's schema when you load data into a table or when you create an empty table. A table schema is a JSON file.",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/bigquery-table.json",
+    "sourceSha256": "dae1cc0041708f292362ae5d75e4c639e9dc7c06b5bdfc357449286597facd86"
+  },
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/field"
+  },
+  "$defs": {
+    "field_name": {
+      "type": "string"
+    },
+    "field_type": {
+      "type": "string",
+      "enum": [
+        "INT64",
+        "INTEGER",
+        "FLOAT64",
+        "FLOAT",
+        "NUMERIC",
+        "BIGNUMERIC",
+        "BOOL",
+        "BOOLEAN",
+        "STRING",
+        "BYTES",
+        "DATE",
+        "DATETIME",
+        "TIME",
+        "TIMESTAMP",
+        "STRUCT",
+        "RECORD",
+        "JSON",
+        "GEOGRAPHY"
+      ]
+    },
+    "field_mode": {
+      "type": "string",
+      "enum": [
+        "NULLABLE",
+        "REQUIRED",
+        "REPEATED"
+      ]
+    },
+    "field_description": {
+      "type": "string"
+    },
+    "field": {
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/field_name"
+        },
+        "type": {
+          "$ref": "#/$defs/field_type"
+        },
+        "mode": {
+          "$ref": "#/$defs/field_mode"
+        },
+        "description": {
+          "$ref": "#/$defs/field_description"
+        }
+      },
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "STRUCT",
+              "RECORD"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "fields",
+          "type",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/field_name"
+          },
+          "type": {
+            "$ref": "#/$defs/field_type"
+          },
+          "mode": {
+            "$ref": "#/$defs/field_mode"
+          },
+          "description": {
+            "$ref": "#/$defs/field_description"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/field"
+            }
+          }
+        }
+      }
+    }
+  }
+}

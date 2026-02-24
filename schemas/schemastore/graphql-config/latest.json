@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/graphql-config/latest.json",
+  "description": "Structure of GraphQL Config",
+  "x-lintel": {
+    "source": "https://unpkg.com/graphql-config/config-schema.json",
+    "sourceSha256": "192a641f188ebfe49d4f3b8cc83f2e04619228ed736981025718ab3ab04739d2"
+  },
+  "$defs": {
+    "DocumentPointer": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "DocumentPointer"
+    },
+    "IExtensions": {
+      "additionalProperties": {},
+      "description": "Configuration of each used extension",
+      "title": "IExtensions",
+      "type": "object"
+    },
+    "IGraphQLProject": {
+      "description": "GraphQL Project",
+      "properties": {
+        "documents": {
+          "$ref": "#/$defs/DocumentPointer",
+          "title": "documents"
+        },
+        "exclude": {
+          "$ref": "#/$defs/WithList%3Cstring%3E",
+          "title": "exclude"
+        },
+        "extensions": {
+          "$ref": "#/$defs/IExtensions",
+          "title": "extensions"
+        },
+        "include": {
+          "$ref": "#/$defs/WithList%3Cstring%3E",
+          "title": "include"
+        },
+        "schema": {
+          "$ref": "#/$defs/SchemaPointer",
+          "title": "schema"
+        }
+      },
+      "required": [
+        "schema"
+      ],
+      "title": "IGraphQLProject",
+      "type": "object"
+    },
+    "IGraphQLProjectLegacy": {
+      "description": "Legacy structure of GraphQL Config v2",
+      "properties": {
+        "excludes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "excludes",
+          "type": "array"
+        },
+        "extensions": {
+          "$ref": "#/$defs/IExtensions",
+          "title": "extensions"
+        },
+        "includes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "includes",
+          "type": "array"
+        },
+        "schemaPath": {
+          "title": "schemaPath",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schemaPath"
+      ],
+      "title": "IGraphQLProjectLegacy",
+      "type": "object"
+    },
+    "IGraphQLProjects": {
+      "description": "Multiple named projects",
+      "properties": {
+        "projects": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/IGraphQLProject"
+              },
+              {
+                "$ref": "#/$defs/IGraphQLProjectLegacy"
+              }
+            ]
+          },
+          "title": "projects",
+          "type": "object"
+        }
+      },
+      "required": [
+        "projects"
+      ],
+      "title": "IGraphQLProjects",
+      "type": "object"
+    },
+    "SchemaPointer": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "properties": {
+              "headers": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "headers",
+                "type": "object"
+              }
+            },
+            "required": [
+              "headers"
+            ],
+            "type": "object"
+          },
+          "type": "object"
+        },
+        {
+          "items": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "properties": {
+                    "headers": {
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "title": "headers",
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "headers"
+                  ],
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "SchemaPointer"
+    },
+    "WithList<string>": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "WithList<string>"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/$defs/IGraphQLProjects"
+    },
+    {
+      "$ref": "#/$defs/IGraphQLProject"
+    },
+    {
+      "$ref": "#/$defs/IGraphQLProjectLegacy"
+    }
+  ]
+}

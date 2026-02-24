@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/elm/latest.json",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/elm.json",
+    "sourceSha256": "a74d7557e12e7480fd4dbdf7b878bdfd9dfd372a168d89467954c2ed9c126611"
+  },
+  "anyOf": [
+    {
+      "$ref": "#/$defs/Application"
+    },
+    {
+      "$ref": "#/$defs/Package"
+    }
+  ],
+  "$defs": {
+    "Package": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "package"
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[^/]+/[^/]+$"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "enum": [
+                "AGPL-3.0-only",
+                "Apache-2.0",
+                "BSD-2-Clause",
+                "BSD-3-Clause",
+                "BSL-1.0",
+                "CC0-1.0",
+                "CDDL-1.0",
+                "CDDL-1.1",
+                "EPL-1.0",
+                "EPL-2.0",
+                "GPL-2.0-only",
+                "GPL-3.0-only",
+                "ISC",
+                "LGPL-2.0-only",
+                "LGPL-2.1-only",
+                "LGPL-2.1-or-later",
+                "LGPL-3.0-only",
+                "LGPL-3.0-or-later",
+                "MIT",
+                "MPL-2.0",
+                "MS-PL",
+                "UNLICENSED"
+              ]
+            }
+          ]
+        },
+        "version": {
+          "type": "string"
+        },
+        "exposed-modules": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "patternProperties": {
+                ".*": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": []
+            }
+          ]
+        },
+        "elm-version": {
+          "$ref": "#/$defs/Range"
+        },
+        "test-dependencies": {
+          "$ref": "#/$defs/PackageDependencies"
+        },
+        "dependentSchemas": {
+          "$ref": "#/$defs/PackageDependencies"
+        }
+      },
+      "required": [
+        "dependencies",
+        "elm-version",
+        "exposed-modules",
+        "license",
+        "name",
+        "summary",
+        "test-dependencies",
+        "type",
+        "version"
+      ]
+    },
+    "Application": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "application"
+        },
+        "source-directories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "elm-version": {
+          "$ref": "#/$defs/Version"
+        },
+        "test-dependencies": {
+          "$ref": "#/$defs/ApplicationDependenciesGroup"
+        },
+        "dependentSchemas": {
+          "$ref": "#/$defs/ApplicationDependenciesGroup"
+        }
+      },
+      "required": [
+        "dependencies",
+        "elm-version",
+        "source-directories",
+        "test-dependencies",
+        "type"
+      ]
+    },
+    "ApplicationDependenciesGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "direct": {
+          "$ref": "#/$defs/ApplicationDependencies"
+        },
+        "indirect": {
+          "$ref": "#/$defs/ApplicationDependencies"
+        }
+      },
+      "required": [
+        "direct",
+        "indirect"
+      ]
+    },
+    "ApplicationDependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[^/]+/[^/]+$": {
+          "$ref": "#/$defs/Version"
+        }
+      },
+      "required": []
+    },
+    "PackageDependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[^/]+/[^/]+$": {
+          "$ref": "#/$defs/Range"
+        }
+      },
+      "required": []
+    },
+    "Range": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+ <= v < [0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "Version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}

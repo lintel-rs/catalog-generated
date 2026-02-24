@@ -1,0 +1,565 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-ssmincidents-responseplan.json",
+  "title": "AWSSSMIncidentsResponsePlanProperties",
+  "description": "Resource type definition for AWS::SSMIncidents::ResponsePlan. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-ssm-incidents.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-ssmincidents-responseplan.json",
+    "sourceSha256": "9f6dd68437916d63013952ab2e2c2113662b6011fab975b58acee940c667cbb0",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]*$",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The name of the response plan."
+    },
+    "DisplayName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The display name of the response plan."
+    },
+    "ChatChannel": {
+      "$ref": "#/$defs/ChatChannel"
+    },
+    "Engagements": {
+      "description": "The list of engagements to use.",
+      "type": "array",
+      "default": [],
+      "maxItems": 5,
+      "uniqueItems": true,
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/SSMContact"
+      }
+    },
+    "Actions": {
+      "description": "The list of actions.",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "insertionOrder": true,
+      "maxItems": 1,
+      "items": {
+        "$ref": "#/$defs/Action"
+      }
+    },
+    "Integrations": {
+      "description": "The list of integrations.",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "insertionOrder": true,
+      "maxItems": 1,
+      "items": {
+        "$ref": "#/$defs/Integration"
+      }
+    },
+    "Tags": {
+      "description": "The tags to apply to the response plan.",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "insertionOrder": false,
+      "maxItems": 50,
+      "items": {
+        "$ref": "#/$defs/Tag"
+      }
+    },
+    "IncidentTemplate": {
+      "$ref": "#/$defs/IncidentTemplate"
+    }
+  },
+  "typeName": "AWS::SSMIncidents::ResponsePlan",
+  "taggable": true,
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-ssm-incidents.git",
+  "$defs": {
+    "SSMContact": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^arn:aws(-(cn|us-gov))?:ssm-contacts:(([a-z]+-)+[0-9])?:([0-9]{12})?:[^.]+$",
+          "maxLength": 1000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The ARN of the contact.",
+      "title": "AWSSSMIncidentsResponsePlanSSMContactDefinition"
+    },
+    "SnsArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^arn:aws(-(cn|us-gov))?:sns:(([a-z]+-)+[0-9])?:([0-9]{12})?:[^.]+$",
+          "maxLength": 1000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The ARN of the Chatbot SNS topic.",
+      "title": "AWSSSMIncidentsResponsePlanSnsArnDefinition"
+    },
+    "NotificationTargetItem": {
+      "description": "A notification target.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SnsTopicArn": {
+          "$ref": "#/$defs/SnsArn"
+        }
+      },
+      "title": "AWSSSMIncidentsResponsePlanNotificationTargetItemDefinition"
+    },
+    "Action": {
+      "description": "The automation configuration to launch.",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "SsmAutomation": {
+          "$ref": "#/$defs/SsmAutomation"
+        }
+      },
+      "title": "AWSSSMIncidentsResponsePlanActionDefinition"
+    },
+    "SsmAutomation": {
+      "description": "The configuration to use when starting the SSM automation document.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "RoleArn",
+        "DocumentName"
+      ],
+      "properties": {
+        "RoleArn": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^arn:aws(-(cn|us-gov))?:[a-z-]+:(([a-z]+-)+[0-9])?:([0-9]{12})?:[^.]+$",
+              "maxLength": 1000
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The role ARN to use when starting the SSM automation document."
+        },
+        "DocumentName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The document name to use when starting the SSM automation document."
+        },
+        "DocumentVersion": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The version of the document to use when starting the SSM automation document."
+        },
+        "TargetAccount": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "IMPACTED_ACCOUNT",
+                "RESPONSE_PLAN_OWNER_ACCOUNT"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The account type to use when starting the SSM automation document."
+        },
+        "Parameters": {
+          "description": "The parameters to set when starting the SSM automation document.",
+          "type": "array",
+          "uniqueItems": true,
+          "insertionOrder": false,
+          "items": {
+            "$ref": "#/$defs/SsmParameter"
+          },
+          "minItems": 1,
+          "maxItems": 200,
+          "default": []
+        },
+        "DynamicParameters": {
+          "description": "The parameters with dynamic values to set when starting the SSM automation document.",
+          "type": "array",
+          "uniqueItems": true,
+          "insertionOrder": false,
+          "items": {
+            "$ref": "#/$defs/DynamicSsmParameter"
+          },
+          "maxItems": 200,
+          "default": []
+        }
+      },
+      "title": "AWSSSMIncidentsResponsePlanSsmAutomationDefinition"
+    },
+    "SsmParameter": {
+      "description": "A parameter to set when starting the SSM automation document.",
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Values": {
+          "type": "array",
+          "uniqueItems": true,
+          "insertionOrder": true,
+          "maxItems": 10,
+          "items": {
+            "$ref": "#/$defs/SsmParameterValue"
+          }
+        }
+      },
+      "required": [
+        "Values",
+        "Key"
+      ],
+      "additionalProperties": false,
+      "title": "AWSSSMIncidentsResponsePlanSsmParameterDefinition"
+    },
+    "SsmParameterValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 10000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "A value of the parameter to set when starting the SSM automation document.",
+      "title": "AWSSSMIncidentsResponsePlanSsmParameterValueDefinition"
+    },
+    "DynamicSsmParameter": {
+      "description": "A parameter with a dynamic value to set when starting the SSM automation document.",
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Value": {
+          "$ref": "#/$defs/DynamicSsmParameterValue"
+        }
+      },
+      "required": [
+        "Value",
+        "Key"
+      ],
+      "additionalProperties": false,
+      "title": "AWSSSMIncidentsResponsePlanDynamicSsmParameterDefinition"
+    },
+    "DynamicSsmParameterValue": {
+      "description": "Value of the dynamic parameter to set when starting the SSM automation document.",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "Variable": {
+          "$ref": "#/$defs/VariableType"
+        }
+      },
+      "title": "AWSSSMIncidentsResponsePlanDynamicSsmParameterValueDefinition"
+    },
+    "VariableType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "INCIDENT_RECORD_ARN",
+            "INVOLVED_RESOURCES"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The variable types used as dynamic parameter value when starting the SSM automation document.",
+      "title": "AWSSSMIncidentsResponsePlanVariableTypeDefinition"
+    },
+    "Integration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "PagerDutyConfiguration": {
+          "$ref": "#/$defs/PagerDutyConfiguration"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "PagerDutyConfiguration"
+          ]
+        }
+      ],
+      "title": "AWSSSMIncidentsResponsePlanIntegrationDefinition"
+    },
+    "PagerDutyConfiguration": {
+      "description": "The pagerDuty configuration to use when starting the incident.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Name",
+        "SecretId",
+        "PagerDutyIncidentConfiguration"
+      ],
+      "properties": {
+        "Name": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the pagerDuty configuration."
+        },
+        "SecretId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The AWS secrets manager secretId storing the pagerDuty token."
+        },
+        "PagerDutyIncidentConfiguration": {
+          "$ref": "#/$defs/PagerDutyIncidentConfiguration"
+        }
+      },
+      "title": "AWSSSMIncidentsResponsePlanPagerDutyConfigurationDefinition"
+    },
+    "PagerDutyIncidentConfiguration": {
+      "description": "The pagerDuty incident configuration.",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "ServiceId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The pagerDuty serviceId."
+        }
+      },
+      "required": [
+        "ServiceId"
+      ],
+      "title": "AWSSSMIncidentsResponsePlanPagerDutyIncidentConfigurationDefinition"
+    },
+    "Tag": {
+      "description": "A key-value pair to tag a resource.",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(?!aws:)[a-zA-Z+-=._:/]+$",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "Value",
+        "Key"
+      ],
+      "title": "AWSSSMIncidentsResponsePlanTagDefinition"
+    },
+    "IncidentTemplate": {
+      "description": "The incident template configuration.",
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "Title",
+        "Impact"
+      ],
+      "properties": {
+        "DedupeString": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 1000,
+              "minLength": 1
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The deduplication string."
+        },
+        "Impact": {
+          "description": "The impact value.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "NotificationTargets": {
+          "description": "The list of notification targets.",
+          "type": "array",
+          "default": [],
+          "maxItems": 10,
+          "items": {
+            "$ref": "#/$defs/NotificationTargetItem"
+          },
+          "insertionOrder": false
+        },
+        "Summary": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 4000,
+              "minLength": 1
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The summary string."
+        },
+        "Title": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 200
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The title string."
+        },
+        "IncidentTags": {
+          "description": "Tags that get applied to incidents created by the StartIncident API action.",
+          "type": "array",
+          "uniqueItems": true,
+          "insertionOrder": false,
+          "default": [],
+          "maxItems": 50,
+          "items": {
+            "$ref": "#/$defs/Tag"
+          }
+        }
+      },
+      "title": "AWSSSMIncidentsResponsePlanIncidentTemplateDefinition"
+    },
+    "ChatbotSns": {
+      "type": "array",
+      "uniqueItems": true,
+      "insertionOrder": true,
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SnsArn"
+      },
+      "title": "AWSSSMIncidentsResponsePlanChatbotSnsDefinition"
+    },
+    "ChatChannel": {
+      "description": "The chat channel configuration.",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "ChatbotSns": {
+          "$ref": "#/$defs/ChatbotSns"
+        }
+      },
+      "title": "AWSSSMIncidentsResponsePlanChatChannelDefinition"
+    }
+  },
+  "required": [
+    "Name",
+    "IncidentTemplate"
+  ],
+  "additionalProperties": false,
+  "primaryIdentifier": [
+    "/properties/Arn"
+  ],
+  "createOnlyProperties": [
+    "/properties/Name"
+  ],
+  "readOnlyProperties": [
+    "/properties/Arn"
+  ]
+}

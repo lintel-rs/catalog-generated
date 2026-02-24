@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/dwp-exchange-gateway/_shared/latest--rate_limiting_advanced-plugin-schema.json",
+  "title": "Rate limiting advanced plugin",
+  "description": "Rate limit how many HTTP requests can be made in a given period of seconds, minutes, hours, days, months, or years. If the underlying Service/Route (or deprecated API entity) has no authentication layer, the Client IP address will be used; otherwise, the Consumer will be used if an authentication plugin has been configured.",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/dwp/schemas/main/exchange/publishing-tools/plugins/rate-limiting-advanced/rate_limiting_advanced-plugin-schema.json",
+    "sourceSha256": "f54cf502aeea986f9d18bc193908c5122f0cfd367a8e1dfbdf15b2436b67fde8"
+  },
+  "type": "object",
+  "properties": {
+    "per_second": {
+      "title": "per_second",
+      "type": "number",
+      "minimum": 1,
+      "description": "The number of HTTP requests that can be made per second"
+    },
+    "per_minute": {
+      "title": "per_minute",
+      "type": "number",
+      "minimum": 1,
+      "description": "The number of HTTP requests that can be made per minute"
+    },
+    "per_hour": {
+      "title": "per_hour",
+      "type": "number",
+      "minimum": 1,
+      "description": "The number of HTTP requests that can be made per hour"
+    },
+    "per_day": {
+      "title": "per_day",
+      "type": "number",
+      "minimum": 1,
+      "description": "The number of HTTP requests that can be made per day"
+    },
+    "per_consumer": {
+      "title": "per_consumer",
+      "description": "configure separate rates for different consumers",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The ID of your consumer",
+            "type": "string",
+            "examples": [
+              "a.service.gov.uk",
+              "b.service.gov.uk",
+              "c.service.gov.uk"
+            ]
+          },
+          "per_second": {
+            "title": "per_second",
+            "type": "number",
+            "minimum": 1,
+            "description": "The number of HTTP requests that can be made per second"
+          },
+          "per_minute": {
+            "title": "per_minute",
+            "type": "number",
+            "minimum": 1,
+            "description": "The number of HTTP requests that can be made per minute"
+          },
+          "per_hour": {
+            "title": "per_hour",
+            "type": "number",
+            "minimum": 1,
+            "description": "The number of HTTP requests that can be made per hour"
+          },
+          "per_day": {
+            "title": "per_day",
+            "type": "number",
+            "minimum": 1,
+            "description": "The number of HTTP requests that can be made per day"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "per_second"
+            ]
+          },
+          {
+            "required": [
+              "per_minute"
+            ]
+          },
+          {
+            "required": [
+              "per_hour"
+            ]
+          },
+          {
+            "required": [
+              "per_day"
+            ]
+          }
+        ]
+      }
+    },
+    "hide_client_headers": {
+      "type": "boolean",
+      "description": "Optionally hide informative response headers"
+    },
+    "redis": {
+      "title": "Redis configuration",
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "Host to use for Redis connection when the redis strategy is defined. This parameter accepts a hostname or an IP address as a value."
+        },
+        "cluster_addresses": {
+          "type": "array",
+          "description": "Cluster addresses to use for Redis connections when the redis strategy is defined. Defining this value implies using Redis cluster. Each string element must consist of a hostname (or IP address) and port. The minimum length of the array is 1 element.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "port": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "server_name": {
+          "type": "string"
+        },
+        "ssl": {
+          "type": "boolean"
+        },
+        "ssl_verify": {
+          "type": "boolean"
+        },
+        "connect_timeout": {
+          "type": "number",
+          "minimum": 1
+        },
+        "read_timeout": {
+          "type": "number",
+          "minimum": 1
+        },
+        "send_timeout": {
+          "type": "number",
+          "minimum": 1
+        },
+        "database": {
+          "type": "number"
+        },
+        "auth_enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "username": {
+          "type": "string",
+          "pattern": "^(\\{vault://|[^{]).*$"
+        },
+        "password": {
+          "type": "string",
+          "pattern": "^(\\{vault://|[^{]).*$"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "anyOf": [
+    {
+      "required": [
+        "per_second"
+      ]
+    },
+    {
+      "required": [
+        "per_minute"
+      ]
+    },
+    {
+      "required": [
+        "per_hour"
+      ]
+    },
+    {
+      "required": [
+        "per_day"
+      ]
+    },
+    {
+      "required": [
+        "per_consumer"
+      ]
+    }
+  ]
+}

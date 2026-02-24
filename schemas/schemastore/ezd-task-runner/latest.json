@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/ezd-task-runner/latest.json",
+  "title": "ezd",
+  "description": "The schema for `ezd`",
+  "x-lintel": {
+    "source": "https://gitlab.com/sbenv/veroxis/ezd-rs/-/raw/HEAD/ezd.schema.json",
+    "sourceSha256": "732e7a26506c4f58eaf45557ef64b1ab0aadea510099fa3606455665b4fa157d"
+  },
+  "type": "object",
+  "properties": {
+    "env": {
+      "type": "array",
+      "description": "Environment variables to set for all tasks"
+    },
+    "tasks": {
+      "type": "object",
+      "properties": {
+        "shell_exec": {
+          "type": "object",
+          "patternProperties": {
+            "": {
+              "type": "object",
+              "description": "Configure and run shell tasks",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "Describes the task for the user"
+                },
+                "env": {
+                  "type": "array",
+                  "description": "Environment variables to set while executing these specific commands"
+                },
+                "commands": {
+                  "type": "array",
+                  "description": "A list of commands to execute within the local shell"
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "docker_seq": {
+          "type": "object",
+          "description": "Configure and run `docker-seq` tasks",
+          "patternProperties": {
+            "": {
+              "type": "object",
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "description": "Path to a `docker-seq.yml` file"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "config": {
+                  "description": "Embedded `docker-seq.yml` configuration",
+                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/ezd-task-runner/_shared/latest--docker-seq.schema.json"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "volumes": {
+      "type": "object",
+      "description": "Declare docker volumes to use within docker_seq tasks",
+      "properties": {
+        "driver": {
+          "type": "string",
+          "description": "Specify volume driver name"
+        },
+        "label": {
+          "type": "string",
+          "description": "Set metadata for a volume"
+        },
+        "opt": {
+          "type": "array",
+          "description": "Set driver specific options"
+        }
+      }
+    },
+    "additionalProperties": false
+  },
+  "additionalProperties": false
+}

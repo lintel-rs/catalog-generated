@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-redshift-endpointauthorization.json",
+  "title": "AWSRedshiftEndpointAuthorizationProperties",
+  "description": "Describes an endpoint authorization for authorizing Redshift-managed VPC endpoint access to a cluster across AWS accounts.. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-redshift",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-redshift-endpointauthorization.json",
+    "sourceSha256": "f84726ef2fa57cef632049a17e14b69d732f01106a3224ebca0640b1345a623e",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "ClusterIdentifier": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^(?=^[a-z][a-z0-9]*(-[a-z0-9]+)*$).{1,63}$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The cluster identifier."
+    },
+    "Account": {
+      "description": "The target AWS account ID to grant or revoke access for.",
+      "$ref": "#/$defs/AwsAccount"
+    },
+    "VpcIds": {
+      "description": "The virtual private cloud (VPC) identifiers to grant or revoke access to.",
+      "type": "array",
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/VpcId"
+      }
+    },
+    "Force": {
+      "description": " Indicates whether to force the revoke action. If true, the Redshift-managed VPC endpoints associated with the endpoint authorization are also deleted.",
+      "type": "boolean"
+    }
+  },
+  "typeName": "AWS::Redshift::EndpointAuthorization",
+  "writeOnlyProperties": [
+    "/properties/Force"
+  ],
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-redshift",
+  "$defs": {
+    "AwsAccount": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^\\d{12}$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSRedshiftEndpointAuthorizationAwsAccountDefinition"
+    },
+    "VpcId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^vpc-[A-Za-z0-9]{1,17}$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSRedshiftEndpointAuthorizationVpcIdDefinition"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/Grantor",
+    "/properties/Grantee",
+    "/properties/AuthorizeTime",
+    "/properties/ClusterStatus",
+    "/properties/Status",
+    "/properties/AllowedAllVPCs",
+    "/properties/AllowedVPCs",
+    "/properties/EndpointCount"
+  ],
+  "tagging": {
+    "taggable": false
+  },
+  "additionalProperties": false,
+  "required": [
+    "ClusterIdentifier",
+    "Account"
+  ],
+  "primaryIdentifier": [
+    "/properties/ClusterIdentifier",
+    "/properties/Account"
+  ],
+  "createOnlyProperties": [
+    "/properties/ClusterIdentifier",
+    "/properties/Account"
+  ]
+}

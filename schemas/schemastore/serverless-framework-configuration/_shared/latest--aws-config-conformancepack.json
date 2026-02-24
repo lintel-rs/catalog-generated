@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-config-conformancepack.json",
+  "title": "AWSConfigConformancePackProperties",
+  "description": "A conformance pack is a collection of AWS Config rules and remediation actions that can be easily deployed as a single entity in an account and a region or across an entire AWS Organization.. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-config.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-config-conformancepack.json",
+    "sourceSha256": "9143ee6d7ffdf0850992d845149b5be598c0f04674e905f4b0521bd7a8abc824",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "ConformancePackName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "[a-zA-Z][-a-zA-Z0-9]*",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Name of the conformance pack which will be assigned as the unique identifier."
+    },
+    "DeliveryS3Bucket": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 63
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "AWS Config stores intermediate files while processing conformance pack template."
+    },
+    "DeliveryS3KeyPrefix": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 1024
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The prefix for delivery S3 bucket."
+    },
+    "TemplateBody": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 51200
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "A string containing full conformance pack template body. You can only specify one of the template body or template S3Uri fields."
+    },
+    "TemplateS3Uri": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "s3://.*",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Location of file containing the template body which points to the conformance pack template that is located in an Amazon S3 bucket. You can only specify one of the template body or template S3Uri fields."
+    },
+    "TemplateSSMDocumentDetails": {
+      "description": "The TemplateSSMDocumentDetails object contains the name of the SSM document and the version of the SSM document.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "DocumentName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "DocumentVersion": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      }
+    },
+    "ConformancePackInputParameters": {
+      "description": "A list of ConformancePackInputParameter objects.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ConformancePackInputParameter"
+      },
+      "minItems": 0,
+      "maxItems": 60
+    }
+  },
+  "typeName": "AWS::Config::ConformancePack",
+  "primaryIdentifier": [
+    "/properties/ConformancePackName"
+  ],
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-config.git",
+  "documentationUrl": "https://docs.aws.amazon.com/config/latest/developerguide/conformance-packs.html",
+  "$defs": {
+    "ParameterName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Key part of key-value pair with value being parameter value",
+      "title": "AWSConfigConformancePackParameterNameDefinition"
+    },
+    "ParameterValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4096
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Value part of key-value pair with key being parameter Name",
+      "title": "AWSConfigConformancePackParameterValueDefinition"
+    },
+    "ConformancePackInputParameter": {
+      "description": "Input parameters in the form of key-value pairs for the conformance pack.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ParameterName": {
+          "$ref": "#/$defs/ParameterName"
+        },
+        "ParameterValue": {
+          "$ref": "#/$defs/ParameterValue"
+        }
+      },
+      "required": [
+        "ParameterName",
+        "ParameterValue"
+      ],
+      "title": "AWSConfigConformancePackConformancePackInputParameterDefinition"
+    }
+  },
+  "createOnlyProperties": [
+    "/properties/ConformancePackName"
+  ],
+  "additionalProperties": false,
+  "required": [
+    "ConformancePackName"
+  ],
+  "writeOnlyProperties": [
+    "/properties/TemplateBody",
+    "/properties/TemplateS3Uri",
+    "/properties/TemplateSSMDocumentDetails"
+  ]
+}

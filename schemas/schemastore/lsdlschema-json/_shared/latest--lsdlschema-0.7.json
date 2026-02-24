@@ -1,0 +1,1337 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/lsdlschema-json/_shared/latest--lsdlschema-0.7.json",
+  "title": "LSDL Schema",
+  "description": "Linguistic Schema Definition Language schema",
+  "x-lintel": {
+    "source": "https://json.schemastore.org/lsdlschema-0.7.json",
+    "sourceSha256": "06daed5e5d4d0073ddfa6292b0e883047653e424a6c03795f45abb27695b42f8"
+  },
+  "type": "object",
+  "properties": {
+    "Version": {
+      "description": "Version of LSDL",
+      "enum": [
+        "0.7.0"
+      ]
+    },
+    "Language": {
+      "description": "Target language for the linguistic schema",
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z]+-[A-Za-z][A-Za-z]+$",
+      "format": "language"
+    },
+    "DynamicImprovement": {
+      "description": "Indicates which heuristics should be run to automatically improve the linguistic schema.",
+      "enum": [
+        "Default",
+        "Full",
+        "HighConfidence",
+        "None"
+      ],
+      "default": "Default"
+    },
+    "Namespaces": {
+      "$ref": "#/$defs/namespaces",
+      "description": "Additional linguistic schemas referenced by objects within this linguistic schema"
+    },
+    "Entities": {
+      "$ref": "#/$defs/entities",
+      "description": "The entities in the linguistic schema."
+    },
+    "Relationships": {
+      "$ref": "#/$defs/relationships",
+      "description": "The relationships in the linguistic schema."
+    },
+    "GlobalSubstitutions": {
+      "$ref": "#/$defs/globalSubstitutions",
+      "description": "The global text substitutions in the linguistic schema."
+    }
+  },
+  "required": [
+    "Version",
+    "Language"
+  ],
+  "$defs": {
+    "identifier": {
+      "description": "Identifier for a linguistic schema object",
+      "type": "string",
+      "pattern": "^.+$",
+      "format": "identifier"
+    },
+    "modelItemReference": {
+      "description": "Name of the conceptual model object to which the linguistic schema object is bound",
+      "type": "string"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "description": "Indicates the state of an object in the linguistic schema.",
+      "enum": [
+        "UserAuthored",
+        "Generated",
+        "Deleted"
+      ],
+      "default": "UserAuthored"
+    },
+    "weight": {
+      "description": "Indicates a weight to apply to an object when selecting between ambiguous alternatives. A higher weight is a stronger preference for selecting the object.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 1
+    },
+    "namespaces": {
+      "description": "A set of references to additional linguistic schemas that may be referenced by objects in this linguistic schema",
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/$defs/lsdlReference"
+        }
+      },
+      "additionalProperties": false,
+      "format": "identifier-properties"
+    },
+    "lsdlReference": {
+      "description": "A reference to an additional linguistic schema.",
+      "type": "object",
+      "additionalProperties": false
+    },
+    "entities": {
+      "description": "The entities in the linguistic schema",
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/$defs/entity"
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false,
+      "format": "identifier-properties"
+    },
+    "entity": {
+      "description": "An entity in the linguistic schema",
+      "type": "object",
+      "properties": {
+        "Binding": {
+          "description": "The conceptual model object which represents the entity",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/conceptualEntityBinding"
+            },
+            {
+              "$ref": "#/$defs/conceptualPropertyBinding"
+            },
+            {
+              "$ref": "#/$defs/hierarchyBinding"
+            },
+            {
+              "$ref": "#/$defs/hierarchyLevelBinding"
+            }
+          ]
+        },
+        "State": {
+          "$ref": "#/$defs/state",
+          "description": "The state of the entity"
+        },
+        "Weight": {
+          "$ref": "#/$defs/weight",
+          "description": "The weight to apply to this entity"
+        },
+        "Words": {
+          "$ref": "#/$defs/words",
+          "description": "Words which can be used to refer to this entity"
+        },
+        "SemanticType": {
+          "description": "The overall semantic category of the entity",
+          "enum": [
+            "Person",
+            "Animate",
+            "Inanimate",
+            "Location",
+            "Time"
+          ]
+        },
+        "Instances": {
+          "$ref": "#/$defs/instances",
+          "description": "Defines how instance values from the model are recognized"
+        }
+      },
+      "required": [
+        "Binding"
+      ],
+      "additionalProperties": false
+    },
+    "conceptualEntityBinding": {
+      "description": "A conceptual entity or table in the conceptual model to which a linguistic schema object is bound",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "Table": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the table."
+            }
+          },
+          "required": [
+            "Table"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ConceptualEntity": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the conceptual entity (e.g. table or pod)"
+            }
+          },
+          "required": [
+            "ConceptualEntity"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "conceptualPropertyBinding": {
+      "description": "A conceptual property, column, or measure in the conceptual model to which a linguistic schema object is bound.",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "Table": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the table containing the column or measure"
+            },
+            "VariationSource": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the property containing the variation set that contains the column or measure"
+            },
+            "VariationSet": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the variation set that contains the column or measure"
+            },
+            "Column": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the column"
+            }
+          },
+          "required": [
+            "Table",
+            "Column"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "Table": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the table containing the column or measure"
+            },
+            "VariationSource": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the property containing the variation set that contains the column or measure"
+            },
+            "VariationSet": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the variation set that contains the column or measure"
+            },
+            "Measure": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the measure"
+            }
+          },
+          "required": [
+            "Table",
+            "Measure"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ConceptualEntity": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the conceptual entity containing the property"
+            },
+            "VariationSource": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the property containing the variation set that contains the property"
+            },
+            "VariationSet": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the variation set that contains the property"
+            },
+            "ConceptualProperty": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the property"
+            }
+          },
+          "required": [
+            "ConceptualEntity",
+            "ConceptualProperty"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "hierarchyBinding": {
+      "description": "A hierarchy in the conceptual model to which a linguistic schema object is bound",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "Table": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the table containing the hierarchy"
+            },
+            "VariationSource": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the property containing the variation set that contains the hierarchy"
+            },
+            "VariationSet": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the variation set that contains the hierarchy"
+            },
+            "Hierarchy": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the hierarchy"
+            }
+          },
+          "required": [
+            "Table",
+            "Hierarchy"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ConceptualEntity": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the conceptual entity containing the hierarchy"
+            },
+            "VariationSource": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the property containing the variation set that contains the hierarchy"
+            },
+            "VariationSet": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the variation set that contains the hierarchy"
+            },
+            "Hierarchy": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the hierarchy"
+            }
+          },
+          "required": [
+            "ConceptualEntity",
+            "Hierarchy"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "hierarchyLevelBinding": {
+      "description": "A hierarchy level in the conceptual model to which a linguistic schema object is bound",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "Table": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the table containing the hierarchy"
+            },
+            "VariationSource": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the property containing the variation set that contains the hierarchy"
+            },
+            "VariationSet": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the variation set that contains the hierarchy"
+            },
+            "Hierarchy": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the hierarchy"
+            },
+            "HierarchyLevel": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the hierarchy level"
+            }
+          },
+          "required": [
+            "Table",
+            "Hierarchy",
+            "HierarchyLevel"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ConceptualEntity": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the conceptual entity containing the hierarchy"
+            },
+            "VariationSource": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the property containing the variation set that contains the hierarchy"
+            },
+            "VariationSet": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the variation set that contains the hierarchy"
+            },
+            "Hierarchy": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the hierarchy"
+            },
+            "HierarchyLevel": {
+              "$ref": "#/$defs/modelItemReference",
+              "description": "The name of the hierarchy level"
+            }
+          },
+          "required": [
+            "ConceptualEntity",
+            "Hierarchy",
+            "HierarchyLevel"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "words": {
+      "description": "A list of terms in the linguistic schema",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/word"
+      },
+      "minItems": 1
+    },
+    "word": {
+      "description": "A term in the linguistic schema",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        {
+          "$ref": "#/$defs/fullWord"
+        }
+      ]
+    },
+    "fullWord": {
+      "description": "A term in the linguistic schema",
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/$defs/wordProperties",
+          "description": "Properties of the term"
+        }
+      },
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false
+    },
+    "wordProperties": {
+      "description": "Properties of a term in the linguistic schema",
+      "type": "object",
+      "properties": {
+        "Type": {
+          "description": "The part of speech of the term",
+          "enum": [
+            "Noun"
+          ]
+        },
+        "State": {
+          "$ref": "#/$defs/state",
+          "description": "The state of the term"
+        },
+        "Weight": {
+          "$ref": "#/$defs/weight",
+          "description": "The weight to apply to the term"
+        }
+      },
+      "additionalProperties": false
+    },
+    "instances": {
+      "description": "Defines how instance values from the model are recognized",
+      "type": "object",
+      "properties": {
+        "Synonyms": {
+          "$ref": "#/$defs/instanceSynonyms",
+          "description": "Defines a set of values which are synonyms of instances of this entity."
+        },
+        "Weights": {
+          "$ref": "#/$defs/instanceWeights",
+          "description": "Reference to property in the model which contains the weight to apply to instances of this entity."
+        }
+      },
+      "additionalProperties": false
+    },
+    "instanceSynonyms": {
+      "description": "A pair of properties that contain synonyms for the instances of an entity.",
+      "type": "object",
+      "properties": {
+        "SynonymBinding": {
+          "$ref": "#/$defs/conceptualPropertyBinding",
+          "description": "The conceptual model object which contains words that can be used to refer to values of the entity"
+        },
+        "ValueBinding": {
+          "$ref": "#/$defs/conceptualPropertyBinding",
+          "description": "The conceptual model object which contains the corresponding values of the entity"
+        },
+        "State": {
+          "$ref": "#/$defs/state",
+          "description": "The state of the instance synonyms"
+        }
+      },
+      "required": [
+        "SynonymBinding",
+        "ValueBinding"
+      ],
+      "additionalProperties": false
+    },
+    "instanceWeights": {
+      "description": "A reference to column in the model that contains the weight to apply to instances of this entity when selecting between ambiguous alternative instances. A higher weight is a stronger preference for selecting this instance of this entity.",
+      "type": "object",
+      "properties": {
+        "Binding": {
+          "$ref": "#/$defs/conceptualPropertyBinding",
+          "description": "The conceptual model object which contains the instance weights corresponding to instances of the entity"
+        }
+      },
+      "required": [
+        "Binding"
+      ],
+      "additionalProperties": false
+    },
+    "relationships": {
+      "description": "The relationships in the linguistic schema",
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/$defs/relationship"
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false,
+      "format": "identifier-properties"
+    },
+    "relationship": {
+      "description": "A relationship in the linguistic schema",
+      "type": "object",
+      "properties": {
+        "Binding": {
+          "description": "The conceptual model object which embodies the relationship",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/conceptualEntityBinding"
+            }
+          ]
+        },
+        "State": {
+          "$ref": "#/$defs/state",
+          "description": "The state of the relationship"
+        },
+        "Weight": {
+          "$ref": "#/$defs/weight",
+          "description": "The weight to apply to this relationship"
+        },
+        "Roles": {
+          "$ref": "#/$defs/roles",
+          "description": "References to linguistic entities which participate in the relationship"
+        },
+        "SemanticSlots": {
+          "$ref": "#/$defs/semanticSlots",
+          "description": "Defines how roles fill common semantic slots in the relationship"
+        },
+        "Conditions": {
+          "$ref": "#/$defs/conditions",
+          "description": "A set of conditions which are required to be true for instances of the relationship represented in the semantic model"
+        },
+        "Phrasings": {
+          "$ref": "#/$defs/phrasings",
+          "description": "A set of syntactic frames which define the types of language used to describe the relationship"
+        }
+      },
+      "additionalProperties": false
+    },
+    "roles": {
+      "description": "The roles in a linguistic relationship",
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/$defs/role"
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false,
+      "format": "identifier-properties"
+    },
+    "role": {
+      "description": "A role in a linguistic relationship.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "$ref": "#/$defs/fullRole"
+        }
+      ]
+    },
+    "fullRole": {
+      "description": "A role in a linguistic relationship.",
+      "type": "object",
+      "properties": {
+        "Target": {
+          "$ref": "#/$defs/entityReference",
+          "description": "The linguistic entity which is the target of the role"
+        },
+        "Nouns": {
+          "$ref": "#/$defs/words",
+          "description": "Nouns which can be used to refer to the entity which is the target of the role, when used in the context of the relationship"
+        },
+        "Quantity": {
+          "$ref": "#/$defs/roleReference",
+          "description": "A role which indicates the quantity of this role's entity which participates in the relationship"
+        },
+        "Amount": {
+          "$ref": "#/$defs/roleReference",
+          "description": "A role which indicates the amount of this role's entity which participates in the relationship"
+        }
+      },
+      "required": [
+        "Target"
+      ],
+      "additionalProperties": false
+    },
+    "entityReference": {
+      "description": "A reference to an entity in a linguistic relationship",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "$ref": "#/$defs/fullEntityReference"
+        }
+      ]
+    },
+    "fullEntityReference": {
+      "description": "A reference to an entity in a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/$defs/identifier",
+          "description": "The name of the entity"
+        },
+        "Namespace": {
+          "$ref": "#/$defs/identifier",
+          "description": "The name of the namespace of the linguistic schema that contains the entity"
+        }
+      },
+      "required": [
+        "Entity"
+      ],
+      "additionalProperties": false
+    },
+    "semanticSlots": {
+      "description": "Defines how roles fill certain common semantic slots (aka thematic relations) in the relationship",
+      "type": "object",
+      "properties": {
+        "Where": {
+          "$ref": "#/$defs/roleReference",
+          "description": "A role which indicates where the relationship takes place"
+        },
+        "When": {
+          "$ref": "#/$defs/roleReference",
+          "description": "A role which indicates when the relationship takes place"
+        },
+        "Occurrences": {
+          "$ref": "#/$defs/roleReference",
+          "description": "A role which indicates the number of times the relationship occurred"
+        }
+      },
+      "additionalProperties": false
+    },
+    "conditions": {
+      "description": "The conditions on a relationship",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/condition"
+      },
+      "minItems": 1,
+      "maxItems": 1
+    },
+    "condition": {
+      "description": "A filter on a relationship that defines the circumstances under which a row in the semantic model represents an instance of the relationship",
+      "type": "object",
+      "properties": {
+        "Target": {
+          "$ref": "#/$defs/roleReference",
+          "description": "A role in the relationship to compare to the value"
+        },
+        "Operator": {
+          "description": "The operator with which to compare the value and the role",
+          "enum": [
+            "Equals",
+            "GreaterThan",
+            "LessThan",
+            "GreaterThanOrEquals",
+            "LessThanOrEquals"
+          ]
+        },
+        "Value": {
+          "$ref": "#/$defs/value",
+          "description": "The value to which the role is compared"
+        }
+      },
+      "required": [
+        "Target",
+        "Operator",
+        "Value"
+      ],
+      "additionalProperties": false
+    },
+    "value": {
+      "description": "A literal value to use in a condition",
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "Text": {
+              "$ref": "#/$defs/textValues",
+              "description": "A text value to use in a condition"
+            }
+          },
+          "required": [
+            "Text"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "Number": {
+              "$ref": "#/$defs/numberValues",
+              "description": "A number value to use in a condition"
+            }
+          },
+          "required": [
+            "Number"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "Boolean": {
+              "$ref": "#/$defs/booleanValues",
+              "description": "A Boolean value to use in a condition"
+            }
+          },
+          "required": [
+            "Boolean"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/textValues"
+        },
+        {
+          "$ref": "#/$defs/numberValues"
+        },
+        {
+          "$ref": "#/$defs/booleanValues"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "textValues": {
+      "description": "One or more text values to use in a condition",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nullableTextValue"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nullableTextValue"
+          },
+          "minItems": 1,
+          "maxItems": 1
+        }
+      ]
+    },
+    "nullableTextValue": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "numberValues": {
+      "description": "One or more number values to use in a condition",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nullableNumberValue"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nullableNumberValue"
+          },
+          "minItems": 1,
+          "maxItems": 1
+        }
+      ]
+    },
+    "nullableNumberValue": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "booleanValues": {
+      "description": "One or more Boolean values to use in a condition",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nullableBooleanValue"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nullableBooleanValue"
+          },
+          "minItems": 1,
+          "maxItems": 1
+        }
+      ]
+    },
+    "nullableBooleanValue": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "phrasings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/phrasing"
+      },
+      "minItems": 1
+    },
+    "phrasing": {
+      "description": "The phrasings on a linguistic relationship",
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/attributePhrasing"
+            },
+            {
+              "$ref": "#/$defs/namePhrasing"
+            },
+            {
+              "$ref": "#/$defs/adjectivePhrasing"
+            },
+            {
+              "$ref": "#/$defs/dynamicAdjectivePhrasing"
+            },
+            {
+              "$ref": "#/$defs/nounPhrasing"
+            },
+            {
+              "$ref": "#/$defs/dynamicNounPhrasing"
+            },
+            {
+              "$ref": "#/$defs/prepositionPhrasing"
+            },
+            {
+              "$ref": "#/$defs/verbPhrasing"
+            }
+          ]
+        },
+        {
+          "$ref": "#/$defs/sharedPhrasingProperties"
+        }
+      ]
+    },
+    "sharedPhrasingProperties": {
+      "type": "object",
+      "properties": {
+        "State": {
+          "$ref": "#/$defs/state",
+          "description": "The state of the phrasing"
+        },
+        "Weight": {
+          "$ref": "#/$defs/weight",
+          "description": "The weight to apply to the phrasing"
+        }
+      }
+    },
+    "attributePhrasing": {
+      "description": "An attribute phrasing on a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "Attribute": {
+          "$ref": "#/$defs/attributePhrasingProperties"
+        },
+        "State": {},
+        "Weight": {}
+      },
+      "required": [
+        "Attribute"
+      ],
+      "additionalProperties": false
+    },
+    "attributePhrasingProperties": {
+      "description": "Properties of an attribute phrasing",
+      "type": "object",
+      "properties": {
+        "Subject": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the subject of the phrasing"
+        },
+        "Object": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the object of the phrasing"
+        },
+        "PrepositionalPhrases": {
+          "$ref": "#/$defs/prepPhrases",
+          "description": "Additional prepositional phrases which apply to the phrasing"
+        }
+      },
+      "required": [
+        "Subject",
+        "Object"
+      ],
+      "additionalProperties": false
+    },
+    "namePhrasing": {
+      "description": "A name phrasing on a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "Name": {
+          "$ref": "#/$defs/namePhrasingProperties"
+        },
+        "State": {},
+        "Weight": {}
+      },
+      "required": [
+        "Name"
+      ],
+      "additionalProperties": false
+    },
+    "namePhrasingProperties": {
+      "description": "Properties of a name phrasing",
+      "type": "object",
+      "properties": {
+        "Subject": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the subject of the phrasing"
+        },
+        "Name": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the name of the Subject"
+        }
+      },
+      "required": [
+        "Subject",
+        "Name"
+      ],
+      "additionalProperties": false
+    },
+    "adjectivePhrasing": {
+      "description": "An adjective phrasing on a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "Adjective": {
+          "$ref": "#/$defs/adjectivePhrasingProperties"
+        },
+        "State": {},
+        "Weight": {}
+      },
+      "required": [
+        "Adjective"
+      ],
+      "additionalProperties": false
+    },
+    "adjectivePhrasingProperties": {
+      "description": "Properties of an adjective phrasing",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "Subject": {
+              "$ref": "#/$defs/roleReference",
+              "description": "The entity which is described via an adjective"
+            },
+            "Adjectives": {
+              "$ref": "#/$defs/words",
+              "description": "Adjectives used to describe the Subject (with a high measurement)"
+            },
+            "Antonyms": {
+              "$ref": "#/$defs/words",
+              "description": "Adjectives used to describe the Subject (with a low measurement)"
+            },
+            "Measurement": {
+              "$ref": "#/$defs/roleReference",
+              "description": "The entity which measures the extent to which the Adjectives apply"
+            },
+            "PrepositionalPhrases": {
+              "$ref": "#/$defs/prepPhrases",
+              "description": "Additional prepositional phrases which apply to the phrasing"
+            }
+          },
+          "required": [
+            "Subject",
+            "Adjectives"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "Subject": {
+              "$ref": "#/$defs/roleReference",
+              "description": "The entity which is described via an adjective"
+            },
+            "Antonyms": {
+              "$ref": "#/$defs/words",
+              "description": "Adjectives used to describe the Subject (with a low measurement)"
+            },
+            "Measurement": {
+              "$ref": "#/$defs/roleReference",
+              "description": "The entity which measures the extent to which the Adjectives apply"
+            },
+            "PrepositionalPhrases": {
+              "$ref": "#/$defs/prepPhrases",
+              "description": "Additional prepositional phrases which apply to the phrasing"
+            }
+          },
+          "required": [
+            "Subject",
+            "Antonyms"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "dynamicAdjectivePhrasing": {
+      "description": "A dynamic adjective phrasing on a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "DynamicAdjective": {
+          "$ref": "#/$defs/dynamicAdjectivePhrasingProperties"
+        },
+        "State": {},
+        "Weight": {}
+      },
+      "required": [
+        "DynamicAdjective"
+      ],
+      "additionalProperties": false
+    },
+    "dynamicAdjectivePhrasingProperties": {
+      "description": "Properties of a dynamic adjective phrasing",
+      "type": "object",
+      "properties": {
+        "Subject": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is described via an adjective"
+        },
+        "Adjective": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The column entity (or table entity with a name phrasing) which is used to describe the Subject"
+        },
+        "PrepositionalPhrases": {
+          "$ref": "#/$defs/prepPhrases",
+          "description": "Additional prepositional phrases which apply to the phrasing"
+        }
+      },
+      "required": [
+        "Subject",
+        "Adjective"
+      ],
+      "additionalProperties": false
+    },
+    "nounPhrasing": {
+      "description": "A noun phrasing on a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "Noun": {
+          "$ref": "#/$defs/nounPhrasingProperties"
+        },
+        "State": {},
+        "Weight": {}
+      },
+      "required": [
+        "Noun"
+      ],
+      "additionalProperties": false
+    },
+    "nounPhrasingProperties": {
+      "description": "Properties of a noun phrasing",
+      "type": "object",
+      "properties": {
+        "Subject": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is described via a noun"
+        },
+        "Nouns": {
+          "$ref": "#/$defs/words",
+          "description": "Nouns used to describe the Subject"
+        },
+        "PrepositionalPhrases": {
+          "$ref": "#/$defs/prepPhrases",
+          "description": "Additional prepositional phrases which apply to the phrasing"
+        }
+      },
+      "required": [
+        "Subject",
+        "Nouns"
+      ],
+      "additionalProperties": false
+    },
+    "dynamicNounPhrasing": {
+      "description": "A dynamic noun phrasing on a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "DynamicNoun": {
+          "$ref": "#/$defs/dynamicNounPhrasingProperties"
+        },
+        "State": {},
+        "Weight": {}
+      },
+      "required": [
+        "DynamicNoun"
+      ],
+      "additionalProperties": false
+    },
+    "dynamicNounPhrasingProperties": {
+      "description": "Properties of a dynamic noun phrasing",
+      "type": "object",
+      "properties": {
+        "Subject": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is described via a noun"
+        },
+        "Noun": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The column entity (or table entity with a name phrasing) which is the used to describe the Subject"
+        },
+        "PrepositionalPhrases": {
+          "$ref": "#/$defs/prepPhrases",
+          "description": "Additional prepositional phrases which apply to the phrasing"
+        }
+      },
+      "required": [
+        "Subject",
+        "Noun"
+      ],
+      "additionalProperties": false
+    },
+    "prepositionPhrasing": {
+      "description": "A preposition phrasing on a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "Preposition": {
+          "$ref": "#/$defs/prepositionPhrasingProperties"
+        },
+        "State": {},
+        "Weight": {}
+      },
+      "required": [
+        "Preposition"
+      ],
+      "additionalProperties": false
+    },
+    "prepositionPhrasingProperties": {
+      "description": "Properties of a preposition phrasing",
+      "type": "object",
+      "properties": {
+        "Subject": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the subject of the prepositional phrase"
+        },
+        "Prepositions": {
+          "$ref": "#/$defs/words",
+          "description": "Prepositions used in the prepositional phrase"
+        },
+        "Object": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the object of the prepositional phrase"
+        },
+        "PrepositionalPhrases": {
+          "$ref": "#/$defs/prepPhrases",
+          "description": "Additional prepositional phrases which apply to the phrasing"
+        }
+      },
+      "required": [
+        "Subject",
+        "Prepositions",
+        "Object"
+      ],
+      "additionalProperties": false
+    },
+    "verbPhrasing": {
+      "description": "A verb phrasing on a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "Verb": {
+          "$ref": "#/$defs/verbPhrasingProperties"
+        },
+        "State": {},
+        "Weight": {}
+      },
+      "required": [
+        "Verb"
+      ],
+      "additionalProperties": false
+    },
+    "verbPhrasingProperties": {
+      "description": "Properties of a verb phrasing",
+      "type": "object",
+      "properties": {
+        "Subject": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the subject of the verb"
+        },
+        "Verbs": {
+          "$ref": "#/$defs/words",
+          "description": "Verbs used to describe the relationship"
+        },
+        "IndirectObject": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the indirect object of the verb"
+        },
+        "Object": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the direct object of the verb"
+        },
+        "PrepositionalPhrases": {
+          "$ref": "#/$defs/prepPhrases",
+          "description": "Additional prepositional phrases which apply to the phrasing"
+        }
+      },
+      "required": [
+        "Verbs"
+      ],
+      "additionalProperties": false
+    },
+    "prepPhrases": {
+      "description": "Prepositional phrases used in a phrasing",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/prepPhrase"
+      },
+      "minItems": 1
+    },
+    "prepPhrase": {
+      "description": "A prepositional phrase used in a phrasing",
+      "type": "object",
+      "properties": {
+        "Prepositions": {
+          "$ref": "#/$defs/words",
+          "description": "Prepositions used in the prepositional phrase"
+        },
+        "Object": {
+          "$ref": "#/$defs/roleReference",
+          "description": "The entity which is the object of the prepositional phrase"
+        }
+      },
+      "required": [
+        "Prepositions",
+        "Object"
+      ],
+      "additionalProperties": false
+    },
+    "roleReference": {
+      "description": "A reference to a role in a linguistic relationship",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/identifier"
+        },
+        {
+          "$ref": "#/$defs/fullRoleReference"
+        }
+      ]
+    },
+    "fullRoleReference": {
+      "description": "A reference to a role in a linguistic relationship",
+      "type": "object",
+      "properties": {
+        "Role": {
+          "$ref": "#/$defs/identifier"
+        }
+      },
+      "required": [
+        "Role"
+      ],
+      "additionalProperties": false
+    },
+    "globalSubstitutions": {
+      "description": "Global text substitutions in the linguistic schema.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/globalSubstitution"
+      },
+      "minItems": 1
+    },
+    "globalSubstitution": {
+      "description": "A global text substitution in the linguistic schema.",
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/$defs/globalSubstitutionProperties"
+        }
+      },
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false
+    },
+    "globalSubstitutionProperties": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/fullGlobalSubstitutionProperties"
+        }
+      ]
+    },
+    "fullGlobalSubstitutionProperties": {
+      "type": "object",
+      "properties": {
+        "Substitute": {
+          "description": "The sequence of words to substitute into the utterance.",
+          "type": "string"
+        },
+        "State": {
+          "$ref": "#/$defs/state",
+          "description": "The state of the global substitution"
+        }
+      },
+      "required": [
+        "Substitute"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

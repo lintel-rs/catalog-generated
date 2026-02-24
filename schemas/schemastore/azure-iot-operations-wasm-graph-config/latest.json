@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-operations-wasm-graph-config/versions/1.0.0.json",
+  "title": "Azure IoT Operations Wasm Graph Config",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/aio-wasm-graph-config-1.0.0.json",
+    "sourceSha256": "919bd7b5ba35ad80ecc9459461c66f4d374579dd998a660a436a560c9920885f"
+  },
+  "type": "object",
+  "properties": {
+    "connections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/WasmGraphConfigConnection"
+      }
+    },
+    "metadata": {
+      "$ref": "#/$defs/WasmGraphMetadata"
+    },
+    "moduleConfigurations": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ModuleConfiguration"
+      }
+    },
+    "moduleRequirements": {
+      "$ref": "#/$defs/ModuleVersions"
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/WasmGraphConfigModule"
+      }
+    },
+    "schemas": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SchemaConfiguration"
+      }
+    }
+  },
+  "required": [
+    "connections",
+    "metadata",
+    "moduleRequirements",
+    "operations"
+  ],
+  "$defs": {
+    "BranchOutputArm": {
+      "type": "string",
+      "enum": [
+        "False",
+        "True"
+      ]
+    },
+    "ConfigParameters": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "default": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "type": "boolean"
+        }
+      }
+    },
+    "ModuleConfiguration": {
+      "type": "object",
+      "required": [
+        "name",
+        "parameters"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ConfigParameters"
+          }
+        }
+      }
+    },
+    "ModuleVersionFeature": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "ModuleVersions": {
+      "type": "object",
+      "required": [
+        "apiVersion",
+        "runtimeVersion"
+      ],
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "features": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/ModuleVersionFeature"
+          }
+        },
+        "runtimeVersion": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SchemaConfiguration": {
+      "type": "object",
+      "required": [
+        "format",
+        "name",
+        "schema"
+      ],
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "WasmGraphConfigConnection": {
+      "type": "object",
+      "required": [
+        "from",
+        "to"
+      ],
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/WasmGraphConfigConnectionFromPoint"
+        },
+        "to": {
+          "$ref": "#/$defs/WasmGraphConfigConnectionToPoint"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WasmGraphConfigConnectionFromPoint": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "arm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BranchOutputArm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "schemaName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "WasmGraphConfigConnectionOperator": {
+      "type": "string",
+      "enum": [
+        "source",
+        "map",
+        "filter",
+        "branch",
+        "concatenate",
+        "accumulate",
+        "delay",
+        "sink"
+      ]
+    },
+    "WasmGraphConfigConnectionToPoint": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WasmGraphConfigModule": {
+      "type": "object",
+      "required": [
+        "name",
+        "operationType"
+      ],
+      "properties": {
+        "module": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "operationType": {
+          "$ref": "#/$defs/WasmGraphConfigConnectionOperator"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WasmGraphMetadata": {
+      "type": "object",
+      "required": [
+        "$schema",
+        "name",
+        "version"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "vendor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/speakeasy-lint-configuration-file/latest.json",
+  "title": "Speakeasy Lint Configuration Schema",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/speakeasy-api/sdk-gen-config/main/schemas/lint.schema.json",
+    "sourceSha256": "bb74466e3dc1f9cf84e141b3564968d49fa8395507086bfae8e9dbee735ccd04"
+  },
+  "type": "object",
+  "properties": {
+    "lintVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "defaultRuleset": {
+      "type": "string"
+    },
+    "rulesets": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/ruleset"
+      }
+    },
+    "customRules": {
+      "$ref": "#/$defs/customRulesConfig"
+    }
+  },
+  "required": [
+    "lintVersion",
+    "defaultRuleset",
+    "rulesets"
+  ],
+  "$defs": {
+    "ruleset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rules": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/rule"
+          }
+        },
+        "rulesets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "given": {
+          "type": "string"
+        },
+        "then": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/then"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/then"
+              }
+            }
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warn",
+            "info",
+            "hint",
+            "off"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "oas3",
+              "oas3_0",
+              "oas3_1"
+            ]
+          }
+        },
+        "resolved": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "then": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "functionOptions": {
+          "type": "object"
+        }
+      }
+    },
+    "customRulesConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timeout": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

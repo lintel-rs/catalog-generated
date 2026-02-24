@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/dwp-exchange-gateway/_shared/latest--route-schema.json",
+  "title": "Route",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/dwp/schemas/main/exchange/publishing-tools/route-schema.json",
+    "sourceSha256": "b3029b6fd62e5a3d96b2b332394d988bb3676c653561a472531a214148e253e5"
+  },
+  "type": "object",
+  "properties": {
+    "host": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "The domain name that matches this route",
+          "pattern": "^(\\*\\.[^*]+|[^*]+|)$"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(\\*\\.[^*]+|[^*]+|)$"
+          },
+          "description": "The domain names that match this route"
+        }
+      ]
+    },
+    "consumer_path": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "The path that matches the route's endpoint",
+          "pattern": "^/(.*)[^/]*$"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The paths that match the route's endpoint",
+            "pattern": "^/(.*)[^/]*$"
+          }
+        }
+      ]
+    },
+    "permitted_consumers": {
+      "type": "array",
+      "items": {
+        "description": "The ID of your consumers",
+        "type": "string",
+        "examples": [
+          "a.service.gov.uk",
+          "b.service.gov.uk",
+          "c.service.gov.uk"
+        ]
+      }
+    },
+    "http_methods": {
+      "type": "string",
+      "description": "A list of HTTP methods that match this Route",
+      "pattern": "^((?:GET|POST|PUT|HEAD|DELETE|CONNECT|OPTIONS|PATCH|TRACE),?\\s?)+$"
+    },
+    "plugins": {
+      "title": "Plugins",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://catalog.lintel.tools/schemas/schemastore/dwp-exchange-gateway/_shared/latest--plugins-schema.json"
+      }
+    },
+    "protocols": {
+      "title": "Protocols",
+      "type": "array",
+      "description": "A list of the protocols this Route should allow",
+      "items": {
+        "type": "string",
+        "enum": [
+          "http",
+          "https"
+        ]
+      }
+    },
+    "strip_path": {
+      "type": "boolean",
+      "description": "When matching a Route via one of the paths, strip the matching prefix from the upstream request URL"
+    },
+    "path_handling": {
+      "type": "string",
+      "description": "Controls how the Service path, Route path and requested path are combined when sending a request to the upstream",
+      "enum": [
+        "v0",
+        "v1"
+      ]
+    },
+    "preserve_host": {
+      "type": "boolean",
+      "description": "When matching a Route via one of the hosts domain names, use the request Host header in the upstream request headers"
+    },
+    "https_redirect_status_code": {
+      "type": "integer",
+      "description": "The status code Kong responds with when all properties of a Route match except the protocol"
+    },
+    "regex_priority": {
+      "type": "integer",
+      "description": "A number used to choose which route resolves a given request when several routes match it using regexes simultaneously",
+      "minimum": 0
+    },
+    "request_buffering": {
+      "type": "boolean",
+      "description": "Whether to enable request body buffering or not"
+    },
+    "response_buffering": {
+      "type": "boolean",
+      "description": "Whether to enable response body buffering or not"
+    },
+    "headers": {
+      "type": "object",
+      "patternProperties": {
+        "^[\\w-]+$": {
+          "title": "header",
+          "type": "array",
+          "examples": [
+            "example-header:"
+          ],
+          "items": {
+            "type": "string",
+            "pattern": "^\\S+$",
+            "examples": [
+              "example_value"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "host",
+    "consumer_path",
+    "http_methods"
+  ],
+  "additionalProperties": false
+}

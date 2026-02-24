@@ -1,0 +1,1005 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/drone-json/latest.json",
+  "title": "Drone CI configuration file",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/drone.json",
+    "sourceSha256": "3a2027c0b8bc5f3309d1dec1686e2de73f1a2f845ace30392c939dbabb29c707",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "kind": {
+      "enum": [
+        "signature",
+        "secret",
+        "template",
+        "pipeline"
+      ]
+    }
+  },
+  "required": [
+    "kind"
+  ],
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "platform": {
+      "type": "object",
+      "properties": {
+        "os": {
+          "type": "string",
+          "enum": [
+            "linux",
+            "windows",
+            "darwin",
+            "freebsd",
+            "netbsd",
+            "openbsd",
+            "dragonfly",
+            "solaris"
+          ]
+        },
+        "arch": {
+          "type": "string",
+          "enum": [
+            "arm",
+            "arm64",
+            "amd64",
+            "386"
+          ]
+        },
+        "variant": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/$defs/secret"
+          }
+        ]
+      }
+    },
+    "condition": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "conditions": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/condition"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "include": {
+              "$ref": "#/$defs/condition"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "exclude": {
+              "$ref": "#/$defs/condition"
+            }
+          }
+        }
+      ]
+    },
+    "allConditions": {
+      "type": "object",
+      "properties": {
+        "branch": {
+          "$ref": "#/$defs/conditions"
+        },
+        "cron": {
+          "$ref": "#/$defs/conditions"
+        },
+        "event": {
+          "$ref": "#/$defs/conditions"
+        },
+        "paths": {
+          "$ref": "#/$defs/conditions"
+        },
+        "ref": {
+          "$ref": "#/$defs/conditions"
+        },
+        "repo": {
+          "$ref": "#/$defs/conditions"
+        },
+        "status": {
+          "$ref": "#/$defs/condition"
+        },
+        "target": {
+          "$ref": "#/$defs/conditions"
+        },
+        "instance": {
+          "$ref": "#/$defs/conditions"
+        }
+      }
+    },
+    "volumes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "host"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "path"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "temp"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "claim"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "config_map"
+            ]
+          }
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "host": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "$ref": "#/$defs/nonEmptyString"
+              }
+            }
+          },
+          "temp": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "medium": {
+                "type": "string",
+                "enum": [
+                  "memory"
+                ]
+              }
+            }
+          },
+          "claim": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/nonEmptyString"
+              },
+              "read_only": {
+                "type": "boolean"
+              }
+            }
+          },
+          "config_map": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/nonEmptyString"
+              },
+              "default_mode": {
+                "type": "integer"
+              },
+              "optional": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "image"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "image": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "command": {
+            "$ref": "#/$defs/commands"
+          },
+          "entrypoint": {
+            "$ref": "#/$defs/commands"
+          },
+          "environment": {
+            "$ref": "#/$defs/environment"
+          },
+          "privileged": {
+            "type": "boolean"
+          },
+          "pull": {
+            "const": "always"
+          },
+          "volumes": {
+            "$ref": "#/$defs/volumes"
+          },
+          "working_dir": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "secret": {
+      "type": "object",
+      "required": [
+        "from_secret"
+      ],
+      "properties": {
+        "from_secret": {
+          "type": "string"
+        }
+      }
+    },
+    "stringOrSecret": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        {
+          "$ref": "#/$defs/secret"
+        }
+      ]
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "concurrency": {
+      "type": "object",
+      "required": [
+        "limit"
+      ],
+      "properties": {
+        "limit": {
+          "type": "number",
+          "description": "Defines the concurrency limits for the named pipeline\nhttps://docs.drone.io/yaml/exec/#the-concurrency-object"
+        }
+      }
+    },
+    "kind_signature": {
+      "type": "object",
+      "required": [
+        "hmac"
+      ],
+      "properties": {
+        "kind": {
+          "const": "signature"
+        },
+        "hmac": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 64
+        }
+      }
+    },
+    "kind_secret": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "kind": {
+          "const": "secret"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "data": {
+          "type": "string"
+        },
+        "get": {
+          "type": "object",
+          "required": [
+            "path",
+            "name"
+          ],
+          "properties": {
+            "path": {
+              "$ref": "#/$defs/nonEmptyString"
+            },
+            "name": {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          }
+        }
+      }
+    },
+    "kind_template": {
+      "type": "object",
+      "required": [
+        "load"
+      ],
+      "properties": {
+        "load": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "kind_pipeline": {
+      "type": "object",
+      "required": [
+        "type",
+        "name",
+        "steps"
+      ],
+      "properties": {
+        "kind": {
+          "const": "pipeline"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "type": {
+          "enum": [
+            "docker",
+            "kubernetes",
+            "ssh",
+            "exec",
+            "digitalocean",
+            "macstadium",
+            "vm"
+          ]
+        },
+        "platform": {
+          "$ref": "#/$defs/platform"
+        },
+        "workspace": {
+          "type": "object",
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          }
+        },
+        "clone": {
+          "type": "object",
+          "properties": {
+            "depth": {
+              "type": "integer",
+              "description": "If empty the full repository may be cloned\nhttps://docs.drone.io/yaml/exec/#the-clone-object"
+            },
+            "disable": {
+              "type": "boolean",
+              "description": "It can be useful when you need to disable implement your own custom clone logic.\nhttps://docs.drone.io/yaml/exec/#the-clone-object"
+            }
+          }
+        },
+        "steps": {
+          "type": "array",
+          "minLength": 1
+        },
+        "trigger": {
+          "$ref": "#/$defs/allConditions"
+        },
+        "concurrency": {
+          "$ref": "#/$defs/concurrency"
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "pipeline_docker": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "docker"
+        },
+        "environment": {
+          "$ref": "#/$defs/environment"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/step_docker"
+          }
+        },
+        "volumes": {
+          "$ref": "#/$defs/volumes"
+        },
+        "services": {
+          "$ref": "#/$defs/services"
+        },
+        "image_pull_secrets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "node": {
+          "$ref": "#/$defs/node"
+        },
+        "concurrency": {
+          "$ref": "#/$defs/concurrency"
+        },
+        "kind": {},
+        "name": {},
+        "platform": {},
+        "workspace": {},
+        "clone": {},
+        "trigger": {},
+        "depends_on": {}
+      }
+    },
+    "pipeline_kubernetes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "kubernetes"
+        },
+        "metadata": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/drone-json/_shared/latest--kubernetes-definitions.json#/$defs/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
+        },
+        "node": {
+          "$ref": "#/$defs/node"
+        },
+        "tolerations": {
+          "description": "If specified, the pod's tolerations.",
+          "items": {
+            "$ref": "https://catalog.lintel.tools/schemas/schemastore/drone-json/_shared/latest--kubernetes-definitions.json#/$defs/io.k8s.api.core.v1.Toleration"
+          },
+          "type": "array"
+        },
+        "dns_config": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/drone-json/_shared/latest--kubernetes-definitions.json#/$defs/io.k8s.api.core.v1.PodDNSConfig",
+          "description": "Specifies the DNS parameters of a pod. Parameters specified here will be merged to the generated DNS configuration based on DNSPolicy."
+        },
+        "host_aliases": {
+          "description": "HostAliases is an optional list of hosts and IPs that will be injected into the pod's hosts file if specified. This is only valid for non-hostNetwork pods.",
+          "items": {
+            "$ref": "https://catalog.lintel.tools/schemas/schemastore/drone-json/_shared/latest--kubernetes-definitions.json#/$defs/io.k8s.api.core.v1.HostAlias"
+          },
+          "type": "array"
+        },
+        "node_selector": {
+          "description": "A list of node selector terms.",
+          "items": {
+            "$ref": "https://catalog.lintel.tools/schemas/schemastore/drone-json/_shared/latest--kubernetes-definitions.json#/$defs/io.k8s.api.core.v1.NodeSelectorTerm"
+          }
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/step_kubernetes"
+          }
+        },
+        "volumes": {
+          "$ref": "#/$defs/volumes"
+        },
+        "services": {
+          "$ref": "#/$defs/services"
+        },
+        "image_pull_secrets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "service_account_name": {
+          "description": "The name of the service account to use when running the kubernetes pipeline",
+          "type": "string"
+        },
+        "concurrency": {
+          "$ref": "#/$defs/concurrency"
+        },
+        "kind": {},
+        "name": {},
+        "platform": {},
+        "workspace": {},
+        "clone": {},
+        "trigger": {},
+        "depends_on": {}
+      }
+    },
+    "pipeline_exec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "exec"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/step_exec"
+          }
+        },
+        "node": {
+          "$ref": "#/$defs/node"
+        },
+        "concurrency": {
+          "$ref": "#/$defs/concurrency"
+        },
+        "kind": {},
+        "name": {},
+        "platform": {},
+        "workspace": {},
+        "clone": {},
+        "trigger": {},
+        "depends_on": {}
+      }
+    },
+    "pipeline_ssh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "server"
+      ],
+      "properties": {
+        "type": {
+          "const": "ssh"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/step_ssh"
+          }
+        },
+        "server": {
+          "required": [
+            "host",
+            "user"
+          ],
+          "properties": {
+            "host": {
+              "$ref": "#/$defs/stringOrSecret"
+            },
+            "user": {
+              "$ref": "#/$defs/stringOrSecret"
+            },
+            "password": {
+              "$ref": "#/$defs/stringOrSecret"
+            },
+            "ssh_key": {
+              "$ref": "#/$defs/stringOrSecret"
+            }
+          }
+        },
+        "concurrency": {
+          "$ref": "#/$defs/concurrency"
+        },
+        "kind": {},
+        "name": {},
+        "platform": {},
+        "workspace": {},
+        "clone": {},
+        "trigger": {},
+        "depends_on": {}
+      }
+    },
+    "pipeline_digitalocean": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "type": {
+          "const": "digitalocean"
+        },
+        "token": {
+          "$ref": "#/$defs/stringOrSecret"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/step_digitalocean"
+          }
+        },
+        "concurrency": {
+          "$ref": "#/$defs/concurrency"
+        },
+        "kind": {},
+        "name": {},
+        "platform": {},
+        "workspace": {},
+        "clone": {},
+        "trigger": {},
+        "depends_on": {}
+      }
+    },
+    "pipeline_macstadium": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "macstadium"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/step_macstadium"
+          }
+        },
+        "kind": {},
+        "name": {},
+        "platform": {},
+        "workspace": {},
+        "clone": {},
+        "trigger": {},
+        "depends_on": {}
+      }
+    },
+    "pipeline_vm": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "vm"
+        },
+        "environment": {
+          "$ref": "#/$defs/environment"
+        },
+        "pool": {
+          "type": "object",
+          "properties": {
+            "use": {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          }
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/step_docker"
+          }
+        },
+        "volumes": {
+          "$ref": "#/$defs/volumes"
+        },
+        "services": {
+          "$ref": "#/$defs/services"
+        },
+        "image_pull_secrets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "node": {
+          "$ref": "#/$defs/node"
+        },
+        "concurrency": {
+          "$ref": "#/$defs/concurrency"
+        },
+        "kind": {},
+        "name": {},
+        "platform": {},
+        "workspace": {},
+        "clone": {},
+        "trigger": {},
+        "depends_on": {}
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "failure": {
+          "type": "string",
+          "enum": [
+            "always",
+            "ignore"
+          ]
+        },
+        "commands": {
+          "$ref": "#/$defs/commands"
+        },
+        "detach": {
+          "type": "boolean"
+        },
+        "environment": {
+          "$ref": "#/$defs/environment"
+        },
+        "when": {
+          "$ref": "#/$defs/allConditions"
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "step_docker": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/step"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "image"
+          ],
+          "properties": {
+            "image": {
+              "$ref": "#/$defs/nonEmptyString"
+            },
+            "network_mode": {
+              "type": "string",
+              "enum": [
+                "bridge",
+                "host"
+              ]
+            },
+            "privileged": {
+              "type": "boolean"
+            },
+            "pull": {
+              "type": "string",
+              "enum": [
+                "always",
+                "never",
+                "if-not-exists"
+              ]
+            },
+            "volumes": {
+              "$ref": "#/$defs/steps_volumes"
+            },
+            "settings": {
+              "type": "object"
+            },
+            "name": {},
+            "detach": {
+              "type": "boolean"
+            },
+            "failure": {},
+            "commands": {},
+            "environment": {},
+            "when": {},
+            "depends_on": {},
+            "user": {}
+          }
+        }
+      ]
+    },
+    "step_kubernetes": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/step"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "image"
+          ],
+          "properties": {
+            "image": {
+              "$ref": "#/$defs/nonEmptyString"
+            },
+            "privileged": {
+              "type": "boolean"
+            },
+            "pull": {
+              "type": "string",
+              "enum": [
+                "always",
+                "never",
+                "if-not-exists"
+              ]
+            },
+            "resources": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/drone-json/_shared/latest--kubernetes-definitions.json#/$defs/io.k8s.api.core.v1.ResourceRequirements"
+            },
+            "volumes": {
+              "$ref": "#/$defs/steps_volumes"
+            },
+            "settings": {
+              "type": "object"
+            },
+            "name": {},
+            "failure": {},
+            "commands": {},
+            "environment": {},
+            "when": {},
+            "depends_on": {}
+          }
+        }
+      ]
+    },
+    "step_exec": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/step"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {},
+            "failure": {},
+            "commands": {},
+            "environment": {},
+            "when": {},
+            "depends_on": {}
+          }
+        }
+      ]
+    },
+    "step_ssh": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/step"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {},
+            "failure": {},
+            "commands": {},
+            "environment": {},
+            "when": {},
+            "depends_on": {}
+          }
+        }
+      ]
+    },
+    "step_digitalocean": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/step"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {},
+            "failure": {},
+            "commands": {},
+            "environment": {},
+            "when": {},
+            "depends_on": {}
+          }
+        }
+      ]
+    },
+    "step_macstadium": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/step"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {},
+            "failure": {},
+            "commands": {},
+            "environment": {},
+            "when": {},
+            "depends_on": {}
+          }
+        }
+      ]
+    },
+    "steps_volumes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "path"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "path": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/kind_signature"
+    },
+    {
+      "$ref": "#/$defs/kind_secret"
+    },
+    {
+      "$ref": "#/$defs/kind_template"
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/kind_pipeline"
+        },
+        {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/pipeline_docker"
+            },
+            {
+              "$ref": "#/$defs/pipeline_kubernetes"
+            },
+            {
+              "$ref": "#/$defs/pipeline_exec"
+            },
+            {
+              "$ref": "#/$defs/pipeline_ssh"
+            },
+            {
+              "$ref": "#/$defs/pipeline_digitalocean"
+            },
+            {
+              "$ref": "#/$defs/pipeline_macstadium"
+            },
+            {
+              "$ref": "#/$defs/pipeline_vm"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

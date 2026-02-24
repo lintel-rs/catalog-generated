@@ -1,0 +1,1176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/theme-json/versions/v1.json",
+  "title": "JSON schema for WordPress block theme global settings and styles",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/WordPress/gutenberg/b40b61fabf13a6229c616527689d9a7024f81535/schemas/json/theme.json",
+    "sourceSha256": "50f8cd7a78bb2775bcc48fe88577ddcb155da0760c5945c555621f8122dd3c51"
+  },
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "description": "JSON schema URI for theme.json.",
+      "type": "string"
+    },
+    "version": {
+      "description": "Version of theme.json to use.\nSince 5.8.",
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "settings": {
+      "description": "Settings for the block editor and individual blocks. These include things like:\n- Which customization options should be available to the user. \n- The default colors, font sizes... available to the user. \n- CSS custom properties and class names used in styles.\n- And the default layout of the editor (widths and available alignments).\nSince 5.8.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/settingsProperties"
+        },
+        {
+          "properties": {
+            "color": {},
+            "layout": {},
+            "spacing": {},
+            "typography": {},
+            "border": {},
+            "custom": {},
+            "blocks": {
+              "description": "Settings defined on a per-block basis.\nSince 5.8.",
+              "$ref": "#/$defs/settingsBlocksPropertiesComplete"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "styles": {
+      "description": "Organized way to set CSS properties. Styles in the top-level will be added in the `body` selector.\nSince 5.8.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/stylesProperties"
+        },
+        {
+          "properties": {
+            "border": {},
+            "color": {},
+            "spacing": {},
+            "typography": {},
+            "elements": {
+              "description": "Styles defined on a per-element basis using the element's selector.\nSince 5.8.",
+              "$ref": "#/$defs/stylesElementsPropertiesComplete"
+            },
+            "blocks": {
+              "description": "Styles defined on a per-block basis using the block's selector.\nSince 5.8.",
+              "$ref": "#/$defs/stylesBlocksPropertiesComplete"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "customTemplates": {
+      "description": "Additional metadata for custom templates defined in the block-templates folder.\nGutenberg plugin required.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Filename, without extension, of the template in the block-templates folder.\nGutenberg plugin required.",
+            "type": "string"
+          },
+          "title": {
+            "description": "Title of the template, translatable.\nGutenberg plugin required.",
+            "type": "string"
+          },
+          "postTypes": {
+            "description": "List of post types that can use this custom template.\nGutenberg plugin required.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "page"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "title"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "templateParts": {
+      "description": "Additional metadata for template parts defined in the block-template-parts folder.\nGutenberg plugin required.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Filename, without extension, of the template in the block-template-parts folder.\nGutenberg plugin required.",
+            "type": "string"
+          },
+          "title": {
+            "description": "Title of the template, translatable.\nGutenberg plugin required.",
+            "type": "string"
+          },
+          "area": {
+            "description": "The area the template part is used for. Block variations for `header` and `footer` values exist and will be used when the area is set to one of those.\nGutenberg plugin required.",
+            "type": "string",
+            "default": "uncategorized"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "version"
+  ],
+  "$defs": {
+    "//": {
+      "explainer": "https://developer.wordpress.org/themes/advanced-topics/theme-json/",
+      "createTheme": "https://developer.wordpress.org/block-editor/how-to-guides/themes/create-block-theme/",
+      "reference": "https://developer.wordpress.org/block-editor/how-to-guides/themes/theme-json/"
+    },
+    "settingsProperties": {
+      "properties": {
+        "border": {
+          "description": "Settings related to borders.\nGutenberg plugin required.",
+          "type": "object",
+          "properties": {
+            "customColor": {
+              "description": "Allow users to set custom border colors.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": false
+            },
+            "customRadius": {
+              "description": "Allow users to set custom border radius.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": false
+            },
+            "customStyle": {
+              "description": "Allow users to set custom border styles.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": false
+            },
+            "customWidth": {
+              "description": "Allow users to set custom border widths.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "color": {
+          "description": "Settings related to colors.\nSince 5.8.",
+          "type": "object",
+          "properties": {
+            "background": {
+              "description": "Allow users to set background colors.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": true
+            },
+            "custom": {
+              "description": "Allow users to select custom colors.\nSince 5.8.",
+              "type": "boolean",
+              "default": true
+            },
+            "customDuotone": {
+              "description": "Allow users to create custom duotone filters.\nSince 5.8.",
+              "type": "boolean",
+              "default": true
+            },
+            "customGradient": {
+              "description": "Allow users to create custom gradients.\nSince 5.8.",
+              "type": "boolean",
+              "default": true
+            },
+            "duotone": {
+              "description": "Duotone presets for the duotone picker.\nDoesn't generate classes or properties.\nSince 5.8.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Name of the duotone preset, translatable.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "slug": {
+                    "description": "Kebab-case unique identifier for the duotone preset.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "colors": {
+                    "description": "List of colors from dark to light.\nSince 5.8.",
+                    "type": "array",
+                    "items": {
+                      "description": "CSS hex or rgb string.\nSince 5.8.",
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "slug",
+                  "colors"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "gradients": {
+              "description": "Gradient presets for the gradient picker.\nGenerates a single class (`.has-{slug}-background`) and custom property (`--wp--preset--gradient--{slug}`) per preset value.\nSince 5.8.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Name of the gradient preset, translatable.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "slug": {
+                    "description": "Kebab-case unique identifier for the gradient preset.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "gradient": {
+                    "description": "CSS gradient string.\nSince 5.8.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "slug",
+                  "gradient"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "link": {
+              "description": "Allow users to set link colors.\nSince 5.8.",
+              "type": "boolean",
+              "default": false
+            },
+            "palette": {
+              "description": "Color palette presets for the color picker.\nGenerates three classes (`.has-{slug}-color`, `.has-{slug}-background-color`, and `.has-{slug}-border-color`) and a single custom property (`--wp--preset--color--{slug}`) per preset value.\nSince 5.8.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Name of the color preset, translatable.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "slug": {
+                    "description": "Kebab-case unique identifier for the color preset.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "color": {
+                    "description": "CSS hex or rgb(a) string.\nSince 5.8.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "slug",
+                  "color"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "text": {
+              "description": "Allow users to set text colors.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "layout": {
+          "description": "Settings related to layout.\nSince 5.8.",
+          "type": "object",
+          "properties": {
+            "contentSize": {
+              "description": "Sets the max-width of the content.\nSince 5.8.",
+              "type": "string"
+            },
+            "wideSize": {
+              "description": "Sets the max-width of wide (`.alignwide`) content.\nSince 5.8.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "spacing": {
+          "description": "Settings related to spacing.\nSince 5.8.",
+          "type": "object",
+          "properties": {
+            "blockGap": {
+              "description": "Enables `--wp--style--block-gap` to be generated from styles.spacing.blockGap.\nA value of `null` instead of `false` further disables layout styles from being generated.\nGutenberg plugin required.",
+              "oneOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "customMargin": {
+              "description": "Allow users to set a custom margin.\nSince 5.8.",
+              "type": "boolean",
+              "default": false
+            },
+            "customPadding": {
+              "description": "Allow users to set a custom padding.\nSince 5.8.",
+              "type": "boolean",
+              "default": false
+            },
+            "units": {
+              "description": "List of units the user can use for spacing values.\nSince 5.8.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "px",
+                "em",
+                "rem",
+                "vh",
+                "vw",
+                "%"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "typography": {
+          "description": "Settings related to typography.\nSince 5.8.",
+          "type": "object",
+          "properties": {
+            "customFontSize": {
+              "description": "Allow users to set custom font sizes.\nSince 5.8.",
+              "type": "boolean",
+              "default": true
+            },
+            "customFontStyle": {
+              "description": "Allow users to set custom font styles.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": true
+            },
+            "customFontWeight": {
+              "description": "Allow users to set custom font weights.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": true
+            },
+            "customLetterSpacing": {
+              "description": "Allow users to set custom letter spacing.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": true
+            },
+            "customLineHeight": {
+              "description": "Allow users to set custom line height.\nSince 5.8.",
+              "type": "boolean",
+              "default": false
+            },
+            "customTextDecorations": {
+              "description": "Allow users to set custom text decorations.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": true
+            },
+            "customTextTransforms": {
+              "description": "Allow users to set custom text transforms.\nGutenberg plugin required.",
+              "type": "boolean",
+              "default": true
+            },
+            "dropCap": {
+              "description": "Enable drop cap.\nSince 5.8.",
+              "type": "boolean",
+              "default": true
+            },
+            "fontSizes": {
+              "description": "Font size presets for the font size selector.\nGenerates a single class (`.has-{slug}-color`) and custom property (`--wp--preset--font-size--{slug}`) per preset value.\nSince 5.8.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Name of the font size preset, translatable.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "slug": {
+                    "description": "Kebab-case unique identifier for the font size preset.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "size": {
+                    "description": "CSS font-size value, including units.\nSince 5.8.",
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "fontFamilies": {
+              "description": "Font family presets for the font family selector.\nGenerates a single custom property (`--wp--preset--font-family--{slug}`) per preset value.\nGutenberg plugin required.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Name of the font family preset, translatable.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "slug": {
+                    "description": "Kebab-case unique identifier for the font family preset.\nSince 5.8.",
+                    "type": "string"
+                  },
+                  "fontFamily": {
+                    "description": "CSS font-family value.\nSince 5.8.",
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "custom": {
+          "description": "Generate custom CSS custom properties of the form `--wp--custom--{key}--{nested-key}: {value};`. `camelCased` keys are transformed to `kebab-case` as to follow the CSS property naming schema. Keys at different depth levels are separated by `--`, so keys should not include `--` in the name.\nSince 5.8.",
+          "$ref": "#/$defs/settingsCustomAdditionalProperties"
+        }
+      }
+    },
+    "settingsPropertiesComplete": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/settingsProperties"
+        },
+        {
+          "properties": {
+            "border": {},
+            "color": {},
+            "layout": {},
+            "spacing": {},
+            "typography": {},
+            "custom": {}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "settingsBlocksPropertiesComplete": {
+      "type": "object",
+      "properties": {
+        "core/archives": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/audio": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/block": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/button": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/buttons": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/calendar": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/categories": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/code": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/column": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/columns": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/cover": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/embed": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/file": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/freeform": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/gallery": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/group": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/heading": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/home-link": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/html": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/image": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/latest-comments": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/latest-posts": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/list": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/loginout": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/media-text": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/missing": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/more": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/navigation": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/navigation-link": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/nextpage": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/page-list": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/paragraph": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-author": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-comment": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-comment-author": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-comment-content": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-comment-date": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-comments": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-comments-count": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-comments-form": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-comments-link": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-content": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-date": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-excerpt": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-featured-image": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-navigation-link": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-template": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-terms": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/post-title": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/preformatted": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/pullquote": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/query": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/query-pagination": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/query-pagination-next": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/query-pagination-numbers": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/query-pagination-previous": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/query-title": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/quote": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/rss": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/search": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/separator": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/shortcode": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/site-logo": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/site-tagline": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/site-title": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/social-link": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/social-links": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/spacer": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/table": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/table-of-contents": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/tag-cloud": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/template-part": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/term-description": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/text-columns": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/verse": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/video": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/widget-area": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/legacy-widget": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        },
+        "core/widget-group": {
+          "$ref": "#/$defs/settingsPropertiesComplete"
+        }
+      },
+      "additionalProperties": false
+    },
+    "settingsCustomAdditionalProperties": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "$ref": "#/$defs/settingsCustomAdditionalProperties"
+          }
+        ]
+      }
+    },
+    "stylesProperties": {
+      "properties": {
+        "border": {
+          "description": "Border styles.\nGutenberg plugin required.",
+          "type": "object",
+          "properties": {
+            "color": {
+              "description": "Sets the `border-color` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            },
+            "radius": {
+              "description": "Sets the `border-radius` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            },
+            "style": {
+              "description": "Sets the `border-style` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            },
+            "width": {
+              "description": "Sets the `border-width` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "color": {
+          "description": "Color styles.\nSince 5.8.",
+          "type": "object",
+          "properties": {
+            "background": {
+              "description": "Sets the `background-color` CSS property.\nSince 5.8.",
+              "type": "string"
+            },
+            "gradient": {
+              "description": "Sets the `background` CSS property.\nSince 5.8.",
+              "type": "string"
+            },
+            "text": {
+              "description": "Sets the `color` CSS property.\nSince 5.8.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "spacing": {
+          "description": "Spacing styles.\nSince 5.8.",
+          "type": "object",
+          "properties": {
+            "blockGap": {
+              "description": "Sets the `--wp--style--block-gap` CSS custom property when settings.spacing.blockGap is true.",
+              "type": "string"
+            },
+            "margin": {
+              "description": "Margin styles.\nSince 5.8.",
+              "type": "object",
+              "properties": {
+                "top": {
+                  "description": "Sets the `margin-top` CSS property.\nSince 5.8.",
+                  "type": "string"
+                },
+                "right": {
+                  "description": "Sets the `margin-right` CSS property.\nSince 5.8.",
+                  "type": "string"
+                },
+                "bottom": {
+                  "description": "Sets the `margin-bottom` CSS property.\nSince 5.8.",
+                  "type": "string"
+                },
+                "left": {
+                  "description": "Sets the `margin-left` CSS property.\nSince 5.8.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "padding": {
+              "description": "Padding styles.\nSince 5.8.",
+              "type": "object",
+              "properties": {
+                "top": {
+                  "description": "Sets the `padding-top` CSS property.\nSince 5.8.",
+                  "type": "string"
+                },
+                "right": {
+                  "description": "Sets the `padding-right` CSS property.\nSince 5.8.",
+                  "type": "string"
+                },
+                "bottom": {
+                  "description": "Sets the `padding-bottom` CSS property.\nSince 5.8.",
+                  "type": "string"
+                },
+                "left": {
+                  "description": "Sets the `padding-left` CSS property.\nSince 5.8.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "typography": {
+          "description": "Typography styles.\nSince 5.8.",
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "description": "Sets the `font-family` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            },
+            "fontSize": {
+              "description": "Sets the `font-size` CSS property.\nSince 5.8.",
+              "type": "string"
+            },
+            "fontStyle": {
+              "description": "Sets the `font-style` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            },
+            "fontWeight": {
+              "description": "Sets the `font-weight` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            },
+            "letterSpacing": {
+              "description": "Sets the `letter-spacing` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            },
+            "lineHeight": {
+              "description": "Sets the `line-height` CSS property.\nSince 5.8.",
+              "type": "string"
+            },
+            "textDecoration": {
+              "description": "Sets the `text-decoration` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            },
+            "textTransform": {
+              "description": "Sets the `text-transform` CSS property.\nGutenberg plugin required.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "stylesPropertiesComplete": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/stylesProperties"
+        },
+        {
+          "properties": {
+            "border": {},
+            "color": {},
+            "spacing": {},
+            "typography": {}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "stylesElementsPropertiesComplete": {
+      "type": "object",
+      "properties": {
+        "link": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        },
+        "h1": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        },
+        "h2": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        },
+        "h3": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        },
+        "h4": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        },
+        "h5": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        },
+        "h6": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        }
+      },
+      "additionalProperties": false
+    },
+    "stylesBlocksPropertiesComplete": {
+      "type": "object",
+      "properties": {
+        "core/archives": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/audio": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/block": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/button": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/buttons": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/calendar": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/categories": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/code": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/column": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/columns": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/cover": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/embed": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/file": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/freeform": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/gallery": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/group": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/heading": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/home-link": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/html": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/image": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/latest-comments": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/latest-posts": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/list": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/loginout": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/media-text": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/missing": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/more": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/navigation": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/navigation-link": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/nextpage": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/page-list": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/paragraph": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-author": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-comment": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-comment-author": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-comment-content": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-comment-date": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-comments": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-comments-count": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-comments-form": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-comments-link": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-content": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-date": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-excerpt": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-featured-image": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-navigation-link": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-template": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-terms": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/post-title": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/preformatted": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/pullquote": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/query": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/query-pagination": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/query-pagination-next": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/query-pagination-numbers": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/query-pagination-previous": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/query-title": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/quote": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/rss": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/search": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/separator": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/shortcode": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/site-logo": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/site-tagline": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/site-title": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/social-link": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/social-links": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/spacer": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/table": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/table-of-contents": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/tag-cloud": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/template-part": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/term-description": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/text-columns": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/verse": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/video": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/widget-area": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/legacy-widget": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        },
+        "core/widget-group": {
+          "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+        }
+      },
+      "additionalProperties": false
+    },
+    "stylesPropertiesAndElementsComplete": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/stylesProperties"
+        },
+        {
+          "properties": {
+            "border": {},
+            "color": {},
+            "spacing": {},
+            "typography": {},
+            "elements": {
+              "$ref": "#/$defs/stylesElementsPropertiesComplete"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

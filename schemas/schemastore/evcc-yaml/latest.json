@@ -1,0 +1,352 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/evcc-yaml/latest.json",
+  "title": "EVCC configuration schema",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/andig/evcc/master/schema.json",
+    "sourceSha256": "9ff76314fdce0a6cd0ecf9a4e98747405297d69d61605f6ab6e212e4c59d13ed"
+  },
+  "type": "object",
+  "properties": {
+    "network": {
+      "type": "object",
+      "description": "Network",
+      "properties": {
+        "schema": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        }
+      }
+    },
+    "interval": {
+      "$ref": "#/$defs/duration"
+    },
+    "log": {
+      "description": "Global log level",
+      "$ref": "#/$defs/loglevel"
+    },
+    "levels": {
+      "type": "object",
+      "description": "Log levels per area",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "sponsortoken": {
+      "type": "string"
+    },
+    "plant": {
+      "type": "string"
+    },
+    "telemetry": {
+      "type": "boolean"
+    },
+    "database": {
+      "type": "object",
+      "description": "Database",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "dsn": {
+          "type": "string"
+        }
+      }
+    },
+    "tariffs": {
+      "type": "object",
+      "description": "Tariffs",
+      "properties": {
+        "currency": {
+          "type": "string"
+        },
+        "grid": {
+          "description": "Grid tariff",
+          "$ref": "#/$defs/typedObject"
+        },
+        "feedin": {
+          "description": "Feed-in tariff",
+          "$ref": "#/$defs/typedObject"
+        },
+        "planner": {
+          "description": "Planner tariff",
+          "$ref": "#/$defs/typedObject"
+        }
+      }
+    },
+    "chargers": {
+      "type": "array",
+      "description": "List of chargers",
+      "items": {
+        "$ref": "#/$defs/namedObject"
+      }
+    },
+    "meters": {
+      "type": "array",
+      "description": "List of meters",
+      "items": {
+        "$ref": "#/$defs/namedObject"
+      }
+    },
+    "vehicles": {
+      "type": "array",
+      "description": "List of vehicles",
+      "items": {
+        "$ref": "#/$defs/namedObject",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "number"
+          },
+          "phases": {
+            "type": "integer"
+          },
+          "identifiers": {
+            "type": "array"
+          },
+          "user": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "VIN": {
+            "type": "string"
+          },
+          "cache": {
+            "$ref": "#/$defs/duration"
+          },
+          "onIdentify": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "$ref": "#/$defs/mode"
+              },
+              "priority": {
+                "type": "integer"
+              },
+              "minCurrent": {
+                "type": "integer"
+              },
+              "maxCurrent": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "site": {
+      "type": "object",
+      "required": [
+        "meters"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "meters": {
+          "type": "object",
+          "properties": {
+            "grid": {
+              "type": "string"
+            },
+            "pv": {
+              "description": "PV inverter/meter (1 or more)",
+              "type": [
+                "string",
+                "array"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "battery": {
+              "description": "Home battery (1 or more)",
+              "type": [
+                "string",
+                "array"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "aux": {
+              "description": "Auxiliary meters (0 or more)",
+              "type": [
+                "string",
+                "array"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          }
+        },
+        "residualPower": {
+          "type": "number"
+        },
+        "maxGridSupplyWhileBatteryCharging": {
+          "type": "number"
+        }
+      }
+    },
+    "loadpoints": {
+      "type": "array",
+      "description": "List of loadpoints",
+      "items": {
+        "type": "object",
+        "required": [
+          "charger"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/$defs/mode"
+          },
+          "charger": {
+            "type": "string"
+          },
+          "meter": {
+            "type": "string"
+          },
+          "minCurrent": {
+            "type": "integer"
+          },
+          "maxCurrent": {
+            "type": "integer"
+          },
+          "phases": {
+            "type": "integer"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "vehicle": {
+            "type": "string"
+          },
+          "soc": {
+            "type": "object",
+            "properties": {
+              "poll": {
+                "type": "object",
+                "properties": {
+                  "mode": {
+                    "$ref": "#/$defs/pollMode"
+                  },
+                  "interval": {
+                    "$ref": "#/$defs/duration"
+                  }
+                }
+              },
+              "estimate": {
+                "type": "boolean"
+              }
+            }
+          },
+          "guardDuration": {
+            "$ref": "#/$defs/duration"
+          },
+          "enable": {
+            "type": "object",
+            "properties": {
+              "delay": {
+                "$ref": "#/$defs/duration"
+              },
+              "threshold": {
+                "type": "integer"
+              }
+            }
+          },
+          "disable": {
+            "type": "object",
+            "properties": {
+              "delay": {
+                "$ref": "#/$defs/duration"
+              },
+              "threshold": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "duration": {
+      "type": "string",
+      "pattern": "\\d[msh]$"
+    },
+    "namedObject": {
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "template": {
+          "type": "string"
+        }
+      }
+    },
+    "typedObject": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "loglevel": {
+      "enum": [
+        "trace",
+        "debug",
+        "info",
+        "error",
+        "fatal"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "off",
+        "now",
+        "pv",
+        "minpv"
+      ]
+    },
+    "pollMode": {
+      "enum": [
+        "always",
+        "charging",
+        "connected"
+      ]
+    }
+  }
+}

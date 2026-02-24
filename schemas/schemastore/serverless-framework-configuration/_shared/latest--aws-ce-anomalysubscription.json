@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-ce-anomalysubscription.json",
+  "title": "AWSCEAnomalySubscriptionProperties",
+  "description": "AWS Cost Anomaly Detection leverages advanced Machine Learning technologies to identify anomalous spend and root causes, so you can quickly take action. Create subscription to be notified. Source:- https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-ce-anomalysubscription.json",
+    "sourceSha256": "3c11846f45fe5482139798bdd239e2549681407cfb71b3e4e6fa49e1ffdcd60e",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "SubscriptionName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "[\\S\\s]*",
+          "minLength": 0,
+          "maxLength": 1024
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The name of the subscription."
+    },
+    "MonitorArnList": {
+      "description": "A list of cost anomaly monitors.",
+      "type": "array",
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/Arn"
+      }
+    },
+    "Subscribers": {
+      "description": "A list of subscriber",
+      "type": "array",
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/Subscriber"
+      }
+    },
+    "Threshold": {
+      "description": "The dollar value that triggers a notification if the threshold is exceeded. ",
+      "type": "number",
+      "minimum": 0
+    },
+    "ThresholdExpression": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "An Expression object in JSON String format used to specify the anomalies that you want to generate alerts for."
+    },
+    "Frequency": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "DAILY",
+            "IMMEDIATE",
+            "WEEKLY"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The frequency at which anomaly reports are sent over email. "
+    },
+    "ResourceTags": {
+      "type": "array",
+      "description": "Tags to assign to subscription.",
+      "items": {
+        "$ref": "#/$defs/ResourceTag"
+      },
+      "minItems": 0,
+      "maxItems": 200,
+      "insertionOrder": false
+    }
+  },
+  "typeName": "AWS::CE::AnomalySubscription",
+  "primaryIdentifier": [
+    "/properties/SubscriptionArn"
+  ],
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "$defs": {
+    "Arn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^arn:aws[-a-z0-9]*:[a-z0-9]+:[-a-z0-9]*:[0-9]{12}:[-a-zA-Z0-9/:_]+$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Subscription ARN",
+      "title": "AWSCEAnomalySubscriptionArnDefinition"
+    },
+    "Subscriber": {
+      "type": "object",
+      "properties": {
+        "Address": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "(^[a-zA-Z0-9.!#$%&'*+=?^_‘{|}~-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$)|(^arn:(aws[a-zA-Z-]*):sns:[a-zA-Z0-9-]+:[0-9]{12}:[a-zA-Z0-9_-]+(\\.fifo)?$)"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Status": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "CONFIRMED",
+                "DECLINED"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "EMAIL",
+                "SNS"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "Address",
+        "Type"
+      ],
+      "additionalProperties": false,
+      "title": "AWSCEAnomalySubscriptionSubscriberDefinition"
+    },
+    "ResourceTag": {
+      "description": "A key-value pair to associate with a resource.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(?!aws:).*$",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The key name for the tag."
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The value for the tag."
+        }
+      },
+      "required": [
+        "Key",
+        "Value"
+      ],
+      "title": "AWSCEAnomalySubscriptionResourceTagDefinition"
+    }
+  },
+  "writeOnlyProperties": [
+    "/properties/ResourceTags"
+  ],
+  "additionalProperties": false,
+  "required": [
+    "MonitorArnList",
+    "Subscribers",
+    "Frequency",
+    "SubscriptionName"
+  ],
+  "createOnlyProperties": [
+    "/properties/ResourceTags"
+  ],
+  "readOnlyProperties": [
+    "/properties/SubscriptionArn",
+    "/properties/AccountId",
+    "/properties/Subscribers/*/Status"
+  ]
+}

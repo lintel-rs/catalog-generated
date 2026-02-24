@@ -1,0 +1,467 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/plex-prerolls/latest.json",
+  "title": "Plex Prerolls Config Schema",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/nwithan8/plex-prerolls/main/.schema/config.schema.json",
+    "sourceSha256": "84cc95e07b5285d2a21724145fb3c593f792c85c096e509601f361b7bfbaf436"
+  },
+  "type": "object",
+  "properties": {
+    "run": {
+      "title": "Run configuration",
+      "description": "Settings for running the application",
+      "type": "object",
+      "properties": {
+        "schedule": {
+          "title": "Cron schedule",
+          "description": "The cron schedule for running the application",
+          "$ref": "#/$defs/cron",
+          "default": "0 0 * * *"
+        },
+        "dry_run": {
+          "title": "Dry run",
+          "description": "Whether to run in dry run mode (don't actually make changes to Plex)",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "plex": {
+      "title": "Plex configuration",
+      "description": "Settings for the Plex server",
+      "type": "object",
+      "properties": {
+        "url": {
+          "title": "Plex URL",
+          "description": "The URL of the Plex server",
+          "$ref": "#/$defs/hostWithIpAndOptionalPort"
+        },
+        "token": {
+          "title": "Plex token",
+          "description": "The token for the Plex server",
+          "$ref": "#/$defs/plexToken"
+        }
+      },
+      "required": [
+        "url",
+        "token"
+      ]
+    },
+    "always": {
+      "title": "Always preroll configuration",
+      "description": "Configuration for always-included prerolls",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Always preroll enabled",
+          "description": "Whether the always preroll is enabled",
+          "$ref": "#/$defs/enabled"
+        },
+        "paths": {
+          "title": "Always preroll paths",
+          "description": "Paths to media files to always include as prerolls",
+          "$ref": "#/$defs/paths"
+        },
+        "path_globbing": {
+          "$ref": "#/$defs/pathGlobbing"
+        },
+        "weight": {
+          "$ref": "#/$defs/weight"
+        },
+        "count": {
+          "title": "Always preroll count",
+          "description": "The number of prerolls to include",
+          "$ref": "#/$defs/positiveInteger"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "date_range": {
+      "title": "Date range preroll configuration",
+      "description": "Configuration for date range-based prerolls",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Date range preroll enabled",
+          "description": "Whether the date range preroll is enabled",
+          "$ref": "#/$defs/enabled"
+        },
+        "ranges": {
+          "title": "Date ranges",
+          "description": "Date ranges for which to include prerolls",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "title": "Name",
+                "description": "The name of the date range",
+                "type": "string"
+              },
+              "start_date": {
+                "$ref": "#/$defs/startDate"
+              },
+              "end_date": {
+                "$ref": "#/$defs/endDate"
+              },
+              "holiday": {
+                "$ref": "#/$defs/holiday"
+              },
+              "paths": {
+                "title": "Date range preroll paths",
+                "description": "Paths to media files to include as prerolls for this range",
+                "$ref": "#/$defs/paths"
+              },
+              "path_globbing": {
+                "title": "Path globbing",
+                "description": "Settings for path globbing",
+                "$ref": "#/$defs/pathGlobbing"
+              },
+              "weight": {
+                "$ref": "#/$defs/weight"
+              },
+              "disable_always": {
+                "$ref": "#/$defs/disableAlways"
+              }
+            },
+            "required": []
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "ranges"
+      ]
+    },
+    "weekly": {
+      "title": "Weekly preroll configuration",
+      "description": "Configuration for weekly-based prerolls",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Weekly preroll enabled",
+          "description": "Whether the weekly preroll is enabled",
+          "$ref": "#/$defs/enabled"
+        },
+        "weeks": {
+          "title": "Configuration for weekly-based prerolls",
+          "description": "Configuration for weekly-based prerolls",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "number": {
+                "$ref": "#/$defs/weekNumber"
+              },
+              "paths": {
+                "title": "Weekly preroll paths",
+                "description": "Paths to media files to include as prerolls for this week",
+                "$ref": "#/$defs/paths"
+              },
+              "path_globbing": {
+                "title": "Path globbing",
+                "description": "Settings for path globbing",
+                "$ref": "#/$defs/pathGlobbing"
+              },
+              "weight": {
+                "$ref": "#/$defs/weight"
+              },
+              "disable_always": {
+                "$ref": "#/$defs/disableAlways"
+              }
+            },
+            "required": [
+              "number"
+            ]
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "weeks"
+      ]
+    },
+    "monthly": {
+      "title": "Monthly preroll configuration",
+      "description": "Configuration for monthly-based prerolls",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Monthly preroll enabled",
+          "description": "Whether the monthly preroll is enabled",
+          "$ref": "#/$defs/enabled"
+        },
+        "months": {
+          "title": "Configuration for monthly-based prerolls",
+          "description": "Configuration for monthly-based prerolls",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "number": {
+                "$ref": "#/$defs/monthNumber"
+              },
+              "paths": {
+                "title": "Monthly preroll paths",
+                "description": "Paths to media files to include as prerolls for this month",
+                "$ref": "#/$defs/paths"
+              },
+              "path_globbing": {
+                "title": "Path globbing",
+                "description": "Settings for path globbing",
+                "$ref": "#/$defs/pathGlobbing"
+              },
+              "weight": {
+                "$ref": "#/$defs/weight"
+              },
+              "disable_always": {
+                "$ref": "#/$defs/disableAlways"
+              }
+            },
+            "required": [
+              "number"
+            ]
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "months"
+      ]
+    },
+    "advanced": {
+      "title": "Advanced configuration",
+      "description": "Advanced configuration options",
+      "type": "object",
+      "properties": {
+        "auto_generation": {
+          "title": "Auto generation",
+          "description": "Settings for auto-generating prerolls",
+          "type": "object",
+          "properties": {
+            "plex_path": {
+              "title": "Plex path for auto generation",
+              "description": "The path for the Plex Media Server to use to access auto-generated prerolls",
+              "type": "string"
+            },
+            "recently_added": {
+              "title": "Recently added",
+              "description": "Settings for auto-generating prerolls from recently added media",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "title": "Recently added auto generation enabled",
+                  "description": "Whether auto generation from recently added media is enabled",
+                  "$ref": "#/$defs/enabled"
+                },
+                "count": {
+                  "title": "Recently added count",
+                  "description": "The number of recently added media to include as prerolls",
+                  "$ref": "#/$defs/positiveInteger"
+                },
+                "trailer_cutoff_year": {
+                  "title": "Trailer cutoff year",
+                  "description": "The year to use as a cutoff for trailers. Default is 1980",
+                  "$ref": "#/$defs/positiveInteger"
+                }
+              },
+              "required": [
+                "enabled",
+                "count"
+              ]
+            }
+          },
+          "required": [
+            "plex_path",
+            "recently_added"
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "date": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "cron": {
+      "description": "Cron expression in the format: `minute hour day month weekday`",
+      "type": "string",
+      "pattern": "^([0-5]?\\d) ([01]?\\d|2[0-3]) ([1-9]|[12]\\d|3[01]) ([1-9]|1[012]) ([0-6])$"
+    },
+    "positiveInteger": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "emptyString": {
+      "pattern": "^$",
+      "type": "string"
+    },
+    "emptyableString": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/emptyString"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "hostWithIpAndOptionalPort": {
+      "pattern": "^(https?://)?[a-zA-Z0-9.-]+(:[0-9]{1,5})?$",
+      "type": "string"
+    },
+    "plexToken": {
+      "title": "Plex token",
+      "type": "string"
+    },
+    "weekNumber": {
+      "title": "Week of the year number",
+      "description": "The week of the year number",
+      "maximum": 53,
+      "type": "integer",
+      "minimum": 1
+    },
+    "monthNumber": {
+      "title": "Month number",
+      "maximum": 12,
+      "type": "integer",
+      "minimum": 1
+    },
+    "enabled": {
+      "title": "Enabled",
+      "type": "boolean",
+      "description": "Whether the feature is enabled"
+    },
+    "countryCode": {
+      "title": "Country code",
+      "pattern": "^[A-Z]{2}$",
+      "type": "string"
+    },
+    "startDate": {
+      "title": "Start date",
+      "description": "The start date of the range",
+      "$ref": "#/$defs/date"
+    },
+    "endDate": {
+      "title": "End date",
+      "description": "The end date of the range",
+      "$ref": "#/$defs/date"
+    },
+    "holiday": {
+      "title": "Holiday",
+      "description": "Configuration for the floating holiday",
+      "required": [
+        "name",
+        "country"
+      ],
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "description": "Case-insensitive name of the holiday. Will be used to look up the date",
+          "type": "string"
+        },
+        "country": {
+          "title": "Country",
+          "description": "The country code (ISO 3166-1 alpha-2) to use for looking up the holiday date",
+          "$ref": "#/$defs/countryCode"
+        },
+        "subdivision": {
+          "title": "Subdivision",
+          "description": "Optional subdivision code to use for looking up the holiday date (e.g., state or province)",
+          "type": "string"
+        },
+        "offset_start": {
+          "title": "Offset start",
+          "description": "Number of days to offset the start date by (can be negative)",
+          "type": "integer",
+          "default": 0
+        },
+        "offset_end": {
+          "title": "Offset end",
+          "description": "Number of days to offset the end date by (can be negative)",
+          "type": "integer",
+          "default": 0
+        }
+      }
+    },
+    "disableAlways": {
+      "title": "Disable always prerolls",
+      "type": "boolean",
+      "description": "Whether to disable always prerolls when this schedule is active"
+    },
+    "weight": {
+      "title": "Weight",
+      "description": "The weight of the preroll for this range",
+      "$ref": "#/$defs/positiveInteger"
+    },
+    "videoFilePath": {
+      "title": "Video file path",
+      "pattern": "^.+\\.(mp4|mkv|avi|mov|wmv|flv|webm)$",
+      "type": "string",
+      "description": "A path to a media file"
+    },
+    "paths": {
+      "title": "Video file paths",
+      "items": {
+        "description": "A path to a video file",
+        "$ref": "#/$defs/videoFilePath"
+      },
+      "type": "array"
+    },
+    "globPattern": {
+      "title": "Glob pattern",
+      "description": "A glob pattern to match files",
+      "type": "string"
+    },
+    "pathGlobbing": {
+      "title": "Path globbing",
+      "description": "Settings for path globbing",
+      "properties": {
+        "enabled": {
+          "$ref": "#/$defs/enabled"
+        },
+        "pairs": {
+          "description": "The pairs of paths to match and replace",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "root_path": {
+                "description": "The local root path to match",
+                "type": "string"
+              },
+              "plex_path": {
+                "description": "The remote Plex path to replace",
+                "type": "string"
+              },
+              "patterns": {
+                "description": "The glob patterns to match",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/globPattern"
+                }
+              }
+            },
+            "required": [
+              "root_path",
+              "plex_path",
+              "patterns"
+            ]
+          }
+        }
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "plex",
+    "advanced"
+  ],
+  "$comment": "https://github.com/nwithan8/plex-prerolls",
+  "additionalProperties": true
+}

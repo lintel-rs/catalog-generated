@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/pyproject/_shared/latest--partial-taskipy.json",
+  "title": "taskipy",
+  "description": "tasks runner for python projects",
+  "x-lintel": {
+    "source": "https://json.schemastore.org/partial-taskipy.json",
+    "sourceSha256": "bb10884869742046f2f89c04df989c808163d07cd27f94a14f073f58af4f050e"
+  },
+  "type": "object",
+  "properties": {
+    "tasks": {
+      "title": "tasks",
+      "description": "task definitions",
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/$defs/Task"
+        }
+      },
+      "additionalProperties": false,
+      "x-tombi-table-keys-order": "ascending"
+    },
+    "variables": {
+      "title": "variables",
+      "description": "variables used in your tasks",
+      "type": "object",
+      "patternProperties": {
+        "^[0-9a-zA-Z_-]+$": {
+          "title": "variable",
+          "description": "variable in your tasks",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/VariableValue"
+            },
+            {
+              "$ref": "#/$defs/Variable"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "x-tombi-table-keys-order": "ascending"
+    },
+    "settings": {
+      "$ref": "#/$defs/Settings"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Task": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Command"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "cmd": {
+              "$ref": "#/$defs/Command"
+            },
+            "help": {
+              "type": "string",
+              "minLength": 1
+            },
+            "use_vars": {
+              "$ref": "#/$defs/UseVars"
+            },
+            "cwd": {
+              "$ref": "#/$defs/Cwd"
+            }
+          },
+          "required": [
+            "cmd"
+          ]
+        }
+      ]
+    },
+    "Command": {
+      "type": "string",
+      "title": "command",
+      "description": "command as a string",
+      "minLength": 1
+    },
+    "Variable": {
+      "type": "object",
+      "properties": {
+        "var": {
+          "$ref": "#/$defs/VariableValue"
+        },
+        "recursive": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "VariableValue": {
+      "type": "string",
+      "title": "variable value",
+      "minLength": 1
+    },
+    "Settings": {
+      "type": "object",
+      "title": "settings",
+      "description": "global scope settings for taskipy",
+      "properties": {
+        "use_vars": {
+          "$ref": "#/$defs/UseVars"
+        },
+        "cwd": {
+          "$ref": "#/$defs/Cwd"
+        }
+      },
+      "additionalProperties": false
+    },
+    "UseVars": {
+      "type": "boolean",
+      "title": "use variables",
+      "description": "use variables flag",
+      "default": false
+    },
+    "Cwd": {
+      "type": "string",
+      "title": "current working directory",
+      "description": "Set the working directory of the task relative to the root of the project (where the pyproject.toml file is)",
+      "minLength": 1
+    }
+  }
+}

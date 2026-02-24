@@ -1,0 +1,849 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-applicationinsights-application.json",
+  "title": "AWSApplicationInsightsApplicationProperties",
+  "description": "Resource schema for AWS::ApplicationInsights::Application. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-applicationinsights.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-applicationinsights-application.json",
+    "sourceSha256": "f15773ca91bf7b959d28d6954fc4e5d9ca501436ea7a67b18a1c04d5cb6fe17a",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "ResourceGroupName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "[a-zA-Z0-9.-_]*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The name of the resource group."
+    },
+    "CWEMonitorEnabled": {
+      "description": "Indicates whether Application Insights can listen to CloudWatch events for the application resources.",
+      "type": "boolean"
+    },
+    "OpsCenterEnabled": {
+      "description": "When set to true, creates opsItems for any problems detected on an application.",
+      "type": "boolean"
+    },
+    "OpsItemSNSTopicArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 300,
+          "pattern": "^arn:aws(-[\\w]+)*:[\\w0-9-]+:([\\w0-9-]*)?:[\\w0-9_-]*([:/].+)*$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The SNS topic provided to Application Insights that is associated to the created opsItem."
+    },
+    "Tags": {
+      "description": "The tags of Application Insights application.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Tag"
+      },
+      "minItems": 1,
+      "insertionOrder": true
+    },
+    "CustomComponents": {
+      "description": "The custom grouped components.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CustomComponent"
+      },
+      "minItems": 1,
+      "insertionOrder": true
+    },
+    "LogPatternSets": {
+      "description": "The log pattern sets.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/LogPatternSet"
+      },
+      "minItems": 1,
+      "insertionOrder": true
+    },
+    "AutoConfigurationEnabled": {
+      "description": "If set to true, application will be configured with recommended monitoring configuration.",
+      "type": "boolean"
+    },
+    "ComponentMonitoringSettings": {
+      "description": "The monitoring settings of the components.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ComponentMonitoringSetting"
+      },
+      "minItems": 1,
+      "insertionOrder": true
+    },
+    "GroupingType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ACCOUNT_BASED"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The grouping type of the application"
+    }
+  },
+  "typeName": "AWS::ApplicationInsights::Application",
+  "taggable": true,
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-applicationinsights.git",
+  "createOnlyProperties": [
+    "/properties/ResourceGroupName"
+  ],
+  "$defs": {
+    "Tag": {
+      "description": "A key-value pair to associate with a resource.",
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The key name of the tag. You can specify a value that is 1 to 127 Unicode characters in length and cannot be prefixed with aws:. You can use any of the following characters: the set of Unicode letters, digits, whitespace, _, ., /, =, +, and -. "
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The value for the tag. You can specify a value that is 1 to 255 Unicode characters in length and cannot be prefixed with aws:. You can use any of the following characters: the set of Unicode letters, digits, whitespace, _, ., /, =, +, and -. "
+        }
+      },
+      "required": [
+        "Key",
+        "Value"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationTagDefinition"
+    },
+    "CustomComponent": {
+      "description": "The custom grouped component.",
+      "type": "object",
+      "properties": {
+        "ComponentName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[0-9\\w\\-_.+]*$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the component."
+        },
+        "ResourceList": {
+          "description": "The list of resource ARNs that belong to the component.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 300,
+            "pattern": "^arn:aws(-[\\w]+)*:[\\w0-9-]+:([\\w0-9-]*)?:[\\w0-9_-]*([:/].+)*$"
+          },
+          "minItems": 1,
+          "insertionOrder": true
+        }
+      },
+      "required": [
+        "ComponentName",
+        "ResourceList"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationCustomComponentDefinition"
+    },
+    "LogPatternSet": {
+      "description": "The log pattern set.",
+      "type": "object",
+      "properties": {
+        "PatternSetName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30,
+              "pattern": "[a-zA-Z0-9.-_]*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the log pattern set."
+        },
+        "LogPatterns": {
+          "description": "The log patterns of a set.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LogPattern"
+          },
+          "minItems": 1,
+          "insertionOrder": true
+        }
+      },
+      "required": [
+        "PatternSetName",
+        "LogPatterns"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationLogPatternSetDefinition"
+    },
+    "LogPattern": {
+      "description": "The log pattern.",
+      "type": "object",
+      "properties": {
+        "PatternName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "pattern": "[a-zA-Z0-9.-_]*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the log pattern."
+        },
+        "Pattern": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The log pattern."
+        },
+        "Rank": {
+          "description": "Rank of the log pattern.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "PatternName",
+        "Pattern",
+        "Rank"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationLogPatternDefinition"
+    },
+    "ComponentMonitoringSetting": {
+      "description": "The monitoring setting of the component.",
+      "type": "object",
+      "properties": {
+        "ComponentName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[0-9\\w\\-_.+]*$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the component."
+        },
+        "ComponentARN": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 300,
+              "pattern": "^arn:aws(-[\\w]+)*:[\\w0-9-]+:([\\w0-9-]*)?:[\\w0-9_-]*([:/].+)*$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The ARN of the compnonent."
+        },
+        "Tier": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z][[A-Z]_]*$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The tier of the application component."
+        },
+        "ComponentConfigurationMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "DEFAULT",
+                "DEFAULT_WITH_OVERWRITE",
+                "CUSTOM"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The component monitoring configuration mode."
+        },
+        "DefaultOverwriteComponentConfiguration": {
+          "description": "The overwritten settings on default component monitoring configuration.",
+          "$ref": "#/$defs/ComponentConfiguration"
+        },
+        "CustomComponentConfiguration": {
+          "description": "The monitoring configuration of the component.",
+          "$ref": "#/$defs/ComponentConfiguration"
+        }
+      },
+      "required": [
+        "Tier",
+        "ComponentConfigurationMode"
+      ],
+      "oneOf": [
+        {
+          "required": [
+            "ComponentName"
+          ]
+        },
+        {
+          "required": [
+            "ComponentARN"
+          ]
+        }
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationComponentMonitoringSettingDefinition"
+    },
+    "ComponentConfiguration": {
+      "description": "The configuration settings of the component.",
+      "type": "object",
+      "properties": {
+        "ConfigurationDetails": {
+          "description": "The configuration settings",
+          "$ref": "#/$defs/ConfigurationDetails"
+        },
+        "SubComponentTypeConfigurations": {
+          "description": "Sub component configurations of the component.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SubComponentTypeConfiguration"
+          },
+          "minItems": 1,
+          "insertionOrder": true
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationComponentConfigurationDefinition"
+    },
+    "ConfigurationDetails": {
+      "description": "The configuration settings.",
+      "type": "object",
+      "properties": {
+        "AlarmMetrics": {
+          "description": "A list of metrics to monitor for the component.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AlarmMetric"
+          },
+          "insertionOrder": true
+        },
+        "Logs": {
+          "description": "A list of logs to monitor for the component.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Log"
+          },
+          "insertionOrder": true
+        },
+        "WindowsEvents": {
+          "description": "A list of Windows Events to log.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WindowsEvent"
+          },
+          "insertionOrder": true
+        },
+        "Alarms": {
+          "description": "A list of alarms to monitor for the component.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Alarm"
+          },
+          "insertionOrder": true
+        },
+        "JMXPrometheusExporter": {
+          "description": "The JMX Prometheus Exporter settings.",
+          "$ref": "#/$defs/JMXPrometheusExporter"
+        },
+        "HANAPrometheusExporter": {
+          "description": "The HANA DB Prometheus Exporter settings.",
+          "$ref": "#/$defs/HANAPrometheusExporter"
+        },
+        "HAClusterPrometheusExporter": {
+          "description": "The HA cluster Prometheus Exporter settings.",
+          "$ref": "#/$defs/HAClusterPrometheusExporter"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationConfigurationDetailsDefinition"
+    },
+    "SubComponentConfigurationDetails": {
+      "description": "The configuration settings of sub components.",
+      "type": "object",
+      "properties": {
+        "AlarmMetrics": {
+          "description": "A list of metrics to monitor for the component.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AlarmMetric"
+          },
+          "insertionOrder": true
+        },
+        "Logs": {
+          "description": "A list of logs to monitor for the component.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Log"
+          },
+          "insertionOrder": true
+        },
+        "WindowsEvents": {
+          "description": "A list of Windows Events to log.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WindowsEvent"
+          },
+          "insertionOrder": true
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationSubComponentConfigurationDetailsDefinition"
+    },
+    "JMXPrometheusExporter": {
+      "description": "The JMX Prometheus Exporter settings.",
+      "type": "object",
+      "properties": {
+        "JMXURL": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "JMX service URL."
+        },
+        "HostPort": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Java agent host port"
+        },
+        "PrometheusPort": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Prometheus exporter port."
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationJMXPrometheusExporterDefinition"
+    },
+    "HANAPrometheusExporter": {
+      "description": "The HANA DB Prometheus Exporter settings.",
+      "type": "object",
+      "properties": {
+        "HANASID": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "HANA DB SID."
+        },
+        "HANAPort": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The HANA DB port."
+        },
+        "HANASecretName": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The secret name which manages the HANA DB credentials e.g. {\n  \"username\": \"<>\",\n  \"password\": \"<>\"\n}."
+        },
+        "AgreeToInstallHANADBClient": {
+          "description": "A flag which indicates agreeing to install SAP HANA DB client.",
+          "type": "boolean"
+        },
+        "PrometheusPort": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Prometheus exporter port."
+        }
+      },
+      "required": [
+        "HANASID",
+        "HANAPort",
+        "HANASecretName",
+        "AgreeToInstallHANADBClient"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationHANAPrometheusExporterDefinition"
+    },
+    "HAClusterPrometheusExporter": {
+      "description": "The HA cluster Prometheus Exporter settings.",
+      "type": "object",
+      "properties": {
+        "PrometheusPort": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Prometheus exporter port."
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationHAClusterPrometheusExporterDefinition"
+    },
+    "AlarmMetric": {
+      "description": "A metric to be monitored for the component.",
+      "type": "object",
+      "properties": {
+        "AlarmMetricName": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the metric to be monitored for the component."
+        }
+      },
+      "required": [
+        "AlarmMetricName"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationAlarmMetricDefinition"
+    },
+    "Log": {
+      "description": "A log to be monitored for the component.",
+      "type": "object",
+      "properties": {
+        "LogGroupName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "pattern": "[\\.\\-_/#A-Za-z0-9]+"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The CloudWatch log group name to be associated to the monitored log."
+        },
+        "LogPath": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 260,
+              "pattern": "^([a-zA-Z]:\\\\[\\\\\\S|*\\S]?.*|/[^\"']*)$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The path of the logs to be monitored."
+        },
+        "LogType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z][[A-Z]_]*$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The log type decides the log patterns against which Application Insights analyzes the log."
+        },
+        "Encoding": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "utf-8",
+                "utf-16",
+                "ascii"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The type of encoding of the logs to be monitored."
+        },
+        "PatternSet": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30,
+              "pattern": "[a-zA-Z0-9.-_]*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the log pattern set."
+        }
+      },
+      "required": [
+        "LogType"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationLogDefinition"
+    },
+    "WindowsEvent": {
+      "description": "A Windows Event to be monitored for the component.",
+      "type": "object",
+      "properties": {
+        "LogGroupName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "pattern": "[\\.\\-_/#A-Za-z0-9]+"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The CloudWatch log group name to be associated to the monitored log."
+        },
+        "EventName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 260,
+              "pattern": "^[a-zA-Z0-9_ \\\\/-]$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The type of Windows Events to log."
+        },
+        "EventLevels": {
+          "description": "The levels of event to log. ",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EventLevel"
+          },
+          "minItems": 1,
+          "insertionOrder": true
+        },
+        "PatternSet": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30,
+              "pattern": "[a-zA-Z0-9.-_]*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the log pattern set."
+        }
+      },
+      "required": [
+        "LogGroupName",
+        "EventName",
+        "EventLevels"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationWindowsEventDefinition"
+    },
+    "EventLevel": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "INFORMATION",
+            "WARNING",
+            "ERROR",
+            "CRITICAL",
+            "VERBOSE"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The level of event to log.",
+      "title": "AWSApplicationInsightsApplicationEventLevelDefinition"
+    },
+    "Alarm": {
+      "description": "A CloudWatch alarm to be monitored for the component.",
+      "type": "object",
+      "properties": {
+        "AlarmName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the CloudWatch alarm to be monitored for the component."
+        },
+        "Severity": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "HIGH",
+                "MEDIUM",
+                "LOW"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Indicates the degree of outage when the alarm goes off."
+        }
+      },
+      "required": [
+        "AlarmName"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationAlarmDefinition"
+    },
+    "SubComponentTypeConfiguration": {
+      "description": "One type sub component configurations for the component.",
+      "type": "object",
+      "properties": {
+        "SubComponentType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AWS::EC2::Instance",
+                "AWS::EC2::Volume"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The sub component type."
+        },
+        "SubComponentConfigurationDetails": {
+          "description": "The configuration settings of sub components.",
+          "$ref": "#/$defs/SubComponentConfigurationDetails"
+        }
+      },
+      "required": [
+        "SubComponentType",
+        "SubComponentConfigurationDetails"
+      ],
+      "additionalProperties": false,
+      "title": "AWSApplicationInsightsApplicationSubComponentTypeConfigurationDefinition"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "ResourceGroupName"
+  ],
+  "primaryIdentifier": [
+    "/properties/ApplicationARN"
+  ],
+  "readOnlyProperties": [
+    "/properties/ApplicationARN"
+  ]
+}

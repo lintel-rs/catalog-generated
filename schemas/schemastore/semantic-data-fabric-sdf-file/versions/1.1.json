@@ -1,0 +1,1811 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/semantic-data-fabric-sdf-file/versions/1.1.json",
+  "title": "Definition",
+  "x-lintel": {
+    "source": "https://cdn.sdf.com/schemas/sdf-schema-1.1.json",
+    "sourceSha256": "d5fd4fa3e7dc5be9c3255bc69e70bad7145d35fa4589111b73d61e65aea84953"
+  },
+  "type": "object",
+  "properties": {
+    "workspace": {
+      "description": "A workspace definition",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Workspace"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "profile": {
+      "description": "A profile definition",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Profile"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "table": {
+      "description": "A table definition",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Table"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "classifier": {
+      "description": "A classifier definition",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Classifier"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "function": {
+      "description": "A function definition",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Function"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "plugin": {
+      "description": "A plugin definition",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Plugin"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "provider": {
+      "description": "A workspace definition",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Provider"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "config": {
+      "description": "A workspace definition",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Config"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Workspace": {
+      "description": "A workspace is a collection of one or more catalogs, schemas, tables, and resources, called workspace members, that are managed together.",
+      "type": "object",
+      "required": [
+        "edition",
+        "name"
+      ],
+      "properties": {
+        "edition": {
+          "description": "The SDF edition, should always be 1 (for now)",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of this workspace (defaults to the workspace directory name if not given) Name must be set for deployment.",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of this workspace",
+          "type": "string"
+        },
+        "repository": {
+          "description": "The URL of the workspace source repository (defaults to 'none' if no repository is given)",
+          "type": "string"
+        },
+        "remote-location": {
+          "description": "The default output object store location, e.g. 's3://bucket/key/' where key is optional",
+          "type": "string"
+        },
+        "includes": {
+          "description": "An array of directories and filenames containing .sql and .sdf.yml files",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IncludePath"
+          }
+        },
+        "excludes": {
+          "description": "An array of directories and filenames to be skipped when resolving includes",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExcludePath"
+          }
+        },
+        "references": {
+          "description": "An array of paths to other workspaces, i.e. .sql and .yml files Todo why do we skip this serialization?",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WorkspacePath"
+          }
+        },
+        "dialect": {
+          "description": "The dialect of this workspace. If not set, defaults to Presto dialect",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Dialect"
+            }
+          ]
+        },
+        "compute": {
+          "description": "The compute platform for this workspace. If not set, defaults to Local",
+          "allOf": [
+            {
+              "$ref": "#/$defs/ComputeKind"
+            }
+          ]
+        },
+        "default-catalog": {
+          "description": "Defines a default catalog (If not set, defaults to the workspace name)",
+          "type": "string"
+        },
+        "default-schema": {
+          "description": "Defines a default schema (If not set, defaults to 'pub')",
+          "default": "pub",
+          "type": "string"
+        },
+        "default-profile": {
+          "description": "Defines the default profile (if not set, defaults to 'dbg')",
+          "default": "dbg",
+          "type": "string"
+        },
+        "source-locations": {
+          "description": "Workspace defined by these set of files",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FilePath"
+          }
+        },
+        "vars": {
+          "description": "A map of named values for setting SQL variables from your environment Ex. -dt: dt, used in SQL as @dt, an in Jinja as {{ dt }}",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Constant"
+          }
+        },
+        "preprocessor": {
+          "description": "Experimental: This project has jinja, sql_vars, and sql_macros",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Preprocessor"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "default-severity": {
+          "description": "The default severity for this tables tests and checks",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Severity"
+            }
+          ]
+        },
+        "is-dbt-project": {
+          "description": "Experimental: This is a dbt project..",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "IncludePath": {
+      "description": "All file path should either be relative to the workspace, or absolute for an object store like AWS s3:// Note that an [IncludePath] specifies a catalog and schema scope for unqualified names (in effect for both creating and querying tables). See [IncludePath::default_catalog] and [IncludePath::default_schema].",
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "description": "A filepath",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of included artifacts: model | test | stats | metadata | resource",
+          "allOf": [
+            {
+              "$ref": "#/$defs/IncludeType"
+            }
+          ]
+        },
+        "default-catalog": {
+          "description": "Defines a default catalog for unqualified names. If not set, defaults to the [Workspace] catalog.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "default-schema": {
+          "description": "Defines a default schema for unqualified names. If not set, defaults to the [Workspace] schema.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dialect": {
+          "description": "The dialect of the included files. If not set, defaults to the [Workspace] dialect.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Dialect"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "compute": {
+          "description": "The compute platform for building the included files. If not set, defaults to the [Workspace] compute platform.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ComputeKind"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "index": {
+          "description": "Index method for this include path: scan | table | schema-table | catalog-schema-table",
+          "allOf": [
+            {
+              "$ref": "#/$defs/IndexMethod"
+            }
+          ]
+        },
+        "sync": {
+          "description": "Synchronization schema for this include path: always | on-pull | on-push | never",
+          "allOf": [
+            {
+              "$ref": "#/$defs/SyncType"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "IncludeType": {
+      "oneOf": [
+        {
+          "description": "Contains models, i.e ddls or queries, used for data transformation",
+          "type": "string",
+          "enum": [
+            "model"
+          ]
+        },
+        {
+          "description": "Contains queries against the data of the models, the check holds if the data returns zero rows",
+          "type": "string",
+          "enum": [
+            "data-contract"
+          ]
+        },
+        {
+          "description": "Contains queries against the information schema of the models, the check holds if the data returns zero rows",
+          "type": "string",
+          "enum": [
+            "code-contract"
+          ]
+        },
+        {
+          "description": "Contains queries for the information schema of the model",
+          "type": "string",
+          "enum": [
+            "code-report"
+          ]
+        },
+        {
+          "description": "Contains queries against the data of the models",
+          "type": "string",
+          "enum": [
+            "data-report"
+          ]
+        },
+        {
+          "description": "Contains resources like csv files that are shipped to the service, etc",
+          "type": "string",
+          "enum": [
+            "resource"
+          ]
+        },
+        {
+          "description": "Contains meta data like classifiers, etc",
+          "type": "string",
+          "enum": [
+            "metadata"
+          ]
+        }
+      ]
+    },
+    "Dialect": {
+      "description": "Supported dialects",
+      "type": "string",
+      "enum": [
+        "snowflake",
+        "presto",
+        "bigquery",
+        "redshift",
+        "spark-lp"
+      ]
+    },
+    "ComputeKind": {
+      "description": "Supported compute platforms",
+      "type": "string",
+      "enum": [
+        "local",
+        "snowflake",
+        "redshift"
+      ]
+    },
+    "IndexMethod": {
+      "type": "string",
+      "enum": [
+        "none",
+        "table-name",
+        "schema-table-name",
+        "catalog-schema-table-name",
+        "scan-dbt"
+      ]
+    },
+    "SyncType": {
+      "oneOf": [
+        {
+          "description": "Synchronizes directory on pull and push",
+          "type": "string",
+          "enum": [
+            "always"
+          ]
+        },
+        {
+          "description": "Synchronizes directory on every pull",
+          "type": "string",
+          "enum": [
+            "on-pull"
+          ]
+        },
+        {
+          "description": "Synchronizes directory on every push",
+          "type": "string",
+          "enum": [
+            "on-push"
+          ]
+        },
+        {
+          "description": "Never synchronizes directory",
+          "type": "string",
+          "enum": [
+            "never"
+          ]
+        }
+      ]
+    },
+    "ExcludePath": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "description": "A filepath",
+          "type": "string"
+        },
+        "exclude-type": {
+          "description": "Type of excluded artifacts",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExcludeType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExcludeType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "content"
+          ]
+        },
+        {
+          "description": "Excludes this path, can be a glob expression",
+          "type": "string",
+          "enum": [
+            "path"
+          ]
+        }
+      ]
+    },
+    "WorkspacePath": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "description": "The relative path from this workspace to the referenced workspace, for a Git repo, from the root of the depot to the workspace",
+          "type": "string"
+        },
+        "profile": {
+          "description": "The chosen workspace profile (none means default)",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "git": {
+          "description": "The Git repo",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rev": {
+          "description": "the Git revision (choose only one of the fields: rev, branch, tag)",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "branch": {
+          "description": "the Git branch (choose only one of the fields: rev, branch, tag)",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tag": {
+          "description": "the Git tag (choose only one of the fields: rev, branch, tag)",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "FilePath": {
+      "description": "All file path should either be relative to the workspace, or absolute for an object store like AWS s3://",
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "description": "A filepath",
+          "type": "string"
+        },
+        "time": {
+          "description": "Last modified of the file",
+          "writeOnly": true,
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SystemTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "SystemTime": {
+      "type": "object",
+      "required": [
+        "nanos_since_epoch",
+        "secs_since_epoch"
+      ],
+      "properties": {
+        "secs_since_epoch": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0.0
+        },
+        "nanos_since_epoch": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Constant": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer",
+          "format": "int64"
+        },
+        {
+          "type": "number",
+          "format": "double"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Preprocessor": {
+      "type": "string",
+      "enum": [
+        "none",
+        "jinja",
+        "sql-vars",
+        "all"
+      ]
+    },
+    "Severity": {
+      "description": "Supported dialects",
+      "type": "string",
+      "enum": [
+        "warning",
+        "error"
+      ]
+    },
+    "Profile": {
+      "description": "Profiles provide a way to override the fields of a workspace, i.e. if a profile has set field X, then the workspace field X will be overridden by the profile field X.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of this workspace (defaults to the workspace directory name if not given) Name must be set for deployment.",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of this workspace",
+          "type": "string"
+        },
+        "repository": {
+          "description": "The URL of the workspace source repository (defaults to 'none' if no repository is given)",
+          "type": "string"
+        },
+        "remote-location": {
+          "description": "The default output object store location, e.g. 's3://bucket/key/' where key is optional",
+          "type": "string"
+        },
+        "includes": {
+          "description": "An array of directories and filenames containing .sql and .sdf.yml files",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IncludePath"
+          }
+        },
+        "excludes": {
+          "description": "An array of directories and filenames to be skipped when resolving includes",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExcludePath"
+          }
+        },
+        "references": {
+          "description": "An array of paths to other workspaces, i.e. .sql and .yml files",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WorkspacePath"
+          }
+        },
+        "dialect": {
+          "description": "The dialect of this profile. If not set, defaults to Presto dialect",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Dialect"
+            }
+          ]
+        },
+        "compute": {
+          "description": "The compute platform for this profile. If not set, defaults to Local",
+          "allOf": [
+            {
+              "$ref": "#/$defs/ComputeKind"
+            }
+          ]
+        },
+        "default-catalog": {
+          "description": "Defines a default catalog (If not set, defaults to the workspace name)",
+          "type": "string"
+        },
+        "default-schema": {
+          "description": "Defines a default schema (If not set, defaults to 'pub')",
+          "default": "pub",
+          "type": "string"
+        },
+        "vars": {
+          "description": "A map of named values for setting SQL variables from your environment Ex. -dt: dt, used in SQL as @dt, an in Jinja as {{ dt }}",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Constant"
+          }
+        },
+        "default-profile": {
+          "description": "Defines the default profile (if not set, defaults to 'dbg')",
+          "default": "dbg",
+          "type": "string"
+        },
+        "source-locations": {
+          "description": "Workspace defined by these set of files",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FilePath"
+          }
+        },
+        "preprocessor": {
+          "description": "Experimental: This project has jinja",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Preprocessor"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "default-severity": {
+          "description": "Experimental: This is a dbt project.. The default severity for this tables tests and checks",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Severity"
+            }
+          ]
+        },
+        "is-dbt-project": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "Table": {
+      "description": "A tables is either defined by given data (also called external table) or defined via a query.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dialect": {
+          "description": "The dialect of this table, defaults to `presto`",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Dialect"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "compute": {
+          "description": "The compute platform for evaluating the query populating this table, defaults to `local`",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ComputeKind"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "table-type": {
+          "description": "The table-type of this table",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TableType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source-locations": {
+          "description": "Table is defined by these .sql and/or .sdf files",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FilePath"
+          }
+        },
+        "columns": {
+          "description": "The columns of the schema: name, type, metadata",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Column"
+          }
+        },
+        "partitioned-by": {
+          "description": "The partitioning format of the table",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Partition"
+          }
+        },
+        "default-severity": {
+          "description": "The default severity for this tables tests and checks",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Severity"
+            }
+          ]
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Constraint"
+          }
+        },
+        "schedule": {
+          "description": "The schedule of the table [expressed as cron]",
+          "type": "string"
+        },
+        "starting": {
+          "description": "The first date of the table [expressed by prefixes of RFC 33]",
+          "type": "string"
+        },
+        "classifiers": {
+          "description": "An array of classifier references",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reclassify": {
+          "description": "Array of reclassify instructions for changing the attached classifier labels",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reclassify"
+          }
+        },
+        "lineage": {
+          "description": "Lineage, a tagged array of column references",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Lineage"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "location": {
+          "description": "Data is at this location",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "file-format": {
+          "description": "Store table in this format [only for external tables]",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileFormat"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "with-header": {
+          "description": "CSV data has a header [only for external tables]",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "delimiter": {
+          "description": "CSV data is separated by this delimiter [only for external tables]",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "compression": {
+          "description": "Json or CSV data is compressed with this method [only for external tables]",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompressionType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dependentSchemas": {
+          "description": "ALl table dependencies (syntax: catalog.schema.table)",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "TableType": {
+      "oneOf": [
+        {
+          "description": "Computed tables have type table",
+          "type": "string",
+          "enum": [
+            "table"
+          ]
+        },
+        {
+          "description": "Given tables are called external",
+          "type": "string",
+          "enum": [
+            "external"
+          ]
+        },
+        {
+          "description": "Table Views",
+          "type": "string",
+          "enum": [
+            "view"
+          ]
+        },
+        {
+          "description": "Session scoped temporary table views [Spark specific]",
+          "type": "string",
+          "enum": [
+            "temporary-view"
+          ]
+        },
+        {
+          "description": "Recursive warehouse tables [SDF specific]",
+          "type": "string",
+          "enum": [
+            "recursive"
+          ]
+        },
+        {
+          "description": "System tables (like sdf.information-schema.*)",
+          "type": "string",
+          "enum": [
+            "system"
+          ]
+        },
+        {
+          "description": "A root table that is managed by an external table provider like Iceberg, Glue, Snowflake, Redshift, etc",
+          "type": "string",
+          "enum": [
+            "remote-external"
+          ]
+        },
+        {
+          "description": "A derived table that is managed by an external compute platform like Snowflake, Redshift, etc",
+          "type": "string",
+          "enum": [
+            "remote-table"
+          ]
+        },
+        {
+          "description": "A table representing a code contract query",
+          "type": "string",
+          "enum": [
+            "code-contract"
+          ]
+        },
+        {
+          "description": "A table representing a data contract query",
+          "type": "string",
+          "enum": [
+            "data-contract"
+          ]
+        },
+        {
+          "description": "A table representing a code report",
+          "type": "string",
+          "enum": [
+            "code-report"
+          ]
+        },
+        {
+          "description": "A table representing a data report",
+          "type": "string",
+          "enum": [
+            "data-report"
+          ]
+        },
+        {
+          "description": "A dialect specific table, like BigQueries information_schema",
+          "type": "string",
+          "enum": [
+            "dialect-specific-table"
+          ]
+        }
+      ]
+    },
+    "Column": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the column",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of this column",
+          "type": "string"
+        },
+        "datatype": {
+          "description": "The type of this column",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "classifiers": {
+          "description": "An array of classifier references",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lineage": {
+          "description": "Lineage, a tagged array of column references",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Lineage"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reclassify": {
+          "description": "Array of reclassify instructions for changing the attached classifier labels",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reclassify"
+          }
+        },
+        "samples": {
+          "description": "An array of representative literals of this column [experimental!]",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "default-severity": {
+          "description": "The default severity for this tables tests and checks",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Severity"
+            }
+          ]
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Constraint"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Lineage": {
+      "type": "object",
+      "properties": {
+        "copy": {
+          "description": "The output column is computed by copying these upstream columns",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "modify": {
+          "description": "The output column is computed by transforming these upstream columns",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scan": {
+          "description": "These upstream columns are indirectly used to produce the output (e.g. in WHERE or GROUP BY)",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "apply": {
+          "description": "These functions were used to produce the output column",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Reclassify": {
+      "type": "object",
+      "properties": {
+        "to": {
+          "description": "Target classifier",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "from": {
+          "description": "Expected source classifier",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "Constraint": {
+      "type": "object",
+      "required": [
+        "test"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the constraint",
+          "type": "string"
+        },
+        "test": {
+          "description": "The type of the constraint",
+          "type": "string"
+        },
+        "severity": {
+          "description": "The columns that the constraint applies to",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Severity"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "Partition": {
+      "description": "A partition is a table column, used to describe to which partition this row belongs to",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the partition column",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of the partition column",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "format": {
+          "description": "The format of the partition column [use strftime format for date/time] See (guide)[https://docs.sdf.com/guide/schedules]",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "FileFormat": {
+      "description": "Store table data in these formats",
+      "type": "string",
+      "enum": [
+        "parquet",
+        "csv",
+        "json"
+      ]
+    },
+    "CompressionType": {
+      "description": "Compress table data using these methods",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "tar",
+            "zstd"
+          ]
+        },
+        {
+          "description": "BZIP2 Compression (.bz2)",
+          "type": "string",
+          "enum": [
+            "bzip2"
+          ]
+        },
+        {
+          "description": "GZIP Compression (.gzip)",
+          "type": "string",
+          "enum": [
+            "gzip"
+          ]
+        },
+        {
+          "description": "None, (default)",
+          "type": "string",
+          "enum": [
+            "none"
+          ]
+        }
+      ]
+    },
+    "Classifier": {
+      "description": "A classifier defines the labels that can be attached to columns or a table.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the classifier type",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of this classifier type",
+          "type": "string"
+        },
+        "labels": {
+          "description": "Named classifier labels",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Label"
+          }
+        },
+        "scope": {
+          "description": "Scope of the classifier: table or column",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Scope"
+            }
+          ]
+        },
+        "cardinality": {
+          "description": "Cardinality of the classifier: zero-or-one, one or zero-or-many",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Cardinality"
+            }
+          ]
+        },
+        "propagate": {
+          "description": "Does the classifier propagate from scope to scope or is it a one scope marker",
+          "type": "boolean"
+        },
+        "source-locations": {
+          "description": "Classifier defined by these set of .sdf files",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FilePath"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Label": {
+      "description": "A classifier element is a scoped classifier label (e.g. the element PII belongs to the classifier scope data)",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the label, use \"*\" to allow arbitrary strings as labels",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of this classifier element",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "Scope": {
+      "type": "string",
+      "enum": [
+        "column",
+        "table"
+      ]
+    },
+    "Cardinality": {
+      "type": "string",
+      "enum": [
+        "zero-or-one",
+        "one",
+        "zero-or-more"
+      ]
+    },
+    "Function": {
+      "description": "A function block defines the signature for user defined",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the function [syntax: [[catalog.]schema].function]",
+          "type": "string"
+        },
+        "section": {
+          "description": "The generic type bounds",
+          "type": "string"
+        },
+        "dialect": {
+          "description": "The dialect that provides this function",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Dialect"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "description": {
+          "description": "A description of this function",
+          "type": "string"
+        },
+        "variadic": {
+          "description": "Arbitrary number of arguments of an common type out of a list of valid types",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Variadic"
+            }
+          ]
+        },
+        "kind": {
+          "description": "The function kind",
+          "allOf": [
+            {
+              "$ref": "#/$defs/FunctionKind"
+            }
+          ]
+        },
+        "parameters": {
+          "description": "The arguments of this function",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          }
+        },
+        "optional-parameters": {
+          "description": "The arguments of this function",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/OptionalParameter"
+          }
+        },
+        "returns": {
+          "description": "The results of this function (can be a tuple)",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameter"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "binds": {
+          "description": "The generic type bounds",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TypeBound"
+          }
+        },
+        "volatility": {
+          "description": "volatility - The volatility of the function.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/Volatility"
+            }
+          ]
+        },
+        "examples": {
+          "description": "example - Example use of the function (tuple with input/output)",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Example"
+          }
+        },
+        "cross-link": {
+          "description": "cross-link - link to existing documentation, for example: https://prestodb.io/docs/current/functions/datetime.html#truncation-function",
+          "type": "string"
+        },
+        "reclassify": {
+          "description": "Array of reclassify instructions for changing the attached classifier labels",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reclassify"
+          }
+        },
+        "source-locations": {
+          "description": "Function defined by these set of .sdf files",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FilePath"
+          }
+        },
+        "implemented-by": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FunctionImplSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "special": {
+          "description": "Function can be called without parentheses, e.g. as if it were a constant, e.g. current_date",
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Variadic": {
+      "description": "Arbitrary number of arguments of an common type out of a list of valid types",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "non-uniform"
+          ]
+        },
+        {
+          "description": "All arguments have the same types",
+          "type": "string",
+          "enum": [
+            "uniform"
+          ]
+        },
+        {
+          "description": "All even arguments have one type, odd arguments have another type",
+          "type": "string",
+          "enum": [
+            "even-odd"
+          ]
+        },
+        {
+          "description": "Any length of arguments, arguments can be different types",
+          "type": "string",
+          "enum": [
+            "any"
+          ]
+        }
+      ]
+    },
+    "FunctionKind": {
+      "type": "string",
+      "enum": [
+        "scalar",
+        "aggregate",
+        "window",
+        "table"
+      ]
+    },
+    "Parameter": {
+      "description": "A function parameter",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The name of the parameter",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "A description of this parameter",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "datatype": {
+          "description": "The datatype of this parameter",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "classifier": {
+          "description": "An array of classifier references",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "constant": {
+          "description": "The required constant value of this parameter",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "identifiers": {
+          "description": "The parameter may appear as identifier, without quote",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "OptionalParameter": {
+      "description": "A function parameter",
+      "type": "object",
+      "required": [
+        "datatype",
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the parameter",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of this parameter",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "datatype": {
+          "description": "The datatype of this parameter",
+          "type": "string"
+        },
+        "classifier": {
+          "description": "An array of classifier references",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "constant": {
+          "description": "The required constant value of this parameter",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "identifiers": {
+          "description": "The parameter may appear as identifier, without quote",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "TypeBound": {
+      "type": "object",
+      "required": [
+        "datatypes",
+        "type-variable"
+      ],
+      "properties": {
+        "type-variable": {
+          "type": "string"
+        },
+        "datatypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Volatility": {
+      "description": "A function's volatility, which defines the functions eligibility for certain optimizations",
+      "oneOf": [
+        {
+          "description": "Pure - An pure function will always return the same output when given the same input.",
+          "type": "string",
+          "enum": [
+            "pure"
+          ]
+        },
+        {
+          "description": "Stable - A stable function may return different values given the same input across different queries but must return the same value for a given input within a query.",
+          "type": "string",
+          "enum": [
+            "stable"
+          ]
+        },
+        {
+          "description": "Volatile - A volatile function may change the return value from evaluation to evaluation. Multiple invocations of a volatile function may return different results when used in the same query.",
+          "type": "string",
+          "enum": [
+            "volatile"
+          ]
+        }
+      ]
+    },
+    "Example": {
+      "type": "object",
+      "required": [
+        "input",
+        "output"
+      ],
+      "properties": {
+        "input": {
+          "description": "The sql string corresponding to the input of this example",
+          "type": "string"
+        },
+        "output": {
+          "description": "The output corresponding to running the input string",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "FunctionImplSpec": {
+      "type": "string",
+      "enum": [
+        "builtin",
+        "sql",
+        "native"
+      ]
+    },
+    "Plugin": {
+      "description": "A function block defines the signature for user defined",
+      "type": "object",
+      "required": [
+        "includes",
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the plugin [e.g.: pyspark]",
+          "type": "string"
+        },
+        "image-uri": {
+          "description": "Image URI of the plugin [e.g.: docker.io/sdf/pyspark:latest]",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dockerfile": {
+          "description": "Path to the dockerfile of the plugin [e.g.: dockerfile]",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "keep-alive": {
+          "description": "Whether to keep the plugin container alive after execution",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "includes": {
+          "description": "An array of directories and filenames containing files processed by this plugin",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PluginIncludePath"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "PluginIncludePath": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "description": "A filepath",
+          "type": "string"
+        },
+        "kind": {
+          "description": "Type of Plugin Path (Default: queries)",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PluginIncludePathKind"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "time": {
+          "description": "Last modified of the file",
+          "writeOnly": true,
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SystemTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "PluginIncludePathKind": {
+      "type": "string",
+      "enum": [
+        "queries",
+        "module"
+      ]
+    },
+    "Provider": {
+      "description": "Table providers manage tables in in catalogs",
+      "type": "object",
+      "required": [
+        "sources",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the table provider",
+          "type": "string"
+        },
+        "sources": {
+          "description": "A list of sources, backed by the table provider, source can use globs, e.g. catalog.schema.*",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "description": "The type of the catalog [e.g.: hive]",
+          "allOf": [
+            {
+              "$ref": "#/$defs/CatalogType"
+            }
+          ]
+        },
+        "warehouse": {
+          "description": "The snowflake warehouse (defaults: the warehouse that was given at sdf Auth)",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cluster-identifier": {
+          "description": "The cluster identifier for redshift server",
+          "writeOnly": true,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source-locations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FilePath"
+          }
+        },
+        "batch-size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        }
+      },
+      "additionalProperties": false
+    },
+    "CatalogType": {
+      "type": "string",
+      "enum": [
+        "glue",
+        "redshift",
+        "snowflake"
+      ]
+    },
+    "Config": {
+      "description": "A configuration with section name and properties",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "The name of the configuration section",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of this configuration section",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "properties": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

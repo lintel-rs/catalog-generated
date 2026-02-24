@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-edgeagent-deployment/versions/1.0.json",
+  "title": "JSON schema for Azure IoT EdgeAgent Deployment version 1.0",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/azure-iot-edgeagent-deployment-1.0.json",
+    "sourceSha256": "5f25959df4da111c2688250fffa87c23c05ab0552cb2708cca7658ef32dbdde1"
+  },
+  "type": "object",
+  "properties": {
+    "$edgeAgent": {
+      "type": "object",
+      "title": "Configuration for the edgeAgent module",
+      "required": [
+        "properties.desired"
+      ],
+      "properties": {
+        "properties.desired": {
+          "type": "object",
+          "required": [
+            "schemaVersion",
+            "runtime",
+            "systemModules",
+            "modules"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "type": "string",
+              "pattern": "1.0"
+            },
+            "runtime": {
+              "type": "object",
+              "required": [
+                "type",
+                "settings"
+              ],
+              "properties": {
+                "type": {
+                  "$ref": "#/$defs/moduleType"
+                },
+                "settings": {
+                  "type": "object",
+                  "properties": {
+                    "minDockerVersion": {
+                      "type": "string",
+                      "examples": [
+                        "v1.25"
+                      ]
+                    },
+                    "loggingOptions": {
+                      "type": "string"
+                    },
+                    "registryCredentials": {
+                      "type": "object",
+                      "patternProperties": {
+                        "^.+$": {
+                          "type": "object",
+                          "required": [
+                            "username",
+                            "password",
+                            "address"
+                          ],
+                          "properties": {
+                            "username": {
+                              "type": "string"
+                            },
+                            "password": {
+                              "type": "string"
+                            },
+                            "address": {
+                              "type": "string",
+                              "pattern": "^[^\\s]+$"
+                            }
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            },
+            "systemModules": {
+              "type": "object",
+              "required": [
+                "edgeAgent",
+                "edgeHub"
+              ],
+              "properties": {
+                "edgeAgent": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "settings"
+                  ],
+                  "properties": {
+                    "type": {
+                      "$ref": "#/$defs/moduleType"
+                    },
+                    "settings": {
+                      "$ref": "#/$defs/moduleSettings"
+                    },
+                    "env": {
+                      "$ref": "#/$defs/env"
+                    }
+                  }
+                },
+                "edgeHub": {
+                  "type": "object",
+                  "title": "The Edgehub Schema",
+                  "required": [
+                    "type",
+                    "settings",
+                    "status",
+                    "restartPolicy"
+                  ],
+                  "properties": {
+                    "type": {
+                      "$ref": "#/$defs/moduleType"
+                    },
+                    "settings": {
+                      "$ref": "#/$defs/moduleSettings"
+                    },
+                    "env": {
+                      "$ref": "#/$defs/env"
+                    },
+                    "status": {
+                      "$ref": "#/$defs/status"
+                    },
+                    "restartPolicy": {
+                      "$ref": "#/$defs/restartPolicy"
+                    }
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "modules": {
+              "type": "object",
+              "patternProperties": {
+                "^[a-zA-Z0-9_-]+$": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "status",
+                    "restartPolicy",
+                    "settings"
+                  ],
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "examples": [
+                        "1.0"
+                      ]
+                    },
+                    "type": {
+                      "$ref": "#/$defs/moduleType"
+                    },
+                    "status": {
+                      "$ref": "#/$defs/status"
+                    },
+                    "restartPolicy": {
+                      "$ref": "#/$defs/restartPolicy"
+                    },
+                    "env": {
+                      "$ref": "#/$defs/env"
+                    },
+                    "settings": {
+                      "$ref": "#/$defs/moduleSettings"
+                    }
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "$edgeAgent"
+  ],
+  "$defs": {
+    "moduleType": {
+      "enum": [
+        "docker"
+      ]
+    },
+    "status": {
+      "enum": [
+        "running",
+        "stopped"
+      ]
+    },
+    "restartPolicy": {
+      "enum": [
+        "never",
+        "on-failure",
+        "on-unhealthy",
+        "always"
+      ]
+    },
+    "moduleSettings": {
+      "type": "object",
+      "required": [
+        "image"
+      ],
+      "properties": {
+        "image": {
+          "type": "string",
+          "examples": [
+            "mcr.microsoft.com/azureiotedge-agent:1.0"
+          ]
+        },
+        "createOptions": {
+          "$ref": "#/$defs/createOptions"
+        }
+      }
+    },
+    "env": {
+      "type": "object",
+      "patternProperties": {
+        "^[^\\+#$\\s\\.]+$": {
+          "type": "object",
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "type": [
+                "number",
+                "string",
+                "boolean"
+              ]
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "createOptions": {
+      "type": "string",
+      "contentMediaType": "application/json"
+    }
+  },
+  "additionalProperties": false
+}

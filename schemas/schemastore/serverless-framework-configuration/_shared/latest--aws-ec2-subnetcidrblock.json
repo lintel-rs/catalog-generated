@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-ec2-subnetcidrblock.json",
+  "title": "AWSEC2SubnetCidrBlockProperties",
+  "description": "The AWS::EC2::SubnetCidrBlock resource creates association between subnet and IPv6 CIDR. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-ec2/subnetcidrblock",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-ec2-subnetcidrblock.json",
+    "sourceSha256": "b0e365fc50096755cc9cf0c544dbc0c9f79686e01377b16781ad709ffbcb737c",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Ipv6CidrBlock": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 42
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The IPv6 network range for the subnet, in CIDR notation. The subnet size must use a /64 prefix length"
+    },
+    "SubnetId": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The ID of the subnet"
+    }
+  },
+  "typeName": "AWS::EC2::SubnetCidrBlock",
+  "tagging": {
+    "taggable": false,
+    "tagOnCreate": false,
+    "tagUpdatable": false,
+    "cloudFormationSystemTags": false
+  },
+  "propertyTransform": {
+    "/properties/Ipv6CidrBlock": "$join([$match($replace(Ipv6CidrBlock, /(^|:)(0{1,4})([0-9a-fA-F]{1,4})/, \"$1$3\"), /^([0-9a-fA-F]{1,4}:){4}/).match, \":/64\"])"
+  },
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-ec2/subnetcidrblock",
+  "additionalProperties": false,
+  "primaryIdentifier": [
+    "/properties/Id"
+  ],
+  "required": [
+    "Ipv6CidrBlock",
+    "SubnetId"
+  ],
+  "createOnlyProperties": [
+    "/properties/Ipv6CidrBlock",
+    "/properties/SubnetId"
+  ],
+  "readOnlyProperties": [
+    "/properties/Id"
+  ]
+}

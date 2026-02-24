@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/vespertide/latest.json",
+  "title": "VespertideConfig",
+  "description": "Top-level vespertide configuration.",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/vespertide.json",
+    "sourceSha256": "a12388ace838538913f7a38705a8b76d199c722aa758269f2f07caabe54f250a"
+  },
+  "type": "object",
+  "properties": {
+    "columnNamingCase": {
+      "$ref": "#/$defs/NameCase"
+    },
+    "migrationFilenamePattern": {
+      "type": "string",
+      "default": "%04v_%m"
+    },
+    "migrationFormat": {
+      "$ref": "#/$defs/FileFormat",
+      "default": "json"
+    },
+    "migrationsDir": {
+      "type": "string"
+    },
+    "modelExportDir": {
+      "description": "Output directory for generated ORM models.",
+      "type": "string",
+      "default": "src/models"
+    },
+    "modelFormat": {
+      "$ref": "#/$defs/FileFormat",
+      "default": "json"
+    },
+    "modelsDir": {
+      "type": "string"
+    },
+    "seaorm": {
+      "$ref": "#/$defs/SeaOrmConfig",
+      "description": "SeaORM-specific export configuration.",
+      "default": {
+        "extraEnumDerives": [
+          "vespera::Schema"
+        ],
+        "extraModelDerives": []
+      }
+    },
+    "tableNamingCase": {
+      "$ref": "#/$defs/NameCase"
+    }
+  },
+  "$defs": {
+    "FileFormat": {
+      "description": "Supported file formats for generated artifacts.",
+      "type": "string",
+      "enum": [
+        "json",
+        "yaml",
+        "yml"
+      ]
+    },
+    "NameCase": {
+      "description": "Supported naming cases.",
+      "type": "string",
+      "enum": [
+        "snake",
+        "camel",
+        "pascal"
+      ]
+    },
+    "SeaOrmConfig": {
+      "description": "SeaORM-specific export configuration.",
+      "type": "object",
+      "properties": {
+        "extraEnumDerives": {
+          "description": "Additional derive macros to add to generated enum types.\nDefault: `[\"vespera::Schema\"]`",
+          "type": "array",
+          "default": [
+            "vespera::Schema"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "extraModelDerives": {
+          "description": "Additional derive macros to add to generated entity model types.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "modelsDir",
+    "migrationsDir",
+    "tableNamingCase",
+    "columnNamingCase"
+  ]
+}

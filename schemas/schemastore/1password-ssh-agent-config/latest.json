@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/1password-ssh-agent-config/latest.json",
+  "title": "AgentConfig",
+  "description": "Defines *user* configuration for the SSH agent, and allows the user to configure which accounts, vaults, and items should be considered for use by the SSH agent.",
+  "x-lintel": {
+    "source": "https://developer.1password.com/schema/ssh-agent-config.json",
+    "sourceSha256": "75a365666a8ec2f0236577582db156dcddb7aa4fe484cdb2aa0ff647a32d8081"
+  },
+  "type": "object",
+  "properties": {
+    "ssh-keys": {
+      "description": "The list of rules to decide which accounts, vaults, and items to add to the SSH agent.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/AgentConfigRule"
+      }
+    }
+  },
+  "required": [
+    "ssh-keys"
+  ],
+  "$defs": {
+    "AgentConfigRule": {
+      "description": "A single rule defined in the SSH agent config for which keys to include in the SSH agent. Each field may be the UUID or another identifier, which varies per field.",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "account"
+          ]
+        },
+        {
+          "required": [
+            "item"
+          ]
+        },
+        {
+          "required": [
+            "vault"
+          ]
+        }
+      ],
+      "properties": {
+        "account": {
+          "description": "Can be either an account UUID or signin address or account name",
+          "type": "string"
+        },
+        "item": {
+          "description": "Can be either an item UUID or name",
+          "type": "string"
+        },
+        "vault": {
+          "description": "Can be either a vault UUID or name",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

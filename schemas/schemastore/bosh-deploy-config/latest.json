@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/bosh-deploy-config/latest.json",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/bosh-deploy-config.json",
+    "sourceSha256": "6c358ed07f16f8d26d664dd328e76163882a9a94a5bfd689ccb6fb9b8b27d125"
+  },
+  "$ref": "#/$defs/DeployConfig",
+  "$defs": {
+    "DeployConfig": {
+      "type": "object",
+      "title": "BOSH CLI Deploy Config",
+      "description": "A config to enable `bosh deploy` flags on a BOSH Director-wide or per-deployment basis.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "required": [
+            "flags"
+          ],
+          "properties": {
+            "flags": {
+              "$ref": "#/$defs/Flags"
+            },
+            "exclude": {
+              "$ref": "#/$defs/Deployments"
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "required": [
+            "flags"
+          ],
+          "properties": {
+            "flags": {
+              "$ref": "#/$defs/Flags"
+            },
+            "include": {
+              "$ref": "#/$defs/Deployments"
+            }
+          }
+        }
+      ]
+    },
+    "Flags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "regex",
+        "pattern": "^(fix|fix-releases|recreate|recreate-persistent-disks)$"
+      }
+    },
+    "Deployments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$comment": "This schema was built from information on https://bosh.io/docs/deploy-config/ and https://github.com/cloudfoundry/bosh-cli/pull/634."
+}

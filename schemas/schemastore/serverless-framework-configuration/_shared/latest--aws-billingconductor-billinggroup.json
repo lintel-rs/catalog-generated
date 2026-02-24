@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-billingconductor-billinggroup.json",
+  "title": "AWSBillingConductorBillingGroupProperties",
+  "description": "A billing group is a set of linked account which belong to the same end customer. It can be seen as a virtual consolidated billing family.. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-billing-conductor.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-billingconductor-billinggroup.json",
+    "sourceSha256": "8fb0d20be87f50a74940b39b4ca955089417f68e66dddefd2a2a697bac46c8bb",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "[a-zA-Z0-9_\\+=\\.\\-@]+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "Description": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 1024
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "PrimaryAccountId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "[0-9]{12}"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "This account will act as a virtual payer account of the billing group"
+    },
+    "ComputationPreference": {
+      "$ref": "#/$defs/ComputationPreference"
+    },
+    "AccountGrouping": {
+      "$ref": "#/$defs/AccountGrouping"
+    },
+    "Tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/Tag"
+      }
+    }
+  },
+  "typeName": "AWS::BillingConductor::BillingGroup",
+  "primaryIdentifier": [
+    "/properties/Arn"
+  ],
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-billing-conductor.git",
+  "$defs": {
+    "BillingGroupStatus": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "PRIMARY_ACCOUNT_MISSING"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSBillingConductorBillingGroupBillingGroupStatusDefinition"
+    },
+    "ComputationPreference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "PricingPlanArn": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "arn:aws(-cn)?:billingconductor::[0-9]{12}:pricingplan/[a-zA-Z0-9]{10}"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "ARN of the attached pricing plan"
+        }
+      },
+      "required": [
+        "PricingPlanArn"
+      ],
+      "title": "AWSBillingConductorBillingGroupComputationPreferenceDefinition"
+    },
+    "AccountGrouping": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "LinkedAccountIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "insertionOrder": false,
+          "items": {
+            "type": "string",
+            "pattern": "[0-9]{12}"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "LinkedAccountIds"
+      ],
+      "title": "AWSBillingConductorBillingGroupAccountGroupingDefinition"
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Key",
+        "Value"
+      ],
+      "title": "AWSBillingConductorBillingGroupTagDefinition"
+    }
+  },
+  "createOnlyProperties": [
+    "/properties/PrimaryAccountId"
+  ],
+  "additionalProperties": false,
+  "tagging": {
+    "taggable": true,
+    "tagOnCreate": true,
+    "tagUpdatable": true,
+    "cloudFormationSystemTags": true,
+    "tagProperty": "/properties/Tags"
+  },
+  "required": [
+    "Name",
+    "AccountGrouping",
+    "PrimaryAccountId",
+    "ComputationPreference"
+  ],
+  "readOnlyProperties": [
+    "/properties/Arn",
+    "/properties/Size",
+    "/properties/Status",
+    "/properties/StatusReason",
+    "/properties/CreationTime",
+    "/properties/LastModifiedTime"
+  ]
+}

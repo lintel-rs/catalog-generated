@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--conditions.json",
+  "title": "Conditions",
+  "description": "CloudFormation template JSON specification for the Conditions capability",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/components/conditions.json",
+    "sourceSha256": "58e8f312012c655611a39aa0d37ac1205bd87b23ddfc8eff9a1777089a622ebc",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Conditions": {
+      "$comment": "You can use intrinsic functions, such as Fn::If, Fn::Equals, and Fn::Not, to conditionally create stack resources. These conditions are evaluated based on input parameters that you declare when you create or update a stack. After you define all your conditions, you can associate them with resources or resource properties in the Resources and Outputs sections of a template.",
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9._-]{1,255}$": {
+          "$ref": "#/$defs/ConditionalExpression"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "ConditionalExpression": {
+      "$comment": "Intrinsic function token expression or literal value",
+      "anyOf": [
+        {
+          "$comment": "Literal value",
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/FnAnd"
+        },
+        {
+          "$ref": "#/$defs/FnEquals"
+        },
+        {
+          "$ref": "#/$defs/FnNot"
+        },
+        {
+          "$ref": "#/$defs/FnOr"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/FnFindInMap"
+        },
+        {
+          "$ref": "#/$defs/FnRef"
+        }
+      ]
+    },
+    "FnRef": {
+      "type": "string"
+    },
+    "FnAnd": {
+      "type": "object",
+      "properties": {
+        "Fn::And": {
+          "description": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-conditions.html#intrinsic-function-reference-conditions-and",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConditionalExpression"
+          },
+          "minItems": 2,
+          "maxItems": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "FnEquals": {
+      "type": "object",
+      "properties": {
+        "Fn::Equals": {
+          "description": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-conditions.html#intrinsic-function-reference-conditions-equals",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConditionalExpression"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "additionalProperties": false
+    },
+    "FnNot": {
+      "type": "object",
+      "properties": {
+        "Fn::Not": {
+          "description": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-conditions.html#intrinsic-function-reference-conditions-not",
+          "type": "array",
+          "maxItems": 1,
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/ConditionalExpression"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "FnOr": {
+      "type": "object",
+      "properties": {
+        "Fn::Or": {
+          "description": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-conditions.html#intrinsic-function-reference-conditions-or",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConditionalExpression"
+          },
+          "minItems": 2,
+          "maxItems": 10
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

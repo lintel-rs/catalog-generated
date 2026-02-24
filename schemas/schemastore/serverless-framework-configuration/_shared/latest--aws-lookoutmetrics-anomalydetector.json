@@ -1,0 +1,720 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-lookoutmetrics-anomalydetector.json",
+  "title": "AWSLookoutMetricsAnomalyDetectorProperties",
+  "description": "An Amazon Lookout for Metrics Detector. Source:- https://docs.aws.amazon.com/lookoutmetrics/latest/dev/lookoutmetrics-welcome.html",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-lookoutmetrics-anomalydetector.json",
+    "sourceSha256": "33164f85f7670c5da2e338ed0595115ce4de22cc22e314e403a2ef376c17e596",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "AnomalyDetectorName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 63,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Name for the Amazon Lookout for Metrics Anomaly Detector"
+    },
+    "AnomalyDetectorDescription": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 256,
+          "pattern": ".*\\S.*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "A description for the AnomalyDetector."
+    },
+    "AnomalyDetectorConfig": {
+      "description": "Configuration options for the AnomalyDetector",
+      "$ref": "#/$defs/AnomalyDetectorConfig"
+    },
+    "MetricSetList": {
+      "description": "List of metric sets for anomaly detection",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "$ref": "#/$defs/MetricSet"
+      }
+    },
+    "KmsKeyArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 2048,
+          "pattern": "arn:aws.*:kms:.*:[0-9]{12}:key/.*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "KMS key used to encrypt the AnomalyDetector data"
+    }
+  },
+  "typeName": "AWS::LookoutMetrics::AnomalyDetector",
+  "primaryIdentifier": [
+    "/properties/Arn"
+  ],
+  "sourceUrl": "https://docs.aws.amazon.com/lookoutmetrics/latest/dev/lookoutmetrics-welcome.html",
+  "$defs": {
+    "Arn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 256,
+          "pattern": "arn:([a-z0-9-]+):.*:.*:.*:.+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSLookoutMetricsAnomalyDetectorArnDefinition"
+    },
+    "ColumnName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 63,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Name of a column in the data.",
+      "title": "AWSLookoutMetricsAnomalyDetectorColumnNameDefinition"
+    },
+    "Charset": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 63,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSLookoutMetricsAnomalyDetectorCharsetDefinition"
+    },
+    "CsvFormatDescriptor": {
+      "type": "object",
+      "properties": {
+        "FileCompression": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "NONE",
+                "GZIP"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Charset": {
+          "$ref": "#/$defs/Charset"
+        },
+        "Delimiter": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 1,
+              "pattern": "[^\\r\\n]"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "HeaderList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ColumnName"
+          }
+        },
+        "QuoteSymbol": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 1,
+              "pattern": "[^\\r\\n]|^$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "ContainsHeader": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorCsvFormatDescriptorDefinition"
+    },
+    "JsonFormatDescriptor": {
+      "type": "object",
+      "properties": {
+        "FileCompression": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "NONE",
+                "GZIP"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Charset": {
+          "$ref": "#/$defs/Charset"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorJsonFormatDescriptorDefinition"
+    },
+    "FileFormatDescriptor": {
+      "type": "object",
+      "properties": {
+        "CsvFormatDescriptor": {
+          "$ref": "#/$defs/CsvFormatDescriptor"
+        },
+        "JsonFormatDescriptor": {
+          "$ref": "#/$defs/JsonFormatDescriptor"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorFileFormatDescriptorDefinition"
+    },
+    "S3SourceConfig": {
+      "type": "object",
+      "properties": {
+        "RoleArn": {
+          "$ref": "#/$defs/Arn"
+        },
+        "TemplatedPathList": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string",
+            "maxLength": 1024,
+            "pattern": "^s3://[a-zA-Z0-9_\\-\\/ {}=]+$"
+          }
+        },
+        "HistoricalDataPathList": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string",
+            "maxLength": 1024,
+            "pattern": "^s3://[a-z0-9].+$"
+          }
+        },
+        "FileFormatDescriptor": {
+          "$ref": "#/$defs/FileFormatDescriptor"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "RoleArn",
+        "FileFormatDescriptor"
+      ],
+      "title": "AWSLookoutMetricsAnomalyDetectorS3SourceConfigDefinition"
+    },
+    "AppFlowConfig": {
+      "type": "object",
+      "properties": {
+        "RoleArn": {
+          "$ref": "#/$defs/Arn"
+        },
+        "FlowName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 256,
+              "pattern": "[a-zA-Z0-9][\\w!@#.-]+"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "RoleArn",
+        "FlowName"
+      ],
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorAppFlowConfigDefinition"
+    },
+    "CloudwatchConfig": {
+      "type": "object",
+      "properties": {
+        "RoleArn": {
+          "$ref": "#/$defs/Arn"
+        }
+      },
+      "required": [
+        "RoleArn"
+      ],
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorCloudwatchConfigDefinition"
+    },
+    "DatabaseHost": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253,
+          "pattern": ".*\\S.*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSLookoutMetricsAnomalyDetectorDatabaseHostDefinition"
+    },
+    "DatabasePort": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535,
+      "title": "AWSLookoutMetricsAnomalyDetectorDatabasePortDefinition"
+    },
+    "TableName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSLookoutMetricsAnomalyDetectorTableNameDefinition"
+    },
+    "SubnetIdList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 255,
+        "pattern": "[\\-0-9a-zA-Z]+"
+      },
+      "title": "AWSLookoutMetricsAnomalyDetectorSubnetIdListDefinition"
+    },
+    "SecurityGroupIdList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 255,
+        "pattern": "[-0-9a-zA-Z]+"
+      },
+      "title": "AWSLookoutMetricsAnomalyDetectorSecurityGroupIdListDefinition"
+    },
+    "VpcConfiguration": {
+      "type": "object",
+      "properties": {
+        "SubnetIdList": {
+          "$ref": "#/$defs/SubnetIdList"
+        },
+        "SecurityGroupIdList": {
+          "$ref": "#/$defs/SecurityGroupIdList"
+        }
+      },
+      "required": [
+        "SubnetIdList",
+        "SecurityGroupIdList"
+      ],
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorVpcConfigurationDefinition"
+    },
+    "SecretManagerArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 256,
+          "pattern": "arn:([a-z0-9-]+):.*:.*:secret:AmazonLookoutMetrics-.+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSLookoutMetricsAnomalyDetectorSecretManagerArnDefinition"
+    },
+    "RDSSourceConfig": {
+      "type": "object",
+      "properties": {
+        "DBInstanceIdentifier": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 63,
+              "pattern": "^[a-zA-Z](?!.*--)(?!.*-$)[0-9a-zA-Z\\-]*$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "DatabaseHost": {
+          "$ref": "#/$defs/DatabaseHost"
+        },
+        "DatabasePort": {
+          "$ref": "#/$defs/DatabasePort"
+        },
+        "SecretManagerArn": {
+          "$ref": "#/$defs/SecretManagerArn"
+        },
+        "DatabaseName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "[a-zA-Z0-9_]+"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "TableName": {
+          "$ref": "#/$defs/TableName"
+        },
+        "RoleArn": {
+          "$ref": "#/$defs/Arn"
+        },
+        "VpcConfiguration": {
+          "$ref": "#/$defs/VpcConfiguration"
+        }
+      },
+      "required": [
+        "DBInstanceIdentifier",
+        "DatabaseHost",
+        "DatabasePort",
+        "SecretManagerArn",
+        "DatabaseName",
+        "TableName",
+        "RoleArn",
+        "VpcConfiguration"
+      ],
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorRDSSourceConfigDefinition"
+    },
+    "RedshiftSourceConfig": {
+      "type": "object",
+      "properties": {
+        "ClusterIdentifier": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 63,
+              "pattern": "^[a-z](?!.*--)(?!.*-$)[0-9a-z\\-]*$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "DatabaseHost": {
+          "$ref": "#/$defs/DatabaseHost"
+        },
+        "DatabasePort": {
+          "$ref": "#/$defs/DatabasePort"
+        },
+        "SecretManagerArn": {
+          "$ref": "#/$defs/SecretManagerArn"
+        },
+        "DatabaseName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "[a-z0-9]+"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "TableName": {
+          "$ref": "#/$defs/TableName"
+        },
+        "RoleArn": {
+          "$ref": "#/$defs/Arn"
+        },
+        "VpcConfiguration": {
+          "$ref": "#/$defs/VpcConfiguration"
+        }
+      },
+      "required": [
+        "ClusterIdentifier",
+        "DatabaseHost",
+        "DatabasePort",
+        "SecretManagerArn",
+        "DatabaseName",
+        "TableName",
+        "RoleArn",
+        "VpcConfiguration"
+      ],
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorRedshiftSourceConfigDefinition"
+    },
+    "MetricSource": {
+      "type": "object",
+      "properties": {
+        "S3SourceConfig": {
+          "$ref": "#/$defs/S3SourceConfig"
+        },
+        "RDSSourceConfig": {
+          "$ref": "#/$defs/RDSSourceConfig"
+        },
+        "RedshiftSourceConfig": {
+          "$ref": "#/$defs/RedshiftSourceConfig"
+        },
+        "CloudwatchConfig": {
+          "$ref": "#/$defs/CloudwatchConfig"
+        },
+        "AppFlowConfig": {
+          "$ref": "#/$defs/AppFlowConfig"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorMetricSourceDefinition"
+    },
+    "TimestampColumn": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ColumnName": {
+          "$ref": "#/$defs/ColumnName"
+        },
+        "ColumnFormat": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 63,
+              "pattern": ".*\\S.*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A timestamp format for the timestamps in the dataset"
+        }
+      },
+      "title": "AWSLookoutMetricsAnomalyDetectorTimestampColumnDefinition"
+    },
+    "Metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "MetricName": {
+          "$ref": "#/$defs/ColumnName"
+        },
+        "AggregationFunction": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "AVG",
+                "SUM"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Operator used to aggregate metric values"
+        },
+        "Namespace": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255,
+              "pattern": "[^:].*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "MetricName",
+        "AggregationFunction"
+      ],
+      "title": "AWSLookoutMetricsAnomalyDetectorMetricDefinition"
+    },
+    "MetricSet": {
+      "type": "object",
+      "properties": {
+        "MetricSetName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 63,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The name of the MetricSet."
+        },
+        "MetricSetDescription": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 256,
+              "pattern": ".*\\S.*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A description for the MetricSet."
+        },
+        "MetricSource": {
+          "$ref": "#/$defs/MetricSource"
+        },
+        "MetricList": {
+          "description": "Metrics captured by this MetricSet.",
+          "type": "array",
+          "insertionOrder": false,
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/Metric"
+          }
+        },
+        "Offset": {
+          "description": "Offset, in seconds, between the frequency interval and the time at which the metrics are available.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 432000
+        },
+        "TimestampColumn": {
+          "$ref": "#/$defs/TimestampColumn"
+        },
+        "DimensionList": {
+          "description": "Dimensions for this MetricSet.",
+          "type": "array",
+          "insertionOrder": false,
+          "minItems": 0,
+          "items": {
+            "$ref": "#/$defs/ColumnName"
+          }
+        },
+        "MetricSetFrequency": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "PT5M",
+                "PT10M",
+                "PT1H",
+                "P1D"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A frequency period to aggregate the data"
+        },
+        "Timezone": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 60,
+              "pattern": ".*\\S.*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "MetricSetName",
+        "MetricList",
+        "MetricSource"
+      ],
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorMetricSetDefinition"
+    },
+    "AnomalyDetectorFrequency": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PT5M",
+            "PT10M",
+            "PT1H",
+            "P1D"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Frequency of anomaly detection",
+      "title": "AWSLookoutMetricsAnomalyDetectorAnomalyDetectorFrequencyDefinition"
+    },
+    "AnomalyDetectorConfig": {
+      "type": "object",
+      "properties": {
+        "AnomalyDetectorFrequency": {
+          "description": "Frequency of anomaly detection",
+          "$ref": "#/$defs/AnomalyDetectorFrequency"
+        }
+      },
+      "required": [
+        "AnomalyDetectorFrequency"
+      ],
+      "additionalProperties": false,
+      "title": "AWSLookoutMetricsAnomalyDetectorAnomalyDetectorConfigDefinition"
+    }
+  },
+  "createOnlyProperties": [
+    "/properties/AnomalyDetectorName",
+    "/properties/MetricSource"
+  ],
+  "additionalProperties": false,
+  "required": [
+    "AnomalyDetectorConfig",
+    "MetricSetList"
+  ],
+  "readOnlyProperties": [
+    "/properties/Arn"
+  ]
+}

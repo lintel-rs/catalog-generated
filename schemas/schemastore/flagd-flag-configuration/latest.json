@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/flagd-flag-configuration/latest.json",
+  "x-lintel": {
+    "source": "https://flagd.dev/schema/v0/flags.json",
+    "sourceSha256": "a9b065cc3e140d10a5e139a3f2bbd2f24d4fe8a728ce824a5f2a1231ed60680b"
+  },
+  "$defs": {
+    "flagsMap": {
+      "title": "Flags",
+      "description": "Top-level flags object. All flags are defined here.",
+      "type": "object",
+      "$comment": "flag objects are one of the 4 flag types defined in definitions",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^.{1,}$": {
+          "$ref": "#/$defs/anyFlag"
+        }
+      }
+    },
+    "flagsArray": {
+      "title": "Flags",
+      "description": "Top-level flags array. All flags are defined here.",
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/anyFlag"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "key": {
+                "description": "Key of the flag: uniquely identifies this flag within it's flagSet",
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "key"
+            ]
+          }
+        ]
+      }
+    },
+    "baseConfig": {
+      "title": "flagd Flag Configuration",
+      "description": "Defines flags for use in flagd providers, including typed variants and rules.",
+      "type": "object",
+      "properties": {
+        "$evaluators": {
+          "title": "Evaluators",
+          "description": "Reusable targeting rules that can be referenced with \"$ref\": \"myRule\" in multiple flags.",
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.{1,}$": {
+              "$comment": "this relative ref means that targeting.json MUST be in the same dir, or available on the same HTTP path",
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/flagd-flag-configuration/_shared/latest--targeting.json"
+            }
+          }
+        },
+        "metadata": {
+          "title": "Flag Set Metadata",
+          "description": "Metadata about the flag set, with keys of type string, and values of type boolean, string, or number.",
+          "properties": {
+            "flagSetId": {
+              "description": "The unique identifier for the flag set.",
+              "type": "string"
+            },
+            "version": {
+              "description": "The version of the flag set.",
+              "type": "string"
+            }
+          },
+          "$ref": "#/$defs/metadata"
+        }
+      }
+    },
+    "providerConfig": {
+      "description": "Defines flags for use in providers (not flagd), including typed variants and rules.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseConfig"
+        }
+      ],
+      "properties": {
+        "flags": {
+          "$ref": "#/$defs/flagsMap"
+        }
+      },
+      "required": [
+        "flags"
+      ]
+    },
+    "flagdConfig": {
+      "description": "Defines flags for use in the flagd daemon (a superset of what's available in providers), including typed variants and rules. Flags can be defined as an array or an object.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseConfig"
+        },
+        {
+          "properties": {
+            "flags": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/flagsMap"
+                },
+                {
+                  "$ref": "#/$defs/flagsArray"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "required": [
+        "flags"
+      ]
+    },
+    "baseFlag": {
+      "$comment": "base flag object; no title/description here, allows for better UX, keep it in the overrides",
+      "type": "object",
+      "properties": {
+        "state": {
+          "title": "Flag State",
+          "description": "Indicates whether the flag is functional. Disabled flags are treated as if they don't exist.",
+          "type": "string",
+          "enum": [
+            "ENABLED",
+            "DISABLED"
+          ]
+        },
+        "defaultVariant": {
+          "title": "Default Variant",
+          "description": "The variant to serve if no dynamic targeting applies (including if the targeting returns null). Set to null to use code-defined default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "targeting": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/flagd-flag-configuration/_shared/latest--targeting.json"
+        },
+        "metadata": {
+          "title": "Flag Metadata",
+          "description": "Metadata about an individual feature flag, with keys of type string, and values of type boolean, string, or number.",
+          "$ref": "#/$defs/metadata"
+        },
+        "variants": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.{1,}$": {}
+          }
+        }
+      },
+      "required": [
+        "state",
+        "variants"
+      ]
+    },
+    "booleanVariants": {
+      "type": "object",
+      "properties": {
+        "variants": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.{1,}$": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "stringVariants": {
+      "type": "object",
+      "properties": {
+        "variants": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.{1,}$": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "numberVariants": {
+      "type": "object",
+      "properties": {
+        "variants": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.{1,}$": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "objectVariants": {
+      "type": "object",
+      "properties": {
+        "variants": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.{1,}$": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "anyFlag": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/booleanFlag"
+        },
+        {
+          "$ref": "#/$defs/numberFlag"
+        },
+        {
+          "$ref": "#/$defs/stringFlag"
+        },
+        {
+          "$ref": "#/$defs/objectFlag"
+        }
+      ]
+    },
+    "booleanFlag": {
+      "$comment": "merge the variants with the base flag to build our typed flags",
+      "title": "Boolean flag",
+      "description": "A flag having boolean values.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseFlag"
+        },
+        {
+          "$ref": "#/$defs/booleanVariants"
+        }
+      ]
+    },
+    "stringFlag": {
+      "title": "String flag",
+      "description": "A flag having string values.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseFlag"
+        },
+        {
+          "$ref": "#/$defs/stringVariants"
+        }
+      ]
+    },
+    "numberFlag": {
+      "title": "Numeric flag",
+      "description": "A flag having numeric values.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseFlag"
+        },
+        {
+          "$ref": "#/$defs/numberVariants"
+        }
+      ]
+    },
+    "objectFlag": {
+      "title": "Object flag",
+      "description": "A flag having arbitrary object values.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseFlag"
+        },
+        {
+          "$ref": "#/$defs/objectVariants"
+        }
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    }
+  },
+  "$ref": "#/$defs/providerConfig"
+}

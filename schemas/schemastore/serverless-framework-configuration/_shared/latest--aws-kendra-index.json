@@ -1,0 +1,589 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-kendra-index.json",
+  "title": "AWSKendraIndexProperties",
+  "description": "A Kendra index. Source:- https://docs.aws.amazon.com/kendra/latest/dg/hiw-index.html",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-kendra-index.json",
+    "sourceSha256": "e9ca0e41c9ba9dda511ee210d4488d2a24e76925bacaf658947fce7af8cc60d9",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Description": {
+      "description": "A description for the index",
+      "$ref": "#/$defs/Description"
+    },
+    "ServerSideEncryptionConfiguration": {
+      "description": "Server side encryption configuration",
+      "$ref": "#/$defs/ServerSideEncryptionConfiguration"
+    },
+    "Tags": {
+      "description": "Tags for labeling the index",
+      "$ref": "#/$defs/TagList"
+    },
+    "Name": {
+      "$ref": "#/$defs/Name"
+    },
+    "RoleArn": {
+      "$ref": "#/$defs/RoleArn"
+    },
+    "Edition": {
+      "$ref": "#/$defs/Edition"
+    },
+    "DocumentMetadataConfigurations": {
+      "description": "Document metadata configurations",
+      "$ref": "#/$defs/DocumentMetadataConfigurationList"
+    },
+    "CapacityUnits": {
+      "description": "Capacity units",
+      "$ref": "#/$defs/CapacityUnitsConfiguration"
+    },
+    "UserContextPolicy": {
+      "$ref": "#/$defs/UserContextPolicy"
+    },
+    "UserTokenConfigurations": {
+      "$ref": "#/$defs/UserTokenConfigurationList"
+    }
+  },
+  "typeName": "AWS::Kendra::Index",
+  "createOnlyProperties": [
+    "/properties/Edition",
+    "/properties/ServerSideEncryptionConfiguration"
+  ],
+  "sourceUrl": "https://docs.aws.amazon.com/kendra/latest/dg/hiw-index.html",
+  "$defs": {
+    "ServerSideEncryptionConfiguration": {
+      "type": "object",
+      "properties": {
+        "KmsKeyId": {
+          "$ref": "#/$defs/KmsKeyId"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraIndexServerSideEncryptionConfigurationDefinition"
+    },
+    "Description": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 1000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexDescriptionDefinition"
+    },
+    "KmsKeyId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexKmsKeyIdDefinition"
+    },
+    "Tag": {
+      "description": "A label for tagging Kendra resources",
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A string used to identify this tag"
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A string containing the value for the tag"
+        }
+      },
+      "required": [
+        "Key",
+        "Value"
+      ],
+      "additionalProperties": false,
+      "title": "AWSKendraIndexTagDefinition"
+    },
+    "TagList": {
+      "description": "List of tags",
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/Tag"
+      },
+      "title": "AWSKendraIndexTagListDefinition"
+    },
+    "Importance": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "title": "AWSKendraIndexImportanceDefinition"
+    },
+    "Freshness": {
+      "type": "boolean",
+      "title": "AWSKendraIndexFreshnessDefinition"
+    },
+    "Duration": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10,
+          "pattern": "[0-9]+[s]"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexDurationDefinition"
+    },
+    "Order": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ASCENDING",
+            "DESCENDING"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexOrderDefinition"
+    },
+    "Relevance": {
+      "type": "object",
+      "properties": {
+        "Freshness": {
+          "$ref": "#/$defs/Freshness"
+        },
+        "Importance": {
+          "$ref": "#/$defs/Importance"
+        },
+        "Duration": {
+          "$ref": "#/$defs/Duration"
+        },
+        "RankOrder": {
+          "$ref": "#/$defs/Order"
+        },
+        "ValueImportanceItems": {
+          "$ref": "#/$defs/ValueImportanceItems"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraIndexRelevanceDefinition"
+    },
+    "ValueImportanceItems": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ValueImportanceItem"
+      },
+      "title": "AWSKendraIndexValueImportanceItemsDefinition"
+    },
+    "ValueImportanceItem": {
+      "type": "object",
+      "properties": {
+        "Key": {
+          "$ref": "#/$defs/ValueImportanceItemKey"
+        },
+        "Value": {
+          "$ref": "#/$defs/Importance"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraIndexValueImportanceItemDefinition"
+    },
+    "ValueImportanceItemKey": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexValueImportanceItemKeyDefinition"
+    },
+    "Search": {
+      "type": "object",
+      "properties": {
+        "Facetable": {
+          "type": "boolean"
+        },
+        "Searchable": {
+          "type": "boolean"
+        },
+        "Displayable": {
+          "type": "boolean"
+        },
+        "Sortable": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraIndexSearchDefinition"
+    },
+    "DocumentMetadataConfigurationName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexDocumentMetadataConfigurationNameDefinition"
+    },
+    "DocumentAttributeValueType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "STRING_VALUE",
+            "STRING_LIST_VALUE",
+            "LONG_VALUE",
+            "DATE_VALUE"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexDocumentAttributeValueTypeDefinition"
+    },
+    "DocumentMetadataConfiguration": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "$ref": "#/$defs/DocumentMetadataConfigurationName"
+        },
+        "Type": {
+          "$ref": "#/$defs/DocumentAttributeValueType"
+        },
+        "Relevance": {
+          "$ref": "#/$defs/Relevance"
+        },
+        "Search": {
+          "$ref": "#/$defs/Search"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Name",
+        "Type"
+      ],
+      "title": "AWSKendraIndexDocumentMetadataConfigurationDefinition"
+    },
+    "DocumentMetadataConfigurationList": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "$ref": "#/$defs/DocumentMetadataConfiguration"
+      },
+      "title": "AWSKendraIndexDocumentMetadataConfigurationListDefinition"
+    },
+    "StorageCapacityUnits": {
+      "type": "integer",
+      "minimum": 0,
+      "title": "AWSKendraIndexStorageCapacityUnitsDefinition"
+    },
+    "QueryCapacityUnits": {
+      "type": "integer",
+      "minimum": 0,
+      "title": "AWSKendraIndexQueryCapacityUnitsDefinition"
+    },
+    "CapacityUnitsConfiguration": {
+      "type": "object",
+      "properties": {
+        "StorageCapacityUnits": {
+          "$ref": "#/$defs/StorageCapacityUnits"
+        },
+        "QueryCapacityUnits": {
+          "$ref": "#/$defs/QueryCapacityUnits"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "StorageCapacityUnits",
+        "QueryCapacityUnits"
+      ],
+      "title": "AWSKendraIndexCapacityUnitsConfigurationDefinition"
+    },
+    "Edition": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "DEVELOPER_EDITION",
+            "ENTERPRISE_EDITION"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Edition of index",
+      "title": "AWSKendraIndexEditionDefinition"
+    },
+    "Name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Name of index",
+      "title": "AWSKendraIndexNameDefinition"
+    },
+    "RoleArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1284,
+          "pattern": "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Role Arn",
+      "title": "AWSKendraIndexRoleArnDefinition"
+    },
+    "Id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 36,
+          "maxLength": 36
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Unique ID of index",
+      "title": "AWSKendraIndexIdDefinition"
+    },
+    "Arn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 1000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexArnDefinition"
+    },
+    "UserContextPolicy": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ATTRIBUTE_FILTER",
+            "USER_TOKEN"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexUserContextPolicyDefinition"
+    },
+    "UserNameAttributeField": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexUserNameAttributeFieldDefinition"
+    },
+    "GroupAttributeField": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexGroupAttributeFieldDefinition"
+    },
+    "KeyLocation": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "URL",
+            "SECRET_MANAGER"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexKeyLocationDefinition"
+    },
+    "Issuer": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexIssuerDefinition"
+    },
+    "ClaimRegex": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexClaimRegexDefinition"
+    },
+    "Url": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "^(https?|ftp|file):\\/\\/([^\\s]*)"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraIndexUrlDefinition"
+    },
+    "JsonTokenTypeConfiguration": {
+      "type": "object",
+      "properties": {
+        "UserNameAttributeField": {
+          "$ref": "#/$defs/UserNameAttributeField"
+        },
+        "GroupAttributeField": {
+          "$ref": "#/$defs/GroupAttributeField"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "UserNameAttributeField",
+        "GroupAttributeField"
+      ],
+      "title": "AWSKendraIndexJsonTokenTypeConfigurationDefinition"
+    },
+    "JwtTokenTypeConfiguration": {
+      "type": "object",
+      "properties": {
+        "KeyLocation": {
+          "$ref": "#/$defs/KeyLocation"
+        },
+        "URL": {
+          "$ref": "#/$defs/Url"
+        },
+        "SecretManagerArn": {
+          "$ref": "#/$defs/RoleArn"
+        },
+        "UserNameAttributeField": {
+          "$ref": "#/$defs/UserNameAttributeField"
+        },
+        "GroupAttributeField": {
+          "$ref": "#/$defs/GroupAttributeField"
+        },
+        "Issuer": {
+          "$ref": "#/$defs/Issuer"
+        },
+        "ClaimRegex": {
+          "$ref": "#/$defs/ClaimRegex"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "KeyLocation"
+      ],
+      "title": "AWSKendraIndexJwtTokenTypeConfigurationDefinition"
+    },
+    "UserTokenConfiguration": {
+      "type": "object",
+      "properties": {
+        "JwtTokenTypeConfiguration": {
+          "$ref": "#/$defs/JwtTokenTypeConfiguration"
+        },
+        "JsonTokenTypeConfiguration": {
+          "$ref": "#/$defs/JsonTokenTypeConfiguration"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraIndexUserTokenConfigurationDefinition"
+    },
+    "UserTokenConfigurationList": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "$ref": "#/$defs/UserTokenConfiguration"
+      },
+      "title": "AWSKendraIndexUserTokenConfigurationListDefinition"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/Id",
+    "/properties/Arn"
+  ],
+  "required": [
+    "Name",
+    "RoleArn",
+    "Edition"
+  ],
+  "additionalProperties": false,
+  "primaryIdentifier": [
+    "/properties/Id"
+  ]
+}

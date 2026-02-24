@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/samtrc/latest.json",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/samtrc.json",
+    "sourceSha256": "39e434c1d2c45e4bca703c8364549bb9d96ab7af1081b12c2d524c8e6fddb018"
+  },
+  "type": "object",
+  "properties": {
+    "extends": {
+      "description": "The name of the configuration file to extend from, used to determine the default rules to apply",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "enum": [
+            "recommended",
+            "strict"
+          ]
+        }
+      ]
+    },
+    "rules": {
+      "description": "Configuration for linter rules for the current project",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "Configure whether model types (e.g. record and service) must be in a separate file from their providers and consumers",
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "const": "split-model-and-providers"
+              },
+              "level": {
+                "$ref": "#/$defs/level_type"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "description": "Configure naming rules which apply to all types in the project",
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "const": "naming-conventions"
+              },
+              "level": {
+                "$ref": "#/$defs/level_type"
+              },
+              "record": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "recordField": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "enum": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "enumValue": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "typeAlias": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "service": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "serviceOperation": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "serviceOperationParameter": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "provider": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "package": {
+                "$ref": "#/$defs/naming_type"
+              },
+              "fileName": {
+                "$ref": "#/$defs/naming_type"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "extends"
+  ],
+  "$defs": {
+    "level_type": {
+      "enum": [
+        "error",
+        "warn",
+        "info",
+        "off"
+      ]
+    },
+    "naming_type": {
+      "enum": [
+        "PascalCase",
+        "camelCase",
+        "kebab-case",
+        "snake_case",
+        "SCREAMING_SNAKE_CASE"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

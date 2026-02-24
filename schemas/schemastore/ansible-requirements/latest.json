@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/ansible-requirements/latest.json",
+  "title": "Ansible Requirements Schema",
+  "description": "https://docs.ansible.com/projects/ansible/latest/galaxy/user_guide.html#installing-roles-and-collections-from-the-same-requirements-yml-file",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/requirements.json",
+    "sourceSha256": "588876d216f2f727e1ae26df2e60b99c9190c7f2a4b6e19652e0faf2298b9886"
+  },
+  "$defs": {
+    "CollectionModel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "galaxy",
+            "url",
+            "file",
+            "git",
+            "dir",
+            "subdirs"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "title": "CollectionModel",
+      "type": "object"
+    },
+    "CollectionStringModel": {
+      "title": "CollectionStringModel",
+      "type": "string"
+    },
+    "IncludeModel": {
+      "properties": {
+        "include": {
+          "title": "Include",
+          "type": "string"
+        }
+      },
+      "required": [
+        "include"
+      ],
+      "title": "IncludeModel",
+      "type": "object"
+    },
+    "RequirementsV2Model": {
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "collections"
+          ]
+        },
+        {
+          "required": [
+            "roles"
+          ]
+        }
+      ],
+      "properties": {
+        "collections": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CollectionModel"
+              },
+              {
+                "$ref": "#/$defs/CollectionStringModel"
+              }
+            ]
+          },
+          "title": "Collections",
+          "type": "array"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/RoleModel"
+          },
+          "title": "Roles",
+          "type": "array"
+        }
+      },
+      "title": "Requirements v2",
+      "type": "object"
+    },
+    "RoleModel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "scm": {
+          "anyOf": [
+            {
+              "enum": [
+                "git"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "hg"
+              ],
+              "type": "string"
+            }
+          ],
+          "default": "git",
+          "title": "Scm"
+        },
+        "src": {
+          "title": "Src",
+          "type": "string"
+        },
+        "version": {
+          "default": "master",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "title": "Role",
+      "type": "object"
+    }
+  },
+  "examples": [
+    "requirements.yml"
+  ],
+  "anyOf": [
+    {
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/RoleModel"
+          },
+          {
+            "$ref": "#/$defs/IncludeModel"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    {
+      "$ref": "#/$defs/RequirementsV2Model"
+    }
+  ]
+}

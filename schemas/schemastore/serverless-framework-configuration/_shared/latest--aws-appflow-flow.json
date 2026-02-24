@@ -1,0 +1,2120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-appflow-flow.json",
+  "title": "AWSAppFlowFlowProperties",
+  "description": "Resource schema for AWS::AppFlow::Flow.. Source:- https://docs.aws.amazon.com/appflow/latest/userguide/what-is-appflow.html",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-appflow-flow.json",
+    "sourceSha256": "6a6085d7e91ecd3499f16f58fdaadf51571b85bd4ab92cfa1f11e304c615c903",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "FlowName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "[a-zA-Z0-9][\\w!@#.-]+",
+          "maxLength": 256,
+          "minLength": 1
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Name of the flow."
+    },
+    "Description": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "[\\w!@#\\-.?,\\s]*",
+          "maxLength": 2048
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Description of the flow."
+    },
+    "KMSArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "arn:aws:kms:.*:[0-9]+:.*",
+          "maxLength": 2048,
+          "minLength": 20
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The ARN of the AWS Key Management Service (AWS KMS) key that's used to encrypt your function's environment variables. If it's not provided, AWS Lambda uses a default service key."
+    },
+    "TriggerConfig": {
+      "description": "Trigger settings of the flow.",
+      "$ref": "#/$defs/TriggerConfig"
+    },
+    "FlowStatus": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "Active",
+            "Suspended"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Flow activation status for Scheduled- and Event-triggered flows"
+    },
+    "SourceFlowConfig": {
+      "description": "Configurations of Source connector of the flow.",
+      "$ref": "#/$defs/SourceFlowConfig"
+    },
+    "DestinationFlowConfigList": {
+      "description": "List of Destination connectors of the flow.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DestinationFlowConfig"
+      }
+    },
+    "Tasks": {
+      "description": "List of tasks for the flow.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Task"
+      }
+    },
+    "Tags": {
+      "description": "List of Tags.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Tag"
+      }
+    },
+    "MetadataCatalogConfig": {
+      "description": "Configurations of metadata catalog of the flow.",
+      "$ref": "#/$defs/MetadataCatalogConfig"
+    }
+  },
+  "typeName": "AWS::AppFlow::Flow",
+  "primaryIdentifier": [
+    "/properties/FlowName"
+  ],
+  "sourceUrl": "https://docs.aws.amazon.com/appflow/latest/userguide/what-is-appflow.html",
+  "additionalProperties": false,
+  "readOnlyProperties": [
+    "/properties/FlowArn"
+  ],
+  "$defs": {
+    "TriggerConfig": {
+      "description": "Trigger settings of the flow.",
+      "type": "object",
+      "properties": {
+        "TriggerType": {
+          "description": "Trigger type of the flow",
+          "$ref": "#/$defs/TriggerType"
+        },
+        "TriggerProperties": {
+          "description": "Details required based on the type of trigger",
+          "$ref": "#/$defs/ScheduledTriggerProperties"
+        }
+      },
+      "required": [
+        "TriggerType"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowTriggerConfigDefinition"
+    },
+    "SourceFlowConfig": {
+      "description": "Configurations of Source connector of the flow.",
+      "type": "object",
+      "properties": {
+        "ConnectorType": {
+          "description": "Type of source connector",
+          "$ref": "#/$defs/ConnectorType"
+        },
+        "ApiVersion": {
+          "description": "The API version that the destination connector uses.",
+          "$ref": "#/$defs/ApiVersion"
+        },
+        "ConnectorProfileName": {
+          "description": "Name of source connector profile",
+          "$ref": "#/$defs/ConnectorProfileName"
+        },
+        "SourceConnectorProperties": {
+          "description": "Source connector details required to query a connector",
+          "$ref": "#/$defs/SourceConnectorProperties"
+        },
+        "IncrementalPullConfig": {
+          "description": "Configuration for scheduled incremental data pull",
+          "$ref": "#/$defs/IncrementalPullConfig"
+        }
+      },
+      "required": [
+        "ConnectorType",
+        "SourceConnectorProperties"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowSourceFlowConfigDefinition"
+    },
+    "DestinationFlowConfig": {
+      "description": "Configurations of destination connector.",
+      "type": "object",
+      "properties": {
+        "ConnectorType": {
+          "description": "Destination connector type",
+          "$ref": "#/$defs/ConnectorType"
+        },
+        "ApiVersion": {
+          "description": "The API version that the destination connector uses.",
+          "$ref": "#/$defs/ApiVersion"
+        },
+        "ConnectorProfileName": {
+          "description": "Name of destination connector profile",
+          "$ref": "#/$defs/ConnectorProfileName"
+        },
+        "DestinationConnectorProperties": {
+          "description": "Destination connector details",
+          "$ref": "#/$defs/DestinationConnectorProperties"
+        }
+      },
+      "required": [
+        "ConnectorType",
+        "DestinationConnectorProperties"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowDestinationFlowConfigDefinition"
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "SourceFields": {
+          "description": "Source fields on which particular task will be applied",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ConnectorOperator": {
+          "description": "Operation to be performed on provided source fields",
+          "$ref": "#/$defs/ConnectorOperator"
+        },
+        "DestinationField": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A field value on which source field should be validated"
+        },
+        "TaskType": {
+          "description": "Type of task",
+          "$ref": "#/$defs/TaskType"
+        },
+        "TaskProperties": {
+          "description": "A Map used to store task related info",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TaskPropertiesObject"
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "SourceFields",
+        "TaskType"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowTaskDefinition"
+    },
+    "Tag": {
+      "description": "A label for tagging AppFlow resources",
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A string used to identify this tag"
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A string containing the value for the tag"
+        }
+      },
+      "required": [
+        "Key",
+        "Value"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowTagDefinition"
+    },
+    "MetadataCatalogConfig": {
+      "description": "Configurations of metadata catalog of the flow.",
+      "type": "object",
+      "properties": {
+        "GlueDataCatalog": {
+          "description": "Configurations of glue data catalog of the flow.",
+          "$ref": "#/$defs/GlueDataCatalog"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowMetadataCatalogConfigDefinition"
+    },
+    "GlueDataCatalog": {
+      "description": "Trigger settings of the flow.",
+      "type": "object",
+      "properties": {
+        "RoleArn": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 512,
+              "pattern": "arn:aws:iam:.*:[0-9]+:.*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A string containing the value for the tag"
+        },
+        "DatabaseName": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 255,
+              "pattern": "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A string containing the value for the tag"
+        },
+        "TablePrefix": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 128,
+              "pattern": "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A string containing the value for the tag"
+        }
+      },
+      "required": [
+        "RoleArn",
+        "DatabaseName",
+        "TablePrefix"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowGlueDataCatalogDefinition"
+    },
+    "DestinationConnectorProperties": {
+      "description": "Destination connector details",
+      "type": "object",
+      "properties": {
+        "Redshift": {
+          "$ref": "#/$defs/RedshiftDestinationProperties"
+        },
+        "S3": {
+          "$ref": "#/$defs/S3DestinationProperties"
+        },
+        "Salesforce": {
+          "$ref": "#/$defs/SalesforceDestinationProperties"
+        },
+        "Snowflake": {
+          "$ref": "#/$defs/SnowflakeDestinationProperties"
+        },
+        "EventBridge": {
+          "$ref": "#/$defs/EventBridgeDestinationProperties"
+        },
+        "Upsolver": {
+          "$ref": "#/$defs/UpsolverDestinationProperties"
+        },
+        "LookoutMetrics": {
+          "$ref": "#/$defs/LookoutMetricsDestinationProperties"
+        },
+        "Marketo": {
+          "$ref": "#/$defs/MarketoDestinationProperties"
+        },
+        "Zendesk": {
+          "$ref": "#/$defs/ZendeskDestinationProperties"
+        },
+        "CustomConnector": {
+          "$ref": "#/$defs/CustomConnectorDestinationProperties"
+        },
+        "SAPOData": {
+          "$ref": "#/$defs/SAPODataDestinationProperties"
+        }
+      },
+      "title": "AWSAppFlowFlowDestinationConnectorPropertiesDefinition"
+    },
+    "IncrementalPullConfig": {
+      "description": "Configuration for scheduled incremental data pull",
+      "type": "object",
+      "properties": {
+        "DatetimeTypeFieldName": {
+          "$ref": "#/$defs/DatetimeTypeFieldName"
+        }
+      },
+      "title": "AWSAppFlowFlowIncrementalPullConfigDefinition"
+    },
+    "SourceConnectorProperties": {
+      "description": "Source connector details required to query a connector",
+      "type": "object",
+      "properties": {
+        "Amplitude": {
+          "$ref": "#/$defs/AmplitudeSourceProperties"
+        },
+        "Datadog": {
+          "$ref": "#/$defs/DatadogSourceProperties"
+        },
+        "Dynatrace": {
+          "$ref": "#/$defs/DynatraceSourceProperties"
+        },
+        "GoogleAnalytics": {
+          "$ref": "#/$defs/GoogleAnalyticsSourceProperties"
+        },
+        "InforNexus": {
+          "$ref": "#/$defs/InforNexusSourceProperties"
+        },
+        "Marketo": {
+          "$ref": "#/$defs/MarketoSourceProperties"
+        },
+        "S3": {
+          "$ref": "#/$defs/S3SourceProperties"
+        },
+        "SAPOData": {
+          "$ref": "#/$defs/SAPODataSourceProperties"
+        },
+        "Salesforce": {
+          "$ref": "#/$defs/SalesforceSourceProperties"
+        },
+        "Pardot": {
+          "$ref": "#/$defs/PardotSourceProperties"
+        },
+        "ServiceNow": {
+          "$ref": "#/$defs/ServiceNowSourceProperties"
+        },
+        "Singular": {
+          "$ref": "#/$defs/SingularSourceProperties"
+        },
+        "Slack": {
+          "$ref": "#/$defs/SlackSourceProperties"
+        },
+        "Trendmicro": {
+          "$ref": "#/$defs/TrendmicroSourceProperties"
+        },
+        "Veeva": {
+          "$ref": "#/$defs/VeevaSourceProperties"
+        },
+        "Zendesk": {
+          "$ref": "#/$defs/ZendeskSourceProperties"
+        },
+        "CustomConnector": {
+          "$ref": "#/$defs/CustomConnectorSourceProperties"
+        }
+      },
+      "title": "AWSAppFlowFlowSourceConnectorPropertiesDefinition"
+    },
+    "ConnectorOperator": {
+      "description": "Operation to be performed on provided source fields",
+      "type": "object",
+      "properties": {
+        "Amplitude": {
+          "$ref": "#/$defs/AmplitudeConnectorOperator"
+        },
+        "Datadog": {
+          "$ref": "#/$defs/DatadogConnectorOperator"
+        },
+        "Dynatrace": {
+          "$ref": "#/$defs/DynatraceConnectorOperator"
+        },
+        "GoogleAnalytics": {
+          "$ref": "#/$defs/GoogleAnalyticsConnectorOperator"
+        },
+        "InforNexus": {
+          "$ref": "#/$defs/InforNexusConnectorOperator"
+        },
+        "Marketo": {
+          "$ref": "#/$defs/MarketoConnectorOperator"
+        },
+        "S3": {
+          "$ref": "#/$defs/S3ConnectorOperator"
+        },
+        "SAPOData": {
+          "$ref": "#/$defs/SAPODataConnectorOperator"
+        },
+        "Salesforce": {
+          "$ref": "#/$defs/SalesforceConnectorOperator"
+        },
+        "Pardot": {
+          "$ref": "#/$defs/PardotConnectorOperator"
+        },
+        "ServiceNow": {
+          "$ref": "#/$defs/ServiceNowConnectorOperator"
+        },
+        "Singular": {
+          "$ref": "#/$defs/SingularConnectorOperator"
+        },
+        "Slack": {
+          "$ref": "#/$defs/SlackConnectorOperator"
+        },
+        "Trendmicro": {
+          "$ref": "#/$defs/TrendmicroConnectorOperator"
+        },
+        "Veeva": {
+          "$ref": "#/$defs/VeevaConnectorOperator"
+        },
+        "Zendesk": {
+          "$ref": "#/$defs/ZendeskConnectorOperator"
+        },
+        "CustomConnector": {
+          "$ref": "#/$defs/Operator"
+        }
+      },
+      "title": "AWSAppFlowFlowConnectorOperatorDefinition"
+    },
+    "ScheduledTriggerProperties": {
+      "description": "Details required for scheduled trigger type",
+      "type": "object",
+      "properties": {
+        "ScheduleExpression": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "DataPullMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Incremental",
+                "Complete"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "ScheduleStartTime": {
+          "type": "number"
+        },
+        "ScheduleEndTime": {
+          "type": "number"
+        },
+        "FirstExecutionFrom": {
+          "type": "number"
+        },
+        "TimeZone": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "ScheduleOffset": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 36000
+        },
+        "FlowErrorDeactivationThreshold": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "ScheduleExpression"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowScheduledTriggerPropertiesDefinition"
+    },
+    "CustomProperties": {
+      "description": "A map for properties for custom connector.",
+      "type": "object",
+      "patternProperties": {
+        "^[\\w]{1,2048}$": {
+          "description": "A string containing the value for the property",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "\\S+"
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowCustomPropertiesDefinition"
+    },
+    "TriggerType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "Scheduled",
+            "Event",
+            "OnDemand"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowTriggerTypeDefinition"
+    },
+    "Object": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "\\S+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowObjectDefinition"
+    },
+    "EntityName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 1024,
+          "pattern": "\\S+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowEntityNameDefinition"
+    },
+    "EnableDynamicFieldUpdate": {
+      "type": "boolean",
+      "title": "AWSAppFlowFlowEnableDynamicFieldUpdateDefinition"
+    },
+    "IncludeDeletedRecords": {
+      "type": "boolean",
+      "title": "AWSAppFlowFlowIncludeDeletedRecordsDefinition"
+    },
+    "IncludeAllVersions": {
+      "type": "boolean",
+      "title": "AWSAppFlowFlowIncludeAllVersionsDefinition"
+    },
+    "IncludeRenditions": {
+      "type": "boolean",
+      "title": "AWSAppFlowFlowIncludeRenditionsDefinition"
+    },
+    "IncludeSourceFiles": {
+      "type": "boolean",
+      "title": "AWSAppFlowFlowIncludeSourceFilesDefinition"
+    },
+    "DocumentType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "[\\s\\w_-]+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowDocumentTypeDefinition"
+    },
+    "BucketName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 63,
+          "pattern": "\\S+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowBucketNameDefinition"
+    },
+    "UpsolverBucketName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 63,
+          "pattern": "^(upsolver-appflow)\\S*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowUpsolverBucketNameDefinition"
+    },
+    "BucketPrefix": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 512
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowBucketPrefixDefinition"
+    },
+    "S3InputFormatConfig": {
+      "type": "object",
+      "properties": {
+        "S3InputFileType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "CSV",
+                "JSON"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "title": "AWSAppFlowFlowS3InputFormatConfigDefinition"
+    },
+    "ErrorHandlingConfig": {
+      "type": "object",
+      "properties": {
+        "FailOnFirstError": {
+          "type": "boolean"
+        },
+        "BucketPrefix": {
+          "$ref": "#/$defs/BucketPrefix"
+        },
+        "BucketName": {
+          "$ref": "#/$defs/BucketName"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowErrorHandlingConfigDefinition"
+    },
+    "SuccessResponseHandlingConfig": {
+      "type": "object",
+      "properties": {
+        "BucketPrefix": {
+          "$ref": "#/$defs/BucketPrefix"
+        },
+        "BucketName": {
+          "$ref": "#/$defs/BucketName"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowSuccessResponseHandlingConfigDefinition"
+    },
+    "Name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "\\S+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowNameDefinition"
+    },
+    "WriteOperationType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "INSERT",
+            "UPSERT",
+            "UPDATE",
+            "DELETE"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowWriteOperationTypeDefinition"
+    },
+    "FileType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "CSV",
+            "JSON",
+            "PARQUET"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowFileTypeDefinition"
+    },
+    "AggregationType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "None",
+            "SingleFile"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowAggregationTypeDefinition"
+    },
+    "TargetFileSize": {
+      "type": "integer",
+      "title": "AWSAppFlowFlowTargetFileSizeDefinition"
+    },
+    "PreserveSourceDataTyping": {
+      "type": "boolean",
+      "title": "AWSAppFlowFlowPreserveSourceDataTypingDefinition"
+    },
+    "PrefixType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "FILENAME",
+            "PATH",
+            "PATH_AND_FILENAME"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowPrefixTypeDefinition"
+    },
+    "PrefixFormat": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "YEAR",
+            "MONTH",
+            "DAY",
+            "HOUR",
+            "MINUTE"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowPrefixFormatDefinition"
+    },
+    "PathPrefixHierarchy": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PathPrefix"
+      },
+      "title": "AWSAppFlowFlowPathPrefixHierarchyDefinition"
+    },
+    "PathPrefix": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "EXECUTION_ID",
+            "SCHEMA_VERSION"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowPathPrefixDefinition"
+    },
+    "PrefixConfig": {
+      "type": "object",
+      "properties": {
+        "PrefixType": {
+          "$ref": "#/$defs/PrefixType"
+        },
+        "PrefixFormat": {
+          "$ref": "#/$defs/PrefixFormat"
+        },
+        "PathPrefixHierarchy": {
+          "$ref": "#/$defs/PathPrefixHierarchy"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowPrefixConfigDefinition"
+    },
+    "AggregationConfig": {
+      "type": "object",
+      "properties": {
+        "AggregationType": {
+          "$ref": "#/$defs/AggregationType"
+        },
+        "TargetFileSize": {
+          "$ref": "#/$defs/TargetFileSize"
+        }
+      },
+      "title": "AWSAppFlowFlowAggregationConfigDefinition"
+    },
+    "S3OutputFormatConfig": {
+      "type": "object",
+      "properties": {
+        "FileType": {
+          "$ref": "#/$defs/FileType"
+        },
+        "PrefixConfig": {
+          "$ref": "#/$defs/PrefixConfig"
+        },
+        "AggregationConfig": {
+          "$ref": "#/$defs/AggregationConfig"
+        },
+        "PreserveSourceDataTyping": {
+          "$ref": "#/$defs/PreserveSourceDataTyping"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowS3OutputFormatConfigDefinition"
+    },
+    "UpsolverS3OutputFormatConfig": {
+      "type": "object",
+      "properties": {
+        "FileType": {
+          "$ref": "#/$defs/FileType"
+        },
+        "PrefixConfig": {
+          "$ref": "#/$defs/PrefixConfig"
+        },
+        "AggregationConfig": {
+          "$ref": "#/$defs/AggregationConfig"
+        }
+      },
+      "required": [
+        "PrefixConfig"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowUpsolverS3OutputFormatConfigDefinition"
+    },
+    "ConnectorType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "SAPOData",
+            "Salesforce",
+            "Pardot",
+            "Singular",
+            "Slack",
+            "Redshift",
+            "S3",
+            "Marketo",
+            "Googleanalytics",
+            "Zendesk",
+            "Servicenow",
+            "Datadog",
+            "Trendmicro",
+            "Snowflake",
+            "Dynatrace",
+            "Infornexus",
+            "Amplitude",
+            "Veeva",
+            "CustomConnector",
+            "EventBridge",
+            "Upsolver",
+            "LookoutMetrics"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowConnectorTypeDefinition"
+    },
+    "ApiVersion": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "\\S+",
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The API version that the connector will use.",
+      "title": "AWSAppFlowFlowApiVersionDefinition"
+    },
+    "ConnectorProfileName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "[\\w/!@#+=.-]+",
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Name of connector profile",
+      "title": "AWSAppFlowFlowConnectorProfileNameDefinition"
+    },
+    "AmplitudeSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowAmplitudeSourcePropertiesDefinition"
+    },
+    "DatadogSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowDatadogSourcePropertiesDefinition"
+    },
+    "DynatraceSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowDynatraceSourcePropertiesDefinition"
+    },
+    "GoogleAnalyticsSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowGoogleAnalyticsSourcePropertiesDefinition"
+    },
+    "InforNexusSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowInforNexusSourcePropertiesDefinition"
+    },
+    "MarketoSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowMarketoSourcePropertiesDefinition"
+    },
+    "S3SourceProperties": {
+      "type": "object",
+      "properties": {
+        "BucketName": {
+          "$ref": "#/$defs/BucketName"
+        },
+        "BucketPrefix": {
+          "$ref": "#/$defs/BucketPrefix"
+        },
+        "S3InputFormatConfig": {
+          "$ref": "#/$defs/S3InputFormatConfig"
+        }
+      },
+      "required": [
+        "BucketName",
+        "BucketPrefix"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowS3SourcePropertiesDefinition"
+    },
+    "SAPODataSourceProperties": {
+      "type": "object",
+      "properties": {
+        "ObjectPath": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "ObjectPath"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowSAPODataSourcePropertiesDefinition"
+    },
+    "SalesforceSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        },
+        "EnableDynamicFieldUpdate": {
+          "$ref": "#/$defs/EnableDynamicFieldUpdate"
+        },
+        "IncludeDeletedRecords": {
+          "$ref": "#/$defs/IncludeDeletedRecords"
+        },
+        "DataTransferApi": {
+          "$ref": "#/$defs/DataTransferApi"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowSalesforceSourcePropertiesDefinition"
+    },
+    "PardotSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowPardotSourcePropertiesDefinition"
+    },
+    "ServiceNowSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowServiceNowSourcePropertiesDefinition"
+    },
+    "SingularSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowSingularSourcePropertiesDefinition"
+    },
+    "SlackSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowSlackSourcePropertiesDefinition"
+    },
+    "TrendmicroSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowTrendmicroSourcePropertiesDefinition"
+    },
+    "VeevaSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        },
+        "DocumentType": {
+          "$ref": "#/$defs/DocumentType"
+        },
+        "IncludeSourceFiles": {
+          "$ref": "#/$defs/IncludeSourceFiles"
+        },
+        "IncludeRenditions": {
+          "$ref": "#/$defs/IncludeRenditions"
+        },
+        "IncludeAllVersions": {
+          "$ref": "#/$defs/IncludeAllVersions"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowVeevaSourcePropertiesDefinition"
+    },
+    "ZendeskSourceProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowZendeskSourcePropertiesDefinition"
+    },
+    "CustomConnectorSourceProperties": {
+      "type": "object",
+      "properties": {
+        "EntityName": {
+          "$ref": "#/$defs/EntityName"
+        },
+        "CustomProperties": {
+          "$ref": "#/$defs/CustomProperties"
+        }
+      },
+      "required": [
+        "EntityName"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowCustomConnectorSourcePropertiesDefinition"
+    },
+    "CustomConnectorDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "EntityName": {
+          "$ref": "#/$defs/EntityName"
+        },
+        "ErrorHandlingConfig": {
+          "$ref": "#/$defs/ErrorHandlingConfig"
+        },
+        "WriteOperationType": {
+          "$ref": "#/$defs/WriteOperationType"
+        },
+        "IdFieldNames": {
+          "description": "List of fields used as ID when performing a write operation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "CustomProperties": {
+          "$ref": "#/$defs/CustomProperties"
+        }
+      },
+      "required": [
+        "EntityName"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowCustomConnectorDestinationPropertiesDefinition"
+    },
+    "ZendeskDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        },
+        "ErrorHandlingConfig": {
+          "$ref": "#/$defs/ErrorHandlingConfig"
+        },
+        "IdFieldNames": {
+          "description": "List of fields used as ID when performing a write operation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "WriteOperationType": {
+          "$ref": "#/$defs/WriteOperationType"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowZendeskDestinationPropertiesDefinition"
+    },
+    "RedshiftDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        },
+        "IntermediateBucketName": {
+          "$ref": "#/$defs/BucketName"
+        },
+        "BucketPrefix": {
+          "$ref": "#/$defs/BucketPrefix"
+        },
+        "ErrorHandlingConfig": {
+          "$ref": "#/$defs/ErrorHandlingConfig"
+        }
+      },
+      "required": [
+        "Object",
+        "IntermediateBucketName"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowRedshiftDestinationPropertiesDefinition"
+    },
+    "S3DestinationProperties": {
+      "type": "object",
+      "properties": {
+        "BucketName": {
+          "$ref": "#/$defs/BucketName"
+        },
+        "BucketPrefix": {
+          "$ref": "#/$defs/BucketPrefix"
+        },
+        "S3OutputFormatConfig": {
+          "$ref": "#/$defs/S3OutputFormatConfig"
+        }
+      },
+      "required": [
+        "BucketName"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowS3DestinationPropertiesDefinition"
+    },
+    "SAPODataDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "ObjectPath": {
+          "$ref": "#/$defs/Object"
+        },
+        "ErrorHandlingConfig": {
+          "$ref": "#/$defs/ErrorHandlingConfig"
+        },
+        "SuccessResponseHandlingConfig": {
+          "$ref": "#/$defs/SuccessResponseHandlingConfig"
+        },
+        "IdFieldNames": {
+          "description": "List of fields used as ID when performing a write operation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "WriteOperationType": {
+          "$ref": "#/$defs/WriteOperationType"
+        }
+      },
+      "required": [
+        "ObjectPath"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowSAPODataDestinationPropertiesDefinition"
+    },
+    "SalesforceDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        },
+        "ErrorHandlingConfig": {
+          "$ref": "#/$defs/ErrorHandlingConfig"
+        },
+        "IdFieldNames": {
+          "description": "List of fields used as ID when performing a write operation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "WriteOperationType": {
+          "$ref": "#/$defs/WriteOperationType"
+        },
+        "DataTransferApi": {
+          "$ref": "#/$defs/DataTransferApi"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowSalesforceDestinationPropertiesDefinition"
+    },
+    "SnowflakeDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        },
+        "IntermediateBucketName": {
+          "$ref": "#/$defs/BucketName"
+        },
+        "BucketPrefix": {
+          "$ref": "#/$defs/BucketPrefix"
+        },
+        "ErrorHandlingConfig": {
+          "$ref": "#/$defs/ErrorHandlingConfig"
+        }
+      },
+      "required": [
+        "Object",
+        "IntermediateBucketName"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowSnowflakeDestinationPropertiesDefinition"
+    },
+    "EventBridgeDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        },
+        "ErrorHandlingConfig": {
+          "$ref": "#/$defs/ErrorHandlingConfig"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowEventBridgeDestinationPropertiesDefinition"
+    },
+    "UpsolverDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "BucketName": {
+          "$ref": "#/$defs/UpsolverBucketName"
+        },
+        "BucketPrefix": {
+          "$ref": "#/$defs/BucketPrefix"
+        },
+        "S3OutputFormatConfig": {
+          "$ref": "#/$defs/UpsolverS3OutputFormatConfig"
+        }
+      },
+      "required": [
+        "BucketName",
+        "S3OutputFormatConfig"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowUpsolverDestinationPropertiesDefinition"
+    },
+    "LookoutMetricsDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowLookoutMetricsDestinationPropertiesDefinition"
+    },
+    "MarketoDestinationProperties": {
+      "type": "object",
+      "properties": {
+        "Object": {
+          "$ref": "#/$defs/Object"
+        },
+        "ErrorHandlingConfig": {
+          "$ref": "#/$defs/ErrorHandlingConfig"
+        }
+      },
+      "required": [
+        "Object"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowMarketoDestinationPropertiesDefinition"
+    },
+    "DatetimeTypeFieldName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Name of the datetime/timestamp data type field to be used for importing incremental records from the source",
+      "title": "AWSAppFlowFlowDatetimeTypeFieldNameDefinition"
+    },
+    "TaskType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "Arithmetic",
+            "Filter",
+            "Map",
+            "Map_all",
+            "Mask",
+            "Merge",
+            "Passthrough",
+            "Truncate",
+            "Validate",
+            "Partition"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowTaskTypeDefinition"
+    },
+    "OperatorPropertiesKeys": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "VALUE",
+            "VALUES",
+            "DATA_TYPE",
+            "UPPER_BOUND",
+            "LOWER_BOUND",
+            "SOURCE_DATA_TYPE",
+            "DESTINATION_DATA_TYPE",
+            "VALIDATION_ACTION",
+            "MASK_VALUE",
+            "MASK_LENGTH",
+            "TRUNCATE_LENGTH",
+            "MATH_OPERATION_FIELDS_ORDER",
+            "CONCAT_FORMAT",
+            "SUBFIELD_CATEGORY_MAP",
+            "EXCLUDE_SOURCE_FIELDS_LIST",
+            "INCLUDE_NEW_FIELDS",
+            "ORDERED_PARTITION_KEYS_LIST"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowOperatorPropertiesKeysDefinition"
+    },
+    "TaskPropertiesObject": {
+      "description": "An object used to store task related info",
+      "type": "object",
+      "properties": {
+        "Key": {
+          "$ref": "#/$defs/OperatorPropertiesKeys"
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 2048,
+              "pattern": ".+"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "Key",
+        "Value"
+      ],
+      "additionalProperties": false,
+      "title": "AWSAppFlowFlowTaskPropertiesObjectDefinition"
+    },
+    "AmplitudeConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "BETWEEN"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowAmplitudeConnectorOperatorDefinition"
+    },
+    "DatadogConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "BETWEEN",
+            "EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowDatadogConnectorOperatorDefinition"
+    },
+    "DynatraceConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "BETWEEN",
+            "EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowDynatraceConnectorOperatorDefinition"
+    },
+    "GoogleAnalyticsConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "BETWEEN"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowGoogleAnalyticsConnectorOperatorDefinition"
+    },
+    "InforNexusConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "BETWEEN",
+            "EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowInforNexusConnectorOperatorDefinition"
+    },
+    "MarketoConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "LESS_THAN",
+            "GREATER_THAN",
+            "BETWEEN",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowMarketoConnectorOperatorDefinition"
+    },
+    "S3ConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "LESS_THAN",
+            "GREATER_THAN",
+            "BETWEEN",
+            "LESS_THAN_OR_EQUAL_TO",
+            "GREATER_THAN_OR_EQUAL_TO",
+            "EQUAL_TO",
+            "NOT_EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowS3ConnectorOperatorDefinition"
+    },
+    "SAPODataConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "LESS_THAN",
+            "CONTAINS",
+            "GREATER_THAN",
+            "BETWEEN",
+            "LESS_THAN_OR_EQUAL_TO",
+            "GREATER_THAN_OR_EQUAL_TO",
+            "EQUAL_TO",
+            "NOT_EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowSAPODataConnectorOperatorDefinition"
+    },
+    "SalesforceConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "LESS_THAN",
+            "CONTAINS",
+            "GREATER_THAN",
+            "BETWEEN",
+            "LESS_THAN_OR_EQUAL_TO",
+            "GREATER_THAN_OR_EQUAL_TO",
+            "EQUAL_TO",
+            "NOT_EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowSalesforceConnectorOperatorDefinition"
+    },
+    "PardotConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "EQUAL_TO",
+            "NO_OP",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowPardotConnectorOperatorDefinition"
+    },
+    "ServiceNowConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "LESS_THAN",
+            "CONTAINS",
+            "GREATER_THAN",
+            "BETWEEN",
+            "LESS_THAN_OR_EQUAL_TO",
+            "GREATER_THAN_OR_EQUAL_TO",
+            "EQUAL_TO",
+            "NOT_EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowServiceNowConnectorOperatorDefinition"
+    },
+    "SingularConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowSingularConnectorOperatorDefinition"
+    },
+    "SlackConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "BETWEEN",
+            "EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowSlackConnectorOperatorDefinition"
+    },
+    "TrendmicroConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowTrendmicroConnectorOperatorDefinition"
+    },
+    "VeevaConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "LESS_THAN",
+            "GREATER_THAN",
+            "BETWEEN",
+            "LESS_THAN_OR_EQUAL_TO",
+            "GREATER_THAN_OR_EQUAL_TO",
+            "EQUAL_TO",
+            "NOT_EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowVeevaConnectorOperatorDefinition"
+    },
+    "ZendeskConnectorOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "GREATER_THAN",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowZendeskConnectorOperatorDefinition"
+    },
+    "Operator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PROJECTION",
+            "LESS_THAN",
+            "GREATER_THAN",
+            "CONTAINS",
+            "BETWEEN",
+            "LESS_THAN_OR_EQUAL_TO",
+            "GREATER_THAN_OR_EQUAL_TO",
+            "EQUAL_TO",
+            "NOT_EQUAL_TO",
+            "ADDITION",
+            "MULTIPLICATION",
+            "DIVISION",
+            "SUBTRACTION",
+            "MASK_ALL",
+            "MASK_FIRST_N",
+            "MASK_LAST_N",
+            "VALIDATE_NON_NULL",
+            "VALIDATE_NON_ZERO",
+            "VALIDATE_NON_NEGATIVE",
+            "VALIDATE_NUMERIC",
+            "NO_OP"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowOperatorDefinition"
+    },
+    "Status": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "Active",
+            "Draft",
+            "Errored",
+            "Suspended"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowStatusDefinition"
+    },
+    "DataTransferApi": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "AUTOMATIC",
+            "BULKV2",
+            "REST_SYNC"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSAppFlowFlowDataTransferApiDefinition"
+    }
+  },
+  "required": [
+    "FlowName",
+    "Tasks",
+    "SourceFlowConfig",
+    "DestinationFlowConfigList",
+    "TriggerConfig"
+  ],
+  "createOnlyProperties": [
+    "/properties/FlowName",
+    "/properties/KMSArn"
+  ]
+}

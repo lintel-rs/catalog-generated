@@ -1,0 +1,2235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-kendra-datasource.json",
+  "title": "AWSKendraDataSourceProperties",
+  "description": "Kendra DataSource. Source:- https://docs.aws.amazon.com/kendra/latest/dg/hiw-data-source.html",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-kendra-datasource.json",
+    "sourceSha256": "9d239285c1674df542c07eb8605e8ee7437e24dd198702ff84a22903607dc70d",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Name": {
+      "$ref": "#/$defs/Name"
+    },
+    "IndexId": {
+      "$ref": "#/$defs/IndexId"
+    },
+    "Type": {
+      "$ref": "#/$defs/Type"
+    },
+    "DataSourceConfiguration": {
+      "$ref": "#/$defs/DataSourceConfiguration"
+    },
+    "Description": {
+      "$ref": "#/$defs/Description"
+    },
+    "Schedule": {
+      "$ref": "#/$defs/Schedule"
+    },
+    "RoleArn": {
+      "$ref": "#/$defs/RoleArn"
+    },
+    "Tags": {
+      "description": "Tags for labeling the data source",
+      "$ref": "#/$defs/TagList"
+    },
+    "CustomDocumentEnrichmentConfiguration": {
+      "$ref": "#/$defs/CustomDocumentEnrichmentConfiguration"
+    }
+  },
+  "typeName": "AWS::Kendra::DataSource",
+  "createOnlyProperties": [
+    "/properties/Type"
+  ],
+  "sourceUrl": "https://docs.aws.amazon.com/kendra/latest/dg/hiw-data-source.html",
+  "$defs": {
+    "IndexId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 36,
+          "maxLength": 36
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "ID of Index",
+      "title": "AWSKendraDataSourceIndexIdDefinition"
+    },
+    "Tag": {
+      "description": "A label for tagging Kendra resources",
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A string used to identify this tag"
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A string containing the value for the tag"
+        }
+      },
+      "required": [
+        "Key",
+        "Value"
+      ],
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceTagDefinition"
+    },
+    "TagList": {
+      "description": "List of tags",
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/Tag"
+      },
+      "title": "AWSKendraDataSourceTagListDefinition"
+    },
+    "DataSourceInclusionsExclusionsStrings": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      },
+      "title": "AWSKendraDataSourceDataSourceInclusionsExclusionsStringsDefinition"
+    },
+    "S3Path": {
+      "type": "object",
+      "properties": {
+        "Bucket": {
+          "$ref": "#/$defs/S3BucketName"
+        },
+        "Key": {
+          "$ref": "#/$defs/S3ObjectKey"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Bucket",
+        "Key"
+      ],
+      "title": "AWSKendraDataSourceS3PathDefinition"
+    },
+    "S3BucketName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 63,
+          "pattern": "[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9]"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceS3BucketNameDefinition"
+    },
+    "S3ObjectKey": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceS3ObjectKeyDefinition"
+    },
+    "DocumentsMetadataConfiguration": {
+      "type": "object",
+      "properties": {
+        "S3Prefix": {
+          "$ref": "#/$defs/S3ObjectKey"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceDocumentsMetadataConfigurationDefinition"
+    },
+    "AccessControlListConfiguration": {
+      "type": "object",
+      "properties": {
+        "KeyPath": {
+          "$ref": "#/$defs/S3ObjectKey"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceAccessControlListConfigurationDefinition"
+    },
+    "S3DataSourceConfiguration": {
+      "description": "S3 data source configuration",
+      "type": "object",
+      "properties": {
+        "BucketName": {
+          "$ref": "#/$defs/S3BucketName"
+        },
+        "InclusionPrefixes": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "InclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ExclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "DocumentsMetadataConfiguration": {
+          "$ref": "#/$defs/DocumentsMetadataConfiguration"
+        },
+        "AccessControlListConfiguration": {
+          "$ref": "#/$defs/AccessControlListConfiguration"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "BucketName"
+      ],
+      "title": "AWSKendraDataSourceS3DataSourceConfigurationDefinition"
+    },
+    "Url": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "^(https?|ftp|file)://([^\\s]*)"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceUrlDefinition"
+    },
+    "SecretArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1284,
+          "pattern": "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceSecretArnDefinition"
+    },
+    "DataSourceVpcConfiguration": {
+      "type": "object",
+      "properties": {
+        "SubnetIds": {
+          "type": "array",
+          "maxItems": 6,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "[\\-0-9a-zA-Z]+"
+          }
+        },
+        "SecurityGroupIds": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "[\\-0-9a-zA-Z]+"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "SubnetIds",
+        "SecurityGroupIds"
+      ],
+      "title": "AWSKendraDataSourceDataSourceVpcConfigurationDefinition"
+    },
+    "DataSourceFieldName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceDataSourceFieldNameDefinition"
+    },
+    "DataSourceToIndexFieldMapping": {
+      "type": "object",
+      "properties": {
+        "DataSourceFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "DateFieldFormat": {
+          "$ref": "#/$defs/DateFieldFormat"
+        },
+        "IndexFieldName": {
+          "$ref": "#/$defs/IndexFieldName"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DataSourceFieldName",
+        "IndexFieldName"
+      ],
+      "title": "AWSKendraDataSourceDataSourceToIndexFieldMappingDefinition"
+    },
+    "DateFieldFormat": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 40
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceDateFieldFormatDefinition"
+    },
+    "IndexFieldName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceIndexFieldNameDefinition"
+    },
+    "DataSourceToIndexFieldMappingList": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/DataSourceToIndexFieldMapping"
+      },
+      "title": "AWSKendraDataSourceDataSourceToIndexFieldMappingListDefinition"
+    },
+    "DisableLocalGroups": {
+      "type": "boolean",
+      "title": "AWSKendraDataSourceDisableLocalGroupsDefinition"
+    },
+    "SharePointConfiguration": {
+      "description": "SharePoint configuration",
+      "type": "object",
+      "properties": {
+        "SharePointVersion": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SHAREPOINT_ONLINE",
+                "SHAREPOINT_2013",
+                "SHAREPOINT_2016"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Urls": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/$defs/Url"
+          }
+        },
+        "SecretArn": {
+          "$ref": "#/$defs/SecretArn"
+        },
+        "CrawlAttachments": {
+          "type": "boolean"
+        },
+        "UseChangeLog": {
+          "type": "boolean"
+        },
+        "InclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ExclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "VpcConfiguration": {
+          "$ref": "#/$defs/DataSourceVpcConfiguration"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        },
+        "DocumentTitleFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "DisableLocalGroups": {
+          "$ref": "#/$defs/DisableLocalGroups"
+        },
+        "SslCertificateS3Path": {
+          "$ref": "#/$defs/S3Path"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Urls",
+        "SecretArn",
+        "SharePointVersion"
+      ],
+      "title": "AWSKendraDataSourceSharePointConfigurationDefinition"
+    },
+    "SalesforceConfiguration": {
+      "type": "object",
+      "properties": {
+        "ServerUrl": {
+          "$ref": "#/$defs/Url"
+        },
+        "SecretArn": {
+          "$ref": "#/$defs/SecretArn"
+        },
+        "StandardObjectConfigurations": {
+          "$ref": "#/$defs/SalesforceStandardObjectConfigurationList"
+        },
+        "KnowledgeArticleConfiguration": {
+          "$ref": "#/$defs/SalesforceKnowledgeArticleConfiguration"
+        },
+        "ChatterFeedConfiguration": {
+          "$ref": "#/$defs/SalesforceChatterFeedConfiguration"
+        },
+        "CrawlAttachments": {
+          "type": "boolean"
+        },
+        "StandardObjectAttachmentConfiguration": {
+          "$ref": "#/$defs/SalesforceStandardObjectAttachmentConfiguration"
+        },
+        "IncludeAttachmentFilePatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ExcludeAttachmentFilePatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "ServerUrl",
+        "SecretArn"
+      ],
+      "title": "AWSKendraDataSourceSalesforceConfigurationDefinition"
+    },
+    "SalesforceStandardObjectConfigurationList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 17,
+      "items": {
+        "$ref": "#/$defs/SalesforceStandardObjectConfiguration"
+      },
+      "title": "AWSKendraDataSourceSalesforceStandardObjectConfigurationListDefinition"
+    },
+    "SalesforceStandardObjectConfiguration": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "$ref": "#/$defs/SalesforceStandardObjectName"
+        },
+        "DocumentDataFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "DocumentTitleFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Name",
+        "DocumentDataFieldName"
+      ],
+      "title": "AWSKendraDataSourceSalesforceStandardObjectConfigurationDefinition"
+    },
+    "SalesforceStandardObjectName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ACCOUNT",
+            "CAMPAIGN",
+            "CASE",
+            "CONTACT",
+            "CONTRACT",
+            "DOCUMENT",
+            "GROUP",
+            "IDEA",
+            "LEAD",
+            "OPPORTUNITY",
+            "PARTNER",
+            "PRICEBOOK",
+            "PRODUCT",
+            "PROFILE",
+            "SOLUTION",
+            "TASK",
+            "USER"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceSalesforceStandardObjectNameDefinition"
+    },
+    "SalesforceKnowledgeArticleConfiguration": {
+      "type": "object",
+      "properties": {
+        "IncludedStates": {
+          "$ref": "#/$defs/SalesforceKnowledgeArticleStateList"
+        },
+        "StandardKnowledgeArticleTypeConfiguration": {
+          "$ref": "#/$defs/SalesforceStandardKnowledgeArticleTypeConfiguration"
+        },
+        "CustomKnowledgeArticleTypeConfigurations": {
+          "$ref": "#/$defs/SalesforceCustomKnowledgeArticleTypeConfigurationList"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "IncludedStates"
+      ],
+      "title": "AWSKendraDataSourceSalesforceKnowledgeArticleConfigurationDefinition"
+    },
+    "SalesforceKnowledgeArticleStateList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/SalesforceKnowledgeArticleState"
+      },
+      "title": "AWSKendraDataSourceSalesforceKnowledgeArticleStateListDefinition"
+    },
+    "SalesforceKnowledgeArticleState": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "DRAFT",
+            "PUBLISHED",
+            "ARCHIVED"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceSalesforceKnowledgeArticleStateDefinition"
+    },
+    "SalesforceStandardKnowledgeArticleTypeConfiguration": {
+      "type": "object",
+      "properties": {
+        "DocumentDataFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "DocumentTitleFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DocumentDataFieldName"
+      ],
+      "title": "AWSKendraDataSourceSalesforceStandardKnowledgeArticleTypeConfigurationDefinition"
+    },
+    "SalesforceCustomKnowledgeArticleTypeConfigurationList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "$ref": "#/$defs/SalesforceCustomKnowledgeArticleTypeConfiguration"
+      },
+      "title": "AWSKendraDataSourceSalesforceCustomKnowledgeArticleTypeConfigurationListDefinition"
+    },
+    "SalesforceCustomKnowledgeArticleTypeConfiguration": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "$ref": "#/$defs/SalesforceCustomKnowledgeArticleTypeName"
+        },
+        "DocumentDataFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "DocumentTitleFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Name",
+        "DocumentDataFieldName"
+      ],
+      "title": "AWSKendraDataSourceSalesforceCustomKnowledgeArticleTypeConfigurationDefinition"
+    },
+    "SalesforceCustomKnowledgeArticleTypeName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceSalesforceCustomKnowledgeArticleTypeNameDefinition"
+    },
+    "SalesforceChatterFeedConfiguration": {
+      "type": "object",
+      "properties": {
+        "DocumentDataFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "DocumentTitleFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        },
+        "IncludeFilterTypes": {
+          "$ref": "#/$defs/SalesforceChatterFeedIncludeFilterTypes"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DocumentDataFieldName"
+      ],
+      "title": "AWSKendraDataSourceSalesforceChatterFeedConfigurationDefinition"
+    },
+    "SalesforceChatterFeedIncludeFilterTypes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "items": {
+        "$ref": "#/$defs/SalesforceChatterFeedIncludeFilterType"
+      },
+      "title": "AWSKendraDataSourceSalesforceChatterFeedIncludeFilterTypesDefinition"
+    },
+    "SalesforceChatterFeedIncludeFilterType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ACTIVE_USER",
+            "STANDARD_USER"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceSalesforceChatterFeedIncludeFilterTypeDefinition"
+    },
+    "SalesforceStandardObjectAttachmentConfiguration": {
+      "type": "object",
+      "properties": {
+        "DocumentTitleFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceSalesforceStandardObjectAttachmentConfigurationDefinition"
+    },
+    "DatabaseConfiguration": {
+      "type": "object",
+      "properties": {
+        "DatabaseEngineType": {
+          "$ref": "#/$defs/DatabaseEngineType"
+        },
+        "ConnectionConfiguration": {
+          "$ref": "#/$defs/ConnectionConfiguration"
+        },
+        "VpcConfiguration": {
+          "$ref": "#/$defs/DataSourceVpcConfiguration"
+        },
+        "ColumnConfiguration": {
+          "$ref": "#/$defs/ColumnConfiguration"
+        },
+        "AclConfiguration": {
+          "$ref": "#/$defs/AclConfiguration"
+        },
+        "SqlConfiguration": {
+          "$ref": "#/$defs/SqlConfiguration"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "ConnectionConfiguration",
+        "ColumnConfiguration",
+        "DatabaseEngineType"
+      ],
+      "title": "AWSKendraDataSourceDatabaseConfigurationDefinition"
+    },
+    "DatabaseEngineType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "RDS_AURORA_MYSQL",
+            "RDS_AURORA_POSTGRESQL",
+            "RDS_MYSQL",
+            "RDS_POSTGRESQL"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceDatabaseEngineTypeDefinition"
+    },
+    "ConnectionConfiguration": {
+      "type": "object",
+      "properties": {
+        "DatabaseHost": {
+          "$ref": "#/$defs/DatabaseHost"
+        },
+        "DatabasePort": {
+          "$ref": "#/$defs/DatabasePort"
+        },
+        "DatabaseName": {
+          "$ref": "#/$defs/DatabaseName"
+        },
+        "TableName": {
+          "$ref": "#/$defs/TableName"
+        },
+        "SecretArn": {
+          "$ref": "#/$defs/SecretArn"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DatabaseHost",
+        "DatabasePort",
+        "DatabaseName",
+        "TableName",
+        "SecretArn"
+      ],
+      "title": "AWSKendraDataSourceConnectionConfigurationDefinition"
+    },
+    "DatabaseHost": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceDatabaseHostDefinition"
+    },
+    "DatabasePort": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535,
+      "title": "AWSKendraDataSourceDatabasePortDefinition"
+    },
+    "DatabaseName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceDatabaseNameDefinition"
+    },
+    "TableName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceTableNameDefinition"
+    },
+    "ColumnConfiguration": {
+      "type": "object",
+      "properties": {
+        "DocumentIdColumnName": {
+          "$ref": "#/$defs/ColumnName"
+        },
+        "DocumentDataColumnName": {
+          "$ref": "#/$defs/ColumnName"
+        },
+        "DocumentTitleColumnName": {
+          "$ref": "#/$defs/ColumnName"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        },
+        "ChangeDetectingColumns": {
+          "$ref": "#/$defs/ChangeDetectingColumns"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DocumentIdColumnName",
+        "DocumentDataColumnName",
+        "ChangeDetectingColumns"
+      ],
+      "title": "AWSKendraDataSourceColumnConfigurationDefinition"
+    },
+    "ChangeDetectingColumns": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/ColumnName"
+      },
+      "title": "AWSKendraDataSourceChangeDetectingColumnsDefinition"
+    },
+    "ColumnName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceColumnNameDefinition"
+    },
+    "SqlConfiguration": {
+      "type": "object",
+      "properties": {
+        "QueryIdentifiersEnclosingOption": {
+          "$ref": "#/$defs/QueryIdentifiersEnclosingOption"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceSqlConfigurationDefinition"
+    },
+    "QueryIdentifiersEnclosingOption": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "DOUBLE_QUOTES",
+            "NONE"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceQueryIdentifiersEnclosingOptionDefinition"
+    },
+    "AclConfiguration": {
+      "type": "object",
+      "properties": {
+        "AllowedGroupsColumnName": {
+          "$ref": "#/$defs/ColumnName"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "AllowedGroupsColumnName"
+      ],
+      "title": "AWSKendraDataSourceAclConfigurationDefinition"
+    },
+    "OneDriveConfiguration": {
+      "type": "object",
+      "properties": {
+        "TenantDomain": {
+          "$ref": "#/$defs/TenantDomain"
+        },
+        "SecretArn": {
+          "$ref": "#/$defs/SecretArn"
+        },
+        "OneDriveUsers": {
+          "$ref": "#/$defs/OneDriveUsers"
+        },
+        "InclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ExclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        },
+        "DisableLocalGroups": {
+          "$ref": "#/$defs/DisableLocalGroups"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "TenantDomain",
+        "SecretArn",
+        "OneDriveUsers"
+      ],
+      "title": "AWSKendraDataSourceOneDriveConfigurationDefinition"
+    },
+    "TenantDomain": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-z]{2,}$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceTenantDomainDefinition"
+    },
+    "OneDriveUsers": {
+      "type": "object",
+      "properties": {
+        "OneDriveUserList": {
+          "$ref": "#/$defs/OneDriveUserList"
+        },
+        "OneDriveUserS3Path": {
+          "$ref": "#/$defs/S3Path"
+        }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "OneDriveUserList"
+          ]
+        },
+        {
+          "required": [
+            "OneDriveUserS3Path"
+          ]
+        }
+      ],
+      "title": "AWSKendraDataSourceOneDriveUsersDefinition"
+    },
+    "OneDriveUserList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/OneDriveUser"
+      },
+      "title": "AWSKendraDataSourceOneDriveUserListDefinition"
+    },
+    "OneDriveUser": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^(?!\\s).+@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceOneDriveUserDefinition"
+    },
+    "ServiceNowConfiguration": {
+      "type": "object",
+      "properties": {
+        "HostUrl": {
+          "$ref": "#/$defs/ServiceNowHostUrl"
+        },
+        "SecretArn": {
+          "$ref": "#/$defs/SecretArn"
+        },
+        "ServiceNowBuildVersion": {
+          "$ref": "#/$defs/ServiceNowBuildVersionType"
+        },
+        "AuthenticationType": {
+          "$ref": "#/$defs/ServiceNowAuthenticationType"
+        },
+        "KnowledgeArticleConfiguration": {
+          "$ref": "#/$defs/ServiceNowKnowledgeArticleConfiguration"
+        },
+        "ServiceCatalogConfiguration": {
+          "$ref": "#/$defs/ServiceNowServiceCatalogConfiguration"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "HostUrl",
+        "SecretArn",
+        "ServiceNowBuildVersion"
+      ],
+      "title": "AWSKendraDataSourceServiceNowConfigurationDefinition"
+    },
+    "ServiceNowBuildVersionType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "LONDON",
+            "OTHERS"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceServiceNowBuildVersionTypeDefinition"
+    },
+    "ServiceNowAuthenticationType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "HTTP_BASIC",
+            "OAUTH2"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceServiceNowAuthenticationTypeDefinition"
+    },
+    "ServiceNowServiceCatalogConfiguration": {
+      "type": "object",
+      "properties": {
+        "CrawlAttachments": {
+          "type": "boolean"
+        },
+        "IncludeAttachmentFilePatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ExcludeAttachmentFilePatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "DocumentDataFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "DocumentTitleFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DocumentDataFieldName"
+      ],
+      "title": "AWSKendraDataSourceServiceNowServiceCatalogConfigurationDefinition"
+    },
+    "ServiceNowHostUrl": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "^(?!(^(https?|ftp|file):\\/\\/))[a-z0-9-]+(\\.service-now\\.com)$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceServiceNowHostUrlDefinition"
+    },
+    "ServiceNowKnowledgeArticleConfiguration": {
+      "type": "object",
+      "properties": {
+        "CrawlAttachments": {
+          "type": "boolean"
+        },
+        "IncludeAttachmentFilePatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ExcludeAttachmentFilePatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "DocumentDataFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "DocumentTitleFieldName": {
+          "$ref": "#/$defs/DataSourceFieldName"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        },
+        "FilterQuery": {
+          "$ref": "#/$defs/ServiceNowKnowledgeArticleFilterQuery"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DocumentDataFieldName"
+      ],
+      "title": "AWSKendraDataSourceServiceNowKnowledgeArticleConfigurationDefinition"
+    },
+    "ServiceNowKnowledgeArticleFilterQuery": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceServiceNowKnowledgeArticleFilterQueryDefinition"
+    },
+    "ConfluenceConfiguration": {
+      "type": "object",
+      "properties": {
+        "ServerUrl": {
+          "$ref": "#/$defs/Url"
+        },
+        "SecretArn": {
+          "$ref": "#/$defs/SecretArn"
+        },
+        "Version": {
+          "$ref": "#/$defs/ConfluenceVersion"
+        },
+        "SpaceConfiguration": {
+          "$ref": "#/$defs/ConfluenceSpaceConfiguration"
+        },
+        "PageConfiguration": {
+          "$ref": "#/$defs/ConfluencePageConfiguration"
+        },
+        "BlogConfiguration": {
+          "$ref": "#/$defs/ConfluenceBlogConfiguration"
+        },
+        "AttachmentConfiguration": {
+          "$ref": "#/$defs/ConfluenceAttachmentConfiguration"
+        },
+        "VpcConfiguration": {
+          "$ref": "#/$defs/DataSourceVpcConfiguration"
+        },
+        "InclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ExclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "ServerUrl",
+        "SecretArn",
+        "Version"
+      ],
+      "title": "AWSKendraDataSourceConfluenceConfigurationDefinition"
+    },
+    "ConfluenceVersion": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "CLOUD",
+            "SERVER"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceConfluenceVersionDefinition"
+    },
+    "ConfluenceSpaceConfiguration": {
+      "type": "object",
+      "properties": {
+        "CrawlPersonalSpaces": {
+          "type": "boolean"
+        },
+        "CrawlArchivedSpaces": {
+          "type": "boolean"
+        },
+        "IncludeSpaces": {
+          "$ref": "#/$defs/ConfluenceSpaceList"
+        },
+        "ExcludeSpaces": {
+          "$ref": "#/$defs/ConfluenceSpaceList"
+        },
+        "SpaceFieldMappings": {
+          "$ref": "#/$defs/ConfluenceSpaceFieldMappingsList"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceConfluenceSpaceConfigurationDefinition"
+    },
+    "ConfluenceSpaceFieldMappingsList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/ConfluenceSpaceToIndexFieldMapping"
+      },
+      "title": "AWSKendraDataSourceConfluenceSpaceFieldMappingsListDefinition"
+    },
+    "ConfluenceSpaceToIndexFieldMapping": {
+      "type": "object",
+      "properties": {
+        "DataSourceFieldName": {
+          "$ref": "#/$defs/ConfluenceSpaceFieldName"
+        },
+        "DateFieldFormat": {
+          "$ref": "#/$defs/DateFieldFormat"
+        },
+        "IndexFieldName": {
+          "$ref": "#/$defs/IndexFieldName"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DataSourceFieldName",
+        "IndexFieldName"
+      ],
+      "title": "AWSKendraDataSourceConfluenceSpaceToIndexFieldMappingDefinition"
+    },
+    "ConfluenceSpaceFieldName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "DISPLAY_URL",
+            "ITEM_TYPE",
+            "SPACE_KEY",
+            "URL"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceConfluenceSpaceFieldNameDefinition"
+    },
+    "ConfluenceSpaceList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/ConfluenceSpaceIdentifier"
+      },
+      "title": "AWSKendraDataSourceConfluenceSpaceListDefinition"
+    },
+    "ConfluenceSpaceIdentifier": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceConfluenceSpaceIdentifierDefinition"
+    },
+    "ConfluencePageConfiguration": {
+      "type": "object",
+      "properties": {
+        "PageFieldMappings": {
+          "$ref": "#/$defs/ConfluencePageFieldMappingsList"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceConfluencePageConfigurationDefinition"
+    },
+    "ConfluencePageFieldMappingsList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "$ref": "#/$defs/ConfluencePageToIndexFieldMapping"
+      },
+      "title": "AWSKendraDataSourceConfluencePageFieldMappingsListDefinition"
+    },
+    "ConfluencePageToIndexFieldMapping": {
+      "type": "object",
+      "properties": {
+        "DataSourceFieldName": {
+          "$ref": "#/$defs/ConfluencePageFieldName"
+        },
+        "DateFieldFormat": {
+          "$ref": "#/$defs/DateFieldFormat"
+        },
+        "IndexFieldName": {
+          "$ref": "#/$defs/IndexFieldName"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DataSourceFieldName",
+        "IndexFieldName"
+      ],
+      "title": "AWSKendraDataSourceConfluencePageToIndexFieldMappingDefinition"
+    },
+    "ConfluencePageFieldName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "AUTHOR",
+            "CONTENT_STATUS",
+            "CREATED_DATE",
+            "DISPLAY_URL",
+            "ITEM_TYPE",
+            "LABELS",
+            "MODIFIED_DATE",
+            "PARENT_ID",
+            "SPACE_KEY",
+            "SPACE_NAME",
+            "URL",
+            "VERSION"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceConfluencePageFieldNameDefinition"
+    },
+    "ConfluenceBlogConfiguration": {
+      "type": "object",
+      "properties": {
+        "BlogFieldMappings": {
+          "$ref": "#/$defs/ConfluenceBlogFieldMappingsList"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceConfluenceBlogConfigurationDefinition"
+    },
+    "ConfluenceBlogFieldMappingsList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 9,
+      "items": {
+        "$ref": "#/$defs/ConfluenceBlogToIndexFieldMapping"
+      },
+      "title": "AWSKendraDataSourceConfluenceBlogFieldMappingsListDefinition"
+    },
+    "ConfluenceBlogToIndexFieldMapping": {
+      "type": "object",
+      "properties": {
+        "DataSourceFieldName": {
+          "$ref": "#/$defs/ConfluenceBlogFieldName"
+        },
+        "DateFieldFormat": {
+          "$ref": "#/$defs/DateFieldFormat"
+        },
+        "IndexFieldName": {
+          "$ref": "#/$defs/IndexFieldName"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DataSourceFieldName",
+        "IndexFieldName"
+      ],
+      "title": "AWSKendraDataSourceConfluenceBlogToIndexFieldMappingDefinition"
+    },
+    "ConfluenceBlogFieldName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "AUTHOR",
+            "DISPLAY_URL",
+            "ITEM_TYPE",
+            "LABELS",
+            "PUBLISH_DATE",
+            "SPACE_KEY",
+            "SPACE_NAME",
+            "URL",
+            "VERSION"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceConfluenceBlogFieldNameDefinition"
+    },
+    "ConfluenceAttachmentConfiguration": {
+      "type": "object",
+      "properties": {
+        "CrawlAttachments": {
+          "type": "boolean"
+        },
+        "AttachmentFieldMappings": {
+          "$ref": "#/$defs/ConfluenceAttachmentFieldMappingsList"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceConfluenceAttachmentConfigurationDefinition"
+    },
+    "ConfluenceAttachmentFieldMappingsList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 11,
+      "items": {
+        "$ref": "#/$defs/ConfluenceAttachmentToIndexFieldMapping"
+      },
+      "title": "AWSKendraDataSourceConfluenceAttachmentFieldMappingsListDefinition"
+    },
+    "ConfluenceAttachmentToIndexFieldMapping": {
+      "type": "object",
+      "properties": {
+        "DataSourceFieldName": {
+          "$ref": "#/$defs/ConfluenceAttachmentFieldName"
+        },
+        "DateFieldFormat": {
+          "$ref": "#/$defs/DateFieldFormat"
+        },
+        "IndexFieldName": {
+          "$ref": "#/$defs/IndexFieldName"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "DataSourceFieldName",
+        "IndexFieldName"
+      ],
+      "title": "AWSKendraDataSourceConfluenceAttachmentToIndexFieldMappingDefinition"
+    },
+    "GoogleDriveConfiguration": {
+      "type": "object",
+      "properties": {
+        "SecretArn": {
+          "$ref": "#/$defs/SecretArn"
+        },
+        "InclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ExclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        },
+        "ExcludeMimeTypes": {
+          "$ref": "#/$defs/ExcludeMimeTypesList"
+        },
+        "ExcludeUserAccounts": {
+          "$ref": "#/$defs/ExcludeUserAccountsList"
+        },
+        "ExcludeSharedDrives": {
+          "$ref": "#/$defs/ExcludeSharedDrivesList"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "SecretArn"
+      ],
+      "title": "AWSKendraDataSourceGoogleDriveConfigurationDefinition"
+    },
+    "ExcludeMimeTypesList": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 30,
+      "items": {
+        "$ref": "#/$defs/MimeType"
+      },
+      "title": "AWSKendraDataSourceExcludeMimeTypesListDefinition"
+    },
+    "MimeType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceMimeTypeDefinition"
+    },
+    "ExcludeUserAccountsList": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/UserAccount"
+      },
+      "title": "AWSKendraDataSourceExcludeUserAccountsListDefinition"
+    },
+    "UserAccount": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceUserAccountDefinition"
+    },
+    "ExcludeSharedDrivesList": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/SharedDriveId"
+      },
+      "title": "AWSKendraDataSourceExcludeSharedDrivesListDefinition"
+    },
+    "SharedDriveId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceSharedDriveIdDefinition"
+    },
+    "ConfluenceAttachmentFieldName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "AUTHOR",
+            "CONTENT_TYPE",
+            "CREATED_DATE",
+            "DISPLAY_URL",
+            "FILE_SIZE",
+            "ITEM_TYPE",
+            "PARENT_ID",
+            "SPACE_KEY",
+            "SPACE_NAME",
+            "URL",
+            "VERSION"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceConfluenceAttachmentFieldNameDefinition"
+    },
+    "WebCrawlerSiteMap": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^(https?):\\/\\/([^\\s]*)",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceWebCrawlerSiteMapDefinition"
+    },
+    "WebCrawlerSiteMaps": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/WebCrawlerSiteMap"
+      },
+      "title": "AWSKendraDataSourceWebCrawlerSiteMapsDefinition"
+    },
+    "WebCrawlerSiteMapsConfiguration": {
+      "type": "object",
+      "properties": {
+        "SiteMaps": {
+          "$ref": "#/$defs/WebCrawlerSiteMaps"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "SiteMaps"
+      ],
+      "title": "AWSKendraDataSourceWebCrawlerSiteMapsConfigurationDefinition"
+    },
+    "WebCrawlerSeedUrl": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^(https?)://([^\\s]*)",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceWebCrawlerSeedUrlDefinition"
+    },
+    "WebCrawlerSeedUrlList": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/WebCrawlerSeedUrl"
+      },
+      "title": "AWSKendraDataSourceWebCrawlerSeedUrlListDefinition"
+    },
+    "WebCrawlerSeedUrlConfiguration": {
+      "type": "object",
+      "properties": {
+        "SeedUrls": {
+          "$ref": "#/$defs/WebCrawlerSeedUrlList"
+        },
+        "WebCrawlerMode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "HOST_ONLY",
+                "SUBDOMAINS",
+                "EVERYTHING"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "SeedUrls"
+      ],
+      "title": "AWSKendraDataSourceWebCrawlerSeedUrlConfigurationDefinition"
+    },
+    "WebCrawlerUrls": {
+      "type": "object",
+      "properties": {
+        "SeedUrlConfiguration": {
+          "$ref": "#/$defs/WebCrawlerSeedUrlConfiguration"
+        },
+        "SiteMapsConfiguration": {
+          "$ref": "#/$defs/WebCrawlerSiteMapsConfiguration"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceWebCrawlerUrlsDefinition"
+    },
+    "ProxyConfiguration": {
+      "type": "object",
+      "properties": {
+        "Host": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "([^\\s]*)",
+              "minLength": 1,
+              "maxLength": 253
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "Credentials": {
+          "$ref": "#/$defs/SecretArn"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Host",
+        "Port"
+      ],
+      "title": "AWSKendraDataSourceProxyConfigurationDefinition"
+    },
+    "WebCrawlerBasicAuthentication": {
+      "type": "object",
+      "properties": {
+        "Host": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "([^\\s]*)",
+              "minLength": 1,
+              "maxLength": 253
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "Credentials": {
+          "$ref": "#/$defs/SecretArn"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Host",
+        "Port",
+        "Credentials"
+      ],
+      "title": "AWSKendraDataSourceWebCrawlerBasicAuthenticationDefinition"
+    },
+    "WebCrawlerBasicAuthenticationList": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "$ref": "#/$defs/WebCrawlerBasicAuthentication"
+      },
+      "title": "AWSKendraDataSourceWebCrawlerBasicAuthenticationListDefinition"
+    },
+    "WebCrawlerAuthenticationConfiguration": {
+      "type": "object",
+      "properties": {
+        "BasicAuthentication": {
+          "$ref": "#/$defs/WebCrawlerBasicAuthenticationList"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceWebCrawlerAuthenticationConfigurationDefinition"
+    },
+    "WebCrawlerConfiguration": {
+      "type": "object",
+      "properties": {
+        "Urls": {
+          "$ref": "#/$defs/WebCrawlerUrls"
+        },
+        "CrawlDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "MaxLinksPerPage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "MaxContentSizePerPageInMegaBytes": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "MaxUrlsPerMinuteCrawlRate": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300
+        },
+        "UrlInclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "UrlExclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ProxyConfiguration": {
+          "$ref": "#/$defs/ProxyConfiguration"
+        },
+        "AuthenticationConfiguration": {
+          "$ref": "#/$defs/WebCrawlerAuthenticationConfiguration"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Urls"
+      ],
+      "title": "AWSKendraDataSourceWebCrawlerConfigurationDefinition"
+    },
+    "WorkDocsConfiguration": {
+      "type": "object",
+      "properties": {
+        "OrganizationId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 12,
+              "maxLength": 12,
+              "pattern": "d-[0-9a-fA-F]{10}"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "CrawlComments": {
+          "type": "boolean"
+        },
+        "UseChangeLog": {
+          "type": "boolean"
+        },
+        "InclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "ExclusionPatterns": {
+          "$ref": "#/$defs/DataSourceInclusionsExclusionsStrings"
+        },
+        "FieldMappings": {
+          "$ref": "#/$defs/DataSourceToIndexFieldMappingList"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "OrganizationId"
+      ],
+      "title": "AWSKendraDataSourceWorkDocsConfigurationDefinition"
+    },
+    "DataSourceConfiguration": {
+      "type": "object",
+      "properties": {
+        "S3Configuration": {
+          "$ref": "#/$defs/S3DataSourceConfiguration"
+        },
+        "SharePointConfiguration": {
+          "$ref": "#/$defs/SharePointConfiguration"
+        },
+        "SalesforceConfiguration": {
+          "$ref": "#/$defs/SalesforceConfiguration"
+        },
+        "OneDriveConfiguration": {
+          "$ref": "#/$defs/OneDriveConfiguration"
+        },
+        "ServiceNowConfiguration": {
+          "$ref": "#/$defs/ServiceNowConfiguration"
+        },
+        "DatabaseConfiguration": {
+          "$ref": "#/$defs/DatabaseConfiguration"
+        },
+        "ConfluenceConfiguration": {
+          "$ref": "#/$defs/ConfluenceConfiguration"
+        },
+        "GoogleDriveConfiguration": {
+          "$ref": "#/$defs/GoogleDriveConfiguration"
+        },
+        "WebCrawlerConfiguration": {
+          "$ref": "#/$defs/WebCrawlerConfiguration"
+        },
+        "WorkDocsConfiguration": {
+          "$ref": "#/$defs/WorkDocsConfiguration"
+        }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "S3Configuration"
+          ]
+        },
+        {
+          "required": [
+            "SharePointConfiguration"
+          ]
+        },
+        {
+          "required": [
+            "SalesforceConfiguration"
+          ]
+        },
+        {
+          "required": [
+            "OneDriveConfiguration"
+          ]
+        },
+        {
+          "required": [
+            "ServiceNowConfiguration"
+          ]
+        },
+        {
+          "required": [
+            "DatabaseConfiguration"
+          ]
+        },
+        {
+          "required": [
+            "ConfluenceConfiguration"
+          ]
+        },
+        {
+          "required": [
+            "GoogleDriveConfiguration"
+          ]
+        },
+        {
+          "required": [
+            "WebCrawlerConfiguration"
+          ]
+        },
+        {
+          "required": [
+            "WorkDocsConfiguration"
+          ]
+        }
+      ],
+      "title": "AWSKendraDataSourceDataSourceConfigurationDefinition"
+    },
+    "Name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Name of data source",
+      "title": "AWSKendraDataSourceNameDefinition"
+    },
+    "Type": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "S3",
+            "SHAREPOINT",
+            "SALESFORCE",
+            "ONEDRIVE",
+            "SERVICENOW",
+            "DATABASE",
+            "CUSTOM",
+            "CONFLUENCE",
+            "GOOGLEDRIVE",
+            "WEBCRAWLER",
+            "WORKDOCS"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Data source type",
+      "title": "AWSKendraDataSourceTypeDefinition"
+    },
+    "Description": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Description of data source",
+      "title": "AWSKendraDataSourceDescriptionDefinition"
+    },
+    "RoleArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1284,
+          "pattern": "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Role ARN",
+      "title": "AWSKendraDataSourceRoleArnDefinition"
+    },
+    "Schedule": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 1000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Schedule",
+      "title": "AWSKendraDataSourceScheduleDefinition"
+    },
+    "Id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "ID of data source",
+      "title": "AWSKendraDataSourceIdDefinition"
+    },
+    "Arn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 1000
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceArnDefinition"
+    },
+    "CustomDocumentEnrichmentConfiguration": {
+      "type": "object",
+      "properties": {
+        "InlineConfigurations": {
+          "$ref": "#/$defs/InlineConfigurations"
+        },
+        "PreExtractionHookConfiguration": {
+          "$ref": "#/$defs/HookConfiguration"
+        },
+        "PostExtractionHookConfiguration": {
+          "$ref": "#/$defs/HookConfiguration"
+        },
+        "RoleArn": {
+          "$ref": "#/$defs/RoleArn"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceCustomDocumentEnrichmentConfigurationDefinition"
+    },
+    "InlineConfigurations": {
+      "description": "List of InlineCustomDocumentEnrichmentConfigurations",
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/InlineCustomDocumentEnrichmentConfiguration"
+      },
+      "title": "AWSKendraDataSourceInlineConfigurationsDefinition"
+    },
+    "InlineCustomDocumentEnrichmentConfiguration": {
+      "type": "object",
+      "properties": {
+        "Condition": {
+          "$ref": "#/$defs/DocumentAttributeCondition"
+        },
+        "Target": {
+          "$ref": "#/$defs/DocumentAttributeTarget"
+        },
+        "DocumentContentDeletion": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceInlineCustomDocumentEnrichmentConfigurationDefinition"
+    },
+    "DocumentAttributeCondition": {
+      "type": "object",
+      "properties": {
+        "ConditionDocumentAttributeKey": {
+          "$ref": "#/$defs/DocumentAttributeKey"
+        },
+        "Operator": {
+          "$ref": "#/$defs/ConditionOperator"
+        },
+        "ConditionOnValue": {
+          "$ref": "#/$defs/DocumentAttributeValue"
+        }
+      },
+      "required": [
+        "ConditionDocumentAttributeKey",
+        "Operator"
+      ],
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceDocumentAttributeConditionDefinition"
+    },
+    "DocumentAttributeTarget": {
+      "type": "object",
+      "properties": {
+        "TargetDocumentAttributeKey": {
+          "$ref": "#/$defs/DocumentAttributeKey"
+        },
+        "TargetDocumentAttributeValueDeletion": {
+          "type": "boolean"
+        },
+        "TargetDocumentAttributeValue": {
+          "$ref": "#/$defs/DocumentAttributeValue"
+        }
+      },
+      "required": [
+        "TargetDocumentAttributeKey"
+      ],
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceDocumentAttributeTargetDefinition"
+    },
+    "ConditionOperator": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "GreaterThan",
+            "GreaterThanOrEquals",
+            "LessThan",
+            "LessThanOrEquals",
+            "Equals",
+            "NotEquals",
+            "Contains",
+            "NotContains",
+            "Exists",
+            "NotExists",
+            "BeginsWith"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceConditionOperatorDefinition"
+    },
+    "DocumentAttributeKey": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "[a-zA-Z0-9_][a-zA-Z0-9_-]*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceDocumentAttributeKeyDefinition"
+    },
+    "DocumentAttributeValue": {
+      "type": "object",
+      "properties": {
+        "StringValue": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "StringListValue": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "LongValue": {
+          "$ref": "#/$defs/Long"
+        },
+        "DateValue": {
+          "$ref": "#/$defs/Timestamp"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceDocumentAttributeValueDefinition"
+    },
+    "Long": {
+      "type": "integer",
+      "format": "int64",
+      "title": "AWSKendraDataSourceLongDefinition"
+    },
+    "Timestamp": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceTimestampDefinition"
+    },
+    "HookConfiguration": {
+      "type": "object",
+      "properties": {
+        "InvocationCondition": {
+          "$ref": "#/$defs/DocumentAttributeCondition"
+        },
+        "LambdaArn": {
+          "$ref": "#/$defs/LambdaArn"
+        },
+        "S3Bucket": {
+          "$ref": "#/$defs/S3BucketName"
+        }
+      },
+      "required": [
+        "LambdaArn",
+        "S3Bucket"
+      ],
+      "additionalProperties": false,
+      "title": "AWSKendraDataSourceHookConfigurationDefinition"
+    },
+    "LambdaArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSKendraDataSourceLambdaArnDefinition"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/Id",
+    "/properties/Arn"
+  ],
+  "required": [
+    "Name",
+    "IndexId",
+    "Type"
+  ],
+  "additionalProperties": false,
+  "primaryIdentifier": [
+    "/properties/Id",
+    "/properties/IndexId"
+  ]
+}

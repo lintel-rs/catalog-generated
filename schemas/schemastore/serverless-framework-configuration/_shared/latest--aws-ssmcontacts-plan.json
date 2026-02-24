@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-ssmcontacts-plan.json",
+  "title": "AWSSSMContactsPlanProperties",
+  "description": "Engagement Plan for a SSM Incident Manager Contact.. Source:- https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-ssmcontacts-plan.json",
+    "sourceSha256": "3f58974e06579299d7e6b2b8312cb82e00f66107893503071d761602372d6fb6",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "ContactId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "arn:[-\\w+=\\/,.@]+:[-\\w+=\\/,.@]+:[-\\w+=\\/,.@]*:[0-9]+:([\\w+=\\/,.@:-]+)*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Contact ID for the AWS SSM Incident Manager Contact to associate the plan."
+    },
+    "Stages": {
+      "description": "The stages that an escalation plan or engagement plan engages contacts and contact methods in.",
+      "type": "array",
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/Stage"
+      }
+    },
+    "RotationIds": {
+      "description": "Rotation Ids to associate with Oncall Contact for engagement.",
+      "type": "array",
+      "insertionOrder": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "typeName": "AWS::SSMContacts::Plan",
+  "tagging": {
+    "taggable": false,
+    "tagOnCreate": false,
+    "tagUpdatable": false,
+    "cloudFormationSystemTags": false
+  },
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "$defs": {
+    "ContactTargetInfo": {
+      "type": "object",
+      "description": "The contact that SSM Incident Manager is engaging during an incident.",
+      "properties": {
+        "ContactId": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The Amazon Resource Name (ARN) of the contact."
+        },
+        "IsEssential": {
+          "type": "boolean",
+          "description": "A Boolean value determining if the contact's acknowledgement stops the progress of stages in the plan."
+        }
+      },
+      "required": [
+        "ContactId",
+        "IsEssential"
+      ],
+      "additionalProperties": false,
+      "title": "AWSSSMContactsPlanContactTargetInfoDefinition"
+    },
+    "ChannelTargetInfo": {
+      "type": "object",
+      "description": "Information about the contact channel that SSM Incident Manager uses to engage the contact.",
+      "properties": {
+        "ChannelId": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The Amazon Resource Name (ARN) of the contact channel."
+        },
+        "RetryIntervalInMinutes": {
+          "type": "integer",
+          "description": "The number of minutes to wait to retry sending engagement in the case the engagement initially fails."
+        }
+      },
+      "required": [
+        "ChannelId",
+        "RetryIntervalInMinutes"
+      ],
+      "additionalProperties": false,
+      "title": "AWSSSMContactsPlanChannelTargetInfoDefinition"
+    },
+    "Stage": {
+      "description": "A set amount of time that an escalation plan or engagement plan engages the specified contacts or contact methods.",
+      "type": "object",
+      "properties": {
+        "DurationInMinutes": {
+          "description": "The time to wait until beginning the next stage.",
+          "type": "integer"
+        },
+        "Targets": {
+          "type": "array",
+          "insertionOrder": false,
+          "description": "The contacts or contact methods that the escalation plan or engagement plan is engaging.",
+          "items": {
+            "$ref": "#/$defs/Targets"
+          }
+        }
+      },
+      "required": [
+        "DurationInMinutes"
+      ],
+      "additionalProperties": false,
+      "title": "AWSSSMContactsPlanStageDefinition"
+    },
+    "Targets": {
+      "description": "The contacts or contact methods that the escalation plan or engagement plan is engaging.",
+      "type": "object",
+      "properties": {
+        "ContactTargetInfo": {
+          "$ref": "#/$defs/ContactTargetInfo"
+        },
+        "ChannelTargetInfo": {
+          "$ref": "#/$defs/ChannelTargetInfo"
+        }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "ChannelTargetInfo"
+          ]
+        },
+        {
+          "required": [
+            "ContactTargetInfo"
+          ]
+        }
+      ],
+      "title": "AWSSSMContactsPlanTargetsDefinition"
+    }
+  },
+  "writeOnlyProperties": [
+    "/properties/RotationIds"
+  ],
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "required": [
+        "ContactId",
+        "Stages"
+      ]
+    },
+    {
+      "required": [
+        "ContactId",
+        "RotationIds"
+      ]
+    }
+  ],
+  "createOnlyProperties": [
+    "/properties/ContactId"
+  ],
+  "primaryIdentifier": [
+    "/properties/Arn"
+  ],
+  "readOnlyProperties": [
+    "/properties/Arn"
+  ]
+}

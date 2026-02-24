@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/project-json/versions/1.0.0-beta3.json",
+  "title": "JSON schema for ASP.NET project.json files",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/project-1.0.0-beta3.json",
+    "sourceSha256": "d467c7295ffbcc586983688551d26287f3306d3416f367e7cdf12de8fd6b3e5b",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "authors": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "bundleExclude": {
+      "description": "List of files to exclude from publish output (kpm bundle).",
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "default": ""
+    },
+    "code": {
+      "description": "Glob pattern to specify all the code files that needs to be compiled. (data type: string or array with glob pattern(s)). Example: [ \"Folder1\\*.cs\", \"Folder2\\*.cs\" ]",
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "default": "**\\*.cs"
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "compilationOptions": {
+      "$ref": "#/$defs/compilationOptions"
+    },
+    "configurations": {
+      "type": "object",
+      "description": "Configurations are named groups of compilation settings. There are 2 defaults built into the runtime namely 'Debug' and 'Release'.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "compilationOptions": {
+            "$ref": "#/$defs/compilationOptions"
+          }
+        }
+      }
+    },
+    "webroot": {
+      "description": "Specifying the webroot property in the project.json file specifies the web server root (aka public folder). In visual studio, this folder will be used to root IIS. Static files should be put in here.",
+      "type": "string"
+    },
+    "description": {
+      "description": "The description of the application",
+      "type": "string"
+    },
+    "exclude": {
+      "description": "Glob pattern to indicate all the code files to be excluded from compilation. (data type: string or array with glob pattern(s)).",
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "bin/**/*.*",
+        "obj/**/*.*"
+      ]
+    },
+    "frameworks": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/configType"
+      }
+    },
+    "preprocess": {
+      "description": "Glob pattern to indicate all the code files to be preprocessed. (data type: string with glob pattern).",
+      "type": "string",
+      "default": "Compiler\\Preprocess\\**\\*.cs"
+    },
+    "resources": {
+      "description": "Glob pattern to indicate all the files that need to be compiled as resources.",
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "default": "Compiler\\Resources\\**\\*.cs"
+    },
+    "scripts": {
+      "type": "object",
+      "description": "Scripts to execute during the various stages.",
+      "properties": {
+        "prepack": {
+          "$ref": "#/$defs/script"
+        },
+        "postpack": {
+          "$ref": "#/$defs/script"
+        },
+        "prebundle": {
+          "$ref": "#/$defs/script"
+        },
+        "postbundle": {
+          "$ref": "#/$defs/script"
+        },
+        "prerestore": {
+          "$ref": "#/$defs/script"
+        },
+        "postrestore": {
+          "$ref": "#/$defs/script"
+        },
+        "prepare": {
+          "$ref": "#/$defs/script"
+        }
+      }
+    },
+    "shared": {
+      "description": "Glob pattern to specify the code files to share with dependent projects. Example: [ \"Folder1\\*.cs\", \"Folder2\\*.cs\" ]",
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "default": "Compiler\\Shared\\**\\*.cs"
+    },
+    "version": {
+      "description": "The version of the application. Example: 1.2.0.0",
+      "type": "string"
+    },
+    "dependentSchemas": {
+      "$ref": "#/$defs/dependencies"
+    }
+  },
+  "id": "https://json.schemastore.org/project-1.0.0-beta3.json",
+  "$defs": {
+    "compilationOptions": {
+      "type": "object",
+      "properties": {
+        "define": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "warningsAsErrors": {
+          "type": "boolean",
+          "default": false
+        },
+        "allowUnsafe": {
+          "type": "boolean",
+          "default": false
+        },
+        "optimize": {
+          "type": "boolean",
+          "default": false
+        },
+        "languageVersion": {
+          "type": "string",
+          "enum": [
+            "csharp1",
+            "csharp2",
+            "csharp3",
+            "csharp4",
+            "csharp5",
+            "csharp6",
+            "experimental"
+          ]
+        }
+      }
+    },
+    "configType": {
+      "type": "object",
+      "properties": {
+        "frameworkAssemblies": {
+          "$ref": "#/$defs/dependencies"
+        },
+        "compilationOptions": {
+          "$ref": "#/$defs/compilationOptions"
+        },
+        "dependentSchemas": {
+          "$ref": "#/$defs/dependencies"
+        }
+      }
+    },
+    "script": {
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "description": "A command line script or scripts.\r\rAvailable variables:\r%project:Directory% - The project directory\r%project:Name% - The project name\r%project:Version% - The project version"
+    },
+    "dependentSchemas": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "object"
+        ],
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "default": "default",
+            "enum": [
+              "default",
+              "build"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

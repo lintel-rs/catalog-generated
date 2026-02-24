@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/cdk-environment-manager-concrete-environments-definition/latest.json",
+  "title": "Concrete Environments Lists",
+  "description": "List of concrete instances (stages) of an environment",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/ti8m-cdk-concrete-environments.json",
+    "sourceSha256": "d75468d6c8f116220730d620c180e6c465cfcd07cd59db356d8dd3b55d995da3",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "all": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/cdk-environment-manager-concrete-environments-definition/_shared/latest--ti8m-cdk-concrete-environment-config.json#/$defs/concrete-environment-spec",
+      "type": "object",
+      "description": "Common default definitions for all environments which may be overridden by individual environments"
+    }
+  },
+  "additionalProperties": {
+    "type": "object",
+    "description": "definitions for one specific environment",
+    "anyOf": [
+      {
+        "$ref": "https://catalog.lintel.tools/schemas/schemastore/cdk-environment-manager-concrete-environments-definition/_shared/latest--ti8m-cdk-concrete-environment-config.json#/$defs/concrete-environment-spec"
+      },
+      {
+        "type": "object",
+        "description": "Reference to a concrete environment definition defined in a separate json file",
+        "properties": {
+          "$ref": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "examples": [
+              "environments/local.json",
+              "[\"environments/common.json\",\n\"environments/local.json\"]"
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

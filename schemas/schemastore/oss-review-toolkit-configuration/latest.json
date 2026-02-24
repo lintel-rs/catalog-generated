@@ -1,0 +1,493 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/oss-review-toolkit-configuration/latest.json",
+  "title": "ORT configuration",
+  "description": "The main configuration file for the OSS-Review-Toolkit (ORT). A full list of all available options can be found at https://github.com/oss-review-toolkit/ort/blob/main/model/src/main/resources/reference.yml.",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/oss-review-toolkit/ort/main/integrations/schemas/ort-configuration-schema.json",
+    "sourceSha256": "0ac66dd5ea34ffcc56e2db0aefdf122056c54ad4f164b2f270a5b910c6c3efe6"
+  },
+  "type": "object",
+  "properties": {
+    "ort": {
+      "properties": {
+        "licenseFilePatterns": {
+          "$ref": "#/$defs/LicenseFilePatterns"
+        },
+        "severeIssueThreshold": {
+          "$ref": "#/$defs/Severity"
+        },
+        "severeRuleViolationThreshold": {
+          "$ref": "#/$defs/Severity"
+        },
+        "enableRepositoryPackageCurations": {
+          "type": "boolean"
+        },
+        "enableRepositoryPackageConfigurations": {
+          "type": "boolean"
+        },
+        "analyzer": {
+          "$ref": "#/$defs/Analyzer"
+        },
+        "advisor": {
+          "$ref": "#/$defs/Advisor"
+        },
+        "downloader": {
+          "$ref": "#/$defs/Downloader"
+        },
+        "scanner": {
+          "$ref": "#/$defs/Scanner"
+        },
+        "reporter": {
+          "$ref": "#/$defs/Reporter"
+        },
+        "notifier": {
+          "$ref": "#/$defs/Notifier"
+        }
+      }
+    }
+  },
+  "required": [
+    "ort"
+  ],
+  "$defs": {
+    "Advisor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "skipExcluded": {
+          "type": "boolean"
+        },
+        "config": {
+          "$ref": "#/$defs/AdvisorConfig"
+        }
+      }
+    },
+    "AdvisorConfig": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "Analyzer": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/oss-review-toolkit-configuration/_shared/latest--analyzer-configuration-schema.json"
+    },
+    "Downloader": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowMovingRevisions": {
+          "type": "boolean"
+        },
+        "includedLicenseCategories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skipExcluded": {
+          "type": "boolean"
+        },
+        "sourceCodeOrigins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceCodeOrigins"
+          }
+        }
+      }
+    },
+    "LicenseFilePatterns": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "licenseFilenames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "noticeFilenames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "patentFilenames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "otherLicenseFilenames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Notifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mail": {
+          "$ref": "#/$defs/Mail"
+        },
+        "jira": {
+          "$ref": "#/$defs/Jira"
+        }
+      }
+    },
+    "Jira": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Mail": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hostName": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "useSsl": {
+          "type": "boolean"
+        },
+        "fromAddress": {
+          "type": "string"
+        }
+      }
+    },
+    "Reporter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "config": {
+          "$ref": "#/$defs/ReporterOptions"
+        }
+      },
+      "required": [
+        "config"
+      ]
+    },
+    "ReporterOptions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "Scanner": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "skipConcluded": {
+          "type": "boolean"
+        },
+        "skipExcluded": {
+          "type": "boolean"
+        },
+        "archive": {
+          "$ref": "#/$defs/Archive"
+        },
+        "detectedLicenseMapping": {
+          "$ref": "#/$defs/DetectedLicenseMapping"
+        },
+        "fileListStorage": {
+          "$ref": "#/$defs/FileListStorage"
+        },
+        "config": {
+          "$ref": "#/$defs/ScannerConfig"
+        },
+        "storages": {
+          "$ref": "#/$defs/Storages"
+        },
+        "storageReaders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StorageTypes"
+          }
+        },
+        "storageWriters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StorageTypes"
+          }
+        },
+        "ignorePatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenanceStorage": {
+          "$ref": "#/$defs/ProvenanceStorage"
+        }
+      }
+    },
+    "Archive": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "fileStorage": {
+          "$ref": "#/$defs/FileStorage"
+        },
+        "postgresStorage": {
+          "$ref": "#/$defs/PostgresConfig"
+        }
+      }
+    },
+    "FileListStorage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fileStorage": {
+          "$ref": "#/$defs/FileStorage"
+        },
+        "postgresStorage": {
+          "$ref": "#/$defs/PostgresConfig"
+        }
+      }
+    },
+    "FileStorage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "localFileStorage": {
+          "$ref": "#/$defs/LocalFileStorage"
+        },
+        "httpFileStorage": {
+          "$ref": "#/$defs/HttpFileStorage"
+        },
+        "s3FileStorage": {
+          "$ref": "#/$defs/S3FileStorage"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "localFileStorage"
+          ]
+        },
+        {
+          "required": [
+            "httpFileStorage"
+          ]
+        },
+        {
+          "required": [
+            "s3FileStorage"
+          ]
+        }
+      ]
+    },
+    "LocalFileStorage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "directory": {
+          "type": "string"
+        },
+        "compression": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "directory"
+      ]
+    },
+    "HttpFileStorage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "query": {
+          "type": "string"
+        },
+        "headers": {
+          "$ref": "#/$defs/Headers"
+        }
+      },
+      "required": [
+        "url"
+      ]
+    },
+    "S3FileStorage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "accessKeyId": {
+          "type": "string"
+        },
+        "awsRegion": {
+          "type": "string"
+        },
+        "bucketName": {
+          "type": "string"
+        },
+        "compression": {
+          "type": "boolean"
+        },
+        "customEndpoint": {
+          "type": "string"
+        },
+        "secretAccessKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucketName"
+      ]
+    },
+    "PostgresConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "connection": {
+          "$ref": "#/$defs/Connection"
+        }
+      },
+      "required": [
+        "connection"
+      ]
+    },
+    "Connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "sslmode": {
+          "type": "string"
+        },
+        "sslcert": {
+          "type": "string"
+        },
+        "sslkey": {
+          "type": "string"
+        },
+        "sslrootcert": {
+          "type": "string"
+        },
+        "connectionTimeout": {
+          "type": "integer"
+        },
+        "idleTimeout": {
+          "type": "integer"
+        },
+        "keepaliveTime": {
+          "type": "integer"
+        },
+        "maxLifetime": {
+          "type": "integer"
+        },
+        "maximumPoolSize": {
+          "type": "integer"
+        },
+        "minimumIdle": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "url",
+        "username"
+      ]
+    },
+    "DetectedLicenseMapping": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "ScannerConfig": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "ProvenanceStorage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fileStorage": {
+          "$ref": "#/$defs/FileStorage"
+        },
+        "postgresStorage": {
+          "$ref": "#/$defs/PostgresConfig"
+        }
+      }
+    },
+    "Storages": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "Severity": {
+      "enum": [
+        "HINT",
+        "WARNING",
+        "ERROR"
+      ]
+    },
+    "SourceCodeOrigins": {
+      "enum": [
+        "ARTIFACT",
+        "VCS"
+      ]
+    },
+    "StorageTypes": {
+      "enum": [
+        "aws",
+        "clearlyDefined",
+        "http",
+        "local",
+        "postgres"
+      ]
+    },
+    "Headers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "boolean",
+          "number",
+          "string"
+        ]
+      }
+    }
+  }
+}

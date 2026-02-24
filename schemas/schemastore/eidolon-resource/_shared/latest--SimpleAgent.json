@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/eidolon-resource/_shared/latest--SimpleAgent.json",
+  "title": "SimpleAgent",
+  "description": "agent is designed to be a flexible, modular component that can interact with various processing units and perform a\nrange of actions based on its configuration.",
+  "x-lintel": {
+    "source": "https://www.eidolonai.com/json_schema/v1/schemas/Agent/SimpleAgent.json",
+    "sourceSha256": "a9adefdec2dabeb3c31c412952201082f82719d5e2e3f3c94949a2844c3a6f66"
+  },
+  "type": "object",
+  "properties": {
+    "implementation": {
+      "const": "SimpleAgent",
+      "title": "Implementation"
+    },
+    "apu": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/eidolon-resource/_shared/latest--overview.json"
+    },
+    "agent_refs": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Agent Refs",
+      "type": "array"
+    },
+    "tools": {
+      "default": [],
+      "description": "A list of [tools](https://www.eidolonai.com/docs/components/logicunit/overview) available to the agent.",
+      "items": {
+        "$ref": "https://catalog.lintel.tools/schemas/schemastore/eidolon-resource/_shared/latest--overview.json"
+      },
+      "title": "Tools",
+      "type": "array"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "system_prompt": {
+      "default": "You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task.",
+      "title": "System Prompt",
+      "type": "string"
+    },
+    "actions": {
+      "default": [
+        {
+          "name": "converse",
+          "allowed_states": [
+            "initialized",
+            "idle",
+            "http_error"
+          ],
+          "sub_title": null,
+          "output_state": "idle",
+          "user_prompt": "{{ body }}",
+          "input_schema": {},
+          "output_schema": "str",
+          "allow_file_upload": false,
+          "supported_mime_types": []
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/ActionDefinition"
+      },
+      "title": "Actions",
+      "type": "array"
+    },
+    "apus": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/NamedAPU"
+      },
+      "title": "Apus",
+      "type": "array"
+    },
+    "title_generation_mode": {
+      "default": "none",
+      "enum": [
+        "none",
+        "on_request",
+        "auto"
+      ],
+      "title": "Title Generation Mode",
+      "type": "string"
+    },
+    "prompt_templates": {
+      "additionalProperties": {
+        "$ref": "https://catalog.lintel.tools/schemas/schemastore/eidolon-resource/_shared/latest--overview.json"
+      },
+      "default": {},
+      "description": "A dictionary of Templates that can be used as jinja2 keys in system or action prompts",
+      "title": "Prompt Templates",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "ActionDefinition": {
+      "properties": {
+        "name": {
+          "default": "converse",
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "sub_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "user_prompt": {
+          "default": "{{ body }}",
+          "title": "User Prompt",
+          "type": "string"
+        },
+        "input_schema": {
+          "additionalProperties": {
+            "type": "object"
+          },
+          "default": {},
+          "title": "Input Schema",
+          "type": "object"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "const": "str",
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ],
+          "default": "str",
+          "title": "Output Schema"
+        },
+        "allow_file_upload": {
+          "default": false,
+          "title": "Allow File Upload",
+          "type": "boolean"
+        },
+        "supported_mime_types": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Supported Mime Types",
+          "type": "array"
+        },
+        "allowed_states": {
+          "default": [
+            "initialized",
+            "idle",
+            "http_error"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed States",
+          "type": "array"
+        },
+        "output_state": {
+          "default": "idle",
+          "title": "Output State",
+          "type": "string"
+        }
+      },
+      "title": "ActionDefinition",
+      "type": "object"
+    },
+    "NamedAPU": {
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "apu": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/eidolon-resource/_shared/latest--overview.json"
+        },
+        "default": {
+          "type": "boolean",
+          "default": false,
+          "title": "Default"
+        }
+      },
+      "title": "NamedAPU",
+      "type": "object"
+    }
+  },
+  "required": [
+    "implementation"
+  ],
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.simple_agent.SimpleAgent",
+    "groups": [
+      "Agent"
+    ],
+    "name": "SimpleAgent",
+    "overrides": {}
+  }
+}

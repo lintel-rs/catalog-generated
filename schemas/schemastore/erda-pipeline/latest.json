@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/erda-pipeline/latest.json",
+  "title": "Erda pipeline.yml Schema",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/erda-project/erda/master/.erda/schemas/pipeline.yaml.json",
+    "sourceSha256": "814071ec9caace014c72c1bfa6281f7199af4bea3a28c9c418009727ae439191"
+  },
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "default": "https://github.com/erda-project/erda/raw/master/.erda/schemas/pipeline.yaml.json"
+    },
+    "version": {
+      "description": "pipeline.yml 语法规范版本",
+      "type": "string",
+      "default": "1.1"
+    },
+    "name": {
+      "type": "string"
+    },
+    "on": {
+      "$ref": "#/$defs/TriggerConfig"
+    },
+    "triggers": {
+      "$ref": "#/$defs/PipelineTrigger"
+    },
+    "storage": {
+      "$ref": "#/$defs/StorageConfig"
+    },
+    "envs": {
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "cron": {
+      "type": "string"
+    },
+    "cron_compensator": {
+      "$ref": "#/$defs/CronCompensator"
+    },
+    "stages": {
+      "description": "步骤",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Stage"
+      }
+    },
+    "params": {
+      "description": "流水线参数",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PipelineParam"
+      }
+    },
+    "outputs": {
+      "description": "输出",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PipelineOutput"
+      }
+    },
+    "lifecycle": {
+      "description": "生命周期",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NetworkHookInfo"
+      }
+    },
+    "breakpoint": {
+      "type": "object",
+      "$ref": "#/$defs/Breakpoint"
+    }
+  },
+  "$defs": {
+    "TriggerConfig": {
+      "type": "object",
+      "properties": {
+        "push": {
+          "$ref": "#/$defs/PushTrigger"
+        },
+        "merge": {
+          "$ref": "#/$defs/MergeTrigger"
+        }
+      }
+    },
+    "PipelineTrigger": {
+      "properties": {
+        "on": {
+          "type": "string"
+        },
+        "filter": {
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "StorageConfig": {
+      "type": "object",
+      "properties": {
+        "context": {
+          "type": "string"
+        }
+      }
+    },
+    "CronCompensator": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean"
+        },
+        "latest_first": {
+          "type": "boolean"
+        },
+        "stop_if_latter_executed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Stage": {
+      "type": "object",
+      "properties": {
+        "stage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/typedActionMap"
+          }
+        }
+      }
+    },
+    "PipelineParam": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "default": {},
+        "desc": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "PipelineOutput": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        }
+      }
+    },
+    "NetworkHookInfo": {
+      "type": "object",
+      "properties": {
+        "hook": {
+          "type": "string"
+        },
+        "client": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "Breakpoint": {
+      "type": "object",
+      "properties": {
+        "on": {
+          "$ref": "#/$defs/BreakpointOn"
+        },
+        "timeout": {}
+      }
+    },
+    "PushTrigger": {
+      "type": "object",
+      "properties": {
+        "branches": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "MergeTrigger": {
+      "type": "object",
+      "properties": {
+        "branches": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "typedActionMap": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/Action"
+      }
+    },
+    "BreakpointOn": {
+      "type": "object",
+      "properties": {
+        "failure": {
+          "type": "string"
+        }
+      }
+    },
+    "Action": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "id": "https://github.com/erda-project/erda/.erda/schemas/pipeline.yaml.json"
+}

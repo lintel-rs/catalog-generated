@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/webhint-io/latest.json",
+  "title": "Configuration",
+  "description": "A configuration file for hint",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/webhintio/hint/main/packages/hint/src/lib/config/config-schema.json",
+    "sourceSha256": "6db9ada68a9016e3e75e0d74578408a4634a06a70467bfd088cc042341b87367"
+  },
+  "type": "object",
+  "properties": {
+    "connector": {
+      "$ref": "#/$defs/connector"
+    },
+    "extends": {
+      "$ref": "#/$defs/extends"
+    },
+    "parsers": {
+      "$ref": "#/$defs/parsers"
+    },
+    "formatters": {
+      "$ref": "#/$defs/formatters"
+    },
+    "hintsTimeout": {
+      "$ref": "#/$defs/hintsTimeout"
+    },
+    "hints": {
+      "$ref": "#/$defs/hints"
+    },
+    "browserslist": {
+      "$ref": "#/$defs/browserslist"
+    },
+    "ignoredUrls": {
+      "$ref": "#/$defs/ignoredUrls"
+    },
+    "language": {
+      "$ref": "#/$defs/language"
+    },
+    "severityThreshold": {
+      "$ref": "#/$defs/severityThreshold"
+    }
+  },
+  "$defs": {
+    "errorlevelstring": {
+      "type": "string",
+      "enum": [
+        "off",
+        "hint",
+        "information",
+        "warning",
+        "error",
+        "default"
+      ]
+    },
+    "errorlevelnumber": {
+      "type": "number",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "hintconfig": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 2,
+      "minItems": 1,
+      "prefixItems": [
+        {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/errorlevelstring"
+            },
+            {
+              "$ref": "#/$defs/errorlevelnumber"
+            }
+          ]
+        },
+        {
+          "type": [
+            "object",
+            "array"
+          ]
+        }
+      ]
+    },
+    "hintobject": {
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/errorlevelstring"
+            },
+            {
+              "$ref": "#/$defs/errorlevelnumber"
+            },
+            {
+              "$ref": "#/$defs/hintconfig"
+            }
+          ]
+        }
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "connector": {
+      "description": "The connector to use to gather information",
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "The name of the connector to use",
+              "type": "string"
+            },
+            "options": {
+              "description": "The options to pass to the connector",
+              "type": "object"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "extends": {
+      "description": "Base configuration to use.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^(?!all$).*$"
+      },
+      "uniqueItems": true
+    },
+    "formatters": {
+      "description": "The formatter(s) to use for the results",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "parsers": {
+      "description": "The parsers to be used with the connector to gather information for specific file types",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "hintsTimeout": {
+      "description": "Time in milliseconds that a hint has to finish",
+      "type": "number"
+    },
+    "hints": {
+      "description": "The hints to validate",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/hintobject"
+        },
+        {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            ]
+          },
+          "minItems": 1
+        }
+      ],
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "browserslist": {
+      "description": "The browsers supported",
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "ignoredUrls": {
+      "description": "The urls to ignore by the hints",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Regex for the domain to ignore"
+          },
+          "hints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "domain",
+          "hints"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "language": {
+      "description": "Localization language",
+      "type": "string"
+    },
+    "severityThreshold": {
+      "$ref": "#/$defs/errorlevelstring"
+    }
+  },
+  "additionalProperties": false,
+  "anyOf": [
+    {
+      "required": [
+        "connector",
+        "hints"
+      ]
+    },
+    {
+      "required": [
+        "extends"
+      ]
+    }
+  ]
+}

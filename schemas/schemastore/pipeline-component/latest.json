@@ -1,0 +1,675 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/pipeline-component/latest.json",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/Cloud-Pipelines/component_spec_schema/stable/component_spec.json_schema.json",
+    "sourceSha256": "5b4d224db5160b724dbf55c3da4e34ffa2e6bf0800741afc9ab51d765fc981c2"
+  },
+  "allOf": [
+    {
+      "$ref": "#/$defs/ComponentSpec"
+    }
+  ],
+  "$defs": {
+    "TypeSpecType": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TypeSpecType"
+          }
+        }
+      ]
+    },
+    "InputSpec": {
+      "description": "Describes the component input specification",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/TypeSpecType"
+        },
+        "description": {
+          "type": "string"
+        },
+        "default": {
+          "type": "string"
+        },
+        "optional": {
+          "type": "boolean",
+          "default": false
+        },
+        "annotations": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OutputSpec": {
+      "description": "Describes the component output specification",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/TypeSpecType"
+        },
+        "description": {
+          "type": "string"
+        },
+        "annotations": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "InputValuePlaceholder": {
+      "description": "Represents the command-line argument placeholder that will be replaced at run-time by the input argument value.",
+      "type": "object",
+      "required": [
+        "inputValue"
+      ],
+      "properties": {
+        "inputValue": {
+          "description": "Name of the input.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "InputPathPlaceholder": {
+      "description": "Represents the command-line argument placeholder that will be replaced at run-time by a local file path pointing to a file containing the input argument value.",
+      "type": "object",
+      "required": [
+        "inputPath"
+      ],
+      "properties": {
+        "inputPath": {
+          "description": "Name of the input.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OutputPathPlaceholder": {
+      "description": "Represents the command-line argument placeholder that will be replaced at run-time by a local file path pointing to a file where the program should write its output data.",
+      "type": "object",
+      "required": [
+        "outputPath"
+      ],
+      "properties": {
+        "outputPath": {
+          "description": "Name of the output.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "StringOrPlaceholder": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/InputValuePlaceholder"
+        },
+        {
+          "$ref": "#/$defs/InputPathPlaceholder"
+        },
+        {
+          "$ref": "#/$defs/OutputPathPlaceholder"
+        },
+        {
+          "$ref": "#/$defs/ConcatPlaceholder"
+        },
+        {
+          "$ref": "#/$defs/IfPlaceholder"
+        }
+      ]
+    },
+    "ConcatPlaceholder": {
+      "description": "Represents the command-line argument placeholder that will be replaced at run-time by the concatenated values of its items.",
+      "type": "object",
+      "required": [
+        "concat"
+      ],
+      "properties": {
+        "concat": {
+          "description": "Items to concatenate",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StringOrPlaceholder"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "IsPresentPlaceholder": {
+      "description": "Represents the command-line argument placeholder that will be replaced at run-time by a boolean value specifying whether the caller has passed an argument for the specified optional input.",
+      "type": "object",
+      "required": [
+        "isPresent"
+      ],
+      "properties": {
+        "isPresent": {
+          "description": "Name of the input.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IfConditionArgumentType": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/IsPresentPlaceholder"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/InputValuePlaceholder"
+        }
+      ]
+    },
+    "ListOfStringsOrPlaceholders": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/StringOrPlaceholder"
+      }
+    },
+    "IfPlaceholder": {
+      "description": "Represents the command-line argument placeholder that will be replaced at run-time by a boolean value specifying whether the caller has passed an argument for the specified optional input.",
+      "type": "object",
+      "required": [
+        "if"
+      ],
+      "properties": {
+        "if": {
+          "type": "object",
+          "required": [
+            "cond",
+            "then"
+          ],
+          "properties": {
+            "cond": {
+              "$ref": "#/$defs/IfConditionArgumentType"
+            },
+            "then": {
+              "$ref": "#/$defs/ListOfStringsOrPlaceholders"
+            },
+            "else": {
+              "$ref": "#/$defs/ListOfStringsOrPlaceholders"
+            }
+          }
+        }
+      }
+    },
+    "ContainerSpec": {
+      "type": "object",
+      "required": [
+        "image"
+      ],
+      "properties": {
+        "image": {
+          "description": "Docker image name.",
+          "$ref": "#/$defs/StringOrPlaceholder"
+        },
+        "command": {
+          "description": "Entrypoint array. Not executed within a shell. The docker image's ENTRYPOINT is used if this is not provided.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StringOrPlaceholder"
+          }
+        },
+        "args": {
+          "description": "Arguments to the entrypoint. The docker image's CMD is used if this is not provided.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StringOrPlaceholder"
+          }
+        },
+        "env": {
+          "description": "List of environment variables to set in the container.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/StringOrPlaceholder"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ContainerImplementation": {
+      "description": "Represents the container component implementation.",
+      "type": "object",
+      "required": [
+        "container"
+      ],
+      "properties": {
+        "container": {
+          "$ref": "#/$defs/ContainerSpec"
+        }
+      }
+    },
+    "ImplementationType": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ContainerImplementation"
+        },
+        {
+          "$ref": "#/$defs/GraphImplementation"
+        }
+      ]
+    },
+    "MetadataSpec": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ComponentSpec": {
+      "description": "Component specification. Describes the metadata (name, description, source), the interface (inputs and outputs) and the implementation of the component.",
+      "type": "object",
+      "required": [
+        "implementation"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InputSpec"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OutputSpec"
+          }
+        },
+        "implementation": {
+          "$ref": "#/$defs/ImplementationType"
+        },
+        "metadata": {
+          "$ref": "#/$defs/MetadataSpec"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ComponentReference": {
+      "description": "Component reference. Contains information that can be used to locate and load a component by name, digest or URL",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "digest": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "spec": {
+          "$ref": "#/$defs/ComponentSpec"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GraphInputArgument": {
+      "description": "Represents the component argument value that comes from the graph component input.",
+      "type": "object",
+      "required": [
+        "graphInput"
+      ],
+      "properties": {
+        "graphInput": {
+          "description": "References the input of the graph/pipeline.",
+          "type": "object",
+          "required": [
+            "inputName"
+          ],
+          "properties": {
+            "inputName": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/TypeSpecType"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "TaskOutputArgument": {
+      "description": "Represents the component argument value that comes from the output of a sibling task.",
+      "type": "object",
+      "required": [
+        "taskOutput"
+      ],
+      "properties": {
+        "taskOutput": {
+          "description": "References the output of a sibling task.",
+          "type": "object",
+          "required": [
+            "taskId",
+            "outputName"
+          ],
+          "properties": {
+            "taskId": {
+              "type": "string"
+            },
+            "outputName": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/TypeSpecType"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "ArgumentType": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/GraphInputArgument"
+        },
+        {
+          "$ref": "#/$defs/TaskOutputArgument"
+        }
+      ]
+    },
+    "TwoArgumentOperands": {
+      "description": "Pair of operands for a binary operation.",
+      "type": "object",
+      "required": [
+        "op1",
+        "op2"
+      ],
+      "properties": {
+        "op1": {
+          "$ref": "#/$defs/ArgumentType"
+        },
+        "op2": {
+          "$ref": "#/$defs/ArgumentType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TwoLogicalOperands": {
+      "description": "Pair of operands for a binary logical operation.",
+      "type": "object",
+      "required": [
+        "op1",
+        "op2"
+      ],
+      "properties": {
+        "op1": {
+          "$ref": "#/$defs/PredicateType"
+        },
+        "op2": {
+          "$ref": "#/$defs/PredicateType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PredicateType": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "=="
+          ],
+          "properties": {
+            "==": {
+              "$ref": "#/$defs/TwoArgumentOperands"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "!="
+          ],
+          "properties": {
+            "!=": {
+              "$ref": "#/$defs/TwoArgumentOperands"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            ">"
+          ],
+          "properties": {
+            ">": {
+              "$ref": "#/$defs/TwoArgumentOperands"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            ">="
+          ],
+          "properties": {
+            ">=": {
+              "$ref": "#/$defs/TwoArgumentOperands"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "<"
+          ],
+          "properties": {
+            "<": {
+              "$ref": "#/$defs/TwoArgumentOperands"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "<="
+          ],
+          "properties": {
+            "<=": {
+              "$ref": "#/$defs/TwoArgumentOperands"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "and"
+          ],
+          "properties": {
+            "and": {
+              "$ref": "#/$defs/TwoLogicalOperands"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "or"
+          ],
+          "properties": {
+            "or": {
+              "$ref": "#/$defs/TwoLogicalOperands"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "not"
+          ],
+          "properties": {
+            "not": {
+              "$ref": "#/$defs/PredicateType"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "RetryStrategySpec": {
+      "description": "Optional configuration that specifies how the task should be retried if it fails.",
+      "type": "object",
+      "properties": {
+        "maxRetries": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CachingStrategySpec": {
+      "description": "Optional configuration that specifies how the task execution may be skipped if the output data exist in cache.",
+      "type": "object",
+      "properties": {
+        "maxCacheStaleness": {
+          "type": "string",
+          "format": "duration"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExecutionOptionsSpec": {
+      "description": "Optional configuration that specifies how the task should be executed. Can be used to set some platform-specific options.",
+      "type": "object",
+      "properties": {
+        "retryStrategy": {
+          "$ref": "#/$defs/RetryStrategySpec"
+        },
+        "cachingStrategy": {
+          "$ref": "#/$defs/CachingStrategySpec"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TaskSpec": {
+      "description": "'Task specification. Task is a configured component - a component supplied with arguments and other applied configuration changes.",
+      "type": "object",
+      "required": [
+        "componentRef"
+      ],
+      "properties": {
+        "componentRef": {
+          "$ref": "#/$defs/ComponentReference"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ArgumentType"
+          }
+        },
+        "isEnabled": {
+          "$ref": "#/$defs/PredicateType"
+        },
+        "executionOptions": {
+          "$ref": "#/$defs/ExecutionOptionsSpec"
+        },
+        "annotations": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GraphSpec": {
+      "description": "Describes the graph component implementation. It represents a graph of component tasks connected to the upstream sources of data using the argument specifications. It also describes the sources of graph output values.",
+      "type": "object",
+      "required": [
+        "tasks"
+      ],
+      "properties": {
+        "tasks": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TaskSpec"
+          }
+        },
+        "outputValues": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TaskOutputArgument"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "GraphImplementation": {
+      "description": "Represents the graph component implementation.",
+      "type": "object",
+      "required": [
+        "graph"
+      ],
+      "properties": {
+        "graph": {
+          "$ref": "#/$defs/GraphSpec"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PipelineRunSpec": {
+      "description": "The object that can be sent to the backend to start a new Run.",
+      "type": "object",
+      "required": [
+        "rootTask"
+      ],
+      "properties": {
+        "rootTask": {
+          "$ref": "#/$defs/TaskSpec"
+        },
+        "onExitTask": {
+          "$ref": "#/$defs/TaskSpec"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

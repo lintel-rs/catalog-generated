@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/apple-app-site-association/latest.json",
+  "title": "Apple Universal Links Config",
+  "description": "Apple Universal Links Config Schema",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/apple-app-site-association.json",
+    "sourceSha256": "f4b8253b9f267442e595c6878cc771f3c7946d2ca0198371430af004ae92e067"
+  },
+  "type": "object",
+  "properties": {
+    "webcredentials": {
+      "type": "object",
+      "title": "Webcredentials Config",
+      "description": "Apple Webcredentials Config Schema",
+      "properties": {
+        "apps": {
+          "$ref": "#/$defs/app_ids"
+        }
+      }
+    },
+    "appclips": {
+      "type": "object",
+      "title": "AppClip Config",
+      "description": "Apple AppClip Config Schema",
+      "properties": {
+        "apps": {
+          "$ref": "#/$defs/app_ids"
+        }
+      }
+    },
+    "applinks": {
+      "type": "object",
+      "title": "Universalink Configurations",
+      "description": "Universalink Configurations Schema",
+      "additionalProperties": false,
+      "required": [
+        "details"
+      ],
+      "properties": {
+        "apps": {
+          "description": "Always empty [] for UniversaLink, can be omitted in later versions",
+          "type": "array",
+          "const": []
+        },
+        "details": {
+          "type": "array",
+          "description": "AppIDs's Universalink URI Matching Configuration",
+          "minItems": 1,
+          "items": {
+            "title": "AppID's matching details",
+            "description": "Details of specific AppIDs uri matching configuration",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "appIDs": {
+                "title": "AppIDs",
+                "description": "Array of AppIDs",
+                "type": "array",
+                "uniqueItems": true,
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/app_id"
+                }
+              },
+              "appID": {
+                "$ref": "#/$defs/app_id"
+              },
+              "paths": {
+                "title": "Paths",
+                "description": "Array of paths to be matched against",
+                "type": "array",
+                "uniqueItems": true,
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "title": "Path",
+                  "description": "Single unique path to be matched against"
+                }
+              },
+              "components": {
+                "type": "array",
+                "title": "URI Components",
+                "description": "Array of path components to be matched, available in later versions",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/component"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "applinks"
+  ],
+  "$defs": {
+    "app_ids": {
+      "type": "array",
+      "title": "AppIDs",
+      "description": "Array of multiple AppIDs",
+      "items": {
+        "$ref": "#/$defs/app_id"
+      }
+    },
+    "app_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]{10}\\.([A-Za-z]{1}[A-Za-z0-9_]*\\.)+[A-Za-z][A-Za-z0-9_]*$",
+      "title": "TeamID And AppID",
+      "description": "10 character TeamID followed by AppID"
+    },
+    "component": {
+      "type": "object",
+      "title": "AppID component",
+      "description": "A component for uri matching",
+      "additionalProperties": false,
+      "properties": {
+        "/": {
+          "type": "string",
+          "title": "Path component",
+          "description": "Define path matching"
+        },
+        "#": {
+          "type": "string",
+          "title": "Fragment component",
+          "description": "Define fragment matching"
+        },
+        "?": {
+          "title": "Query component",
+          "description": "Define Query matching",
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "exclude": {
+          "type": "boolean",
+          "title": "Exclusion flag",
+          "description": "Whether to exclude a specific match"
+        }
+      }
+    }
+  }
+}

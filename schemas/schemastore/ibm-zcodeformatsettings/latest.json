@@ -1,0 +1,418 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/ibm-zcodeformatsettings/latest.json",
+  "title": "IBM zCodeFormatSettings",
+  "description": "JSON schema for zcodeformat.yaml or zcodeformat.json code formatter preferences files. Version 0.0.1 -- Licensed Materials - Property of IBM - (c) Copyright IBM Corporation 2022. All Rights Reserved.",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/IBM/zopeneditor-about/main/zcodeformat/zcodeformat-schema-0.0.1.json",
+    "sourceSha256": "76f248a3a65a516074c4812a70dacb01080c6c0f6c789b0d0c219b20261268a2"
+  },
+  "type": "object",
+  "properties": {
+    "additionalProperties": false,
+    "cobol": {
+      "$ref": "#/$defs/cobol"
+    },
+    "copybook": {
+      "$ref": "#/$defs/copybook"
+    }
+  },
+  "$defs": {
+    "copybookCapitalizationOptions": {
+      "enum": [
+        "upper",
+        "lower"
+      ]
+    },
+    "cobolCapitalizationOptions": {
+      "enum": [
+        "none",
+        "upper",
+        "lower",
+        "mixed"
+      ]
+    },
+    "cobol": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "dataDivision": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "enableIndentation": {
+              "type": "boolean",
+              "description": "Enable indentation of record descriptions\nIf false, startOfAreaA and indentLength are not allowed",
+              "default": true
+            },
+            "indentation": {
+              "type": "object",
+              "description": "Indentation objects based on enableIndentation",
+              "$ref": "#/$defs/dataDivIndent"
+            },
+            "alignPictureClauses": {
+              "type": "boolean",
+              "description": "Align PICTURE Clauses",
+              "default": true
+            },
+            "alignValueClauses": {
+              "type": "boolean",
+              "description": "Align VALUE Clauses",
+              "default": true
+            }
+          },
+          "anyOf": [
+            {
+              "properties": {
+                "enableIndentation": {
+                  "const": false
+                },
+                "indentation": {
+                  "type": "object",
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "properties": {
+                "enableIndentation": {
+                  "const": true
+                },
+                "indentation": {
+                  "$ref": "#/$defs/dataDivIndent"
+                }
+              }
+            }
+          ]
+        },
+        "procedureDivision": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "enableIndentation": {
+              "type": "boolean",
+              "description": "Enable indentation of procedure divisions",
+              "default": true
+            },
+            "indentation": {
+              "type": "object",
+              "description": "Indentation objects based on enableIndentation",
+              "$ref": "#/$defs/procDivIndent"
+            }
+          },
+          "anyOf": [
+            {
+              "properties": {
+                "enableIndentation": {
+                  "const": false
+                },
+                "indentation": {
+                  "type": "object",
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "properties": {
+                "enableIndentation": {
+                  "const": true
+                },
+                "indentation": {
+                  "$ref": "#/$defs/procDivIndent"
+                }
+              }
+            }
+          ]
+        },
+        "reservedWordCase": {
+          "type": "string",
+          "description": "Reserved words",
+          "default": "upper",
+          "$ref": "#/$defs/cobolCapitalizationOptions"
+        },
+        "userDefinedWordCase": {
+          "type": "string",
+          "description": "User-defined words",
+          "default": "upper",
+          "$ref": "#/$defs/cobolCapitalizationOptions"
+        },
+        "commentCase": {
+          "type": "string",
+          "description": "Comment",
+          "default": "none",
+          "$ref": "#/$defs/cobolCapitalizationOptions"
+        },
+        "functionCase": {
+          "type": "string",
+          "description": "Function",
+          "default": "upper",
+          "$ref": "#/$defs/cobolCapitalizationOptions"
+        },
+        "dateFormatCase": {
+          "type": "string",
+          "description": "Date format",
+          "default": "upper",
+          "$ref": "#/$defs/cobolCapitalizationOptions"
+        },
+        "compilerDirectiveCase": {
+          "type": "string",
+          "description": "Compiler directive",
+          "default": "upper",
+          "$ref": "#/$defs/cobolCapitalizationOptions"
+        },
+        "endOfAreaB": {
+          "type": "integer",
+          "description": "End of Area B\n\nIf -1, will use Margin R as the end of Area B",
+          "default": -1,
+          "oneOf": [
+            {
+              "minimum": -1,
+              "maximum": -1
+            },
+            {
+              "minimum": 50,
+              "maximum": 100
+            }
+          ]
+        },
+        "lineWrappingStyle": {
+          "type": "string",
+          "description": "If indentation moves code beyond Area B",
+          "default": "wrapToNextLine",
+          "enum": [
+            "wrapToNextLine",
+            "noIndent",
+            "indentToAreaB",
+            "indentPastAreaB"
+          ]
+        }
+      }
+    },
+    "copybook": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "codeCase": {
+          "type": "string",
+          "description": "Format copybook code in uppercase",
+          "default": "upper",
+          "$ref": "#/$defs/copybookCapitalizationOptions"
+        },
+        "commentCase": {
+          "type": "string",
+          "description": "Format copybook comments in uppercase",
+          "default": "upper",
+          "$ref": "#/$defs/copybookCapitalizationOptions"
+        }
+      }
+    },
+    "dataDivIndent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "startOfAreaA": {
+          "type": "integer",
+          "description": "Start of Area A\nCannot be used if enableIndentation is false",
+          "default": 8,
+          "minimum": 8,
+          "maximum": 11
+        },
+        "indentLength": {
+          "type": "integer",
+          "description": "Indent Length\nCannot be used if enableIndentation is false",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10
+        }
+      }
+    },
+    "procDivIndent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "startOfAreaA": {
+          "type": "integer",
+          "description": "Start of Area A\nCannot be used if enableIndentation is false",
+          "default": 8,
+          "minimum": 8,
+          "maximum": 11
+        },
+        "startOfAreaB": {
+          "type": "integer",
+          "description": "Start of Area B\nCannot be used if enableIndentation is false",
+          "default": 12,
+          "minimum": 12,
+          "maximum": 16
+        },
+        "indentMultipleLineStatements": {
+          "type": "integer",
+          "description": "Multiple line statement indent length\nCannot be used if enableIndentation is false\nuse -1 to disable",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "alignLists": {
+          "type": "boolean",
+          "description": "Align lists\nCannot be used if enableIndentation is false",
+          "default": true
+        },
+        "indentForAllBlocks": {
+          "type": "integer",
+          "description": "Fixed indent length to use for all blocks\nCannot be used if enableIndentation is false\nCannot be used with other individual block indent values",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "blocks": {
+          "type": "object",
+          "description": "Individual block indent values",
+          "$ref": "#/$defs/blockIndent"
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "indentForAllBlocks": {
+              "type": "number"
+            },
+            "blocks": {
+              "type": "object",
+              "additionalProperties": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "indentForAllBlocks": false,
+            "blocks": {
+              "$ref": "#/$defs/blockIndent"
+            }
+          }
+        }
+      ]
+    },
+    "blockIndent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "indentAtEndBlock": {
+          "type": "integer",
+          "description": "Indent length of AT END block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentAtEndOfPageBlock": {
+          "type": "integer",
+          "description": "Indent length of AT END OF PAGE block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentExecBlock": {
+          "type": "integer",
+          "description": "Indent length of EXEC block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 5,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentEndExecPhrase": {
+          "type": "boolean",
+          "description": "Indent END-EXEC phrase\nCannot be used if enableIndentation is false\nEND-EXEC phrase will be indented with Exec Block",
+          "default": true
+        },
+        "indentIfBlock": {
+          "type": "integer",
+          "description": "Indent length of IF block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentInvalidKeyBlock": {
+          "type": "integer",
+          "description": "Indent length of INVALID KEY block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 8,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentNotAtEndBlock": {
+          "type": "integer",
+          "description": "Indent length of NOT AT END block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 4,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentNotAtEndOfPageBlock": {
+          "type": "integer",
+          "description": "Indent length of NOT AT END OF PAGE block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 4,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentNotInvalidKeyBlock": {
+          "type": "integer",
+          "description": "Indent length of INVALID KEY\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 4,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentNotOnExceptionBlock": {
+          "type": "integer",
+          "description": "Indent length of NOT ON EXCEPTION block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 4,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentNotOnOverflowBlock": {
+          "type": "integer",
+          "description": "Indent length of NOT ON OVERFLOW block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 4,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentNotOnSizeErrorBlock": {
+          "type": "integer",
+          "description": "Indent length of NOT ON SIZE ERROR block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 4,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentOnExceptionBlock": {
+          "type": "integer",
+          "description": "Indent length of ON EXCEPTION block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentOnOverflowBlock": {
+          "type": "integer",
+          "description": "Indent length of ON OVERFLOW block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentOnSizeErrorBlock": {
+          "type": "integer",
+          "description": "Indent length of ON SIZE ERROR block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentPerformBlock": {
+          "type": "integer",
+          "description": "Indent length of PERFORM block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 8,
+          "minimum": 0,
+          "maximum": 10
+        },
+        "indentWhenBlock": {
+          "type": "integer",
+          "description": "Indent length of WHEN block\nCannot be used if enableIndentation is false\nCannot be used if indentForAllBlocks is used",
+          "default": 5,
+          "minimum": 0,
+          "maximum": 10
+        }
+      }
+    }
+  }
+}

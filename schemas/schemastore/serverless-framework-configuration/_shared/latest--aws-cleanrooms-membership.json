@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-cleanrooms-membership.json",
+  "title": "AWSCleanRoomsMembershipProperties",
+  "description": "Represents an AWS account that is a part of a collaboration. Source:- No source definition found, add manually please",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-cleanrooms-membership.json",
+    "sourceSha256": "535dc565da5b3d0c2ef919ca5c6862e3c2a9c416157b6158000dba7296e25759",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Tags": {
+      "description": "An arbitrary set of tags (key-value pairs) for this cleanrooms membership.",
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/Tag"
+      },
+      "uniqueItems": true,
+      "type": "array"
+    },
+    "CollaborationIdentifier": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "QueryLogStatus": {
+      "$ref": "#/$defs/MembershipQueryLogStatus"
+    }
+  },
+  "typeName": "AWS::CleanRooms::Membership",
+  "additionalProperties": false,
+  "$defs": {
+    "MembershipQueryLogStatus": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ENABLED",
+            "DISABLED"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSCleanRoomsMembershipMembershipQueryLogStatusDefinition"
+    },
+    "MembershipStatus": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "REMOVED",
+            "COLLABORATION_DELETED"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSCleanRoomsMembershipMembershipStatusDefinition"
+    },
+    "Tag": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "Value",
+        "Key"
+      ],
+      "title": "AWSCleanRoomsMembershipTagDefinition"
+    }
+  },
+  "tagging": {
+    "taggable": true,
+    "tagOnCreate": true,
+    "tagUpdatable": true,
+    "cloudFormationSystemTags": true,
+    "tagProperty": "/properties/Tags"
+  },
+  "required": [
+    "CollaborationIdentifier",
+    "QueryLogStatus"
+  ],
+  "readOnlyProperties": [
+    "/properties/Arn",
+    "/properties/CollaborationArn",
+    "/properties/CollaborationCreatorAccountId",
+    "/properties/MembershipIdentifier"
+  ],
+  "createOnlyProperties": [
+    "/properties/CollaborationIdentifier"
+  ],
+  "primaryIdentifier": [
+    "/properties/MembershipIdentifier"
+  ]
+}

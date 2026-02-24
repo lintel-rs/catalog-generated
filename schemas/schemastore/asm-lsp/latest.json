@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/asm-lsp/latest.json",
+  "title": "RootConfig",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/bergercookie/asm-lsp/master/asm-lsp_config_schema.json",
+    "sourceSha256": "61c0bba9575f3b5a77353d2870b3a00a4936dfe3b5a05c45038e267142fe9b5e"
+  },
+  "type": "object",
+  "properties": {
+    "default_config": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Config"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "project": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/$defs/ProjectConfig"
+      }
+    }
+  },
+  "$defs": {
+    "Arch": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "x86",
+            "x86-64",
+            "arm",
+            "arm64",
+            "riscv",
+            "z80",
+            "6502",
+            "power-isa",
+            "AVR",
+            "mips"
+          ]
+        },
+        {
+          "description": "enables both `Arch::X86` and `Arch::X86_64`",
+          "type": "string",
+          "enum": [
+            "x86/x86-64"
+          ]
+        }
+      ]
+    },
+    "Assembler": {
+      "type": "string",
+      "enum": [
+        "avr",
+        "ca65",
+        "fasm",
+        "gas",
+        "go",
+        "mars",
+        "masm",
+        "nasm"
+      ]
+    },
+    "Config": {
+      "type": "object",
+      "required": [
+        "assembler",
+        "instruction_set"
+      ],
+      "properties": {
+        "assembler": {
+          "$ref": "#/$defs/Assembler"
+        },
+        "instruction_set": {
+          "$ref": "#/$defs/Arch"
+        },
+        "opts": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConfigOptions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "ConfigOptions": {
+      "type": "object",
+      "properties": {
+        "compile_flags_txt": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "compiler": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "default_diagnostics": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "diagnostics": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "ProjectConfig": {
+      "type": "object",
+      "required": [
+        "assembler",
+        "instruction_set",
+        "path"
+      ],
+      "properties": {
+        "assembler": {
+          "$ref": "#/$defs/Assembler"
+        },
+        "instruction_set": {
+          "$ref": "#/$defs/Arch"
+        },
+        "opts": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConfigOptions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

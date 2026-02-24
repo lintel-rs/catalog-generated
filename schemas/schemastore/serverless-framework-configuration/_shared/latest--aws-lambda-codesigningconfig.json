@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-lambda-codesigningconfig.json",
+  "title": "AWSLambdaCodeSigningConfigProperties",
+  "description": "Resource Type definition for AWS::Lambda::CodeSigningConfig.. Source:- No source definition found, add manually please",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-lambda-codesigningconfig.json",
+    "sourceSha256": "270262d774b87100ce78c0ae880b7033f1fa14137817458c49606c8c66442537",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Description": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "A description of the CodeSigningConfig"
+    },
+    "AllowedPublishers": {
+      "description": "When the CodeSigningConfig is later on attached to a function, the function code will be expected to be signed by profiles from this list",
+      "$ref": "#/$defs/AllowedPublishers"
+    },
+    "CodeSigningPolicies": {
+      "description": "Policies to control how to act if a signature is invalid",
+      "$ref": "#/$defs/CodeSigningPolicies"
+    }
+  },
+  "typeName": "AWS::Lambda::CodeSigningConfig",
+  "primaryIdentifier": [
+    "/properties/CodeSigningConfigArn"
+  ],
+  "additionalProperties": false,
+  "readOnlyProperties": [
+    "/properties/CodeSigningConfigId",
+    "/properties/CodeSigningConfigArn"
+  ],
+  "$defs": {
+    "AllowedPublishers": {
+      "type": "object",
+      "description": "When the CodeSigningConfig is later on attached to a function, the function code will be expected to be signed by profiles from this list",
+      "additionalProperties": false,
+      "properties": {
+        "SigningProfileVersionArns": {
+          "type": "array",
+          "description": "List of Signing profile version Arns",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "pattern": "arn:(aws[a-zA-Z0-9-]*):([a-zA-Z0-9\\-])+:([a-z]{2}(-gov)?-[a-z]+-\\d{1})?:(\\d{12})?:(.*)",
+            "minLength": 12,
+            "maxLength": 1024
+          }
+        }
+      },
+      "required": [
+        "SigningProfileVersionArns"
+      ],
+      "title": "AWSLambdaCodeSigningConfigAllowedPublishersDefinition"
+    },
+    "CodeSigningPolicies": {
+      "type": "object",
+      "description": "Policies to control how to act if a signature is invalid",
+      "additionalProperties": false,
+      "properties": {
+        "UntrustedArtifactOnDeployment": {
+          "oneOf": [
+            {
+              "type": "string",
+              "default": "Warn",
+              "enum": [
+                "Warn",
+                "Enforce"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Indicates how Lambda operations involve updating the code artifact will operate. Default to Warn if not provided"
+        }
+      },
+      "required": [
+        "UntrustedArtifactOnDeployment"
+      ],
+      "title": "AWSLambdaCodeSigningConfigCodeSigningPoliciesDefinition"
+    }
+  },
+  "required": [
+    "AllowedPublishers"
+  ]
+}

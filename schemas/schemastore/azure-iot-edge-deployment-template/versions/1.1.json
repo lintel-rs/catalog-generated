@@ -1,0 +1,295 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-edge-deployment-template/versions/1.1.json",
+  "title": "JSON schema for Azure IoT Edge Deployment Template version 2.0",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/azure-iot-edge-deployment-template-2.0.json",
+    "sourceSha256": "97d577aa53cb6863cbc3a506f9c7ad0a27fffbfe715e452e75eafa38232a56e0",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "$schema-template": {
+      "type": "string"
+    },
+    "modulesContent": {
+      "type": "object",
+      "title": "The configuration for all the modules.",
+      "required": [
+        "$edgeAgent",
+        "$edgeHub"
+      ],
+      "properties": {
+        "$edgeAgent": {
+          "type": "object",
+          "title": "Configuration for the edgeAgent module",
+          "required": [
+            "properties.desired"
+          ],
+          "properties": {
+            "properties.desired": {
+              "type": "object",
+              "required": [
+                "schemaVersion",
+                "runtime",
+                "systemModules",
+                "modules"
+              ],
+              "properties": {
+                "schemaVersion": {
+                  "type": "string",
+                  "examples": [
+                    "1.0",
+                    "1.1"
+                  ]
+                },
+                "runtime": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "settings"
+                  ],
+                  "properties": {
+                    "type": {
+                      "$ref": "#/$defs/moduleType"
+                    },
+                    "settings": {
+                      "type": "object",
+                      "properties": {
+                        "minDockerVersion": {
+                          "type": "string",
+                          "examples": [
+                            "v1.25"
+                          ]
+                        },
+                        "loggingOptions": {
+                          "type": "string"
+                        },
+                        "registryCredentials": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^[^.# ]+$": {
+                              "type": "object",
+                              "required": [
+                                "username",
+                                "password",
+                                "address"
+                              ],
+                              "properties": {
+                                "username": {
+                                  "type": "string"
+                                },
+                                "password": {
+                                  "type": "string"
+                                },
+                                "address": {
+                                  "type": "string",
+                                  "pattern": "^[^\\s]+$"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "systemModules": {
+                  "type": "object",
+                  "required": [
+                    "edgeAgent",
+                    "edgeHub"
+                  ],
+                  "properties": {
+                    "edgeAgent": {
+                      "type": "object",
+                      "required": [
+                        "type",
+                        "settings"
+                      ],
+                      "properties": {
+                        "type": {
+                          "$ref": "#/$defs/moduleType"
+                        },
+                        "settings": {
+                          "$ref": "#/$defs/moduleSettings"
+                        },
+                        "env": {
+                          "$ref": "#/$defs/env"
+                        },
+                        "imagePullPolicy": {
+                          "$ref": "#/$defs/imagePullPolicy"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "edgeHub": {
+                      "type": "object",
+                      "title": "The Edgehub Schema",
+                      "required": [
+                        "type",
+                        "settings",
+                        "status",
+                        "restartPolicy"
+                      ],
+                      "properties": {
+                        "type": {
+                          "$ref": "#/$defs/moduleType"
+                        },
+                        "settings": {
+                          "$ref": "#/$defs/moduleSettings"
+                        },
+                        "env": {
+                          "$ref": "#/$defs/env"
+                        },
+                        "status": {
+                          "$ref": "#/$defs/status"
+                        },
+                        "restartPolicy": {
+                          "$ref": "#/$defs/restartPolicy"
+                        },
+                        "imagePullPolicy": {
+                          "$ref": "#/$defs/imagePullPolicy"
+                        },
+                        "startupOrder": {
+                          "$ref": "#/$defs/startupOrder"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "modules": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[a-zA-Z0-9_-]+$": {
+                      "type": "object",
+                      "required": [
+                        "type",
+                        "status",
+                        "restartPolicy",
+                        "settings"
+                      ],
+                      "properties": {
+                        "version": {
+                          "type": "string",
+                          "examples": [
+                            "1.0",
+                            "1.1"
+                          ]
+                        },
+                        "type": {
+                          "$ref": "#/$defs/moduleType"
+                        },
+                        "status": {
+                          "$ref": "#/$defs/status"
+                        },
+                        "restartPolicy": {
+                          "$ref": "#/$defs/restartPolicy"
+                        },
+                        "env": {
+                          "$ref": "#/$defs/env"
+                        },
+                        "settings": {
+                          "$ref": "#/$defs/moduleSettings"
+                        },
+                        "imagePullPolicy": {
+                          "$ref": "#/$defs/imagePullPolicy"
+                        },
+                        "startupOrder": {
+                          "$ref": "#/$defs/startupOrder"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "$edgeHub": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-edge-deployment-template/_shared/1.1--azure-iot-edge-deployment-2.0.json#/properties/modulesContent/properties/$edgeHub"
+        }
+      },
+      "patternProperties": {
+        "^[a-zA-Z0-9_-]+$": {
+          "type": "object",
+          "required": [
+            "properties.desired"
+          ],
+          "properties": {
+            "properties.desired": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "modulesContent"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "moduleType": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-edge-deployment-template/_shared/1.1--azure-iot-edge-deployment-2.0.json#/$defs/moduleType"
+    },
+    "status": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-edge-deployment-template/_shared/1.1--azure-iot-edge-deployment-2.0.json#/$defs/status"
+    },
+    "restartPolicy": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-edge-deployment-template/_shared/1.1--azure-iot-edge-deployment-2.0.json#/$defs/restartPolicy"
+    },
+    "imagePullPolicy": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-edge-deployment-template/_shared/1.1--azure-iot-edge-deployment-2.0.json#/$defs/imagePullPolicy"
+    },
+    "startupOrder": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-edge-deployment-template/_shared/1.1--azure-iot-edge-deployment-2.0.json#/$defs/startupOrder"
+    },
+    "moduleSettings": {
+      "type": "object",
+      "required": [
+        "image"
+      ],
+      "properties": {
+        "image": {
+          "type": "string",
+          "examples": [
+            "mcr.microsoft.com/azureiotedge-agent:1.0"
+          ]
+        }
+      },
+      "patternProperties": {
+        "^(createoptions|createOptions)[0-9]*$": {
+          "$ref": "#/$defs/createOptions"
+        }
+      },
+      "additionalProperties": false
+    },
+    "env": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-iot-edge-deployment-template/_shared/1.1--azure-iot-edge-deployment-2.0.json#/$defs/env"
+    },
+    "createOptions": {
+      "type": [
+        "object",
+        "string"
+      ],
+      "contentMediaType": "application/json"
+    }
+  },
+  "id": "https://json.schemastore.org/azure-iot-edge-deployment-template-2.0.json"
+}

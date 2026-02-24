@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/dwp-exchange-gateway/_shared/latest--oidc_apigw-plugin-schema.json",
+  "title": "OIDC API Gateway plugin",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/dwp/schemas/main/exchange/publishing-tools/plugins/oidc/oidc_apigw-plugin-schema.json",
+    "sourceSha256": "8af7c76cd4e2031cc8cffab86bb80c3effd8c856be4b75bc1a8f9bd1e7b44bdf"
+  },
+  "type": "object",
+  "properties": {
+    "identity_provider": {
+      "type": "string",
+      "description": "The identity provider the plugin will interact with to carry our the OpenId Connect auth code flow",
+      "enum": [
+        "cognito-non-prod",
+        "cognito-staging",
+        "cognito-prod",
+        "azure-ad",
+        "kbv-tactical-dev",
+        "kbv-tactical-test",
+        "kbv-tactical-nft",
+        "kbv-tactical-stage",
+        "kbv-tactical-prod"
+      ]
+    },
+    "use_internet": {
+      "type": "boolean",
+      "description": "Determines whether the JWKS endpoints for your IDP will be internet facing",
+      "default": true
+    },
+    "https_proxy": {
+      "title": "HTTPS proxy URL",
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "The URL of the HTTPS proxy to use for outgoing requests",
+      "examples": [
+        "https://proxy.example.com:3128"
+      ]
+    },
+    "scopes_required": {
+      "type": "array",
+      "description": "The scopes required to be present in the access token (or introspection results) for successful authorization.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "audience_required": {
+      "type": "array",
+      "description": "The audience required to be present in the access token (or introspection results) for successful authorization.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "client_id": {
+      "type": "string",
+      "minLength": 2,
+      "pattern": "^\\{vault://env/[\\w|-]+/?[\\w|-]+\\}$",
+      "description": "Reference to the client id env var in the gateway, refer to gateway module for details"
+    },
+    "cache_ttl": {
+      "type": "integer",
+      "default": 3600,
+      "minimum": 1000,
+      "description": "Time is expressed in milliseconds"
+    },
+    "cache_introspection": {
+      "type": "boolean",
+      "default": false
+    },
+    "introspection_endpoint": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "The introspection endpoint. If set it overrides the value in introspection_endpoint returned by the discovery endpoint"
+    },
+    "forbidden_redirect_uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|https)://[^ \"]+$",
+      "description": "Where to redirect the client on forbidden requests"
+    },
+    "groups_required": {
+      "type": "array",
+      "description": "The groups required to be present in the access token (or introspection results) for successful authorization.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "auth_methods": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "password",
+          "client_credentials",
+          "authorization_code",
+          "bearer",
+          "introspection",
+          "userinfo",
+          "kong_oauth2",
+          "refresh_token",
+          "session"
+        ]
+      },
+      "description": "Types of credentials/grants to enable"
+    },
+    "upstream_introspection_header": {
+      "type": "string",
+      "description": "The header to use for the introspection request to the upstream server"
+    },
+    "display_errors": {
+      "type": "boolean",
+      "default": false
+    },
+    "ssl_verify": {
+      "type": "boolean",
+      "default": true
+    },
+    "timeout": {
+      "type": "integer",
+      "default": 10000,
+      "minimum": 1000,
+      "description": "Time is expressed in milliseconds"
+    },
+    "client_secret": {
+      "type": "string",
+      "description": "Reference to the client secret env var in the gateway, refer to gateway module for details",
+      "minLength": 3,
+      "pattern": "^\\{vault://env/[\\w|-]+/?[\\w|-]+\\}$"
+    }
+  },
+  "additionalProperties": false,
+  "dependentSchemas": {
+    "identity_provider": {
+      "if": {
+        "properties": {
+          "identity_provider": {
+            "enum": [
+              "cognito-non-prod",
+              "cognito-prod"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "use_internet"
+        ]
+      }
+    }
+  },
+  "required": [
+    "identity_provider"
+  ]
+}

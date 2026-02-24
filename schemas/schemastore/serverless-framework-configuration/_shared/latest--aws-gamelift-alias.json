@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-gamelift-alias.json",
+  "title": "AWSGameLiftAliasProperties",
+  "description": "The AWS::GameLift::Alias resource creates an alias for an Amazon GameLift (GameLift) fleet destination.. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-gamelift.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-gamelift-alias.json",
+    "sourceSha256": "21af2d3ec6703d266a37f3e7975ff18e94f247a66acdbabdc6a3d1db65efa1c2",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Description": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "A human-readable description of the alias."
+    },
+    "Name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "pattern": ".*\\S.*"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "A descriptive label that is associated with an alias. Alias names do not need to be unique."
+    },
+    "RoutingStrategy": {
+      "description": "A routing configuration that specifies where traffic is directed for this alias, such as to a fleet or to a message.",
+      "$ref": "#/$defs/RoutingStrategy"
+    }
+  },
+  "typeName": "AWS::GameLift::Alias",
+  "taggable": true,
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-gamelift.git",
+  "$defs": {
+    "RoutingStrategy": {
+      "type": "object",
+      "properties": {
+        "Message": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The message text to be used with a terminal routing strategy. If you specify TERMINAL for the Type property, you must specify this property."
+        },
+        "FleetId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^fleet-\\S+"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "A unique identifier for a fleet that the alias points to. If you specify SIMPLE for the Type property, you must specify this property."
+        },
+        "Type": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "SIMPLE",
+                "TERMINAL"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Simple routing strategy. The alias resolves to one specific fleet. Use this type when routing to active fleets."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Type"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "FleetId"
+          ]
+        },
+        {
+          "required": [
+            "Message"
+          ]
+        }
+      ],
+      "title": "AWSGameLiftAliasRoutingStrategyDefinition"
+    }
+  },
+  "primaryIdentifier": [
+    "/properties/AliasId"
+  ],
+  "additionalProperties": false,
+  "required": [
+    "Name",
+    "RoutingStrategy"
+  ],
+  "readOnlyProperties": [
+    "/properties/AliasId"
+  ]
+}

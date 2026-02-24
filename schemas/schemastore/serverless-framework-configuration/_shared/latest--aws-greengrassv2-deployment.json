@@ -1,0 +1,437 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-greengrassv2-deployment.json",
+  "title": "AWSGreengrassV2DeploymentProperties",
+  "description": "Resource for Greengrass V2 deployment.. Source:- No source definition found, add manually please",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-greengrassv2-deployment.json",
+    "sourceSha256": "afb8cc23fecce0689ede4366a8b9ff5b9133c62070d048bb020567e9b943adeb",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "TargetArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "arn:[^:]*:iot:[^:]*:[0-9]+:(thing|thinggroup)/.+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "ParentTargetArn": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "arn:[^:]*:iot:[^:]*:[0-9]+:thinggroup/.+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "DeploymentName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "Components": {
+      "type": "object",
+      "patternProperties": {
+        ".+": {
+          "$ref": "#/$defs/ComponentDeploymentSpecification"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IotJobConfiguration": {
+      "$ref": "#/$defs/DeploymentIoTJobConfiguration"
+    },
+    "DeploymentPolicies": {
+      "$ref": "#/$defs/DeploymentPolicies"
+    },
+    "Tags": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "type": "string",
+          "maxLength": 256
+        }
+      },
+      "maxProperties": 200,
+      "additionalProperties": false
+    }
+  },
+  "typeName": "AWS::GreengrassV2::Deployment",
+  "tagging": {
+    "taggable": true,
+    "tagOnCreate": true,
+    "tagUpdatable": true,
+    "cloudFormationSystemTags": false,
+    "tagProperty": "/properties/Tags"
+  },
+  "$defs": {
+    "ComponentDeploymentSpecification": {
+      "type": "object",
+      "properties": {
+        "ComponentVersion": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "ConfigurationUpdate": {
+          "$ref": "#/$defs/ComponentConfigurationUpdate"
+        },
+        "RunWith": {
+          "$ref": "#/$defs/ComponentRunWith"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentComponentDeploymentSpecificationDefinition"
+    },
+    "SystemResourceLimits": {
+      "type": "object",
+      "properties": {
+        "Memory": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 0,
+          "maximum": 9223372036854772000
+        },
+        "Cpus": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentSystemResourceLimitsDefinition"
+    },
+    "ComponentRunWith": {
+      "type": "object",
+      "properties": {
+        "PosixUser": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "SystemResourceLimits": {
+          "$ref": "#/$defs/SystemResourceLimits"
+        },
+        "WindowsUser": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentComponentRunWithDefinition"
+    },
+    "ComponentConfigurationUpdate": {
+      "type": "object",
+      "properties": {
+        "Merge": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10485760
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Reset": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 256
+          },
+          "insertionOrder": false
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentComponentConfigurationUpdateDefinition"
+    },
+    "DeploymentIoTJobConfiguration": {
+      "type": "object",
+      "properties": {
+        "JobExecutionsRolloutConfig": {
+          "$ref": "#/$defs/IoTJobExecutionsRolloutConfig"
+        },
+        "AbortConfig": {
+          "$ref": "#/$defs/IoTJobAbortConfig"
+        },
+        "TimeoutConfig": {
+          "$ref": "#/$defs/IoTJobTimeoutConfig"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentDeploymentIoTJobConfigurationDefinition"
+    },
+    "IoTJobExecutionsRolloutConfig": {
+      "type": "object",
+      "properties": {
+        "ExponentialRate": {
+          "$ref": "#/$defs/IoTJobExponentialRolloutRate"
+        },
+        "MaximumPerMinute": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentIoTJobExecutionsRolloutConfigDefinition"
+    },
+    "IoTJobAbortConfig": {
+      "type": "object",
+      "properties": {
+        "CriteriaList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IoTJobAbortCriteria"
+          },
+          "minItems": 1,
+          "insertionOrder": false
+        }
+      },
+      "required": [
+        "CriteriaList"
+      ],
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentIoTJobAbortConfigDefinition"
+    },
+    "IoTJobAbortCriteria": {
+      "type": "object",
+      "properties": {
+        "FailureType": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "FAILED",
+                "REJECTED",
+                "TIMED_OUT",
+                "ALL"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Action": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "CANCEL"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "ThresholdPercentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "MinNumberOfExecutedThings": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        }
+      },
+      "required": [
+        "FailureType",
+        "Action",
+        "ThresholdPercentage",
+        "MinNumberOfExecutedThings"
+      ],
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentIoTJobAbortCriteriaDefinition"
+    },
+    "IoTJobTimeoutConfig": {
+      "type": "object",
+      "properties": {
+        "InProgressTimeoutInMinutes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentIoTJobTimeoutConfigDefinition"
+    },
+    "IoTJobExponentialRolloutRate": {
+      "type": "object",
+      "properties": {
+        "BaseRatePerMinute": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "IncrementFactor": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "RateIncreaseCriteria": {
+          "$ref": "#/$defs/IoTJobRateIncreaseCriteria"
+        }
+      },
+      "required": [
+        "BaseRatePerMinute",
+        "IncrementFactor",
+        "RateIncreaseCriteria"
+      ],
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentIoTJobExponentialRolloutRateDefinition"
+    },
+    "IoTJobRateIncreaseCriteria": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "NumberOfNotifiedThings": {
+              "$ref": "#/$defs/NumberOfThings"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "NumberOfSucceededThings": {
+              "$ref": "#/$defs/NumberOfThings"
+            }
+          }
+        }
+      ],
+      "title": "AWSGreengrassV2DeploymentIoTJobRateIncreaseCriteriaDefinition"
+    },
+    "NumberOfThings": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647,
+      "title": "AWSGreengrassV2DeploymentNumberOfThingsDefinition"
+    },
+    "DeploymentPolicies": {
+      "type": "object",
+      "properties": {
+        "FailureHandlingPolicy": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ROLLBACK",
+                "DO_NOTHING"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "ComponentUpdatePolicy": {
+          "$ref": "#/$defs/DeploymentComponentUpdatePolicy"
+        },
+        "ConfigurationValidationPolicy": {
+          "$ref": "#/$defs/DeploymentConfigurationValidationPolicy"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentDeploymentPoliciesDefinition"
+    },
+    "DeploymentComponentUpdatePolicy": {
+      "type": "object",
+      "properties": {
+        "TimeoutInSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "Action": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "NOTIFY_COMPONENTS",
+                "SKIP_NOTIFY_COMPONENTS"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentDeploymentComponentUpdatePolicyDefinition"
+    },
+    "DeploymentConfigurationValidationPolicy": {
+      "type": "object",
+      "properties": {
+        "TimeoutInSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSGreengrassV2DeploymentDeploymentConfigurationValidationPolicyDefinition"
+    }
+  },
+  "createOnlyProperties": [
+    "/properties/TargetArn",
+    "/properties/ParentTargetArn",
+    "/properties/DeploymentName",
+    "/properties/Components",
+    "/properties/IotJobConfiguration",
+    "/properties/DeploymentPolicies"
+  ],
+  "required": [
+    "TargetArn"
+  ],
+  "primaryIdentifier": [
+    "/properties/DeploymentId"
+  ],
+  "additionalProperties": false,
+  "readOnlyProperties": [
+    "/properties/DeploymentId"
+  ]
+}

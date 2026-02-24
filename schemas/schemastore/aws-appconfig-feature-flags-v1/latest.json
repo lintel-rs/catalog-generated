@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/aws-appconfig-feature-flags-v1/latest.json",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/aws-cdk-appconfig-featureflags-1.0.0.json",
+    "sourceSha256": "c85fdb5848c970a4b0914d5eeb078b71d7caf700da01d54807e3c2f5975c0c70"
+  },
+  "allOf": [
+    {
+      "$ref": "#/$defs/flagSetDefinition"
+    }
+  ],
+  "$defs": {
+    "flagSetDefinition": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/flagSchemaVersions"
+        },
+        "flags": {
+          "$ref": "#/$defs/flagDefinitions"
+        },
+        "values": {
+          "$ref": "#/$defs/flagValues"
+        }
+      },
+      "required": [
+        "version",
+        "flags",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "flagDefinitions": {
+      "type": "object",
+      "patternProperties": {
+        "^[^\\n]{1,64}$": {
+          "$ref": "#/$defs/flagDefinition"
+        }
+      },
+      "maxProperties": 25,
+      "additionalProperties": false
+    },
+    "flagDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/customerDefinedName"
+        },
+        "description": {
+          "$ref": "#/$defs/customerDefinedDescription"
+        },
+        "_createdAt": {
+          "type": "string"
+        },
+        "_updatedAt": {
+          "type": "string"
+        },
+        "_deprecation": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "planned"
+            },
+            "date": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "additionalProperties": false
+        },
+        "attributes": {
+          "$ref": "#/$defs/attributeDefinitions"
+        }
+      },
+      "required": [
+        "attributes"
+      ],
+      "additionalProperties": false
+    },
+    "attributeDefinitions": {
+      "type": "object",
+      "patternProperties": {
+        "^[^\\n]{1,64}$": {
+          "$ref": "#/$defs/attributeDefinition"
+        }
+      },
+      "maxProperties": 25,
+      "additionalProperties": false
+    },
+    "attributeDefinition": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "$ref": "#/$defs/customerDefinedDescription"
+        },
+        "constraints": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/numberConstraints"
+            },
+            {
+              "$ref": "#/$defs/stringConstraints"
+            },
+            {
+              "$ref": "#/$defs/arrayConstraints"
+            },
+            {
+              "$ref": "#/$defs/boolConstraints"
+            }
+          ]
+        }
+      },
+      "required": [
+        "constraints"
+      ],
+      "additionalProperties": false
+    },
+    "flagValues": {
+      "type": "object",
+      "patternProperties": {
+        "^[^\\n]{1,64}$": {
+          "$ref": "#/$defs/flagValue"
+        }
+      },
+      "maxProperties": 25,
+      "additionalProperties": false
+    },
+    "flagValue": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "_createdAt": {
+          "type": "string"
+        },
+        "_updatedAt": {
+          "type": "string"
+        },
+        "_variants": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/variant"
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "_variants"
+      ],
+      "additionalProperties": false
+    },
+    "stringConstraints": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "pattern": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "enum": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "maxLength": 1024
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "not": {
+        "required": [
+          "pattern",
+          "enum"
+        ],
+        "properties": {
+          "pattern": true,
+          "enum": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "numberConstraints": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "number"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "minimum": {
+          "type": "integer"
+        },
+        "maximum": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "arrayConstraints": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "array"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "elements": {
+          "$ref": "#/$defs/elementConstraints"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "boolConstraints": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "elementConstraints": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/numberConstraints"
+        },
+        {
+          "$ref": "#/$defs/stringConstraints"
+        }
+      ]
+    },
+    "variant": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "name": {
+          "$ref": "#/$defs/customerDefinedName"
+        },
+        "rule": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "attributeValues": {
+          "$ref": "#/$defs/attributeValue"
+        }
+      },
+      "required": [
+        "name",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "attributeValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 1024
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "maxLength": 1024
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "customerDefinedName": {
+      "type": "string",
+      "pattern": "^[^\\n]{1,64}$"
+    },
+    "customerDefinedDescription": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "flagSchemaVersions": {
+      "const": "1"
+    }
+  }
+}

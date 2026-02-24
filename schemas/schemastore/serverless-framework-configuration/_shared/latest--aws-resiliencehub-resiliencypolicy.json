@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-resiliencehub-resiliencypolicy.json",
+  "title": "AWSResilienceHubResiliencyPolicyProperties",
+  "description": "Resource Type Definition for Resiliency Policy.. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-resiliencehub",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-resiliencehub-resiliencypolicy.json",
+    "sourceSha256": "8d23a8e836217c3e62d0fe4c0174b9ec6c224f56b395d02c3719a158b44f7aa4",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "PolicyName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_\\-]{1,59}$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Name of Resiliency Policy."
+    },
+    "PolicyDescription": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 500
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Description of Resiliency Policy."
+    },
+    "DataLocationConstraint": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "AnyLocation",
+            "SameContinent",
+            "SameCountry"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Data Location Constraint of the Policy."
+    },
+    "Tier": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "MissionCritical",
+            "Critical",
+            "Important",
+            "CoreServices",
+            "NonCritical"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Resiliency Policy Tier."
+    },
+    "Policy": {
+      "$ref": "#/$defs/PolicyMap"
+    },
+    "Tags": {
+      "$ref": "#/$defs/TagMap"
+    }
+  },
+  "typeName": "AWS::ResilienceHub::ResiliencyPolicy",
+  "primaryIdentifier": [
+    "/properties/PolicyArn"
+  ],
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-resiliencehub",
+  "$defs": {
+    "FailurePolicy": {
+      "description": "Failure Policy.",
+      "type": "object",
+      "properties": {
+        "RtoInSecs": {
+          "description": "RTO in seconds.",
+          "type": "integer"
+        },
+        "RpoInSecs": {
+          "description": "RPO in seconds.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "RtoInSecs",
+        "RpoInSecs"
+      ],
+      "additionalProperties": false,
+      "title": "AWSResilienceHubResiliencyPolicyFailurePolicyDefinition"
+    },
+    "PolicyMap": {
+      "type": "object",
+      "patternProperties": {
+        ".*{1,8}": {
+          "$ref": "#/$defs/FailurePolicy"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSResilienceHubResiliencyPolicyPolicyMapDefinition"
+    },
+    "TagValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 256
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSResilienceHubResiliencyPolicyTagValueDefinition"
+    },
+    "TagMap": {
+      "type": "object",
+      "patternProperties": {
+        ".{1,128}": {
+          "$ref": "#/$defs/TagValue"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSResilienceHubResiliencyPolicyTagMapDefinition"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/PolicyArn"
+  ],
+  "tagging": {
+    "taggable": true,
+    "tagOnCreate": true,
+    "tagUpdatable": true,
+    "cloudFormationSystemTags": false,
+    "tagProperty": "/properties/Tags"
+  },
+  "additionalProperties": false,
+  "required": [
+    "PolicyName",
+    "Tier",
+    "Policy"
+  ]
+}

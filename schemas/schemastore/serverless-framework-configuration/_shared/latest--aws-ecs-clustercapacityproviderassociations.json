@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-ecs-clustercapacityproviderassociations.json",
+  "title": "AWSECSClusterCapacityProviderAssociationsProperties",
+  "description": "Associate a set of ECS Capacity Providers with a specified ECS Cluster. Source:- https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-ecs-clustercapacityproviderassociations.json",
+    "sourceSha256": "3aeb0e5cf959849adb9a48aeceec75f3e2a498e69149170bede07fdb49c5046e",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "CapacityProviders": {
+      "$ref": "#/$defs/CapacityProviders"
+    },
+    "Cluster": {
+      "$ref": "#/$defs/Cluster"
+    },
+    "DefaultCapacityProviderStrategy": {
+      "$ref": "#/$defs/DefaultCapacityProviderStrategy"
+    }
+  },
+  "typeName": "AWS::ECS::ClusterCapacityProviderAssociations",
+  "primaryIdentifier": [
+    "/properties/Cluster"
+  ],
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "$defs": {
+    "CapacityProviders": {
+      "description": "List of capacity providers to associate with the cluster",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CapacityProvider"
+      },
+      "uniqueItems": true,
+      "title": "AWSECSClusterCapacityProviderAssociationsCapacityProvidersDefinition"
+    },
+    "CapacityProvider": {
+      "oneOf": [
+        {
+          "type": "string",
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "FARGATE",
+                "FARGATE_SPOT"
+              ]
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            }
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "If using ec2 auto-scaling, the name of the associated capacity provider. Otherwise FARGATE, FARGATE_SPOT.",
+      "title": "AWSECSClusterCapacityProviderAssociationsCapacityProviderDefinition"
+    },
+    "Cluster": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The name of the cluster",
+      "title": "AWSECSClusterCapacityProviderAssociationsClusterDefinition"
+    },
+    "DefaultCapacityProviderStrategy": {
+      "description": "List of capacity providers to associate with the cluster",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CapacityProviderStrategy"
+      },
+      "title": "AWSECSClusterCapacityProviderAssociationsDefaultCapacityProviderStrategyDefinition"
+    },
+    "CapacityProviderStrategy": {
+      "type": "object",
+      "properties": {
+        "Base": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "Weight": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "CapacityProvider": {
+          "$ref": "#/$defs/CapacityProvider"
+        }
+      },
+      "required": [
+        "CapacityProvider"
+      ],
+      "additionalProperties": false,
+      "title": "AWSECSClusterCapacityProviderAssociationsCapacityProviderStrategyDefinition"
+    }
+  },
+  "additionalProperties": false,
+  "createOnlyProperties": [
+    "/properties/Cluster"
+  ],
+  "required": [
+    "CapacityProviders",
+    "Cluster",
+    "DefaultCapacityProviderStrategy"
+  ]
+}

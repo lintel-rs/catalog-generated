@@ -1,0 +1,664 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-databrew-recipe.json",
+  "title": "AWSDataBrewRecipeProperties",
+  "description": "Resource schema for AWS::DataBrew::Recipe.. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-databrew.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-databrew-recipe.json",
+    "sourceSha256": "a2709d91a0d456bf31c77d12e082847e909b8a0dc160f11ff766c8227ae42b73",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Description": {
+      "oneOf": [
+        {
+          "minLength": 0,
+          "maxLength": 1024,
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Description of the recipe"
+    },
+    "Name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Recipe name"
+    },
+    "Steps": {
+      "type": "array",
+      "insertionOrder": true,
+      "items": {
+        "type": "object",
+        "$ref": "#/$defs/RecipeStep"
+      }
+    },
+    "Tags": {
+      "type": "array",
+      "insertionOrder": false,
+      "uniqueItems": false,
+      "items": {
+        "$ref": "#/$defs/Tag"
+      }
+    }
+  },
+  "typeName": "AWS::DataBrew::Recipe",
+  "createOnlyProperties": [
+    "/properties/Name",
+    "/properties/Tags"
+  ],
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-databrew.git",
+  "taggable": true,
+  "primaryIdentifier": [
+    "/properties/Name"
+  ],
+  "$defs": {
+    "SecondaryInput": {
+      "description": "Secondary input",
+      "type": "object",
+      "properties": {
+        "S3InputDefinition": {
+          "$ref": "#/$defs/S3Location"
+        },
+        "DataCatalogInputDefinition": {
+          "$ref": "#/$defs/DataCatalogInputDefinition"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "S3InputDefinition"
+          ]
+        },
+        {
+          "required": [
+            "DataCatalogInputDefinition"
+          ]
+        }
+      ],
+      "additionalProperties": false,
+      "title": "AWSDataBrewRecipeSecondaryInputDefinition"
+    },
+    "S3Location": {
+      "description": "Input location",
+      "type": "object",
+      "properties": {
+        "Bucket": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Bucket"
+      ],
+      "title": "AWSDataBrewRecipeS3LocationDefinition"
+    },
+    "DataCatalogInputDefinition": {
+      "type": "object",
+      "properties": {
+        "CatalogId": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Catalog id"
+        },
+        "DatabaseName": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Database name"
+        },
+        "TableName": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Table name"
+        },
+        "TempDirectory": {
+          "$ref": "#/$defs/S3Location"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSDataBrewRecipeDataCatalogInputDefinition"
+    },
+    "RecipeStep": {
+      "type": "object",
+      "properties": {
+        "Action": {
+          "$ref": "#/$defs/Action"
+        },
+        "ConditionExpressions": {
+          "description": "Condition expressions applied to the step action",
+          "type": "array",
+          "insertionOrder": true,
+          "items": {
+            "$ref": "#/$defs/ConditionExpression"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Action"
+      ],
+      "title": "AWSDataBrewRecipeRecipeStepDefinition"
+    },
+    "Action": {
+      "type": "object",
+      "properties": {
+        "Operation": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Step action operation"
+        },
+        "Parameters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RecipeParameters"
+            },
+            {
+              "$ref": "#/$defs/ParameterMap"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Operation"
+      ],
+      "title": "AWSDataBrewRecipeActionDefinition"
+    },
+    "ConditionExpression": {
+      "description": "Condition expressions applied to the step action",
+      "type": "object",
+      "properties": {
+        "Condition": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Input condition to be applied to the target column"
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Value of the condition"
+        },
+        "TargetColumn": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Name of the target column"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Condition",
+        "TargetColumn"
+      ],
+      "title": "AWSDataBrewRecipeConditionExpressionDefinition"
+    },
+    "RecipeParameters": {
+      "additionalProperties": false,
+      "properties": {
+        "AggregateFunction": {
+          "type": "string"
+        },
+        "Base": {
+          "type": "string"
+        },
+        "CaseStatement": {
+          "type": "string"
+        },
+        "CategoryMap": {
+          "type": "string"
+        },
+        "CharsToRemove": {
+          "type": "string"
+        },
+        "CollapseConsecutiveWhitespace": {
+          "type": "string"
+        },
+        "ColumnDataType": {
+          "type": "string"
+        },
+        "ColumnRange": {
+          "type": "string"
+        },
+        "Count": {
+          "type": "string"
+        },
+        "CustomCharacters": {
+          "type": "string"
+        },
+        "CustomStopWords": {
+          "type": "string"
+        },
+        "CustomValue": {
+          "type": "string"
+        },
+        "DatasetsColumns": {
+          "type": "string"
+        },
+        "DateAddValue": {
+          "type": "string"
+        },
+        "DateTimeFormat": {
+          "type": "string"
+        },
+        "DateTimeParameters": {
+          "type": "string"
+        },
+        "DeleteOtherRows": {
+          "type": "string"
+        },
+        "Delimiter": {
+          "type": "string"
+        },
+        "EndPattern": {
+          "type": "string"
+        },
+        "EndPosition": {
+          "type": "string"
+        },
+        "EndValue": {
+          "type": "string"
+        },
+        "ExpandContractions": {
+          "type": "string"
+        },
+        "Exponent": {
+          "type": "string"
+        },
+        "FalseString": {
+          "type": "string"
+        },
+        "GroupByAggFunctionOptions": {
+          "type": "string"
+        },
+        "GroupByColumns": {
+          "type": "string"
+        },
+        "HiddenColumns": {
+          "type": "string"
+        },
+        "IgnoreCase": {
+          "type": "string"
+        },
+        "IncludeInSplit": {
+          "type": "string"
+        },
+        "Interval": {
+          "type": "string"
+        },
+        "IsText": {
+          "type": "string"
+        },
+        "JoinKeys": {
+          "type": "string"
+        },
+        "JoinType": {
+          "type": "string"
+        },
+        "LeftColumns": {
+          "type": "string"
+        },
+        "Limit": {
+          "type": "string"
+        },
+        "LowerBound": {
+          "type": "string"
+        },
+        "MapType": {
+          "type": "string"
+        },
+        "ModeType": {
+          "type": "string"
+        },
+        "MultiLine": {
+          "type": "boolean"
+        },
+        "NumRows": {
+          "type": "string"
+        },
+        "NumRowsAfter": {
+          "type": "string"
+        },
+        "NumRowsBefore": {
+          "type": "string"
+        },
+        "OrderByColumn": {
+          "type": "string"
+        },
+        "OrderByColumns": {
+          "type": "string"
+        },
+        "Other": {
+          "type": "string"
+        },
+        "Pattern": {
+          "type": "string"
+        },
+        "PatternOption1": {
+          "type": "string"
+        },
+        "PatternOption2": {
+          "type": "string"
+        },
+        "PatternOptions": {
+          "type": "string"
+        },
+        "Period": {
+          "type": "string"
+        },
+        "Position": {
+          "type": "string"
+        },
+        "RemoveAllPunctuation": {
+          "type": "string"
+        },
+        "RemoveAllQuotes": {
+          "type": "string"
+        },
+        "RemoveAllWhitespace": {
+          "type": "string"
+        },
+        "RemoveCustomCharacters": {
+          "type": "string"
+        },
+        "RemoveCustomValue": {
+          "type": "string"
+        },
+        "RemoveLeadingAndTrailingPunctuation": {
+          "type": "string"
+        },
+        "RemoveLeadingAndTrailingQuotes": {
+          "type": "string"
+        },
+        "RemoveLeadingAndTrailingWhitespace": {
+          "type": "string"
+        },
+        "RemoveLetters": {
+          "type": "string"
+        },
+        "RemoveNumbers": {
+          "type": "string"
+        },
+        "RemoveSourceColumn": {
+          "type": "string"
+        },
+        "RemoveSpecialCharacters": {
+          "type": "string"
+        },
+        "RightColumns": {
+          "type": "string"
+        },
+        "SampleSize": {
+          "type": "string"
+        },
+        "SampleType": {
+          "type": "string"
+        },
+        "SecondInput": {
+          "type": "string"
+        },
+        "SecondaryInputs": {
+          "type": "array",
+          "insertionOrder": true,
+          "uniqueItems": false,
+          "items": {
+            "$ref": "#/$defs/SecondaryInput"
+          }
+        },
+        "SourceColumn": {
+          "type": "string"
+        },
+        "SourceColumn1": {
+          "type": "string"
+        },
+        "SourceColumn2": {
+          "type": "string"
+        },
+        "SourceColumns": {
+          "type": "string"
+        },
+        "StartColumnIndex": {
+          "type": "string"
+        },
+        "StartPattern": {
+          "type": "string"
+        },
+        "StartPosition": {
+          "type": "string"
+        },
+        "StartValue": {
+          "type": "string"
+        },
+        "StemmingMode": {
+          "type": "string"
+        },
+        "StepCount": {
+          "type": "string"
+        },
+        "StepIndex": {
+          "type": "string"
+        },
+        "StopWordsMode": {
+          "type": "string"
+        },
+        "Strategy": {
+          "type": "string"
+        },
+        "SheetNames": {
+          "type": "array",
+          "insertionOrder": true,
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "SheetIndexes": {
+          "type": "array",
+          "insertionOrder": true,
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "TargetColumn": {
+          "type": "string"
+        },
+        "TargetColumnNames": {
+          "type": "string"
+        },
+        "TargetDateFormat": {
+          "type": "string"
+        },
+        "TargetIndex": {
+          "type": "string"
+        },
+        "TimeZone": {
+          "type": "string"
+        },
+        "TokenizerPattern": {
+          "type": "string"
+        },
+        "TrueString": {
+          "type": "string"
+        },
+        "UdfLang": {
+          "type": "string"
+        },
+        "Units": {
+          "type": "string"
+        },
+        "UnpivotColumn": {
+          "type": "string"
+        },
+        "UpperBound": {
+          "type": "string"
+        },
+        "UseNewDataFrame": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string"
+        },
+        "Value1": {
+          "type": "string"
+        },
+        "Value2": {
+          "type": "string"
+        },
+        "ValueColumn": {
+          "type": "string"
+        },
+        "ViewFrame": {
+          "type": "string"
+        },
+        "Input": {
+          "description": "Input",
+          "type": "object",
+          "properties": {
+            "S3InputDefinition": {
+              "$ref": "#/$defs/S3Location"
+            },
+            "DataCatalogInputDefinition": {
+              "$ref": "#/$defs/DataCatalogInputDefinition"
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "S3InputDefinition"
+              ]
+            },
+            {
+              "required": [
+                "DataCatalogInputDefinition"
+              ]
+            }
+          ],
+          "additionalProperties": false
+        }
+      },
+      "title": "AWSDataBrewRecipeRecipeParametersDefinition"
+    },
+    "ParameterMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[A-Za-z0-9]{1,128}$": {
+          "type": "string"
+        }
+      },
+      "title": "AWSDataBrewRecipeParameterMapDefinition"
+    },
+    "Tag": {
+      "description": "A key-value pair to associate with a resource.",
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 256
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Value",
+        "Key"
+      ],
+      "title": "AWSDataBrewRecipeTagDefinition"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "Name",
+    "Steps"
+  ]
+}

@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/versions/4.0.json",
+  "title": "JSON Schema for Azure Device Update for IoT Hub 'Import Manifest' version 4.0",
+  "description": "Schema for import manifest used for importing an update to Device Update for IoT Hub.",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/azure-deviceupdate-import-manifest-4.0.json",
+    "sourceSha256": "898390d2b8c5e6601df6c28c118582e654bfd6824642a1296c5b6507119412bf",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON schema reference."
+    },
+    "updateId": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/_shared/4.0--azure-deviceupdate-manifest-definitions-4.0.json#/$defs/updateId"
+    },
+    "description": {
+      "type": "string",
+      "title": "Update description",
+      "description": "Optional update description.",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "compatibility": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/_shared/4.0--azure-deviceupdate-manifest-definitions-4.0.json#/$defs/compatibility"
+    },
+    "instructions": {
+      "$ref": "#/$defs/instructions"
+    },
+    "files": {
+      "type": "array",
+      "title": "Update files",
+      "description": "List of update payload files. Sum of all file sizes may not exceed 2 GB. May be empty or null if all instruction steps are reference steps.",
+      "items": {
+        "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/_shared/4.0--azure-deviceupdate-manifest-definitions-4.0.json#/$defs/file"
+      },
+      "minItems": 0,
+      "maxItems": 10
+    },
+    "manifestVersion": {
+      "type": "string",
+      "title": "Import manifest schema version",
+      "description": "Import manifest schema version. Must be 4.0.",
+      "const": "4.0"
+    },
+    "createdDateTime": {
+      "type": "string",
+      "title": "Created date & time",
+      "description": "Date & time import manifest was created in ISO 8601 format.",
+      "examples": [
+        "2020-10-02T22:18:04.9446744Z"
+      ]
+    }
+  },
+  "required": [
+    "updateId",
+    "compatibility",
+    "instructions",
+    "manifestVersion",
+    "createdDateTime"
+  ],
+  "$defs": {
+    "instructions": {
+      "type": "object",
+      "title": "Installation instructions",
+      "description": "Update installation instructions.",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "title": "Installation steps",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/inlineStep"
+              },
+              {
+                "$ref": "#/$defs/referenceStep"
+              }
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 10
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "steps"
+      ]
+    },
+    "stepDescription": {
+      "type": "string",
+      "title": "Step description",
+      "description": "Optional instruction step description.",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "inlineStep": {
+      "type": "object",
+      "title": "Inline installation step",
+      "description": "Installation instruction step that performs code execution.",
+      "properties": {
+        "type": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/_shared/4.0--azure-deviceupdate-manifest-definitions-4.0.json#/$defs/inlineStepType"
+        },
+        "description": {
+          "$ref": "#/$defs/stepDescription"
+        },
+        "handler": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/_shared/4.0--azure-deviceupdate-manifest-definitions-4.0.json#/$defs/inlineStepHandler"
+        },
+        "files": {
+          "type": "array",
+          "title": "Step update files",
+          "description": "Names of update files that agent will pass to handler.",
+          "items": {
+            "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/_shared/4.0--azure-deviceupdate-manifest-definitions-4.0.json#/$defs/filename"
+          },
+          "minItems": 1,
+          "maxItems": 10
+        },
+        "handlerProperties": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/_shared/4.0--azure-deviceupdate-manifest-definitions-4.0.json#/$defs/inlineStepHandlerProperties"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "handler",
+        "files"
+      ]
+    },
+    "referenceStep": {
+      "type": "object",
+      "title": "Reference installation step",
+      "description": "Installation instruction step that installs another update.",
+      "properties": {
+        "type": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/_shared/4.0--azure-deviceupdate-manifest-definitions-4.0.json#/$defs/referenceStepType"
+        },
+        "description": {
+          "$ref": "#/$defs/stepDescription"
+        },
+        "updateId": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/azure-device-update-for-iot-hub-import-manifest/_shared/4.0--azure-deviceupdate-manifest-definitions-4.0.json#/$defs/updateId"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "updateId"
+      ]
+    }
+  },
+  "examples": [
+    {
+      "updateId": {
+        "provider": "Microsoft",
+        "name": "Toaster",
+        "version": "1.0"
+      },
+      "description": "Example update",
+      "compatibility": [
+        {
+          "deviceManufacturer": "Microsoft",
+          "deviceModel": "Toaster"
+        }
+      ],
+      "instructions": {
+        "steps": [
+          {
+            "description": "pre-install script",
+            "handler": "microsoft/script:1",
+            "handlerProperties": {
+              "arguments": "--pre-install"
+            },
+            "files": [
+              "configure.sh"
+            ]
+          },
+          {
+            "type": "reference",
+            "updateId": {
+              "provider": "Microsoft",
+              "name": "Sensor",
+              "version": "1.0"
+            }
+          }
+        ]
+      },
+      "files": [
+        {
+          "filename": "configure.sh",
+          "sizeInBytes": 718,
+          "hashes": {
+            "sha256": "mcB5SexMU4JOOzqmlJqKbue9qMskWY3EI/iVjJxCtAs="
+          }
+        }
+      ],
+      "manifestVersion": "4.0",
+      "createdDateTime": "2020-10-02T22:18:04.9446744Z"
+    }
+  ]
+}

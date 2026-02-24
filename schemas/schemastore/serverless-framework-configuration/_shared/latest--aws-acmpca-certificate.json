@@ -1,0 +1,687 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-acmpca-certificate.json",
+  "title": "AWSACMPCACertificateProperties",
+  "description": "A certificate issued via a private certificate authority. Source:- https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ACMPCA.html",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-acmpca-certificate.json",
+    "sourceSha256": "84049bf8a176428d9c1e254d6f80eccf57b038b37d91f21b96ce16c55de6157e",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "ApiPassthrough": {
+      "description": "These are fields to be overridden in a certificate at the time of issuance. These requires an API_Passthrough template be used or they will be ignored.",
+      "$ref": "#/$defs/ApiPassthrough"
+    },
+    "CertificateAuthorityArn": {
+      "description": "The Amazon Resource Name (ARN) for the private CA to issue the certificate.",
+      "$ref": "#/$defs/Arn"
+    },
+    "CertificateSigningRequest": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The certificate signing request (CSR) for the Certificate."
+    },
+    "SigningAlgorithm": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The name of the algorithm that will be used to sign the Certificate."
+    },
+    "TemplateArn": {
+      "description": "Specifies a custom configuration template to use when issuing a certificate. If this parameter is not provided, ACM Private CA defaults to the EndEntityCertificate/V1 template.",
+      "$ref": "#/$defs/Arn"
+    },
+    "Validity": {
+      "description": "The time before which the Certificate will be valid.",
+      "$ref": "#/$defs/Validity"
+    },
+    "ValidityNotBefore": {
+      "description": "The time after which the Certificate will be valid.",
+      "$ref": "#/$defs/Validity"
+    }
+  },
+  "typeName": "AWS::ACMPCA::Certificate",
+  "primaryIdentifier": [
+    "/properties/Arn",
+    "/properties/CertificateAuthorityArn"
+  ],
+  "sourceUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_ACMPCA.html",
+  "$defs": {
+    "ApiPassthrough": {
+      "description": "Structure that specifies fields to be overridden in a certificate at the time of issuance. These requires an API Passthrough template be used or they will be ignored.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Extensions": {
+          "$ref": "#/$defs/Extensions"
+        },
+        "Subject": {
+          "$ref": "#/$defs/Subject"
+        }
+      },
+      "title": "AWSACMPCACertificateApiPassthroughDefinition"
+    },
+    "Arn": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSACMPCACertificateArnDefinition"
+    },
+    "CertificatePolicyList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PolicyInformation"
+      },
+      "title": "AWSACMPCACertificateCertificatePolicyListDefinition"
+    },
+    "ExtendedKeyUsage": {
+      "description": "Structure that contains X.509 ExtendedKeyUsage information.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ExtendedKeyUsageType": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "ExtendedKeyUsageObjectIdentifier": {
+          "$ref": "#/$defs/CustomObjectIdentifier"
+        }
+      },
+      "title": "AWSACMPCACertificateExtendedKeyUsageDefinition"
+    },
+    "ExtendedKeyUsageList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ExtendedKeyUsage"
+      },
+      "title": "AWSACMPCACertificateExtendedKeyUsageListDefinition"
+    },
+    "Extensions": {
+      "description": "Structure that contains X.500 extensions for a Certificate.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CertificatePolicies": {
+          "$ref": "#/$defs/CertificatePolicyList"
+        },
+        "ExtendedKeyUsage": {
+          "$ref": "#/$defs/ExtendedKeyUsageList"
+        },
+        "KeyUsage": {
+          "$ref": "#/$defs/KeyUsage"
+        },
+        "SubjectAlternativeNames": {
+          "$ref": "#/$defs/GeneralNameList"
+        },
+        "CustomExtensions": {
+          "$ref": "#/$defs/CustomExtensionList"
+        }
+      },
+      "title": "AWSACMPCACertificateExtensionsDefinition"
+    },
+    "CustomExtensionList": {
+      "description": "Array of X.509 extensions for a certificate.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CustomExtension"
+      },
+      "title": "AWSACMPCACertificateCustomExtensionListDefinition"
+    },
+    "CustomExtension": {
+      "description": "Structure that contains X.509 extension information for a certificate.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Critical": {
+          "type": "boolean"
+        },
+        "ObjectIdentifier": {
+          "$ref": "#/$defs/CustomObjectIdentifier"
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "ObjectIdentifier",
+        "Value"
+      ],
+      "title": "AWSACMPCACertificateCustomExtensionDefinition"
+    },
+    "GeneralNameList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/GeneralName"
+      },
+      "title": "AWSACMPCACertificateGeneralNameListDefinition"
+    },
+    "GeneralName": {
+      "description": "Structure that contains X.509 GeneralName information. Assign one and ONLY one field.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "OtherName": {
+          "$ref": "#/$defs/OtherName"
+        },
+        "Rfc822Name": {
+          "$ref": "#/$defs/Rfc822Name"
+        },
+        "DnsName": {
+          "$ref": "#/$defs/DnsName"
+        },
+        "DirectoryName": {
+          "$ref": "#/$defs/Subject"
+        },
+        "EdiPartyName": {
+          "$ref": "#/$defs/EdiPartyName"
+        },
+        "UniformResourceIdentifier": {
+          "$ref": "#/$defs/UniformResourceIdentifier"
+        },
+        "IpAddress": {
+          "$ref": "#/$defs/IpAddress"
+        },
+        "RegisteredId": {
+          "$ref": "#/$defs/CustomObjectIdentifier"
+        }
+      },
+      "title": "AWSACMPCACertificateGeneralNameDefinition"
+    },
+    "KeyUsage": {
+      "description": "Structure that contains X.509 KeyUsage information.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "DigitalSignature": {
+          "type": "boolean",
+          "default": false
+        },
+        "NonRepudiation": {
+          "type": "boolean",
+          "default": false
+        },
+        "KeyEncipherment": {
+          "type": "boolean",
+          "default": false
+        },
+        "DataEncipherment": {
+          "type": "boolean",
+          "default": false
+        },
+        "KeyAgreement": {
+          "type": "boolean",
+          "default": false
+        },
+        "KeyCertSign": {
+          "type": "boolean",
+          "default": false
+        },
+        "CRLSign": {
+          "type": "boolean",
+          "default": false
+        },
+        "EncipherOnly": {
+          "type": "boolean",
+          "default": false
+        },
+        "DecipherOnly": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "title": "AWSACMPCACertificateKeyUsageDefinition"
+    },
+    "PolicyInformation": {
+      "description": "Structure that contains X.509 Policy information.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CertPolicyId": {
+          "$ref": "#/$defs/CustomObjectIdentifier"
+        },
+        "PolicyQualifiers": {
+          "$ref": "#/$defs/PolicyQualifierInfoList"
+        }
+      },
+      "required": [
+        "CertPolicyId"
+      ],
+      "title": "AWSACMPCACertificatePolicyInformationDefinition"
+    },
+    "PolicyQualifierInfo": {
+      "description": "Structure that contains X.509 Policy qualifier information.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "PolicyQualifierId": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Qualifier": {
+          "$ref": "#/$defs/Qualifier"
+        }
+      },
+      "required": [
+        "PolicyQualifierId",
+        "Qualifier"
+      ],
+      "title": "AWSACMPCACertificatePolicyQualifierInfoDefinition"
+    },
+    "PolicyQualifierInfoList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PolicyQualifierInfo"
+      },
+      "title": "AWSACMPCACertificatePolicyQualifierInfoListDefinition"
+    },
+    "Qualifier": {
+      "description": "Structure that contains a X.509 policy qualifier.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CpsUri": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "CpsUri"
+      ],
+      "title": "AWSACMPCACertificateQualifierDefinition"
+    },
+    "Subject": {
+      "description": "Structure that contains X.500 distinguished name information.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Country": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Organization": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "OrganizationalUnit": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "DistinguishedNameQualifier": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "State": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "CommonName": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "SerialNumber": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Locality": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Title": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Surname": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "GivenName": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Initials": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Pseudonym": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "GenerationQualifier": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "CustomAttributes": {
+          "$ref": "#/$defs/CustomAttributeList"
+        }
+      },
+      "title": "AWSACMPCACertificateSubjectDefinition"
+    },
+    "CustomAttributeList": {
+      "description": "Array of X.500 attribute type and value. CustomAttributes cannot be used along with pre-defined attributes.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CustomAttribute"
+      },
+      "title": "AWSACMPCACertificateCustomAttributeListDefinition"
+    },
+    "CustomAttribute": {
+      "description": "Structure that contains X.500 attribute type and value.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ObjectIdentifier": {
+          "$ref": "#/$defs/CustomObjectIdentifier"
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "ObjectIdentifier",
+        "Value"
+      ],
+      "title": "AWSACMPCACertificateCustomAttributeDefinition"
+    },
+    "Validity": {
+      "description": "Validity for a certificate.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Value": {
+          "type": "number"
+        },
+        "Type": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "Value",
+        "Type"
+      ],
+      "title": "AWSACMPCACertificateValidityDefinition"
+    },
+    "CustomObjectIdentifier": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "String that contains X.509 ObjectIdentifier information.",
+      "title": "AWSACMPCACertificateCustomObjectIdentifierDefinition"
+    },
+    "OtherName": {
+      "description": "Structure that contains X.509 OtherName information.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "TypeId": {
+          "$ref": "#/$defs/CustomObjectIdentifier"
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "TypeId",
+        "Value"
+      ],
+      "title": "AWSACMPCACertificateOtherNameDefinition"
+    },
+    "Rfc822Name": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "String that contains X.509 Rfc822Name information.",
+      "title": "AWSACMPCACertificateRfc822NameDefinition"
+    },
+    "DnsName": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "String that contains X.509 DnsName information.",
+      "title": "AWSACMPCACertificateDnsNameDefinition"
+    },
+    "EdiPartyName": {
+      "description": "Structure that contains X.509 EdiPartyName information.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "PartyName": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "NameAssigner": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        }
+      },
+      "required": [
+        "PartyName",
+        "NameAssigner"
+      ],
+      "title": "AWSACMPCACertificateEdiPartyNameDefinition"
+    },
+    "UniformResourceIdentifier": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "String that contains X.509 UniformResourceIdentifier information.",
+      "title": "AWSACMPCACertificateUniformResourceIdentifierDefinition"
+    },
+    "IpAddress": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "String that contains X.509 IpAddress information.",
+      "title": "AWSACMPCACertificateIpAddressDefinition"
+    }
+  },
+  "writeOnlyProperties": [
+    "/properties/ApiPassthrough",
+    "/properties/CertificateSigningRequest"
+  ],
+  "additionalProperties": false,
+  "required": [
+    "CertificateAuthorityArn",
+    "CertificateSigningRequest",
+    "SigningAlgorithm",
+    "Validity"
+  ],
+  "readOnlyProperties": [
+    "/properties/Arn",
+    "/properties/Certificate"
+  ],
+  "createOnlyProperties": [
+    "/properties/ApiPassthrough",
+    "/properties/CertificateAuthorityArn",
+    "/properties/CertificateSigningRequest",
+    "/properties/SigningAlgorithm",
+    "/properties/TemplateArn",
+    "/properties/Validity",
+    "/properties/ValidityNotBefore"
+  ]
+}

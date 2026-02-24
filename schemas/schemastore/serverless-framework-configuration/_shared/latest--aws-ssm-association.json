@@ -1,0 +1,331 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-ssm-association.json",
+  "title": "AWSSSMAssociationProperties",
+  "description": "The AWS::SSM::Association resource associates an SSM document in AWS Systems Manager with EC2 instances that contain a configuration agent to process the document.. Source:- https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-ssm",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-ssm-association.json",
+    "sourceSha256": "304845b4f66c3aabf64855d2d98899b64f6c48d872f8da7875b7a4dffb60f529",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "AssociationName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-.]{3,128}$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The name of the association."
+    },
+    "DocumentVersion": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The version of the SSM document to associate with the target."
+    },
+    "InstanceId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)",
+          "examples": [
+            "i-0e60836d21cf313c4",
+            "mi-0532c22e49636ee13"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The ID of the instance that the SSM document is associated with."
+    },
+    "Name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-.:/]{3,200}$",
+          "examples": [
+            "AWS-GatherSoftwareInventory",
+            "MyCustomSSMDocument"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The name of the SSM document."
+    },
+    "Parameters": {
+      "description": "Parameter values that the SSM document uses at runtime.",
+      "type": "object",
+      "patternProperties": {
+        ".*{1,255}": {
+          "$ref": "#/$defs/ParameterValues"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ScheduleExpression": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "examples": [
+            "cron(0 0 */1 * * ? *)",
+            "cron(0 16 ? * TUE *)",
+            "rate(30 minutes)",
+            "rate(7 days)"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "A Cron or Rate expression that specifies when the association is applied to the target."
+    },
+    "Targets": {
+      "description": "The targets that the SSM document sends commands to.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Target"
+      },
+      "minItems": 0,
+      "maxItems": 5
+    },
+    "OutputLocation": {
+      "$ref": "#/$defs/InstanceAssociationOutputLocation"
+    },
+    "AutomationTargetParameterName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "MaxErrors": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^([1-9][0-9]{0,6}|[0]|[1-9][0-9]%|[0-9]%|100%)$",
+          "examples": [
+            "1%",
+            "10%",
+            "50%",
+            "1"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "MaxConcurrency": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^([1-9][0-9]{0,6}|[1-9][0-9]%|[1-9]%|100%)$",
+          "examples": [
+            "1%",
+            "10%",
+            "50%",
+            "1"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "ComplianceSeverity": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "CRITICAL",
+            "HIGH",
+            "MEDIUM",
+            "LOW",
+            "UNSPECIFIED"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "SyncCompliance": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "AUTO",
+            "MANUAL"
+          ]
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ]
+    },
+    "WaitForSuccessTimeoutSeconds": {
+      "type": "integer",
+      "minimum": 15,
+      "maximum": 172800
+    },
+    "ApplyOnlyAtCronInterval": {
+      "type": "boolean"
+    },
+    "CalendarNames": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        [
+          "calendar1",
+          "calendar2"
+        ],
+        [
+          "calendar3"
+        ]
+      ]
+    },
+    "ScheduleOffset": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 6
+    }
+  },
+  "typeName": "AWS::SSM::Association",
+  "additionalProperties": false,
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-ssm",
+  "$defs": {
+    "Target": {
+      "type": "object",
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]{1,128}$|resource-groups:Name"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ]
+        },
+        "Values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Key",
+        "Values"
+      ],
+      "title": "AWSSSMAssociationTargetDefinition"
+    },
+    "ParameterValues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "AWSSSMAssociationParameterValuesDefinition"
+    },
+    "S3Region": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 20
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSSSMAssociationS3RegionDefinition"
+    },
+    "S3BucketName": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 63
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSSSMAssociationS3BucketNameDefinition"
+    },
+    "S3KeyPrefix": {
+      "oneOf": [
+        {
+          "type": "string",
+          "maxLength": 1024
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "title": "AWSSSMAssociationS3KeyPrefixDefinition"
+    },
+    "S3OutputLocation": {
+      "type": "object",
+      "properties": {
+        "OutputS3Region": {
+          "$ref": "#/$defs/S3Region"
+        },
+        "OutputS3BucketName": {
+          "$ref": "#/$defs/S3BucketName"
+        },
+        "OutputS3KeyPrefix": {
+          "$ref": "#/$defs/S3KeyPrefix"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSSSMAssociationS3OutputLocationDefinition"
+    },
+    "InstanceAssociationOutputLocation": {
+      "type": "object",
+      "properties": {
+        "S3Location": {
+          "$ref": "#/$defs/S3OutputLocation"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSSSMAssociationInstanceAssociationOutputLocationDefinition"
+    }
+  },
+  "primaryIdentifier": [
+    "/properties/AssociationId"
+  ],
+  "required": [
+    "Name"
+  ],
+  "readOnlyProperties": [
+    "/properties/AssociationId"
+  ]
+}

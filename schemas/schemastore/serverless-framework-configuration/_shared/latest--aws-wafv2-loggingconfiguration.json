@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-wafv2-loggingconfiguration.json",
+  "title": "AWSWAFv2LoggingConfigurationProperties",
+  "description": "A WAFv2 Logging Configuration Resource Provider. Source:- https://github.com/advaj/aws-cloudformation-resource-providers-wafv2.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-wafv2-loggingconfiguration.json",
+    "sourceSha256": "900079bae79e69049e72afe465a4f9985b36d506bc6eaa57f50bb3256c3d2505",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "ResourceArn": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The Amazon Resource Name (ARN) of the web ACL that you want to associate with LogDestinationConfigs."
+    },
+    "LogDestinationConfigs": {
+      "description": "The Amazon Resource Names (ARNs) of the logging destinations that you want to associate with the web ACL.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "RedactedFields": {
+      "description": "The parts of the request that you want to keep out of the logs. For example, if you redact the HEADER field, the HEADER field in the firehose will be xxx.",
+      "type": "array",
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/FieldToMatch"
+      }
+    },
+    "LoggingFilter": {
+      "description": "Filtering that specifies which web requests are kept in the logs and which are dropped. You can filter on the rule action and on the web request labels that were applied by matching rules during web ACL evaluation.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "DefaultBehavior": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "KEEP",
+                "DROP"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Default handling for logs that don't match any of the specified filtering conditions."
+        },
+        "Filters": {
+          "description": "The filters that you want to apply to the logs.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/Filter"
+          }
+        }
+      },
+      "required": [
+        "DefaultBehavior",
+        "Filters"
+      ]
+    }
+  },
+  "typeName": "AWS::WAFv2::LoggingConfiguration",
+  "primaryIdentifier": [
+    "/properties/ResourceArn"
+  ],
+  "sourceUrl": "https://github.com/advaj/aws-cloudformation-resource-providers-wafv2.git",
+  "$defs": {
+    "Filter": {
+      "type": "object",
+      "properties": {
+        "Behavior": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "KEEP",
+                "DROP"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "How to handle logs that satisfy the filter's conditions and requirement. "
+        },
+        "Conditions": {
+          "description": "Match conditions for the filter.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/Condition"
+          }
+        },
+        "Requirement": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "MEETS_ALL",
+                "MEETS_ANY"
+              ]
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Logic to apply to the filtering conditions. You can specify that, in order to satisfy the filter, a log must match all conditions or must match at least one condition."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "Behavior",
+        "Conditions",
+        "Requirement"
+      ],
+      "title": "AWSWAFv2LoggingConfigurationFilterDefinition"
+    },
+    "Condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ActionCondition": {
+          "description": "A single action condition.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "Action": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "ALLOW",
+                    "BLOCK",
+                    "COUNT",
+                    "CAPTCHA",
+                    "CHALLENGE",
+                    "EXCLUDED_AS_COUNT"
+                  ]
+                },
+                {
+                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+                }
+              ],
+              "description": "Logic to apply to the filtering conditions. You can specify that, in order to satisfy the filter, a log must match all conditions or must match at least one condition."
+            }
+          },
+          "required": [
+            "Action"
+          ]
+        },
+        "LabelNameCondition": {
+          "description": "A single label name condition.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "LabelName": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+                }
+              ],
+              "description": "The label name that a log record must contain in order to meet the condition. This must be a fully qualified label name. Fully qualified labels have a prefix, optional namespaces, and label name. The prefix identifies the rule group or web ACL context of the rule that added the label. "
+            }
+          },
+          "required": [
+            "LabelName"
+          ]
+        }
+      },
+      "title": "AWSWAFv2LoggingConfigurationConditionDefinition"
+    },
+    "FieldToMatch": {
+      "description": "A key-value pair to associate with a resource.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "JsonBody": {
+          "type": "object",
+          "description": "Inspect the request body as JSON. The request body immediately follows the request headers. This is the part of a request that contains any additional data that you want to send to your web server as the HTTP request body, such as data from a form. ",
+          "additionalProperties": false,
+          "properties": {
+            "InvalidFallbackBehavior": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "MATCH",
+                    "NO_MATCH",
+                    "EVALUATE_AS_STRING"
+                  ]
+                },
+                {
+                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+                }
+              ],
+              "description": "What AWS WAF should do if it fails to completely parse the JSON body."
+            },
+            "MatchPattern": {
+              "description": "The patterns to look for in the JSON body. AWS WAF inspects the results of these pattern matches against the rule inspection criteria. ",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "All": {
+                  "description": "Match all of the elements. See also MatchScope in JsonBody. You must specify either this setting or the IncludedPaths setting, but not both.",
+                  "type": "object"
+                },
+                "IncludedPaths": {
+                  "description": "Match only the specified include paths. See also MatchScope in JsonBody.",
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[\\/]+([^~]*(~[01])*)*{1,512}$"
+                  }
+                }
+              }
+            },
+            "MatchScope": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "ALL",
+                    "KEY",
+                    "VALUE"
+                  ]
+                },
+                {
+                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+                }
+              ],
+              "description": "The parts of the JSON to match against using the MatchPattern. If you specify All, AWS WAF matches against keys and values. "
+            }
+          },
+          "required": [
+            "MatchPattern",
+            "MatchScope"
+          ]
+        },
+        "Method": {
+          "description": "Inspect the HTTP method. The method indicates the type of operation that the request is asking the origin to perform. ",
+          "type": "object"
+        },
+        "QueryString": {
+          "type": "object",
+          "description": "Inspect the query string. This is the part of a URL that appears after a ? character, if any. "
+        },
+        "SingleHeader": {
+          "description": "Inspect a single header. Provide the name of the header to inspect, for example, User-Agent or Referer. This setting isn't case sensitive.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "Name": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+                }
+              ],
+              "description": "The name of the query header to inspect."
+            }
+          },
+          "required": [
+            "Name"
+          ]
+        },
+        "UriPath": {
+          "type": "object",
+          "description": "Inspect the request URI path. This is the part of a web request that identifies a resource, for example, /images/daily-ad.jpg. "
+        }
+      },
+      "title": "AWSWAFv2LoggingConfigurationFieldToMatchDefinition"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/ManagedByFirewallManager"
+  ],
+  "additionalProperties": false,
+  "required": [
+    "ResourceArn",
+    "LogDestinationConfigs"
+  ],
+  "createOnlyProperties": [
+    "/properties/ResourceArn"
+  ]
+}

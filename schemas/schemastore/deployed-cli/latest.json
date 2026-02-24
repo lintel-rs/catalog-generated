@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/deployed-cli/latest.json",
+  "title": "deployed cli",
+  "description": "JSON schema for the deployed cli config file. \n\nSee also: https://hyhello.github.io/deployed\n\n",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/deployed.json",
+    "sourceSha256": "3c192cb2ad8a5b9984002f02f1db2141665c8c819a2f24abb2f459f398e6c947"
+  },
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "description": "JSON Schema for deployed.",
+      "type": "string",
+      "minLength": 1
+    },
+    "projectName": {
+      "description": "Name of project to be released.",
+      "type": "string",
+      "minLength": 1
+    },
+    "cluster": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Alias collection of environment to be deployed.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "privateKey": {
+      "$ref": "#/$defs/privateKey"
+    },
+    "passphrase": {
+      "$ref": "#/$defs/passphrase"
+    },
+    "script": {
+      "$ref": "#/$defs/script"
+    },
+    "backupName": {
+      "$ref": "#/$defs/backupName"
+    },
+    "removeLocalDir": {
+      "$ref": "#/$defs/removeLocalDir"
+    },
+    "clearRemoteDir": {
+      "$ref": "#/$defs/clearRemoteDir"
+    },
+    "modeList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": [
+          "mode",
+          "name",
+          "host",
+          "port",
+          "username",
+          "localPath",
+          "remotePath"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "description": "Deployment environment alias.",
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "description": "Deployment environment name.",
+            "type": "string",
+            "minLength": 1
+          },
+          "host": {
+            "description": "Hostname or IP address of the server.",
+            "type": "string",
+            "minLength": 1
+          },
+          "port": {
+            "description": "Port number of the server.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "username": {
+            "description": "Username for authentication.",
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
+            "description": "Password for password-based user authentication.",
+            "type": "string",
+            "minLength": 1
+          },
+          "remotePath": {
+            "description": "Deployment path.",
+            "type": "string",
+            "minLength": 2
+          },
+          "localPath": {
+            "description": "Local upload path.",
+            "type": "string",
+            "minLength": 1
+          },
+          "backupPath": {
+            "description": "Backup path.",
+            "type": "string",
+            "minLength": 2
+          },
+          "privateKey": {
+            "$ref": "#/$defs/privateKey"
+          },
+          "passphrase": {
+            "$ref": "#/$defs/passphrase"
+          },
+          "script": {
+            "$ref": "#/$defs/script"
+          },
+          "backupName": {
+            "$ref": "#/$defs/backupName"
+          },
+          "removeLocalDir": {
+            "$ref": "#/$defs/removeLocalDir"
+          },
+          "clearRemoteDir": {
+            "$ref": "#/$defs/clearRemoteDir"
+          }
+        }
+      }
+    },
+    "plugin": {
+      "description": "List of plugins to load and use.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": [
+          "string",
+          "array"
+        ],
+        "prefixItems": [
+          {
+            "description": "The name of the plugin.",
+            "type": "string"
+          },
+          {
+            "description": "The options of the plugin.",
+            "type": "object"
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "projectName",
+    "modeList"
+  ],
+  "$defs": {
+    "privateKey": {
+      "description": "Buffer or string that contains a private key for either key-based or hostbased user authentication (OpenSSH format).",
+      "type": [
+        "string",
+        "object"
+      ]
+    },
+    "passphrase": {
+      "description": "For an encrypted privateKey, this is the passphrase used to decrypt it.",
+      "type": "string",
+      "minLength": 1
+    },
+    "script": {
+      "description": "Execute script commands.",
+      "type": "string",
+      "minLength": 1
+    },
+    "backupName": {
+      "description": "Old version backup name.",
+      "type": "string",
+      "minLength": 1
+    },
+    "removeLocalDir": {
+      "description": "Delete localpath after deployment.",
+      "type": "boolean"
+    },
+    "clearRemoteDir": {
+      "description": "Empty the old version before deploying the new version.",
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

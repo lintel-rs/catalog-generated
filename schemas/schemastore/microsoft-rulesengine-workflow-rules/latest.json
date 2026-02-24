@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/microsoft-rulesengine-workflow-rules/latest.json",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/microsoft/RulesEngine/main/schema/workflow-schema.json",
+    "sourceSha256": "b52992a9a0ecb5301dfecd3eb7f596a0378f5dbad166a1d5194040a85e672e73"
+  },
+  "type": "object",
+  "properties": {
+    "WorkflowName": {
+      "type": "string"
+    },
+    "WorkflowsToInject": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "GlobalParams": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ScopedParam"
+      }
+    },
+    "Rules": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LeafRule"
+          },
+          {
+            "$ref": "#/$defs/Rule"
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "WorkflowName",
+    "Rules"
+  ],
+  "$defs": {
+    "ScopedParam": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Expression": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name",
+        "Expression"
+      ]
+    },
+    "Rule": {
+      "title": "Rule",
+      "properties": {
+        "RuleName": {
+          "type": "string"
+        },
+        "LocalParams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ScopedParam"
+          }
+        },
+        "Operator": {
+          "enum": [
+            "And",
+            "AndAlso",
+            "Or",
+            "OrElse"
+          ]
+        },
+        "ErrorMessage": {
+          "type": "string"
+        },
+        "SuccessEvent": {
+          "type": "string"
+        },
+        "Rules": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/LeafRule"
+              },
+              {
+                "$ref": "#/$defs/Rule"
+              }
+            ]
+          }
+        },
+        "Properties": {
+          "type": "object"
+        },
+        "Actions": {
+          "$ref": "#/$defs/RuleActions"
+        },
+        "Enabled": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": [
+        "RuleName",
+        "Operator",
+        "Rules"
+      ],
+      "type": "object"
+    },
+    "LeafRule": {
+      "title": "Leaf Rule",
+      "type": "object",
+      "required": [
+        "RuleName",
+        "Expression"
+      ],
+      "properties": {
+        "RuleName": {
+          "type": "string"
+        },
+        "LocalParams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ScopedParam"
+          }
+        },
+        "Expression": {
+          "type": "string"
+        },
+        "RuleExpressionType": {
+          "enum": [
+            "LambdaExpression"
+          ]
+        },
+        "ErrorMessage": {
+          "type": "string"
+        },
+        "SuccessEvent": {
+          "type": "string"
+        },
+        "Properties": {
+          "type": "object"
+        },
+        "Actions": {
+          "$ref": "#/$defs/RuleActions"
+        },
+        "Enabled": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "ActionInfo": {
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Context": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "Name"
+      ]
+    },
+    "RuleActions": {
+      "properties": {
+        "OnSuccess": {
+          "$ref": "#/$defs/ActionInfo"
+        },
+        "OnFailure": {
+          "$ref": "#/$defs/ActionInfo"
+        }
+      }
+    }
+  }
+}

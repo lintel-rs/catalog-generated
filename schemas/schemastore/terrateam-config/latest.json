@@ -1,0 +1,1916 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/terrateam-config/latest.json",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/terrateamio/terrateam/refs/heads/main/api_schemas/terrat/config-schema.json",
+    "sourceSha256": "186e5bf8c11406879a932cb567cdf68c1b136cd527e24067e47f4090ea3e3998"
+  },
+  "$ref": "#/$defs/version-1",
+  "$defs": {
+    "access-control": {
+      "additionalProperties": false,
+      "properties": {
+        "apply_require_all_dirspace_access": {
+          "default": true,
+          "type": "boolean"
+        },
+        "ci_config_update": {
+          "$ref": "#/$defs/access-control-match-list"
+        },
+        "enabled": {
+          "default": true,
+          "type": "boolean"
+        },
+        "files": {
+          "additionalProperties": {
+            "$ref": "#/$defs/access-control-match-list"
+          },
+          "type": "object"
+        },
+        "plan_require_all_dirspace_access": {
+          "default": false,
+          "type": "boolean"
+        },
+        "policies": {
+          "items": {
+            "$ref": "#/$defs/access-control-policy"
+          },
+          "type": "array"
+        },
+        "terrateam_config_update": {
+          "$ref": "#/$defs/access-control-match-list"
+        },
+        "unlock": {
+          "$ref": "#/$defs/access-control-match-list"
+        }
+      },
+      "type": "object"
+    },
+    "access-control-match-list": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "access-control-policy": {
+      "additionalProperties": false,
+      "properties": {
+        "apply": {
+          "$ref": "#/$defs/access-control-match-list"
+        },
+        "apply_autoapprove": {
+          "$ref": "#/$defs/access-control-match-list"
+        },
+        "apply_force": {
+          "$ref": "#/$defs/access-control-match-list"
+        },
+        "apply_with_superapproval": {
+          "$ref": "#/$defs/access-control-match-list"
+        },
+        "plan": {
+          "$ref": "#/$defs/access-control-match-list"
+        },
+        "superapproval": {
+          "$ref": "#/$defs/access-control-match-list"
+        },
+        "tag_query": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_query"
+      ],
+      "type": "object"
+    },
+    "apply-requirements": {
+      "additionalProperties": false,
+      "properties": {
+        "checks": {
+          "$ref": "#/$defs/apply-requirements-checks"
+        },
+        "create_completed_apply_check_on_noop": {
+          "default": false,
+          "type": "boolean"
+        },
+        "create_pending_apply_check": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "apply-requirements-checks": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/apply-requirements-checks-1"
+        },
+        {
+          "$ref": "#/$defs/apply-requirements-checks-2"
+        }
+      ]
+    },
+    "apply-requirements-checks-1": {
+      "additionalProperties": false,
+      "properties": {
+        "approved": {
+          "$ref": "#/$defs/apply-requirements-checks-approved"
+        },
+        "merge_conflicts": {
+          "$ref": "#/$defs/apply-requirements-checks-merge-conflicts"
+        },
+        "status_checks": {
+          "$ref": "#/$defs/apply-requirements-checks-status-checks"
+        }
+      },
+      "type": "object"
+    },
+    "apply-requirements-checks-2": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "apply_after_merge": {
+            "$ref": "#/$defs/apply-requirements-checks-apply-after-merge"
+          },
+          "approved": {
+            "$ref": "#/$defs/apply-requirements-checks-approved-2"
+          },
+          "merge_conflicts": {
+            "$ref": "#/$defs/apply-requirements-checks-merge-conflicts"
+          },
+          "require_ready_for_review_pr": {
+            "default": true,
+            "type": "boolean"
+          },
+          "status_checks": {
+            "$ref": "#/$defs/apply-requirements-checks-status-checks"
+          },
+          "tag_query": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tag_query"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "apply-requirements-checks-apply-after-merge": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "apply-requirements-checks-approved": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/apply-requirements-checks-approved-1"
+        },
+        {
+          "$ref": "#/$defs/apply-requirements-checks-approved-2"
+        }
+      ]
+    },
+    "apply-requirements-checks-approved-1": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "default": 1,
+          "type": "integer"
+        },
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "apply-requirements-checks-approved-2": {
+      "additionalProperties": false,
+      "properties": {
+        "all_of": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "any_of": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "any_of_count": {
+          "default": 1,
+          "type": "integer"
+        },
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "require_completed_reviews": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "apply-requirements-checks-merge-conflicts": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "apply-requirements-checks-status-checks": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": true,
+          "type": "boolean"
+        },
+        "ignore_matching": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "automerge": {
+      "additionalProperties": false,
+      "properties": {
+        "delete_branch": {
+          "default": false,
+          "type": "boolean"
+        },
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "merge_strategy": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "merge",
+            "rebase",
+            "squash"
+          ],
+          "type": "string"
+        },
+        "require_explicit_apply": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "batch-runs": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "max_workspaces_per_batch": {
+          "default": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "config-builder": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "script": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "custom-tags": {
+      "additionalProperties": false,
+      "properties": {
+        "branch": {
+          "$ref": "#/$defs/custom-tags-branch"
+        },
+        "dest_branch": {
+          "$ref": "#/$defs/custom-tags-branch"
+        }
+      },
+      "type": "object"
+    },
+    "custom-tags-branch": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "properties": {},
+      "type": "object"
+    },
+    "default-branch-overrides": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "destination-branch-name": {
+      "type": "string"
+    },
+    "destination-branch-object": {
+      "additionalProperties": false,
+      "properties": {
+        "branch": {
+          "type": "string"
+        },
+        "source_branches": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "branch"
+      ],
+      "type": "object"
+    },
+    "dir": {
+      "additionalProperties": false,
+      "properties": {
+        "create_and_select_workspace": {
+          "default": true,
+          "type": "boolean"
+        },
+        "create_if_missing": {
+          "default": false,
+          "type": "boolean"
+        },
+        "lock_branch_target": {
+          "enum": [
+            "all",
+            "dest_branch"
+          ],
+          "type": "string"
+        },
+        "stacks": {
+          "$ref": "#/$defs/workspaces"
+        },
+        "tags": {
+          "$ref": "#/$defs/tags"
+        },
+        "when_modified": {
+          "$ref": "#/$defs/when-modified-nullable"
+        },
+        "workspaces": {
+          "$ref": "#/$defs/workspaces"
+        }
+      },
+      "type": "object"
+    },
+    "drift-1": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "reconcile": {
+          "default": false,
+          "type": "boolean"
+        },
+        "schedule": {
+          "enum": [
+            "hourly",
+            "daily",
+            "weekly",
+            "monthly"
+          ],
+          "type": "string"
+        },
+        "tag_query": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule"
+      ],
+      "type": "object"
+    },
+    "drift-2": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "schedules": {
+          "additionalProperties": {
+            "$ref": "#/$defs/drift-schedule"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "schedules"
+      ],
+      "type": "object"
+    },
+    "drift-schedule": {
+      "additionalProperties": false,
+      "properties": {
+        "reconcile": {
+          "default": false,
+          "type": "boolean"
+        },
+        "schedule": {
+          "enum": [
+            "hourly",
+            "daily",
+            "weekly",
+            "monthly"
+          ],
+          "type": "string"
+        },
+        "tag_query": {
+          "type": "string"
+        },
+        "window": {
+          "additionalProperties": false,
+          "properties": {
+            "end": {
+              "type": "string"
+            },
+            "start": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "end",
+            "start"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "schedule",
+        "tag_query"
+      ],
+      "type": "object"
+    },
+    "engine": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/engine-cdktf"
+        },
+        {
+          "$ref": "#/$defs/engine-opentofu"
+        },
+        {
+          "$ref": "#/$defs/engine-terraform"
+        },
+        {
+          "$ref": "#/$defs/engine-terragrunt"
+        },
+        {
+          "$ref": "#/$defs/engine-pulumi"
+        },
+        {
+          "$ref": "#/$defs/engine-fly"
+        },
+        {
+          "$ref": "#/$defs/engine-custom"
+        },
+        {
+          "$ref": "#/$defs/engine-other"
+        }
+      ]
+    },
+    "engine-cdktf": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "cdktf",
+          "type": "string"
+        },
+        "outputs": {
+          "$ref": "#/$defs/engine-tf-outputs"
+        },
+        "override_tf_cmd": {
+          "type": "string"
+        },
+        "tf_cmd": {
+          "type": "string"
+        },
+        "tf_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "engine-custom": {
+      "additionalProperties": false,
+      "properties": {
+        "apply": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "diff": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "init": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "name": {
+          "const": "custom",
+          "type": "string"
+        },
+        "outputs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "plan": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "unsafe_apply": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "engine-fly": {
+      "additionalProperties": false,
+      "properties": {
+        "config_file": {
+          "type": "string"
+        },
+        "name": {
+          "const": "fly",
+          "type": "string"
+        }
+      },
+      "required": [
+        "config_file",
+        "name"
+      ],
+      "type": "object"
+    },
+    "engine-opentofu": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "tofu",
+          "type": "string"
+        },
+        "outputs": {
+          "$ref": "#/$defs/engine-tf-outputs"
+        },
+        "override_tf_cmd": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "engine-other": {
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        ]
+      },
+      "properties": {},
+      "type": "object"
+    },
+    "engine-pulumi": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "pulumi",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "engine-terraform": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "terraform",
+          "type": "string"
+        },
+        "outputs": {
+          "$ref": "#/$defs/engine-tf-outputs"
+        },
+        "override_tf_cmd": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "engine-terragrunt": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "terragrunt",
+          "type": "string"
+        },
+        "outputs": {
+          "$ref": "#/$defs/engine-tf-outputs"
+        },
+        "override_tf_cmd": {
+          "type": "string"
+        },
+        "tf_cmd": {
+          "type": "string"
+        },
+        "tf_version": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "engine-tf-outputs": {
+      "additionalProperties": false,
+      "properties": {
+        "collect": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "gate": {
+      "additionalProperties": false,
+      "properties": {
+        "all_of": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "any_of": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "any_of_count": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "hook": {
+      "additionalProperties": false,
+      "properties": {
+        "post": {
+          "$ref": "#/$defs/hook-list"
+        },
+        "pre": {
+          "$ref": "#/$defs/hook-list"
+        }
+      },
+      "type": "object"
+    },
+    "hook-list": {
+      "items": {
+        "$ref": "#/$defs/hook-op"
+      },
+      "type": "array"
+    },
+    "hook-op": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/hook-op-drift-create-issue"
+        },
+        {
+          "$ref": "#/$defs/hook-op-env-exec"
+        },
+        {
+          "$ref": "#/$defs/hook-op-env-source"
+        },
+        {
+          "$ref": "#/$defs/hook-op-oidc"
+        },
+        {
+          "$ref": "#/$defs/hook-op-run"
+        },
+        {
+          "$ref": "#/$defs/hook-op-slack"
+        },
+        {
+          "$ref": "#/$defs/hook-op-gates"
+        }
+      ]
+    },
+    "hook-op-drift-create-issue": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "drift_create_issue",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "hook-op-env-exec": {
+      "additionalProperties": false,
+      "properties": {
+        "cmd": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "method": {
+          "const": "exec",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sensitive": {
+          "default": false,
+          "type": "boolean"
+        },
+        "trim_trailing_newlines": {
+          "default": true,
+          "type": "boolean"
+        },
+        "type": {
+          "const": "env",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "cmd"
+      ],
+      "type": "object"
+    },
+    "hook-op-env-source": {
+      "additionalProperties": false,
+      "properties": {
+        "cmd": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "method": {
+          "const": "source",
+          "type": "string"
+        },
+        "sensitive": {
+          "default": false,
+          "type": "boolean"
+        },
+        "type": {
+          "const": "env",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cmd",
+        "method",
+        "type"
+      ],
+      "type": "object"
+    },
+    "hook-op-gates": {
+      "additionalProperties": false,
+      "properties": {
+        "cmd": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "env": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "run_on": {
+          "$ref": "#/$defs/run-on"
+        },
+        "type": {
+          "const": "gates",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cmd",
+        "type"
+      ],
+      "type": "object"
+    },
+    "hook-op-oidc": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/hook-op-oidc-aws"
+        },
+        {
+          "$ref": "#/$defs/hook-op-oidc-gcp"
+        }
+      ]
+    },
+    "hook-op-oidc-aws": {
+      "additionalProperties": false,
+      "properties": {
+        "assume_role_arn": {
+          "type": "string"
+        },
+        "assume_role_enabled": {
+          "default": true,
+          "type": "boolean"
+        },
+        "audience": {
+          "type": "string"
+        },
+        "duration": {
+          "default": 3600,
+          "type": "integer"
+        },
+        "provider": {
+          "const": "aws",
+          "type": "string"
+        },
+        "region": {
+          "default": "us-east-1",
+          "type": "string"
+        },
+        "role_arn": {
+          "type": "string"
+        },
+        "session_name": {
+          "default": "terrateam",
+          "type": "string"
+        },
+        "type": {
+          "const": "oidc",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role_arn",
+        "type"
+      ],
+      "type": "object"
+    },
+    "hook-op-oidc-gcp": {
+      "additionalProperties": false,
+      "properties": {
+        "access_token_lifetime": {
+          "default": 3600,
+          "type": "integer"
+        },
+        "access_token_subject": {
+          "type": "string"
+        },
+        "audience": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "provider": {
+          "const": "gcp",
+          "type": "string"
+        },
+        "service_account": {
+          "type": "string"
+        },
+        "type": {
+          "const": "oidc",
+          "type": "string"
+        },
+        "workload_identity_provider": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "service_account",
+        "type",
+        "workload_identity_provider"
+      ]
+    },
+    "hook-op-run": {
+      "additionalProperties": false,
+      "properties": {
+        "capture_output": {
+          "default": false,
+          "type": "boolean"
+        },
+        "cmd": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "env": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "ignore_errors": {
+          "default": false,
+          "type": "boolean"
+        },
+        "on_error": {
+          "items": {},
+          "type": "array"
+        },
+        "run_on": {
+          "$ref": "#/$defs/run-on"
+        },
+        "type": {
+          "const": "run",
+          "type": "string"
+        },
+        "visible_on": {
+          "$ref": "#/$defs/visible-on"
+        }
+      },
+      "required": [
+        "type",
+        "cmd"
+      ],
+      "type": "object"
+    },
+    "hook-op-slack": {
+      "additionalProperties": false,
+      "properties": {
+        "msg": {
+          "type": "string"
+        },
+        "run_on": {
+          "$ref": "#/$defs/run-on"
+        },
+        "type": {
+          "const": "slack",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "msg"
+      ],
+      "type": "object"
+    },
+    "integrations": {
+      "additionalProperties": false,
+      "properties": {
+        "resourcely": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "default": false,
+              "type": "boolean"
+            },
+            "extra_args": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "notification-policy": {
+      "additionalProperties": false,
+      "properties": {
+        "comment_strategy": {
+          "default": "minimize",
+          "enum": [
+            "append",
+            "delete",
+            "minimize"
+          ],
+          "type": "string"
+        },
+        "tag_query": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_query"
+      ],
+      "type": "object"
+    },
+    "notifications": {
+      "additionalProperties": false,
+      "properties": {
+        "policies": {
+          "items": {
+            "$ref": "#/$defs/notification-policy"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "permission": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "permissions"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "retry": {
+      "additionalProperties": false,
+      "properties": {
+        "backoff": {
+          "default": 1.5,
+          "type": "number"
+        },
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "initial_sleep": {
+          "default": 5,
+          "type": "integer"
+        },
+        "tries": {
+          "default": 3,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "run-on": {
+      "enum": [
+        "failure",
+        "always",
+        "success"
+      ],
+      "type": "string"
+    },
+    "runs-on": {},
+    "stack-config": {
+      "additionalProperties": false,
+      "properties": {
+        "rules": {
+          "$ref": "#/$defs/stack-rules"
+        },
+        "tag_query": {
+          "type": "string"
+        },
+        "variables": {
+          "$ref": "#/$defs/stack-variables"
+        }
+      },
+      "required": [
+        "tag_query"
+      ],
+      "type": "object"
+    },
+    "stack-nested-config": {
+      "additionalProperties": false,
+      "properties": {
+        "rules": {
+          "$ref": "#/$defs/stack-rules"
+        },
+        "stacks": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "variables": {
+          "$ref": "#/$defs/stack-variables"
+        }
+      },
+      "required": [
+        "stacks"
+      ],
+      "type": "object"
+    },
+    "stack-rules": {
+      "additionalProperties": false,
+      "properties": {
+        "apply_after": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "auto_apply": {
+          "type": "boolean"
+        },
+        "modified_by": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "plan_after": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "stack-variables": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "stacks": {
+      "additionalProperties": false,
+      "properties": {
+        "names": {
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/stack-config"
+              },
+              {
+                "$ref": "#/$defs/stack-nested-config"
+              }
+            ]
+          },
+          "type": "object"
+        }
+      },
+      "require": [
+        "names"
+      ],
+      "type": "object"
+    },
+    "storage-plan-cmd": {
+      "additionalProperties": false,
+      "properties": {
+        "delete": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fetch": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "method": {
+          "const": "cmd",
+          "type": "string"
+        },
+        "store": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "method",
+        "store",
+        "fetch"
+      ],
+      "type": "object"
+    },
+    "storage-plan-s3": {
+      "additionalProperties": false,
+      "properties": {
+        "access_key_id": {
+          "type": "string"
+        },
+        "bucket": {
+          "type": "string"
+        },
+        "delete_extra_args": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "delete_used_plans": {
+          "default": true,
+          "type": "boolean"
+        },
+        "fetch_extra_args": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "method": {
+          "const": "s3",
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "secret_access_key": {
+          "type": "string"
+        },
+        "store_extra_args": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "bucket",
+        "method",
+        "region"
+      ],
+      "type": "object"
+    },
+    "storage-plan-terrateam": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "const": "terrateam",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "type": "object"
+    },
+    "tags": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "terraform-version": {
+      "type": "string"
+    },
+    "tree-builder": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "script": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "version-1": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "$ref": "#/$defs/access-control"
+        },
+        "apply_requirements": {
+          "$ref": "#/$defs/apply-requirements"
+        },
+        "automerge": {
+          "$ref": "#/$defs/automerge"
+        },
+        "batch_runs": {
+          "$ref": "#/$defs/batch-runs"
+        },
+        "checkout_strategy": {
+          "default": "merge",
+          "enum": [
+            "merge",
+            "checkout"
+          ],
+          "type": "string"
+        },
+        "config_builder": {
+          "$ref": "#/$defs/config-builder"
+        },
+        "cost_estimation": {
+          "additionalProperties": false,
+          "properties": {
+            "currency": {
+              "default": "USD",
+              "type": "string"
+            },
+            "enabled": {
+              "default": true,
+              "type": "boolean"
+            },
+            "provider": {
+              "default": "infracost",
+              "enum": [
+                "infracost"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "create_and_select_workspace": {
+          "default": true,
+          "type": "boolean"
+        },
+        "default_branch_overrides": {
+          "$ref": "#/$defs/default-branch-overrides"
+        },
+        "default_tf_version": {
+          "$ref": "#/$defs/terraform-version"
+        },
+        "workflows": {
+          "items": {
+            "$ref": "#/$defs/workflow-entry"
+          },
+          "type": "array"
+        },
+        "destination_branches": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/destination-branch-name"
+              },
+              {
+                "$ref": "#/$defs/destination-branch-object"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "dirs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/dir"
+          },
+          "type": "object"
+        },
+        "drift": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/drift-1"
+            },
+            {
+              "$ref": "#/$defs/drift-2"
+            }
+          ]
+        },
+        "enabled": {
+          "default": true,
+          "type": "boolean"
+        },
+        "engine": {
+          "$ref": "#/$defs/engine"
+        },
+        "hooks": {
+          "additionalProperties": false,
+          "properties": {
+            "all": {
+              "$ref": "#/$defs/hook"
+            },
+            "apply": {
+              "$ref": "#/$defs/hook"
+            },
+            "plan": {
+              "$ref": "#/$defs/hook"
+            }
+          },
+          "type": "object"
+        },
+        "indexer": {
+          "additionalProperties": false,
+          "properties": {
+            "build_tag": {
+              "type": "string"
+            },
+            "enabled": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "integrations": {
+          "$ref": "#/$defs/integrations"
+        },
+        "notifications": {
+          "$ref": "#/$defs/notifications"
+        },
+        "parallel_runs": {
+          "default": 3,
+          "type": "integer"
+        },
+        "stacks": {
+          "$ref": "#/$defs/stacks"
+        },
+        "storage": {
+          "additionalProperties": false,
+          "properties": {
+            "plans": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/storage-plan-terrateam"
+                },
+                {
+                  "$ref": "#/$defs/storage-plan-cmd"
+                },
+                {
+                  "$ref": "#/$defs/storage-plan-s3"
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "tags": {
+          "$ref": "#/$defs/custom-tags"
+        },
+        "tree_builder": {
+          "$ref": "#/$defs/tree-builder"
+        },
+        "version": {
+          "const": "1",
+          "default": "1",
+          "type": "string"
+        },
+        "when_modified": {
+          "$ref": "#/$defs/when-modified"
+        },
+        "$defs": {}
+      },
+      "type": "object"
+    },
+    "visible-on": {
+      "enum": [
+        "always",
+        "failure",
+        "success"
+      ],
+      "type": "string"
+    },
+    "when-modified": {
+      "additionalProperties": false,
+      "properties": {
+        "autoapply": {
+          "default": false,
+          "type": "boolean"
+        },
+        "autoplan": {
+          "default": true,
+          "type": "boolean"
+        },
+        "autoplan_draft_pr": {
+          "default": true,
+          "type": "boolean"
+        },
+        "depends_on": {
+          "type": "string"
+        },
+        "file_patterns": {
+          "default": [
+            "**/*.tf",
+            "**/*.tfvars"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "when-modified-nullable": {
+      "additionalProperties": false,
+      "properties": {
+        "autoapply": {
+          "type": "boolean"
+        },
+        "autoplan": {
+          "type": "boolean"
+        },
+        "autoplan_draft_pr": {
+          "type": "boolean"
+        },
+        "depends_on": {
+          "type": "string"
+        },
+        "file_patterns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "workflow-entry": {
+      "additionalProperties": false,
+      "properties": {
+        "apply": {
+          "$ref": "#/$defs/workflow-op-list"
+        },
+        "cdktf": {
+          "default": false,
+          "type": "boolean"
+        },
+        "engine": {
+          "$ref": "#/$defs/engine"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "integrations": {
+          "$ref": "#/$defs/integrations"
+        },
+        "lock_policy": {
+          "default": "strict",
+          "enum": [
+            "apply",
+            "merge",
+            "none",
+            "strict"
+          ],
+          "type": "string"
+        },
+        "plan": {
+          "$ref": "#/$defs/workflow-op-list"
+        },
+        "runs_on": {
+          "$ref": "#/$defs/runs-on"
+        },
+        "tag_query": {
+          "type": "string"
+        },
+        "terraform_version": {
+          "$ref": "#/$defs/terraform-version"
+        },
+        "terragrunt": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tag_query"
+      ],
+      "type": "object"
+    },
+    "workflow-op-apply": {
+      "additionalProperties": false,
+      "properties": {
+        "env": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "extra_args": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "retry": {
+          "$ref": "#/$defs/retry"
+        },
+        "type": {
+          "const": "apply",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "workflow-op-checkov": {
+      "additionalProperties": false,
+      "properties": {
+        "env": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "extra_args": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "gate": {
+          "$ref": "#/$defs/gate"
+        },
+        "ignore_errors": {
+          "default": false,
+          "type": "boolean"
+        },
+        "run_on": {
+          "$ref": "#/$defs/run-on"
+        },
+        "type": {
+          "const": "checkov",
+          "type": "string"
+        },
+        "visible_on": {
+          "$ref": "#/$defs/visible-on"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "workflow-op-conftest": {
+      "additionalProperties": false,
+      "properties": {
+        "env": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "extra_args": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "gate": {
+          "$ref": "#/$defs/gate"
+        },
+        "ignore_errors": {
+          "default": false,
+          "type": "boolean"
+        },
+        "run_on": {
+          "$ref": "#/$defs/run-on"
+        },
+        "type": {
+          "const": "conftest",
+          "type": "string"
+        },
+        "visible_on": {
+          "enum": [
+            "always",
+            "failure",
+            "success"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "workflow-op-init": {
+      "additionalProperties": false,
+      "properties": {
+        "env": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "extra_args": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "type": {
+          "const": "init",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "workflow-op-list": {
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/workflow-op-init"
+          },
+          {
+            "$ref": "#/$defs/workflow-op-plan"
+          },
+          {
+            "$ref": "#/$defs/workflow-op-checkov"
+          },
+          {
+            "$ref": "#/$defs/workflow-op-conftest"
+          },
+          {
+            "$ref": "#/$defs/workflow-op-apply"
+          },
+          {
+            "$ref": "#/$defs/workflow-op-opa"
+          },
+          {
+            "$ref": "#/$defs/hook-op-run"
+          },
+          {
+            "$ref": "#/$defs/hook-op-slack"
+          },
+          {
+            "$ref": "#/$defs/hook-op-env-exec"
+          },
+          {
+            "$ref": "#/$defs/hook-op-env-source"
+          },
+          {
+            "$ref": "#/$defs/hook-op-oidc"
+          },
+          {
+            "$ref": "#/$defs/hook-op-gates"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    "workflow-op-opa": {
+      "additionalProperties": false,
+      "properties": {
+        "env": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "extra_args": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fail_on": {
+          "default": "undefined",
+          "enum": [
+            "defined",
+            "undefined"
+          ],
+          "type": "string"
+        },
+        "gate": {
+          "$ref": "#/$defs/gate"
+        },
+        "ignore_errors": {
+          "default": false,
+          "type": "boolean"
+        },
+        "run_on": {
+          "$ref": "#/$defs/run-on"
+        },
+        "type": {
+          "const": "opa",
+          "type": "string"
+        },
+        "visible_on": {
+          "$ref": "#/$defs/visible-on"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "workflow-op-plan": {
+      "additionalProperties": false,
+      "properties": {
+        "env": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "extra_args": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "mode": {
+          "default": "strict",
+          "enum": [
+            "fast-and-loose",
+            "strict"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "const": "plan",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "workspaces": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "tags": {
+            "$ref": "#/$defs/tags"
+          },
+          "when_modified": {
+            "$ref": "#/$defs/when-modified-nullable"
+          }
+        },
+        "type": "object"
+      },
+      "type": "object"
+    }
+  }
+}

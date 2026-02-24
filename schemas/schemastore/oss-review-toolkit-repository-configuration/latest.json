@@ -1,0 +1,365 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/oss-review-toolkit-repository-configuration/latest.json",
+  "title": "ORT repository configuration",
+  "description": "The OSS-Review-Toolkit (ORT) provides a possibility to configure exclusions, resolutions and more in a file called `.ort.yml`. A full list of all available options can be found at https://oss-review-toolkit.org/ort/docs/configuration/ort-yml.",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/oss-review-toolkit/ort/main/integrations/schemas/repository-configuration-schema.json",
+    "sourceSha256": "95bd6d3998d99ad25082a7ccb173cf2dc695c399068d311c84a49d294fedb2bf"
+  },
+  "type": "object",
+  "properties": {
+    "analyzer": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/oss-review-toolkit-repository-configuration/_shared/latest--analyzer-configuration-schema.json"
+    },
+    "includes": {
+      "type": "object",
+      "description": "Defines which parts of a repository should be included.",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "description": "A glob to match the path of the project definition file, relative to the root of the repository.",
+                "type": "string"
+              },
+              "reason": {
+                "$ref": "#/$defs/pathIncludeReason"
+              },
+              "comment": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "pattern",
+              "reason"
+            ]
+          }
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string"
+              },
+              "reason": {
+                "$ref": "#/$defs/scopeIncludeReason"
+              },
+              "comment": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "pattern",
+              "reason"
+            ]
+          }
+        }
+      }
+    },
+    "excludes": {
+      "type": "object",
+      "description": "Defines which parts of a repository should be excluded.",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "description": "A glob to match the path of the project definition file, relative to the root of the repository.",
+                "type": "string"
+              },
+              "reason": {
+                "$ref": "#/$defs/pathExcludeReason"
+              },
+              "comment": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "pattern",
+              "reason"
+            ]
+          }
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string"
+              },
+              "reason": {
+                "$ref": "#/$defs/scopeExcludeReason"
+              },
+              "comment": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "pattern",
+              "reason"
+            ]
+          }
+        }
+      }
+    },
+    "resolutions": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/oss-review-toolkit-repository-configuration/_shared/latest--resolutions-schema.json"
+    },
+    "curations": {
+      "type": "object",
+      "description": "Curations for artifacts in a repository.",
+      "properties": {
+        "license_findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/licenseFindingCurations"
+          }
+        },
+        "packages": {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/oss-review-toolkit-repository-configuration/_shared/latest--curations-schema.json"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "license_findings"
+          ]
+        },
+        {
+          "required": [
+            "packages"
+          ]
+        }
+      ]
+    },
+    "package_configurations": {
+      "type": "array",
+      "description": "A configuration for a specific package and provenance.",
+      "items": {
+        "$ref": "https://catalog.lintel.tools/schemas/schemastore/oss-review-toolkit-repository-configuration/_shared/latest--package-configuration-schema.json"
+      }
+    },
+    "license_choices": {
+      "type": "object",
+      "description": "A configuration to select a license from a multi-licensed package.",
+      "properties": {
+        "package_license_choices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "package_id": {
+                "type": "string"
+              },
+              "license_choices": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "given": {
+                      "type": "string"
+                    },
+                    "choice": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "choice"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "package_id",
+              "license_choices"
+            ]
+          }
+        },
+        "repository_license_choices": {
+          "type": "array",
+          "items": {
+            "given": {
+              "type": "string"
+            },
+            "choice": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "snippet_choices": {
+      "type": "array",
+      "description": "A configuration to select a snippet from a package with multiple snippet findings.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "provenance": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "url"
+            ]
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "given": {
+                  "type": "object",
+                  "properties": {
+                    "source_location": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "start_line": {
+                          "type": "integer"
+                        },
+                        "end_line": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "path",
+                        "start_line",
+                        "end_line"
+                      ]
+                    }
+                  }
+                },
+                "choice": {
+                  "type": "object",
+                  "properties": {
+                    "purl": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "$ref": "#/$defs/snippetChoiceReason"
+                    },
+                    "comment": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "reason"
+                  ]
+                }
+              },
+              "required": [
+                "given",
+                "choice"
+              ]
+            }
+          }
+        },
+        "required": [
+          "provenance",
+          "choices"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "licenseFindingCurations": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "start_lines": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "line_count": {
+          "type": "integer"
+        },
+        "detected_license": {
+          "type": "string"
+        },
+        "concluded_license": {
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/licenseFindingCurationReason"
+        },
+        "comment": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "concluded_license",
+        "reason"
+      ]
+    },
+    "pathIncludeReason": {
+      "enum": [
+        "SOURCE_OF",
+        "OTHER"
+      ]
+    },
+    "pathExcludeReason": {
+      "enum": [
+        "BUILD_TOOL_OF",
+        "DATA_FILE_OF",
+        "DOCUMENTATION_OF",
+        "EXAMPLE_OF",
+        "OPTIONAL_COMPONENT_OF",
+        "OTHER",
+        "PROVIDED_BY",
+        "TEST_OF",
+        "TEST_TOOL_OF"
+      ]
+    },
+    "scopeIncludeReason": {
+      "enum": [
+        "SOURCE_OF",
+        "OTHER"
+      ]
+    },
+    "scopeExcludeReason": {
+      "enum": [
+        "BUILD_DEPENDENCY_OF",
+        "DEV_DEPENDENCY_OF",
+        "DOCUMENTATION_DEPENDENCY_OF",
+        "PROVIDED_DEPENDENCY_OF",
+        "TEST_DEPENDENCY_OF",
+        "RUNTIME_DEPENDENCY_OF"
+      ]
+    },
+    "licenseFindingCurationReason": {
+      "enum": [
+        "CODE",
+        "DATA_OF",
+        "DOCUMENTATION_OF",
+        "INCORRECT",
+        "NOT_DETECTED",
+        "REFERENCE"
+      ]
+    },
+    "snippetChoiceReason": {
+      "enum": [
+        "NO_RELEVANT_FINDING",
+        "ORIGINAL_FINDING",
+        "OTHER"
+      ]
+    }
+  }
+}

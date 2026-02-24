@@ -1,0 +1,457 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--aws-emrserverless-application.json",
+  "title": "AWSEMRServerlessApplicationProperties",
+  "description": "Resource schema for AWS::EMRServerless::Application Type. Source:- https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-emrserverless-application.json",
+    "sourceSha256": "167c8ca9607ab3e84b94997fd8763ebfedd8b7f919487586bbfac3a79ac76874",
+    "invalid": true
+  },
+  "type": "object",
+  "properties": {
+    "Architecture": {
+      "$ref": "#/$defs/Architecture"
+    },
+    "Name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9._\\/#-]+$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "User friendly Application name."
+    },
+    "ReleaseLabel": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9._/-]+$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "EMR release label."
+    },
+    "Type": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The type of the application"
+    },
+    "InitialCapacity": {
+      "description": "Initial capacity initialized when an Application is started.",
+      "$ref": "#/$defs/InitialCapacityConfigMap"
+    },
+    "MaximumCapacity": {
+      "description": "Maximum allowed cumulative resources for an Application. No new resources will be created once the limit is hit.",
+      "$ref": "#/$defs/MaximumAllowedResources"
+    },
+    "Tags": {
+      "description": "Tag map with key and value",
+      "type": "array",
+      "uniqueItems": true,
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/Tag"
+      }
+    },
+    "AutoStartConfiguration": {
+      "description": "Configuration for Auto Start of Application.",
+      "$ref": "#/$defs/AutoStartConfiguration"
+    },
+    "AutoStopConfiguration": {
+      "description": "Configuration for Auto Stop of Application.",
+      "$ref": "#/$defs/AutoStopConfiguration"
+    },
+    "ImageConfiguration": {
+      "$ref": "#/$defs/ImageConfigurationInput"
+    },
+    "NetworkConfiguration": {
+      "description": "Network Configuration for customer VPC connectivity.",
+      "$ref": "#/$defs/NetworkConfiguration"
+    },
+    "WorkerTypeSpecifications": {
+      "$ref": "#/$defs/WorkerTypeSpecificationInputMap"
+    }
+  },
+  "typeName": "AWS::EMRServerless::Application",
+  "tagging": {
+    "taggable": true,
+    "cloudFormationSystemTags": false,
+    "tagProperty": "/properties/Tags"
+  },
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "$defs": {
+    "Architecture": {
+      "oneOf": [
+        {
+          "enum": [
+            "ARM64",
+            "X86_64"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "The cpu architecture of an application.",
+      "title": "AWSEMRServerlessApplicationArchitectureDefinition"
+    },
+    "ImageConfigurationInput": {
+      "type": "object",
+      "description": "The image configuration.",
+      "properties": {
+        "ImageUri": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^([a-z0-9]+[a-z0-9-.]*)\\/((?:[a-z0-9]+(?:[._-][a-z0-9]+)*\\/)*[a-z0-9]+(?:[._-][a-z0-9]+)*)(?:\\:([a-zA-Z0-9_][a-zA-Z0-9-._]{0,299})|@(sha256:[0-9a-f]{64}))$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The URI of an image in the Amazon ECR registry. This field is required when you create a new application. If you leave this field blank in an update, Amazon EMR will remove the image configuration."
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSEMRServerlessApplicationImageConfigurationInputDefinition"
+    },
+    "InitialCapacityConfigMap": {
+      "type": "array",
+      "uniqueItems": true,
+      "insertionOrder": false,
+      "items": {
+        "$ref": "#/$defs/InitialCapacityConfigKeyValuePair"
+      },
+      "title": "AWSEMRServerlessApplicationInitialCapacityConfigMapDefinition"
+    },
+    "InitialCapacityConfigKeyValuePair": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "pattern": "^[a-zA-Z]+[-_]*[a-zA-Z]+$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "Worker type for an analytics framework."
+        },
+        "Value": {
+          "$ref": "#/$defs/InitialCapacityConfig"
+        }
+      },
+      "required": [
+        "Key",
+        "Value"
+      ],
+      "title": "AWSEMRServerlessApplicationInitialCapacityConfigKeyValuePairDefinition"
+    },
+    "InitialCapacityConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "WorkerCount": {
+          "description": "Initial count of workers to be initialized when an Application is started. This count will be continued to be maintained until the Application is stopped",
+          "type": "integer",
+          "format": "int64",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "WorkerConfiguration": {
+          "$ref": "#/$defs/WorkerConfiguration"
+        }
+      },
+      "required": [
+        "WorkerCount",
+        "WorkerConfiguration"
+      ],
+      "title": "AWSEMRServerlessApplicationInitialCapacityConfigDefinition"
+    },
+    "WorkerConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Cpu": {
+          "description": "Per worker CPU resource. vCPU is the only supported unit and specifying vCPU is optional.",
+          "$ref": "#/$defs/CpuSize"
+        },
+        "Memory": {
+          "description": "Per worker memory resource. GB is the only supported unit and specifying GB is optional.",
+          "$ref": "#/$defs/MemorySize"
+        },
+        "Disk": {
+          "description": "Per worker Disk resource. GB is the only supported unit and specifying GB is optional",
+          "$ref": "#/$defs/DiskSize"
+        }
+      },
+      "required": [
+        "Cpu",
+        "Memory"
+      ],
+      "title": "AWSEMRServerlessApplicationWorkerConfigurationDefinition"
+    },
+    "MaximumAllowedResources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Cpu": {
+          "description": "Per worker CPU resource. vCPU is the only supported unit and specifying vCPU is optional.",
+          "$ref": "#/$defs/CpuSize"
+        },
+        "Memory": {
+          "description": "Per worker memory resource. GB is the only supported unit and specifying GB is optional.",
+          "$ref": "#/$defs/MemorySize"
+        },
+        "Disk": {
+          "description": "Per worker Disk resource. GB is the only supported unit and specifying GB is optional",
+          "$ref": "#/$defs/DiskSize"
+        }
+      },
+      "required": [
+        "Cpu",
+        "Memory"
+      ],
+      "title": "AWSEMRServerlessApplicationMaximumAllowedResourcesDefinition"
+    },
+    "AutoStartConfiguration": {
+      "description": "Configuration for Auto Start of Application",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Enabled": {
+          "description": "If set to true, the Application will automatically start. Defaults to true.",
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": [],
+      "title": "AWSEMRServerlessApplicationAutoStartConfigurationDefinition"
+    },
+    "AutoStopConfiguration": {
+      "description": "Configuration for Auto Stop of Application",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Enabled": {
+          "description": "If set to true, the Application will automatically stop after being idle. Defaults to true.",
+          "type": "boolean",
+          "default": true
+        },
+        "IdleTimeoutMinutes": {
+          "type": "integer",
+          "description": "The amount of time [in minutes] to wait before auto stopping the Application when idle. Defaults to 15 minutes."
+        }
+      },
+      "required": [],
+      "title": "AWSEMRServerlessApplicationAutoStopConfigurationDefinition"
+    },
+    "NetworkConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SubnetIds": {
+          "description": "The ID of the subnets in the VPC to which you want to connect your job or application.",
+          "type": "array",
+          "insertionOrder": false,
+          "uniqueItems": true,
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/SubnetId"
+          }
+        },
+        "SecurityGroupIds": {
+          "description": "The ID of the security groups in the VPC to which you want to connect your job or application.",
+          "type": "array",
+          "insertionOrder": false,
+          "uniqueItems": true,
+          "minItems": 1,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/SecurityGroupId"
+          }
+        }
+      },
+      "required": [],
+      "title": "AWSEMRServerlessApplicationNetworkConfigurationDefinition"
+    },
+    "SubnetId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[-0-9a-zA-Z]+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Identifier of a subnet",
+      "title": "AWSEMRServerlessApplicationSubnetIdDefinition"
+    },
+    "SecurityGroupId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[-0-9a-zA-Z]+"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Identifier of a security group",
+      "title": "AWSEMRServerlessApplicationSecurityGroupIdDefinition"
+    },
+    "Tag": {
+      "description": "A key-value pair to associate with a resource.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Key": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9 /_.:=+@-]+$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The value for the tag. You can specify a value that is 1 to 128 Unicode characters in length. You can use any of the following characters: the set of Unicode letters, digits, whitespace, _, ., /, =, +, and -. "
+        },
+        "Value": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 256,
+              "pattern": "^[A-Za-z0-9 /_.:=+@-]*$"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+            }
+          ],
+          "description": "The value for the tag. You can specify a value that is 0 to 256 Unicode characters in length. You can use any of the following characters: the set of Unicode letters, digits, whitespace, _, ., /, =, +, and -. "
+        }
+      },
+      "required": [
+        "Key",
+        "Value"
+      ],
+      "title": "AWSEMRServerlessApplicationTagDefinition"
+    },
+    "CpuSize": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 15,
+          "pattern": "^[1-9][0-9]*(\\s)?(vCPU|vcpu|VCPU)?$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Per worker CPU resource. vCPU is the only supported unit and specifying vCPU is optional.",
+      "title": "AWSEMRServerlessApplicationCpuSizeDefinition"
+    },
+    "MemorySize": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 15,
+          "pattern": "^[1-9][0-9]*(\\s)?(GB|gb|gB|Gb)?$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Per worker memory resource. GB is the only supported unit and specifying GB is optional.",
+      "title": "AWSEMRServerlessApplicationMemorySizeDefinition"
+    },
+    "DiskSize": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 15,
+          "pattern": "^[1-9][0-9]*(\\s)?(GB|gb|gB|Gb)$"
+        },
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/serverless-framework-configuration/_shared/latest--cf.functions.json#/Aws_CF_FunctionString"
+        }
+      ],
+      "description": "Per worker Disk resource. GB is the only supported unit and specifying GB is optional",
+      "title": "AWSEMRServerlessApplicationDiskSizeDefinition"
+    },
+    "WorkerTypeSpecificationInput": {
+      "type": "object",
+      "description": "The specifications for a worker type.",
+      "properties": {
+        "ImageConfiguration": {
+          "$ref": "#/$defs/ImageConfigurationInput"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSEMRServerlessApplicationWorkerTypeSpecificationInputDefinition"
+    },
+    "WorkerTypeSpecificationInputMap": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z]+[-_]*[a-zA-Z]+$": {
+          "$ref": "#/$defs/WorkerTypeSpecificationInput"
+        }
+      },
+      "additionalProperties": false,
+      "title": "AWSEMRServerlessApplicationWorkerTypeSpecificationInputMapDefinition"
+    }
+  },
+  "primaryIdentifier": [
+    "/properties/ApplicationId"
+  ],
+  "additionalProperties": false,
+  "required": [
+    "ReleaseLabel",
+    "Type"
+  ],
+  "createOnlyProperties": [
+    "/properties/Name",
+    "/properties/ReleaseLabel",
+    "/properties/Type"
+  ],
+  "readOnlyProperties": [
+    "/properties/Arn",
+    "/properties/ApplicationId"
+  ]
+}

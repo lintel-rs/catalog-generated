@@ -1,0 +1,742 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/zuul/latest.json",
+  "title": "Zuul Config Schema",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/zuul.json",
+    "sourceSha256": "c3b9c82b5724a79f00c33161ccb09126f39ad96b80b879d89c7a9397673c5d55"
+  },
+  "type": "array",
+  "items": {
+    "anyOf": [
+      {
+        "$ref": "#/$defs/JobEntry"
+      },
+      {
+        "$ref": "#/$defs/NodesetEntry"
+      },
+      {
+        "$ref": "#/$defs/ProjectEntry"
+      },
+      {
+        "$ref": "#/$defs/ProjectTemplateEntry"
+      },
+      {
+        "$ref": "#/$defs/SecretEntry"
+      }
+    ]
+  },
+  "$defs": {
+    "JobEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "job": {
+          "$ref": "#/$defs/JobModel"
+        }
+      },
+      "required": [
+        "job"
+      ],
+      "title": "JobEntry",
+      "type": "object"
+    },
+    "JobModel": {
+      "additionalProperties": false,
+      "properties": {
+        "abstract": {
+          "default": false,
+          "title": "Abstract",
+          "type": "boolean"
+        },
+        "allowed-projects": {
+          "title": "Allowed-Projects",
+          "type": "string"
+        },
+        "ansible-version": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "enum": [
+                "2.7",
+                "2.8",
+                "2.9",
+                "2.10",
+                "2.11"
+              ],
+              "type": "string"
+            }
+          ],
+          "title": "Ansible-Version"
+        },
+        "attempts": {
+          "title": "Attempts",
+          "type": "integer"
+        },
+        "branches": {
+          "title": "Branches",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "workspace-scheme": {
+          "title": "Workspace Scheme",
+          "enum": [
+            "flat",
+            "golang",
+            "unique"
+          ],
+          "type": "string"
+        },
+        "failure-url": {
+          "title": "Failure-Url",
+          "type": "string"
+        },
+        "files": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Files"
+        },
+        "final": {
+          "default": false,
+          "title": "Final",
+          "type": "boolean"
+        },
+        "group-vars": {
+          "additionalProperties": {
+            "type": "object"
+          },
+          "title": "Group-Vars",
+          "type": "object"
+        },
+        "host-vars": {
+          "additionalProperties": {
+            "type": "object"
+          },
+          "title": "Host-Vars",
+          "type": "object"
+        },
+        "irrelevant-files": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Irrelevant-Files"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "nodeset": {
+          "title": "Nodeset"
+        },
+        "override-checkout": {
+          "title": "Override-Checkout",
+          "type": "string"
+        },
+        "parent": {
+          "title": "Parent",
+          "type": "string"
+        },
+        "post-run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Post-Run"
+        },
+        "post-timeout": {
+          "title": "Post-Timeout",
+          "type": "integer"
+        },
+        "pre-run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Pre-Run"
+        },
+        "provides": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Provides",
+          "type": "array"
+        },
+        "required-projects": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/$defs/RequiredProjectModel"
+              }
+            ]
+          },
+          "title": "Required-Projects",
+          "type": "array"
+        },
+        "requires": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Requires",
+          "type": "array"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/ZuulRoleModel"
+          },
+          "title": "Roles",
+          "type": "array"
+        },
+        "run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Run"
+        },
+        "secrets": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JobSecretModel"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/JobSecretModel"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Secrets"
+        },
+        "semaphores": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/JobSemaphoreModel"
+            },
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/JobSemaphoreModel"
+                },
+                {
+                  "type": "array"
+                }
+              ]
+            }
+          ],
+          "title": "Semaphore(s)"
+        },
+        "success-url": {
+          "title": "Success-Url",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Tags"
+        },
+        "timeout": {
+          "title": "Timeout",
+          "type": "integer"
+        },
+        "vars": {
+          "title": "Vars",
+          "type": "object"
+        },
+        "voting": {
+          "default": true,
+          "title": "Voting",
+          "type": "boolean"
+        },
+        "dependentSchemas": {
+          "title": "Files"
+        },
+        "dependentRequired": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "items": {
+                "$ref": "#/$defs/JobDependencyModel"
+              },
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "JobModel",
+      "type": "object"
+    },
+    "JobDependencyModel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "soft": {
+          "default": false,
+          "title": "Soft",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "JobDependencyModel",
+      "type": "object"
+    },
+    "JobSecretModel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "pass-to-parent": {
+          "default": false,
+          "title": "Pass-To-Parent",
+          "type": "boolean"
+        },
+        "secret": {
+          "title": "Secret",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "secret"
+      ],
+      "title": "JobSecretModel",
+      "type": "object"
+    },
+    "JobSemaphoreModel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "resources-first": {
+          "default": false,
+          "title": "Resources-First",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "JobSemaphoreModel",
+      "type": "object"
+    },
+    "NodesetEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeset": {
+          "$ref": "#/$defs/NodesetModel"
+        }
+      },
+      "required": [
+        "nodeset"
+      ],
+      "title": "NodesetEntry",
+      "type": "object"
+    },
+    "NodesetModel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/NodesetNodeModel"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "groups": {
+          "items": {
+            "$ref": "#/$defs/NodesetGroupModel"
+          },
+          "title": "Groups",
+          "type": "array"
+        },
+        "alternatives": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/$defs/NodesetModel"
+              }
+            ]
+          },
+          "title": "Alternatives",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "NodesetModel",
+      "type": "object"
+    },
+    "NodesetNodeModel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Name"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "label"
+      ],
+      "title": "NodesetNodeModel",
+      "type": "object"
+    },
+    "NodesetGroupModel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "nodes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Nodes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "nodes"
+      ],
+      "title": "NodesetGroupModel",
+      "type": "object"
+    },
+    "PipelineModel": {
+      "additionalProperties": false,
+      "properties": {
+        "fail-fast": {
+          "title": "Fail Fast",
+          "type": "boolean"
+        },
+        "jobs": {
+          "items": {},
+          "title": "Jobs",
+          "type": "array"
+        },
+        "queue": {
+          "title": "Queue",
+          "type": "string"
+        }
+      },
+      "title": "PipelineModel",
+      "type": "object"
+    },
+    "ProjectEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "$ref": "#/$defs/ProjectModel"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "ProjectEntry",
+      "type": "object"
+    },
+    "ProjectModel": {
+      "additionalProperties": false,
+      "properties": {
+        "check": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "default-branch": {
+          "title": "Default-Branch",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "gate": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "merge-mode": {
+          "title": "Merge-Mode",
+          "enum": [
+            "merge",
+            "merge-resolve",
+            "merge-recursive",
+            "merge-ort",
+            "cherry-pick",
+            "squash-merge",
+            "rebase"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "periodic-weekly": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "post": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "promote": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "queue": {
+          "title": "Queue",
+          "type": "string"
+        },
+        "release": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "templates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Templates",
+          "type": "array"
+        },
+        "third-party-check": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "vars": {
+          "title": "Vars",
+          "type": "object"
+        }
+      },
+      "title": "ProjectModel",
+      "type": "object"
+    },
+    "ProjectTemplateEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "project-template": {
+          "$ref": "#/$defs/ProjectTemplateModel"
+        }
+      },
+      "required": [
+        "project-template"
+      ],
+      "title": "ProjectTemplateEntry",
+      "type": "object"
+    },
+    "ProjectTemplateModel": {
+      "additionalProperties": false,
+      "properties": {
+        "check": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "default-branch": {
+          "title": "Default-Branch",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "gate": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "periodic-weekly": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "post": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "promote": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "queue": {
+          "title": "Queue",
+          "type": "string"
+        },
+        "release": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "third-party-check": {
+          "$ref": "#/$defs/PipelineModel"
+        },
+        "vars": {
+          "title": "Vars",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ProjectTemplateModel",
+      "type": "object"
+    },
+    "RequiredProjectModel": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "override-checkout": {
+          "title": "Override-Checkout",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "RequiredProjectModel",
+      "type": "object"
+    },
+    "SecretEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "secret": {
+          "$ref": "#/$defs/SecretModel"
+        }
+      },
+      "required": [
+        "secret"
+      ],
+      "title": "SecretEntry",
+      "type": "object"
+    },
+    "SecretModel": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "title": "Data",
+          "type": "object"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "data"
+      ],
+      "title": "SecretModel",
+      "type": "object"
+    },
+    "ZuulRoleModel": {
+      "additionalProperties": false,
+      "properties": {
+        "zuul": {
+          "title": "Zuul",
+          "type": "string"
+        }
+      },
+      "required": [
+        "zuul"
+      ],
+      "title": "ZuulRoleModel",
+      "type": "object"
+    }
+  },
+  "examples": [
+    "zuul.d/*.yaml",
+    "zuul-tests.d/*.yaml",
+    ".zuul.yaml"
+  ]
+}
