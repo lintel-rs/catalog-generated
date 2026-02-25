@@ -5,7 +5,7 @@
   "description": "Configuration schema for ECA (Editor Code Assistant). See https://eca.dev/config/introduction for full documentation.",
   "x-lintel": {
     "source": "https://eca.dev/config.json",
-    "sourceSha256": "962c49c32782f66f6a67f262d4481b7f3ad070ccf8f20463b55eff75386fc309"
+    "sourceSha256": "371e098c77d2d6397564939052e19c08fdaaa248b62a1504e46bef87c4623175"
   },
   "type": "object",
   "properties": {
@@ -288,6 +288,49 @@
           "description": "Whether to automatically generate a title for new chats.",
           "markdownDescription": "Whether to automatically generate a title for new chats.",
           "default": true
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "description": "Network configuration for custom CA certificates and mTLS client certificates. Values support dynamic string interpolation (e.g. '${env:SSL_CERT_FILE}').",
+      "markdownDescription": "Network configuration for custom CA certificates and mTLS client certificates. Values support dynamic string interpolation (e.g. `${env:SSL_CERT_FILE}`).",
+      "additionalProperties": false,
+      "properties": {
+        "caCertFile": {
+          "type": "string",
+          "description": "Path to a PEM file containing custom CA certificates. These are added to the JVM default trust store, so public CAs remain trusted. Falls back to SSL_CERT_FILE or NODE_EXTRA_CA_CERTS environment variables.",
+          "markdownDescription": "Path to a PEM file containing custom CA certificates. These are added to the JVM default trust store, so public CAs remain trusted. Falls back to `SSL_CERT_FILE` or `NODE_EXTRA_CA_CERTS` environment variables.",
+          "examples": [
+            "/etc/ssl/certs/corporate-ca.pem",
+            "${env:SSL_CERT_FILE}"
+          ]
+        },
+        "clientCert": {
+          "type": "string",
+          "description": "Path to a PEM file containing the client certificate for mutual TLS (mTLS). Falls back to ECA_CLIENT_CERT environment variable.",
+          "markdownDescription": "Path to a PEM file containing the client certificate for mutual TLS (mTLS). Falls back to `ECA_CLIENT_CERT` environment variable.",
+          "examples": [
+            "/etc/ssl/certs/client.pem",
+            "${env:ECA_CLIENT_CERT}"
+          ]
+        },
+        "clientKey": {
+          "type": "string",
+          "description": "Path to a PEM file containing the client private key for mutual TLS (mTLS). Supports both unencrypted and encrypted PKCS8 keys. Falls back to ECA_CLIENT_KEY environment variable.",
+          "markdownDescription": "Path to a PEM file containing the client private key for mutual TLS (mTLS). Supports both unencrypted and encrypted PKCS8 keys. Falls back to `ECA_CLIENT_KEY` environment variable.",
+          "examples": [
+            "/etc/ssl/private/client-key.pem",
+            "${env:ECA_CLIENT_KEY}"
+          ]
+        },
+        "clientKeyPassphrase": {
+          "type": "string",
+          "description": "Passphrase for an encrypted client private key. Only needed when the key file is encrypted. Falls back to ECA_CLIENT_KEY_PASSPHRASE environment variable.",
+          "markdownDescription": "Passphrase for an encrypted client private key. Only needed when the key file is encrypted. Falls back to `ECA_CLIENT_KEY_PASSPHRASE` environment variable.",
+          "examples": [
+            "${env:ECA_CLIENT_KEY_PASSPHRASE}"
+          ]
         }
       }
     }
