@@ -1,28 +1,69 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json",
-  "title": "schema for psql job usage",
+  "title": "schema for build-kaniko job usage",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/jobs/psql/use.schema.json",
-    "sourceSha256": "c48c07ce48e32f14b5b7e9ce79790f883e3d945517a07e0416555114bdb9593c"
+    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/jobs/build-kaniko/use.schema.json",
+    "sourceSha256": "e2b2d1899ed0a3614a728df5fd12bd9c50d333aa781a84870c6dd51be0a6cee9"
   },
   "type": "object",
   "properties": {
-    "pgSecretRefName": {
-      "description": "Secret with Postgresql credentials to execute the script",
+    "dockerfile": {
+      "description": "Path to the Dockerfile on the repository. Defaults to /Dockerfile",
       "type": "string"
     },
-    "sqlFile": {
-      "description": "Path to .sql file in the repo",
-      "examples": [
-        "./scripts/restore.sql"
-      ],
+    "context": {
+      "description": "Docker context (cwd) when building the image. Defaults to .",
       "type": "string"
+    },
+    "registrySecretRefName": {
+      "description": "Name of the registry secret if you have a custom docker registry. Should contain CI_REGISTRY_USER, CI_REGISTRY_PASSWORD",
+      "type": "string"
+    },
+    "imagePackage": {
+      "description": "Name of the dockerfile on the registry",
+      "type": "string"
+    },
+    "imageProject": {
+      "description": "Optional project name in the docker registry",
+      "type": "string"
+    },
+    "imageRepository": {
+      "description": "Optional sub repository for the docker image",
+      "type": "string"
+    },
+    "buildArgs": {
+      "$ref": "#/$defs/build-args"
+    },
+    "skipExisting": {
+      "description": "Skip build if image already registerd",
+      "type": "boolean"
+    },
+    "buildOptions": {
+      "description": "Build options",
+      "type": "string",
+      "examples": [
+        "-single-snapshot --ignore-path=/product_uuid"
+      ]
+    },
+    "target": {
+      "description": "Set the target build stage to build.",
+      "type": "string"
+    },
+    "noPush": {
+      "description": "Disable registry push, just build",
+      "type": "boolean"
     }
   },
-  "additionalProperties": false,
   "required": [
-    "pgSecretRefName",
-    "sqlFile"
-  ]
+    "imagePackage"
+  ],
+  "$defs": {
+    "build-args": {
+      "description": "Build args to customize the docker build",
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
 }
