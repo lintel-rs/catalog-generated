@@ -1,27 +1,99 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json",
-  "description": "All the valid configuration parameters for the Memcached plugin for RoadRunner.",
+  "title": "roadrunner-jobs",
+  "description": "All the valid configuration parameters for the jobs plugin for RoadRunner.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/roadrunner-server/memcached/refs/heads/master/schema.json",
-    "sourceSha256": "0d780cabd1c1f8cb0023d047138df8fdf32b8793e7b3d12b39346484fa27daaa"
+    "source": "https://raw.githubusercontent.com/roadrunner-server/jobs/refs/heads/master/schema.json",
+    "sourceSha256": "ba9e4dadf412640d77690ffbbfb9822fad2bdd75a2b2490f07f122a8df336128",
+    "invalid": true
   },
   "type": "object",
   "properties": {
-    "addr": {
-      "description": "Addresses of the memcached node(s).",
+    "num_pollers": {
+      "description": "Number of threads which will try to obtain jobs from the priority queue. Default is the number of workers in the pool +1. **Deprecated:** This will be removed in a future version.",
+      "type": "integer",
+      "minimum": 1,
+      "examples": [
+        10,
+        32
+      ],
+      "deprecated": true
+    },
+    "timeout": {
+      "description": "Request timeout (in seconds) when attempting to send jobs to the queue. If zero or omitted, this defaults to 60 seconds.",
+      "type": "integer",
+      "default": 60
+    },
+    "pipeline_size": {
+      "description": "Size of the internal priority queue. If the internal priority queue is full, you cannot send (push) additional jobs to the queue. If you set this value to zero or omit it, it defaults to 1 million.",
+      "type": "integer",
+      "default": 1000000,
+      "minimum": 0
+    },
+    "consume": {
+      "description": "A list of pipelines to be consumed by the server automatically when starting. You can omit this list if you want to start consuming manually. Each item in this list must be defined as a key under `pipelines`.",
       "type": "array",
-      "minItems": 1,
       "items": {
         "type": "string",
-        "minLength": 1,
-        "examples": [
-          "localhost:11211"
-        ]
+        "pattern": "^[a-zA-Z0-9._-]+$"
+      }
+    },
+    "pool": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json"
+    },
+    "pipelines": {
+      "description": "List of broker pipelines associated with the configured drivers. This option is not required since you can declare pipelines at runtime. The selected pipeline `driver` must be configured in the root of your configuration file.",
+      "type": "object",
+      "patternProperties": {
+        "additionalProperties": false,
+        "^[a-zA-Z0-9._-]+$": {
+          "oneOf": [
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/pipeline"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "PipelineProperties": {
+      "description": "Common configuration options for queues/pipelines.",
+      "priority": {
+        "description": "Pipeline priority. If the job pushed to the pipeline has priority set to 0, it will inherit the pipeline's priority.",
+        "type": "integer",
+        "minimum": 0,
+        "default": 10
       },
-      "default": [
-        "localhost:11211"
-      ]
+      "prefetch": {
+        "description": "Number of jobs to prefetch from the driver. Please consult the driver for the maximum and default values. For instance, SQS allows only 10.",
+        "type": "integer",
+        "minimum": 0
+      },
+      "queue": {
+        "type": "string",
+        "description": "The name of the queue.",
+        "default": "default"
+      }
     }
   },
   "additionalProperties": false
