@@ -1,605 +1,311 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Webpack browser schema for Build Facade.",
-  "description": "Browser target options",
+  "title": "Unit testing",
+  "description": "Unit testing options for Angular applications.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/angular_devkit/build_angular/src/builders/browser/schema.json",
-    "sourceSha256": "c297376a590f99702815b2ca1975fd015150a1b74388bb7a5e990b3b3243f6c3"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/angular/build/src/builders/unit-test/schema.json",
+    "sourceSha256": "aa9fefbb4d08af4ee4825b7ebc9191d195c3add679ed60648f69aedad239c013"
   },
   "type": "object",
   "properties": {
-    "assets": {
-      "type": "array",
-      "description": "Define the assets to be copied to the output directory. These assets are copied as-is without any further processing or hashing.",
-      "default": [],
-      "items": {
-        "$ref": "#/$defs/assetPattern"
-      }
-    },
-    "main": {
+    "buildTarget": {
       "type": "string",
-      "description": "The full path for the main entry point to the app, relative to the current workspace."
-    },
-    "polyfills": {
-      "description": "Polyfills to be included in the build.",
-      "oneOf": [
-        {
-          "type": "array",
-          "description": "A list of polyfills to include in the build. Can be a full path for a file, relative to the current workspace or module specifier. Example: 'zone.js'.",
-          "items": {
-            "type": "string",
-            "uniqueItems": true
-          },
-          "default": []
-        },
-        {
-          "type": "string",
-          "description": "The full path for the polyfills file, relative to the current workspace or a module specifier. Example: 'zone.js'."
-        }
-      ]
+      "description": "Specifies the build target to use for the unit test build in the format `project:target[:configuration]`. This defaults to the `build` target of the current project with the `development` configuration. You can also pass a comma-separated list of configurations. Example: `project:target:production,staging`.",
+      "pattern": "^[^:\\s]*:[^:\\s]*(:[^\\s]+)?$"
     },
     "tsConfig": {
       "type": "string",
-      "description": "The full path for the TypeScript configuration file, relative to the current workspace."
+      "description": "The path to the TypeScript configuration file, relative to the workspace root. Defaults to `tsconfig.spec.json` in the project root if it exists. If not specified and the default does not exist, the `tsConfig` from the specified `buildTarget` will be used."
     },
-    "scripts": {
-      "description": "Global scripts to be included in the build.",
-      "type": "array",
-      "default": [],
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "input": {
-                "type": "string",
-                "description": "The file to include.",
-                "pattern": "\\.[cm]?jsx?$"
-              },
-              "bundleName": {
-                "type": "string",
-                "pattern": "^[\\w\\-.]*$",
-                "description": "The bundle name for this extra entry point."
-              },
-              "inject": {
-                "type": "boolean",
-                "description": "If the bundle will be referenced in the HTML file.",
-                "default": true
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "input"
-            ]
-          },
-          {
-            "type": "string",
-            "description": "The file to include.",
-            "pattern": "\\.[cm]?jsx?$"
-          }
-        ]
-      }
-    },
-    "styles": {
-      "description": "Global styles to be included in the build.",
-      "type": "array",
-      "default": [],
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "input": {
-                "type": "string",
-                "description": "The file to include.",
-                "pattern": "\\.(?:css|scss|sass|less)$"
-              },
-              "bundleName": {
-                "type": "string",
-                "pattern": "^[\\w\\-.]*$",
-                "description": "The bundle name for this extra entry point."
-              },
-              "inject": {
-                "type": "boolean",
-                "description": "If the bundle will be referenced in the HTML file.",
-                "default": true
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "input"
-            ]
-          },
-          {
-            "type": "string",
-            "description": "The file to include.",
-            "pattern": "\\.(?:css|scss|sass|less)$"
-          }
-        ]
-      }
-    },
-    "inlineStyleLanguage": {
-      "description": "The stylesheet language to use for the application's inline component styles.",
+    "runner": {
       "type": "string",
-      "default": "css",
+      "description": "Specifies the test runner to use for test execution.",
+      "default": "vitest",
       "enum": [
-        "css",
-        "less",
-        "sass",
-        "scss"
+        "karma",
+        "vitest"
       ]
     },
-    "stylePreprocessorOptions": {
-      "description": "Options to pass to style preprocessors.",
-      "type": "object",
-      "properties": {
-        "includePaths": {
-          "description": "Paths to include. Paths will be resolved to workspace root.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": []
-        }
-      },
-      "additionalProperties": false
-    },
-    "optimization": {
-      "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking, dead-code elimination, inlining of critical CSS and fonts inlining. For more information, see https://angular.dev/reference/configs/workspace-config#optimization-configuration.",
-      "default": true,
-      "x-user-analytics": "ep.ng_optimization",
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "scripts": {
-              "type": "boolean",
-              "description": "Enables optimization of the scripts output.",
-              "default": true
-            },
-            "styles": {
-              "description": "Enables optimization of the styles output.",
-              "default": true,
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "minify": {
-                      "type": "boolean",
-                      "description": "Minify CSS definitions by removing extraneous whitespace and comments, merging identifiers and minimizing values.",
-                      "default": true
-                    },
-                    "inlineCritical": {
-                      "type": "boolean",
-                      "description": "Extract and inline critical CSS definitions to improve first paint time.",
-                      "default": true
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "type": "boolean"
-                }
-              ]
-            },
-            "fonts": {
-              "description": "Enables optimization for fonts. This option requires internet access. `HTTPS_PROXY` environment variable can be used to specify a proxy server.",
-              "default": true,
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "inline": {
-                      "type": "boolean",
-                      "description": "Reduce render blocking requests by inlining external Google Fonts and Adobe Fonts CSS definitions in the application's HTML index file. This option requires internet access. `HTTPS_PROXY` environment variable can be used to specify a proxy server.",
-                      "default": true
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "type": "boolean"
-                }
-              ]
-            }
-          },
-          "additionalProperties": false
-        },
-        {
-          "type": "boolean"
-        }
-      ]
-    },
-    "fileReplacements": {
-      "description": "Replace compilation source files with other compilation source files in the build.",
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/fileReplacement"
-      },
-      "default": []
-    },
-    "outputPath": {
-      "type": "string",
-      "description": "The full path for the new output directory, relative to the current workspace."
-    },
-    "resourcesOutputPath": {
-      "type": "string",
-      "description": "The path where style resources will be placed, relative to outputPath."
-    },
-    "aot": {
-      "type": "boolean",
-      "description": "Build using Ahead of Time compilation.",
-      "x-user-analytics": "ep.ng_aot",
-      "default": true
-    },
-    "sourceMap": {
-      "description": "Output source maps for scripts and styles. For more information, see https://angular.dev/reference/configs/workspace-config#source-map-configuration.",
-      "default": false,
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "scripts": {
-              "type": "boolean",
-              "description": "Output source maps for all scripts.",
-              "default": true
-            },
-            "styles": {
-              "type": "boolean",
-              "description": "Output source maps for all styles.",
-              "default": true
-            },
-            "hidden": {
-              "type": "boolean",
-              "description": "Output source maps used for error reporting tools.",
-              "default": false
-            },
-            "vendor": {
-              "type": "boolean",
-              "description": "Resolve vendor packages source maps.",
-              "default": false
-            }
-          },
-          "additionalProperties": false
-        },
-        {
-          "type": "boolean"
-        }
-      ]
-    },
-    "vendorChunk": {
-      "type": "boolean",
-      "description": "Generate a seperate bundle containing only vendor libraries. This option should only be used for development to reduce the incremental compilation time.",
-      "default": false
-    },
-    "commonChunk": {
-      "type": "boolean",
-      "description": "Generate a seperate bundle containing code used across multiple bundles.",
-      "default": true
-    },
-    "baseHref": {
-      "type": "string",
-      "description": "Base url for the application being built."
-    },
-    "deployUrl": {
-      "type": "string",
-      "description": "Customize the base path for the URLs of resources in 'index.html' and component stylesheets. This option is only necessary for specific deployment scenarios, such as with Angular Elements or when utilizing different CDN locations."
-    },
-    "verbose": {
-      "type": "boolean",
-      "description": "Adds more details to output logging.",
-      "default": false
-    },
-    "progress": {
-      "type": "boolean",
-      "description": "Log progress to the console while building.",
-      "default": true
-    },
-    "i18nMissingTranslation": {
-      "type": "string",
-      "description": "How to handle missing translations for i18n.",
-      "enum": [
-        "warning",
-        "error",
-        "ignore"
+    "runnerConfig": {
+      "type": [
+        "string",
+        "boolean"
       ],
-      "default": "warning"
-    },
-    "i18nDuplicateTranslation": {
-      "type": "string",
-      "description": "How to handle duplicate translations for i18n.",
-      "enum": [
-        "warning",
-        "error",
-        "ignore"
-      ],
-      "default": "warning"
-    },
-    "localize": {
-      "description": "Translate the bundles in one or more locales.",
-      "oneOf": [
-        {
-          "type": "boolean",
-          "description": "Translate all locales."
-        },
-        {
-          "type": "array",
-          "description": "List of locales ID's to translate.",
-          "minItems": 1,
-          "items": {
-            "type": "string",
-            "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z]{4})?(-([a-zA-Z]{2}|[0-9]{3}))?(-[a-zA-Z]{5,8})?(-x(-[a-zA-Z0-9]{1,8})+)?$"
-          }
-        }
-      ]
-    },
-    "watch": {
-      "type": "boolean",
-      "description": "Run build when files change.",
+      "description": "Specifies the configuration file for the selected test runner. If a string is provided, it will be used as the path to the configuration file. If `true`, the builder will search for a default configuration file (e.g., `vitest.config.ts` or `karma.conf.js`). If `false`, no external configuration file will be used.\\nFor Vitest, this enables advanced options and the use of custom plugins. Please note that while the file is loaded, the Angular team does not provide direct support for its specific contents or any third-party plugins used within it.",
       "default": false
     },
-    "outputHashing": {
-      "type": "string",
-      "description": "Define the output filename cache-busting hashing mode.\n\n- `none`: No hashing.\n- `all`: Hash for all output bundles. \n- `media`: Hash for all output media (e.g., images, fonts, etc. that are referenced in CSS files).\n- `bundles`: Hash for output of lazy and main bundles.",
-      "default": "none",
-      "enum": [
-        "none",
-        "all",
-        "media",
-        "bundles"
-      ]
-    },
-    "poll": {
-      "type": "number",
-      "description": "Enable and define the file watching poll time period in milliseconds."
-    },
-    "deleteOutputPath": {
-      "type": "boolean",
-      "description": "Delete the output path before building.",
-      "default": true
-    },
-    "preserveSymlinks": {
-      "type": "boolean",
-      "description": "Do not use the real path when resolving modules. If unset then will default to `true` if NodeJS option --preserve-symlinks is set."
-    },
-    "extractLicenses": {
-      "type": "boolean",
-      "description": "Extract all licenses in a separate file.",
-      "default": true
-    },
-    "buildOptimizer": {
-      "type": "boolean",
-      "description": "Enables advanced build optimizations when using the 'aot' option.",
-      "default": true
-    },
-    "namedChunks": {
-      "type": "boolean",
-      "description": "Use file name for lazy loaded chunks.",
-      "default": false
-    },
-    "subresourceIntegrity": {
-      "type": "boolean",
-      "description": "Enables the use of subresource integrity validation.",
-      "default": false
-    },
-    "serviceWorker": {
-      "type": "boolean",
-      "description": "Generates a service worker config for production builds.",
-      "default": false
-    },
-    "ngswConfigPath": {
-      "type": "string",
-      "description": "Path to ngsw-config.json."
-    },
-    "index": {
-      "description": "Configures the generation of the application's HTML index.",
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "The path of a file to use for the application's HTML index. The filename of the specified path will be used for the generated file and will be created in the root of the application's configured output path."
-        },
-        {
-          "type": "object",
-          "description": "",
-          "properties": {
-            "input": {
-              "type": "string",
-              "minLength": 1,
-              "description": "The path of a file to use for the application's generated HTML index."
-            },
-            "output": {
-              "type": "string",
-              "minLength": 1,
-              "default": "index.html",
-              "description": "The output path of the application's generated HTML index file. The full provided path will be used and will be considered relative to the application's configured output path."
-            }
-          },
-          "required": [
-            "input"
-          ]
-        }
-      ]
-    },
-    "statsJson": {
-      "type": "boolean",
-      "description": "Generates a 'stats.json' file which can be analyzed using tools such as 'webpack-bundle-analyzer'.",
-      "default": false
-    },
-    "budgets": {
-      "description": "Budget thresholds to ensure parts of your application stay within boundaries which you set.",
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/budget"
-      },
-      "default": []
-    },
-    "webWorkerTsConfig": {
-      "type": "string",
-      "description": "TypeScript configuration for Web Worker modules."
-    },
-    "crossOrigin": {
-      "type": "string",
-      "description": "Define the crossorigin attribute setting of elements that provide CORS support.",
-      "default": "none",
-      "enum": [
-        "none",
-        "anonymous",
-        "use-credentials"
-      ]
-    },
-    "allowedCommonJsDependencies": {
-      "description": "A list of CommonJS or AMD packages that are allowed to be used without a build time warning. Use `'*'` to allow all.",
+    "browsers": {
+      "description": "Specifies the browsers to use for test execution. When not specified, tests are run in a Node.js environment using jsdom. For both Vitest and Karma, browser names ending with 'Headless' (e.g., 'ChromeHeadless') will enable headless mode.",
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": []
+      "minItems": 1
+    },
+    "browserViewport": {
+      "description": "Specifies the browser viewport dimensions for browser-based tests in the format `widthxheight`.",
+      "type": "string",
+      "pattern": "^\\d+x\\d+$"
+    },
+    "include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "**/*.spec.ts",
+        "**/*.test.ts"
+      ],
+      "description": "Specifies glob patterns of files to include for testing, relative to the project root. This option also has special handling for directory paths (includes all test files within) and file paths (includes the corresponding test file if one exists)."
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specifies glob patterns of files to exclude from testing, relative to the project root."
+    },
+    "filter": {
+      "type": "string",
+      "description": "Specifies a regular expression pattern to match against test suite and test names. Only tests with a name matching the pattern will be executed. For example, `^App` will run only tests in suites beginning with 'App'."
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "Enables watch mode, which re-runs tests when source files change. Defaults to `true` in TTY environments and `false` otherwise."
+    },
+    "headless": {
+      "type": "boolean",
+      "description": "Forces all configured browsers to run in headless mode. When using the Vitest runner, this option is ignored if no browsers are configured. The Karma runner does not support this option."
+    },
+    "debug": {
+      "type": "boolean",
+      "description": "Enables debugging mode for tests, allowing the use of the Node Inspector.",
+      "default": false
+    },
+    "ui": {
+      "type": "boolean",
+      "description": "Enables the Vitest UI for interactive test execution. This option is only available for the Vitest runner."
+    },
+    "coverage": {
+      "type": "boolean",
+      "description": "Enables coverage reporting for tests.",
+      "default": false
+    },
+    "coverageInclude": {
+      "type": "array",
+      "description": "Specifies glob patterns of files to include in the coverage report.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "coverageExclude": {
+      "type": "array",
+      "description": "Specifies glob patterns of files to exclude from the coverage report.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "coverageReporters": {
+      "type": "array",
+      "description": "Specifies the reporters to use for coverage results. Each reporter can be a string representing its name, or a tuple containing the name and an options object. Built-in reporters include 'html', 'lcov', 'lcovonly', 'text', 'text-summary', 'cobertura', 'json', and 'json-summary'.",
+      "items": {
+        "oneOf": [
+          {
+            "enum": [
+              "html",
+              "lcov",
+              "lcovonly",
+              "text",
+              "text-summary",
+              "cobertura",
+              "json",
+              "json-summary"
+            ]
+          },
+          {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "prefixItems": [
+              {
+                "enum": [
+                  "html",
+                  "lcov",
+                  "lcovonly",
+                  "text",
+                  "text-summary",
+                  "cobertura",
+                  "json",
+                  "json-summary"
+                ]
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "coverageThresholds": {
+      "type": "object",
+      "description": "Specifies minimum coverage thresholds that must be met. If thresholds are not met, the builder will exit with an error.",
+      "properties": {
+        "perFile": {
+          "type": "boolean",
+          "description": "When true, thresholds are enforced for each file individually."
+        },
+        "statements": {
+          "type": "number",
+          "description": "Minimum percentage of statements covered."
+        },
+        "branches": {
+          "type": "number",
+          "description": "Minimum percentage of branches covered."
+        },
+        "functions": {
+          "type": "number",
+          "description": "Minimum percentage of functions covered."
+        },
+        "lines": {
+          "type": "number",
+          "description": "Minimum percentage of lines covered."
+        }
+      },
+      "additionalProperties": false
+    },
+    "coverageWatermarks": {
+      "type": "object",
+      "description": "Specifies coverage watermarks for the HTML reporter. These determine the color coding for high, medium, and low coverage.",
+      "properties": {
+        "statements": {
+          "type": "array",
+          "description": "The high and low watermarks for statements coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "branches": {
+          "type": "array",
+          "description": "The high and low watermarks for branches coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "functions": {
+          "type": "array",
+          "description": "The high and low watermarks for functions coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "lines": {
+          "type": "array",
+          "description": "The high and low watermarks for lines coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "additionalProperties": false
+    },
+    "reporters": {
+      "type": "array",
+      "description": "Specifies the reporters to use during test execution. Each reporter can be a string representing its name, or a tuple containing the name and an options object. Built-in reporters include 'default', 'verbose', 'dots', 'json', 'junit', 'tap', 'tap-flat', and 'html'. You can also provide a path to a custom reporter.",
+      "items": {
+        "oneOf": [
+          {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "enum": [
+                  "default",
+                  "verbose",
+                  "dots",
+                  "json",
+                  "junit",
+                  "tap",
+                  "tap-flat",
+                  "html"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "prefixItems": [
+              {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "default",
+                      "verbose",
+                      "dots",
+                      "json",
+                      "junit",
+                      "tap",
+                      "tap-flat",
+                      "html"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "outputFile": {
+      "type": "string",
+      "description": "Specifies a file path for the test report, applying only to the first reporter. To configure output files for multiple reporters, use the tuple format `['reporter-name', { outputFile: '...' }]` within the `reporters` option. When not provided, output is written to the console."
+    },
+    "providersFile": {
+      "type": "string",
+      "description": "Specifies the path to a TypeScript file that provides an array of Angular providers for the test environment. The file must contain a default export of the provider array.",
+      "minLength": 1
+    },
+    "setupFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "A list of paths to global setup files that are executed before the test files. The application's polyfills and the Angular TestBed are always initialized before these files."
+    },
+    "progress": {
+      "type": "boolean",
+      "description": "Shows build progress information in the console. Defaults to the `progress` setting of the specified `buildTarget`."
+    },
+    "listTests": {
+      "type": "boolean",
+      "description": "Lists all discovered test files and exits the process without building or executing the tests.",
+      "default": false
+    },
+    "dumpVirtualFiles": {
+      "type": "boolean",
+      "description": "Dumps build output files to the `.angular/cache` directory for debugging purposes.",
+      "default": false,
+      "visible": false
     }
   },
   "additionalProperties": false,
-  "$defs": {
-    "assetPattern": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "followSymlinks": {
-              "type": "boolean",
-              "default": false,
-              "description": "Allow glob patterns to follow symlink directories. This allows subdirectories of the symlink to be searched."
-            },
-            "glob": {
-              "type": "string",
-              "description": "The pattern to match."
-            },
-            "input": {
-              "type": "string",
-              "description": "The input directory path in which to apply 'glob'. Defaults to the project root."
-            },
-            "ignore": {
-              "description": "An array of globs to ignore.",
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "output": {
-              "type": "string",
-              "default": "",
-              "description": "Absolute path within the output."
-            }
-          },
-          "additionalProperties": false,
-          "required": [
-            "glob",
-            "input"
-          ]
-        },
-        {
-          "type": "string"
-        }
-      ]
-    },
-    "fileReplacement": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "src": {
-              "type": "string",
-              "pattern": "\\.(([cm]?[jt])sx?|json)$"
-            },
-            "replaceWith": {
-              "type": "string",
-              "pattern": "\\.(([cm]?[jt])sx?|json)$"
-            }
-          },
-          "additionalProperties": false,
-          "required": [
-            "src",
-            "replaceWith"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "replace": {
-              "type": "string",
-              "pattern": "\\.(([cm]?[jt])sx?|json)$"
-            },
-            "with": {
-              "type": "string",
-              "pattern": "\\.(([cm]?[jt])sx?|json)$"
-            }
-          },
-          "additionalProperties": false,
-          "required": [
-            "replace",
-            "with"
-          ]
-        }
-      ]
-    },
-    "budget": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "The type of budget.",
-          "enum": [
-            "all",
-            "allScript",
-            "any",
-            "anyScript",
-            "anyComponentStyle",
-            "bundle",
-            "initial"
-          ]
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the bundle."
-        },
-        "baseline": {
-          "type": "string",
-          "description": "The baseline size for comparison."
-        },
-        "maximumWarning": {
-          "type": "string",
-          "description": "The maximum threshold for warning relative to the baseline."
-        },
-        "maximumError": {
-          "type": "string",
-          "description": "The maximum threshold for error relative to the baseline."
-        },
-        "minimumWarning": {
-          "type": "string",
-          "description": "The minimum threshold for warning relative to the baseline."
-        },
-        "minimumError": {
-          "type": "string",
-          "description": "The minimum threshold for error relative to the baseline."
-        },
-        "warning": {
-          "type": "string",
-          "description": "The threshold for warning relative to the baseline (min & max)."
-        },
-        "error": {
-          "type": "string",
-          "description": "The threshold for error relative to the baseline (min & max)."
-        }
-      },
-      "additionalProperties": false,
-      "required": [
-        "type"
-      ]
-    }
-  },
-  "required": [
-    "outputPath",
-    "index",
-    "main",
-    "tsConfig"
-  ]
+  "required": []
 }

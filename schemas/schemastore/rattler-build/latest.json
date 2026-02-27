@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/rattler-build/latest.json",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json",
-    "sourceSha256": "35d0231a5d82f38cfb3119c17598d5507e16cdd660f5e8da9818c5d5f37b4233"
+    "sourceSha256": "2f2141ed84b85d4cd695dec0b36c1415656e4325b3c3058920d1ebdc70fc44d3"
   },
   "$defs": {
     "About": {
@@ -642,6 +642,28 @@
       "title": "Cache",
       "type": "object"
     },
+    "CacheInherit": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "description": "Name of the staging cache to inherit from.",
+          "minLength": 1,
+          "title": "From",
+          "type": "string"
+        },
+        "run_exports": {
+          "default": true,
+          "description": "Whether to inherit run_exports from the staging cache.",
+          "title": "Run Exports",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "CacheInherit",
+      "type": "object"
+    },
     "ComplexPackage": {
       "additionalProperties": false,
       "properties": {
@@ -819,12 +841,16 @@
             }
           ],
           "default": null,
+          "deprecated": true,
           "description": "The cache build that can be used as a common build step for all output."
         },
         "outputs": {
           "anyOf": [
             {
               "$ref": "#/$defs/Output"
+            },
+            {
+              "$ref": "#/$defs/StagingOutput"
             },
             {
               "$ref": "#/$defs/IfStatement"
@@ -834,6 +860,9 @@
                 "anyOf": [
                   {
                     "$ref": "#/$defs/Output"
+                  },
+                  {
+                    "$ref": "#/$defs/StagingOutput"
                   },
                   {
                     "$ref": "#/$defs/IfStatement"
@@ -2420,6 +2449,23 @@
           "default": null,
           "description": "The package name and version, this overwrites any top-level fields."
         },
+        "inherit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/CacheInherit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of the staging cache to inherit from, or an object with `from` and `run_exports` options.",
+          "title": "Inherit"
+        },
         "source": {
           "anyOf": [
             {
@@ -2922,6 +2968,7 @@
         },
         "cache_only": {
           "default": false,
+          "deprecated": true,
           "description": "Do not output a package but use this output as an input to others.",
           "title": "Cache Only",
           "type": "boolean"
@@ -2954,6 +3001,7 @@
             }
           ],
           "default": null,
+          "deprecated": true,
           "description": "Take the output of the specified outputs and copy them in the working directory.",
           "title": "Cache From"
         }
@@ -4212,6 +4260,247 @@
         "package"
       ],
       "title": "SimpleRecipe",
+      "type": "object"
+    },
+    "StagingBuild": {
+      "additionalProperties": false,
+      "properties": {
+        "script": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/FileScript"
+            },
+            {
+              "$ref": "#/$defs/ContentScript"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/IfStatement"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/IfStatement"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The script to execute to invoke the staging build.",
+          "title": "Script"
+        }
+      },
+      "title": "StagingBuild",
+      "type": "object"
+    },
+    "StagingMeta": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Unique name for this staging cache.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "StagingMeta",
+      "type": "object"
+    },
+    "StagingOutput": {
+      "additionalProperties": false,
+      "properties": {
+        "staging": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/StagingMeta"
+            }
+          ],
+          "description": "Marks this output as a staging output with the given name."
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrlSource"
+            },
+            {
+              "$ref": "#/$defs/GitRev"
+            },
+            {
+              "$ref": "#/$defs/GitTag"
+            },
+            {
+              "$ref": "#/$defs/GitBranch"
+            },
+            {
+              "$ref": "#/$defs/BaseGitSource"
+            },
+            {
+              "$ref": "#/$defs/LocalSource"
+            },
+            {
+              "$ref": "#/$defs/IfStatement"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/UrlSource"
+                  },
+                  {
+                    "$ref": "#/$defs/GitRev"
+                  },
+                  {
+                    "$ref": "#/$defs/GitTag"
+                  },
+                  {
+                    "$ref": "#/$defs/GitBranch"
+                  },
+                  {
+                    "$ref": "#/$defs/BaseGitSource"
+                  },
+                  {
+                    "$ref": "#/$defs/LocalSource"
+                  },
+                  {
+                    "$ref": "#/$defs/IfStatement"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source items to be downloaded and used for the staging build.",
+          "title": "Source"
+        },
+        "requirements": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StagingRequirements"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The dependencies needed for the staging build."
+        },
+        "build": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StagingBuild"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Build configuration for the staging output."
+        }
+      },
+      "required": [
+        "staging"
+      ],
+      "title": "StagingOutput",
+      "type": "object"
+    },
+    "StagingRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "build": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/IfStatement"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/IfStatement"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dependencies to install on the build platform architecture for the staging build.",
+          "title": "Build"
+        },
+        "host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/IfStatement"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/IfStatement"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dependencies to install on the host platform architecture for the staging build.",
+          "title": "Host"
+        },
+        "ignore_run_exports": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IgnoreRunExports"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ignore run-exports by name or from certain packages"
+        }
+      },
+      "title": "StagingRequirements",
       "type": "object"
     },
     "TestElementFiles": {

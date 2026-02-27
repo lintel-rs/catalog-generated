@@ -5,7 +5,7 @@
   "description": "Configuration schema for langgraph-cli",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/langchain-ai/langgraph/main/libs/cli/schemas/schema.v0.json",
-    "sourceSha256": "c56b9ffe973ce95a19b82df53831702f50b82b3ceb3418dc576d546b294c0c47"
+    "sourceSha256": "d838b2d77557477aaeae4963ff6195ef22240fdff5f6c1617f0723a6b419b44b"
   },
   "$ref": "#/$defs/Config",
   "$defs": {
@@ -616,7 +616,27 @@
               "type": "null"
             }
           ],
-          "description": "Optional. List of allowed python modules to de-serialize custom objects from.\n\nIf provided, only the specified modules will be allowed to be deserialized.\nIf omitted, no modules are allowed, and the object returned will simply be a json object OR\na deserialized langchain object.\n"
+          "description": "Optional. List of allowed python modules to de-serialize custom objects from JSON.\n\nIf provided, only the specified modules will be allowed to be deserialized.\nIf omitted, no modules are allowed, and the object returned will simply be a json object OR\na deserialized langchain object.\n"
+        },
+        "allowed_msgpack_modules": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Optional. List of allowed python modules to de-serialize custom objects from msgpack.\n\nKnown safe types (langgraph.checkpoint.serde.jsonplus.SAFE_MSGPACK_TYPES) are always\nallowed regardless of this setting. Use this to allowlist your custom Pydantic models,\ndataclasses, and other user-defined types.\n\nIf True (default), unregistered types will log a warning but still be deserialized.\nIf None, only known safe types will be deserialized; unregistered types will be blocked.\n\n{...\n[\"my_agent.models\", \"MyState\"],\n]\n}\n}\n\n{...\n}\n}\n\n"
         },
         "pickle_fallback": {
           "type": "boolean",
