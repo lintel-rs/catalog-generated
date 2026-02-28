@@ -5,7 +5,16 @@
   "description": "An encoding workflow from a single configuration template",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/bitmovin/bitmovin-api-sdk-examples/main/bitmovin-encoding-template.json",
-    "sourceSha256": "7fce4a6f3a11a95cc247e1f3edb13d4df02f22d53f6a77fce8d06e87d0ce33e5"
+    "sourceSha256": "7fce4a6f3a11a95cc247e1f3edb13d4df02f22d53f6a77fce8d06e87d0ce33e5",
+    "fileMatch": [
+      "*.bitmovin.json",
+      "*.bitmovin.yml",
+      "*.bitmovin.yaml"
+    ],
+    "parsers": [
+      "json",
+      "yaml"
+    ]
   },
   "type": "object",
   "properties": {
@@ -226,11 +235,11 @@
                       "type": "string"
                     },
                     "roleArn": {
-                      "description": "Amazon ARN of the IAM Role (Identity and Access Management Role) that will be assumed for S3 access.\n\nThis role has to be created by the owner of the account with the S3 bucket (i.e., you as a customer). For Bitmovin to be able to assume this role, the following has to be added\nto the trust policy of the role:\n\n```\n{\n  \"Effect\": \"Allow\",\n  \"Principal\": {\n    \"AWS\": \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\"\n  },\n  \"Action\": \"sts:AssumeRole\",\n  \"Condition\": {\n    \"StringEquals\": {\n      \"sts:ExternalId\": \"{{externalId}}\"\n    }\n  }\n}\n```\n\nwhere \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\" is the Bitmovin user used for the access.\nThe `Condition` is optional but we highly recommend it, see property `externalId` below for more information.\n\nThis setup allows Bitmovin assume the provided IAM role and to read data from your S3 bucket. Please note that the IAM role has to have read access on S3.\n\nFor more information about role creation please visit https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html#roles-creatingrole-service-console\n",
+                      "description": "Amazon ARN of the IAM Role (Identity and Access Management Role) that will be assumed for S3 access.\n\nThis role has to be created by the owner of the account with the S3 bucket (i.e., you as a customer). For Bitmovin to be able to assume this role, the following has to be added\nto the trust policy of the role:\n\n```\n{\n  \"Effect\": \"Allow\",\n  \"Principal\": {\n    \"AWS\": \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\"\n  },\n  \"Action\": \"sts:AssumeRole\",\n  \"Condition\": {\n    \"StringEquals\": {\n      \"sts:ExternalId\": \"{{externalId}}\"\n    }\n  }\n}\n```\n\nwhere \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\" is the Bitmovin user used for the access.\nThe `Condition` is optional but we highly recommend it, see property `externalId` below for more information.\n\nThis setup allows Bitmovin assume the provided IAM role and to read data from your S3 bucket. Please note that the IAM role has to have read access on S3.\n\nFor more information about role creation please visit <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html#roles-creatingrole-service-console>\n",
                       "type": "string"
                     },
                     "externalId": {
-                      "description": "External ID used together with the IAM role identified by `roleArn` to assume S3 access.\n\nThis ID is provided by the API if `externalIdMode` is set to `GLOBAL` or `GENERATED`. If present, it has to be added to the trust policy of the IAM role `roleArn` configured above, otherwise the API won't be able to read from the S3 bucket. An appropriate trust policy would look like this:\n\n```\n{\n  \"Effect\": \"Allow\",\n  \"Principal\": {\n    \"AWS\": \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\"\n  },\n  \"Action\": \"sts:AssumeRole\",\n  \"Condition\": {\n    \"StringEquals\": {\n      \"sts:ExternalId\": \"{{externalId}}\"\n    }\n  }\n}\n```\n\nwhere \"{{externalId}}\" is the generated ID.\n\nThis property is optional but we recommend it as an additional security feature. We will use both the `roleArn` and the `externalId` to access your S3 data.\nIf the Amazon IAM role has an external ID configured but it is not provided in the input configuration Bitmovin won't be able to read from the S3 bucket. Also if the\nexternal ID does not match the one configured for the IAM role on AWS side, Bitmovin won't be able to access the S3 bucket.\n\nIf you need to change the external ID that is used by your IAM role, you need to create a new input, and use the external ID provided by the API to update your IAM role.\n\nFor more information please visit https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html\n",
+                      "description": "External ID used together with the IAM role identified by `roleArn` to assume S3 access.\n\nThis ID is provided by the API if `externalIdMode` is set to `GLOBAL` or `GENERATED`. If present, it has to be added to the trust policy of the IAM role `roleArn` configured above, otherwise the API won't be able to read from the S3 bucket. An appropriate trust policy would look like this:\n\n```\n{\n  \"Effect\": \"Allow\",\n  \"Principal\": {\n    \"AWS\": \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\"\n  },\n  \"Action\": \"sts:AssumeRole\",\n  \"Condition\": {\n    \"StringEquals\": {\n      \"sts:ExternalId\": \"{{externalId}}\"\n    }\n  }\n}\n```\n\nwhere \"{{externalId}}\" is the generated ID.\n\nThis property is optional but we recommend it as an additional security feature. We will use both the `roleArn` and the `externalId` to access your S3 data.\nIf the Amazon IAM role has an external ID configured but it is not provided in the input configuration Bitmovin won't be able to read from the S3 bucket. Also if the\nexternal ID does not match the one configured for the IAM role on AWS side, Bitmovin won't be able to access the S3 bucket.\n\nIf you need to change the external ID that is used by your IAM role, you need to create a new input, and use the external ID provided by the API to update your IAM role.\n\nFor more information please visit <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html>\n",
                       "type": "string"
                     },
                     "externalIdMode": {
@@ -1280,7 +1289,7 @@
                       "type": "string"
                     },
                     "signatureVersion": {
-                      "description": "Specifies the method used for authentication. Must be set to S3_V2 if the region supports both V2 and V4, but the bucket allows V2 only (see https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)",
+                      "description": "Specifies the method used for authentication. Must be set to S3_V2 if the region supports both V2 and V4, but the bucket allows V2 only (see <https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)>",
                       "enum": [
                         "S3_V2",
                         "S3_V4"
@@ -1352,11 +1361,11 @@
                       "type": "string"
                     },
                     "roleArn": {
-                      "description": "Amazon ARN of the IAM Role (Identity and Access Management Role) that will be assumed for S3 access.\n\nThis role has to be created by the owner of the account with the S3 bucket (i.e., you as a customer). For Bitmovin to be able to assume this role, the following has to be added\nto the trust policy of the role:\n\n```\n{\n  \"Effect\": \"Allow\",\n  \"Principal\": {\n    \"AWS\": \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\"\n  },\n  \"Action\": \"sts:AssumeRole\",\n  \"Condition\": {\n    \"StringEquals\": {\n      \"sts:ExternalId\": \"{{externalId}}\"\n    }\n  }\n}\n```\n\nwhere \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\" is the Bitmovin user used for the access.\nThe `Condition` is optional but we highly recommend it, see property `externalId` below for more information.\n\nThis setup allows Bitmovin assume the provided IAM role and to write data to your S3 bucket. Please note that the IAM role has to have write access to S3.\n\nFor more information about role creation please visit https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html#roles-creatingrole-service-console\n",
+                      "description": "Amazon ARN of the IAM Role (Identity and Access Management Role) that will be assumed for S3 access.\n\nThis role has to be created by the owner of the account with the S3 bucket (i.e., you as a customer). For Bitmovin to be able to assume this role, the following has to be added\nto the trust policy of the role:\n\n```\n{\n  \"Effect\": \"Allow\",\n  \"Principal\": {\n    \"AWS\": \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\"\n  },\n  \"Action\": \"sts:AssumeRole\",\n  \"Condition\": {\n    \"StringEquals\": {\n      \"sts:ExternalId\": \"{{externalId}}\"\n    }\n  }\n}\n```\n\nwhere \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\" is the Bitmovin user used for the access.\nThe `Condition` is optional but we highly recommend it, see property `externalId` below for more information.\n\nThis setup allows Bitmovin assume the provided IAM role and to write data to your S3 bucket. Please note that the IAM role has to have write access to S3.\n\nFor more information about role creation please visit <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html#roles-creatingrole-service-console>\n",
                       "type": "string"
                     },
                     "externalId": {
-                      "description": "External ID used together with the IAM role identified by `roleArn` to assume S3 access.\n\nThis ID is provided by the API if `externalIdMode` is set to `GLOBAL` or `GENERATED`. If present, it has to be added to the trust policy of the IAM role `roleArn` configured above, otherwise the API won't be able to write to the S3 bucket. An appropriate trust policy would look like this:\n\n```\n{\n  \"Effect\": \"Allow\",\n  \"Principal\": {\n    \"AWS\": \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\"\n  },\n  \"Action\": \"sts:AssumeRole\",\n  \"Condition\": {\n    \"StringEquals\": {\n      \"sts:ExternalId\": \"{{externalId}}\"\n    }\n  }\n}\n```\n\nwhere \"{{externalId}}\" is the generated ID.\n\nThis property is optional but we recommend it as an additional security feature. We will use both the `roleArn` and the `externalId` to access your S3 data.\nIf the Amazon IAM role has an external ID configured but it is not provided in the output configuration Bitmovin won't be able to write to the S3 bucket. Also if the\nexternal ID does not match the one configured for the IAM role on AWS side, Bitmovin won't be able to access the S3 bucket.\n\nIf you need to change the external ID that is used by your IAM role, you need to create a new output, and use the external ID provided by the API to update your IAM role.\n\nFor more information please visit https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html\n",
+                      "description": "External ID used together with the IAM role identified by `roleArn` to assume S3 access.\n\nThis ID is provided by the API if `externalIdMode` is set to `GLOBAL` or `GENERATED`. If present, it has to be added to the trust policy of the IAM role `roleArn` configured above, otherwise the API won't be able to write to the S3 bucket. An appropriate trust policy would look like this:\n\n```\n{\n  \"Effect\": \"Allow\",\n  \"Principal\": {\n    \"AWS\": \"arn:aws:iam::630681592166:user/bitmovinCustomerS3Access\"\n  },\n  \"Action\": \"sts:AssumeRole\",\n  \"Condition\": {\n    \"StringEquals\": {\n      \"sts:ExternalId\": \"{{externalId}}\"\n    }\n  }\n}\n```\n\nwhere \"{{externalId}}\" is the generated ID.\n\nThis property is optional but we recommend it as an additional security feature. We will use both the `roleArn` and the `externalId` to access your S3 data.\nIf the Amazon IAM role has an external ID configured but it is not provided in the output configuration Bitmovin won't be able to write to the S3 bucket. Also if the\nexternal ID does not match the one configured for the IAM role on AWS side, Bitmovin won't be able to access the S3 bucket.\n\nIf you need to change the external ID that is used by your IAM role, you need to create a new output, and use the external ID provided by the API to update your IAM role.\n\nFor more information please visit <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html>\n",
                       "type": "string"
                     },
                     "externalIdMode": {
@@ -2187,7 +2196,7 @@
                 "properties": {
                   "type": "object",
                   "title": "LiveMediaIngestOutput",
-                  "description": "Live Media and Metadata Ingest Protocol. See https://tools.ietf.org/html/draft-mekuria-mmediaingest-01.",
+                  "description": "Live Media and Metadata Ingest Protocol. See <https://tools.ietf.org/html/draft-mekuria-mmediaingest-01>.",
                   "properties": {
                     "name": {
                       "description": "Name of the resource. Can be freely chosen by the user.",
@@ -14076,7 +14085,7 @@
                                           ]
                                         },
                                         "systemIds": {
-                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See https://dashif.org/identifiers/content_protection/\n",
+                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See <https://dashif.org/identifiers/content_protection/>\n",
                                           "items": {
                                             "type": "string"
                                           },
@@ -15379,7 +15388,7 @@
                                           ]
                                         },
                                         "systemIds": {
-                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See https://dashif.org/identifiers/content_protection/\n",
+                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See <https://dashif.org/identifiers/content_protection/>\n",
                                           "items": {
                                             "type": "string"
                                           },
@@ -15816,7 +15825,7 @@
                                           ]
                                         },
                                         "systemIds": {
-                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See https://dashif.org/identifiers/content_protection/\n",
+                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See <https://dashif.org/identifiers/content_protection/>\n",
                                           "items": {
                                             "type": "string"
                                           },
@@ -16763,7 +16772,7 @@
                                           ]
                                         },
                                         "systemIds": {
-                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See https://dashif.org/identifiers/content_protection/\n",
+                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See <https://dashif.org/identifiers/content_protection/>\n",
                                           "items": {
                                             "type": "string"
                                           },
@@ -17505,7 +17514,7 @@
                                           ]
                                         },
                                         "systemIds": {
-                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See https://dashif.org/identifiers/content_protection/\n",
+                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See <https://dashif.org/identifiers/content_protection/>\n",
                                           "items": {
                                             "type": "string"
                                           },
@@ -18358,7 +18367,7 @@
                                           ]
                                         },
                                         "systemIds": {
-                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See https://dashif.org/identifiers/content_protection/\n",
+                                          "description": "DRM system identifier of the content protection scheme. At minimum one is expected.\nNot all systemIds are currently supported, support depends on the muxing type.\n\nRelates to SPEKE implementation. See <https://dashif.org/identifiers/content_protection/>\n",
                                           "items": {
                                             "type": "string"
                                           },

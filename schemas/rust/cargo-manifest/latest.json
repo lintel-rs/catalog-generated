@@ -5,7 +5,13 @@
   "description": "A schema for Cargo.toml.",
   "x-lintel": {
     "source": "https://www.schemastore.org/cargo.json",
-    "sourceSha256": "18b126e01c1f46c89251ae796ec97ab6f4902ba24dcd4924114a2b1f72fa4ec1"
+    "sourceSha256": "18b126e01c1f46c89251ae796ec97ab6f4902ba24dcd4924114a2b1f72fa4ec1",
+    "fileMatch": [
+      "Cargo.toml"
+    ],
+    "parsers": [
+      "toml"
+    ]
   },
   "type": "object",
   "properties": {
@@ -429,7 +435,7 @@
       "type": "object",
       "properties": {
         "package": {
-          "description": "Specify the name of the package.\n\nWhen writing a `[dependencies]` section in `Cargo.toml` the key you write for a\ndependency typically matches up to the name of the crate you import from in the\ncode. For some projects, though, you may wish to reference the crate with a\ndifferent name in the code regardless of how it's published on crates.io. For\nexample you may wish to:\n\n* Avoid the need to  `use foo as bar` in Rust source.\n* Depend on multiple versions of a crate.\n* Depend on crates with the same name from different registries.\n\nTo support this Cargo supports a `package` key in the `[dependencies]` section\nof which package should be depended on:\n\n```toml\n[package]\nname = \"mypackage\"\nversion = \"0.0.1\"\n\n[dependencies]\nfoo = \"0.1\"\nbar = { git = \"https://github.com/example/project\", package = \"foo\" }\nbaz = { version = \"0.1\", registry = \"custom\", package = \"foo\" }\n```\n\nIn this example, three crates are now available in your Rust code:\n\n```rust\nextern crate foo; // crates.io\nextern crate bar; // git repository\nextern crate baz; // registry `custom`\n```\n\nAll three of these crates have the package name of `foo` in their own\n`Cargo.toml`, so we're explicitly using the `package` key to inform Cargo that\nwe want the `foo` package even though we're calling it something else locally.\nThe `package` key, if not specified, defaults to the name of the dependency\nbeing requested.\n",
+          "description": "Specify the name of the package.\n\nWhen writing a `[dependencies]` section in `Cargo.toml` the key you write for a\ndependency typically matches up to the name of the crate you import from in the\ncode. For some projects, though, you may wish to reference the crate with a\ndifferent name in the code regardless of how it's published on crates.io. For\nexample you may wish to:\n\n* Avoid the need to  `use foo as bar` in Rust source.\n* Depend on multiple versions of a crate.\n* Depend on crates with the same name from different registries.\n\nTo support this Cargo supports a `package` key in the `[dependencies]` section\nof which package should be depended on:\n\n```toml\n[package]\nname = \"mypackage\"\nversion = \"0.0.1\"\n\n[dependencies]\nfoo = \"0.1\"\nbar = { git = \"<https://github.com/example/project>\", package = \"foo\" }\nbaz = { version = \"0.1\", registry = \"custom\", package = \"foo\" }\n```\n\nIn this example, three crates are now available in your Rust code:\n\n```rust\nextern crate foo; // crates.io\nextern crate bar; // git repository\nextern crate baz; // registry `custom`\n```\n\nAll three of these crates have the package name of `foo` in their own\n`Cargo.toml`, so we're explicitly using the `package` key to inform Cargo that\nwe want the `foo` package even though we're calling it something else locally.\nThe `package` key, if not specified, defaults to the name of the dependency\nbeing requested.\n",
           "type": "string",
           "x-taplo": {
             "links": {
@@ -456,7 +462,7 @@
           }
         },
         "git": {
-          "description": "To depend on a library located in a `git` repository, the minimum information\nyou need to specify is the location of the repository with the `git` key:\n\n```toml\n[dependencies]\nrand = { git = \"https://github.com/rust-lang-nursery/rand\" }\n```\n\nCargo will fetch the `git` repository at this location then look for a\n`Cargo.toml` for the requested crate anywhere inside the `git` repository\n(not necessarily at the root - for example, specifying a member crate name\nof a workspace and setting `git` to the repository containing the workspace).\n\nSince we haven't specified any other information, Cargo assumes that\nwe intend to use the latest commit on the main branch to build our package.\nYou can combine the `git` key with the `rev`, `tag`, or `branch` keys to\nspecify something else. Here's an example of specifying that you want to use\nthe latest commit on a branch named `next`:\n\n```toml\n[dependencies]\nrand = { git = \"https://github.com/rust-lang-nursery/rand\", branch = \"next\" }\n```\n\nSee [Git Authentication](https://doc.rust-lang.org/cargo/appendix/git-authentication.html) for help with git authentication for private repos.\n\n> **Note**: [crates.io](https://crates.io/) does not allow packages to be published with `git`\n> dependencies (`git` [dev-dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#development-dependencies) are ignored). See the [Multiple\n> locations](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#multiple-locations) section for a fallback alternative.\n",
+          "description": "To depend on a library located in a `git` repository, the minimum information\nyou need to specify is the location of the repository with the `git` key:\n\n```toml\n[dependencies]\nrand = { git = \"<https://github.com/rust-lang-nursery/rand>\" }\n```\n\nCargo will fetch the `git` repository at this location then look for a\n`Cargo.toml` for the requested crate anywhere inside the `git` repository\n(not necessarily at the root - for example, specifying a member crate name\nof a workspace and setting `git` to the repository containing the workspace).\n\nSince we haven't specified any other information, Cargo assumes that\nwe intend to use the latest commit on the main branch to build our package.\nYou can combine the `git` key with the `rev`, `tag`, or `branch` keys to\nspecify something else. Here's an example of specifying that you want to use\nthe latest commit on a branch named `next`:\n\n```toml\n[dependencies]\nrand = { git = \"<https://github.com/rust-lang-nursery/rand>\", branch = \"next\" }\n```\n\nSee [Git Authentication](https://doc.rust-lang.org/cargo/appendix/git-authentication.html) for help with git authentication for private repos.\n\n> **Note**: [crates.io](https://crates.io/) does not allow packages to be published with `git`\n> dependencies (`git` [dev-dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#development-dependencies) are ignored). See the [Multiple\n> locations](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#multiple-locations) section for a fallback alternative.\n",
           "type": "string",
           "x-taplo": {
             "links": {
@@ -901,7 +907,7 @@
         },
         "documentation": {
           "title": "Documentation",
-          "description": "\nThe `documentation` field specifies a URL to a website hosting the crate's\ndocumentation. If no URL is specified in the manifest file, [crates.io](https://crates.io) will\nautomatically link your crate to the corresponding [docs.rs](https://docs.rs) page.\n\n```toml\n[package]\n# ...\ndocumentation = \"https://docs.rs/bitflags\"\n```\n",
+          "description": "\nThe `documentation` field specifies a URL to a website hosting the crate's\ndocumentation. If no URL is specified in the manifest file, [crates.io](https://crates.io) will\nautomatically link your crate to the corresponding [docs.rs](https://docs.rs) page.\n\n```toml\n[package]\n# ...\ndocumentation = \"<https://docs.rs/bitflags>\"\n```\n",
           "anyOf": [
             {
               "$ref": "#/$defs/Documentation"
@@ -925,7 +931,7 @@
         },
         "homepage": {
           "title": "Homepage",
-          "description": "The `homepage` field should be a URL to a site that is the home page for your\npackage.\n\n```toml\n[package]\n# ...\nhomepage = \"https://serde.rs/\"\n```",
+          "description": "The `homepage` field should be a URL to a site that is the home page for your\npackage.\n\n```toml\n[package]\n# ...\nhomepage = \"<https://serde.rs/>\"\n```",
           "anyOf": [
             {
               "$ref": "#/$defs/Homepage"
@@ -937,7 +943,7 @@
         },
         "repository": {
           "title": "Repository",
-          "description": "The `repository` field should be a URL to the source repository for your\npackage.\n\n```toml\n[package]\n# ...\nrepository = \"https://github.com/rust-lang/cargo/\"\n```",
+          "description": "The `repository` field should be a URL to the source repository for your\npackage.\n\n```toml\n[package]\n# ...\nrepository = \"<https://github.com/rust-lang/cargo/>\"\n```",
           "anyOf": [
             {
               "$ref": "#/$defs/Repository"
@@ -985,7 +991,7 @@
         },
         "categories": {
           "title": "Categories",
-          "description": "The `categories` field is an array of strings of the categories this package\nbelongs to.\n\n```toml\ncategories = [\"command-line-utilities\", \"development-tools::cargo-plugins\"]\n```\n\n> **Note**: [crates.io](https://crates.io) has a maximum of 5 categories. Each category should\n> match one of the strings available at https://crates.io/category_slugs, and\n> must match exactly.",
+          "description": "The `categories` field is an array of strings of the categories this package\nbelongs to.\n\n```toml\ncategories = [\"command-line-utilities\", \"development-tools::cargo-plugins\"]\n```\n\n> **Note**: [crates.io](https://crates.io) has a maximum of 5 categories. Each category should\n> match one of the strings available at <https://crates.io/category_slugs>, and\n> must match exactly.",
           "anyOf": [
             {
               "$ref": "#/$defs/Categories"
@@ -1801,7 +1807,7 @@
       "type": "object",
       "properties": {
         "package": {
-          "description": "The `workspace.package` table is where you define keys that can be\ninherited by members of a workspace. These keys can be inherited by\ndefining them in the member package with `{key}.workspace = true`.\n\nKeys that are supported:\n\n|                |                 |\n|----------------|-----------------|\n| `authors`      | `categories`    |\n| `description`  | `documentation` |\n| `edition`      | `exclude`       |\n| `homepage`     | `include`       |\n| `keywords`     | `license`       |\n| `license-file` | `publish`       |\n| `readme`       | `repository`    |\n| `rust-version` | `version`       |\n\n- `license-file` and `readme` are relative to the workspace root\n- `include` and `exclude` are relative to your package root\n\nExample:\n```toml\n# [PROJECT_DIR]/Cargo.toml\n[workspace]\nmembers = [\"bar\"]\n\n[workspace.package]\nversion = \"1.2.3\"\nauthors = [\"Nice Folks\"]\ndescription = \"A short description of my package\"\ndocumentation = \"https://example.com/bar\"\n```\n\n```toml\n# [PROJECT_DIR]/bar/Cargo.toml\n[package]\nname = \"bar\"\nversion.workspace = true\nauthors.workspace = true\ndescription.workspace = true\ndocumentation.workspace = true\n```",
+          "description": "The `workspace.package` table is where you define keys that can be\ninherited by members of a workspace. These keys can be inherited by\ndefining them in the member package with `{key}.workspace = true`.\n\nKeys that are supported:\n\n|                |                 |\n|----------------|-----------------|\n| `authors`      | `categories`    |\n| `description`  | `documentation` |\n| `edition`      | `exclude`       |\n| `homepage`     | `include`       |\n| `keywords`     | `license`       |\n| `license-file` | `publish`       |\n| `readme`       | `repository`    |\n| `rust-version` | `version`       |\n\n- `license-file` and `readme` are relative to the workspace root\n- `include` and `exclude` are relative to your package root\n\nExample:\n```toml\n# [PROJECT_DIR]/Cargo.toml\n[workspace]\nmembers = [\"bar\"]\n\n[workspace.package]\nversion = \"1.2.3\"\nauthors = [\"Nice Folks\"]\ndescription = \"A short description of my package\"\ndocumentation = \"<https://example.com/bar>\"\n```\n\n```toml\n# [PROJECT_DIR]/bar/Cargo.toml\n[package]\nname = \"bar\"\nversion.workspace = true\nauthors.workspace = true\ndescription.workspace = true\ndocumentation.workspace = true\n```",
           "type": "object",
           "properties": {
             "version": {
@@ -1987,11 +1993,11 @@
     },
     "Categories": {
       "title": "Categories",
-      "description": "The `categories` field is an array of strings of the categories this package\nbelongs to.\n\n```toml\ncategories = [\"command-line-utilities\", \"development-tools::cargo-plugins\"]\n```\n\n> **Note**: [crates.io](https://crates.io) has a maximum of 5 categories. Each category should\n> match one of the strings available at https://crates.io/category_slugs, and\n> must match exactly.",
+      "description": "The `categories` field is an array of strings of the categories this package\nbelongs to.\n\n```toml\ncategories = [\"command-line-utilities\", \"development-tools::cargo-plugins\"]\n```\n\n> **Note**: [crates.io](https://crates.io) has a maximum of 5 categories. Each category should\n> match one of the strings available at <https://crates.io/category_slugs>, and\n> must match exactly.",
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "description": "The `categories` field is an array of strings of the categories this package\nbelongs to.\n\n```toml\ncategories = [\"command-line-utilities\", \"development-tools::cargo-plugins\"]\n```\n\n> **Note**: [crates.io](https://crates.io) has a maximum of 5 categories. Each category should\n> match one of the strings available at https://crates.io/category_slugs, and\n> must match exactly.",
+        "description": "The `categories` field is an array of strings of the categories this package\nbelongs to.\n\n```toml\ncategories = [\"command-line-utilities\", \"development-tools::cargo-plugins\"]\n```\n\n> **Note**: [crates.io](https://crates.io) has a maximum of 5 categories. Each category should\n> match one of the strings available at <https://crates.io/category_slugs>, and\n> must match exactly.",
         "type": "string",
         "x-taplo": {
           "links": {
@@ -2018,7 +2024,7 @@
     },
     "Documentation": {
       "title": "Documentation",
-      "description": "\nThe `documentation` field specifies a URL to a website hosting the crate's\ndocumentation. If no URL is specified in the manifest file, [crates.io](https://crates.io) will\nautomatically link your crate to the corresponding [docs.rs](https://docs.rs) page.\n\n```toml\n[package]\n# ...\ndocumentation = \"https://docs.rs/bitflags\"\n```\n",
+      "description": "\nThe `documentation` field specifies a URL to a website hosting the crate's\ndocumentation. If no URL is specified in the manifest file, [crates.io](https://crates.io) will\nautomatically link your crate to the corresponding [docs.rs](https://docs.rs) page.\n\n```toml\n[package]\n# ...\ndocumentation = \"<https://docs.rs/bitflags>\"\n```\n",
       "type": "string",
       "x-taplo": {
         "links": {
@@ -2049,7 +2055,7 @@
     },
     "Homepage": {
       "title": "Homepage",
-      "description": "The `homepage` field should be a URL to a site that is the home page for your\npackage.\n\n```toml\n[package]\n# ...\nhomepage = \"https://serde.rs/\"\n```",
+      "description": "The `homepage` field should be a URL to a site that is the home page for your\npackage.\n\n```toml\n[package]\n# ...\nhomepage = \"<https://serde.rs/>\"\n```",
       "type": "string",
       "x-taplo": {
         "links": {
@@ -2120,7 +2126,7 @@
     },
     "Repository": {
       "title": "Repository",
-      "description": "The `repository` field should be a URL to the source repository for your\npackage.\n\n```toml\n[package]\n# ...\nrepository = \"https://github.com/rust-lang/cargo/\"\n```",
+      "description": "The `repository` field should be a URL to the source repository for your\npackage.\n\n```toml\n[package]\n# ...\nrepository = \"<https://github.com/rust-lang/cargo/>\"\n```",
       "type": "string",
       "x-taplo": {
         "links": {

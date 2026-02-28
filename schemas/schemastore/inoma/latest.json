@@ -5,7 +5,13 @@
   "description": "Schema of the build flow configuration file `zinoma.yml`.\n\nIn order to use Žinoma with your project, you need to create a file named `zinoma.yml`. We recommend putting this file in the root directory of your project.\n\nThis struct describes the schema expected for this file. It assumes prior knowledge of the Yaml format.\n\n__Example__\n\n`zinoma.yml`:\n\n```yaml targets: download_dependencies: input: - paths: [package.json, package-lock.json] output: - paths: [node_modules] build: npm install\n\ntest: input: - download_dependencies.output - paths: [package.json, src, test] build: npm test\n\nlint: input: - download_dependencies.output - paths: [package.json, src, test] build: npm run lint\n\ncheck: dependencies: [test, lint]\n\nstart: input: - download_dependencies.output - paths: [package.json, src] service: exec npm run start\n\nbuild: dependencies: [check] input: - paths: - Dockerfile - package.json - package-lock.json - src output: - paths: [lambda.zip] build: | docker build -t build-my-project:latest . docker create -ti --name build-my-project build-my-project:latest bash docker cp build-my-project:/var/task/lambda.zip ./ docker rm -f build-my-project ```\n\nIn this example:\n\n- `zinoma check` will ensure the code complies to the test suites and the coding standards. - `zinoma start --watch` will run the application and restart it whenever the sources are updated. - `zinoma --clean build` will generate a clean artifact, ready to be deployed.\n\nA fully functional and more advanced example project is available in [fbecart/zinoma-node-example](https://github.com/fbecart/zinoma-node-example).",
   "x-lintel": {
     "source": "https://github.com/fbecart/zinoma/releases/latest/download/zinoma-schema.json",
-    "sourceSha256": "64fb7f2aefcf6c202d1764b877d2cb81880270ad31671dc967528355045c2bec"
+    "sourceSha256": "64fb7f2aefcf6c202d1764b877d2cb81880270ad31671dc967528355045c2bec",
+    "fileMatch": [
+      "zinoma.yml"
+    ],
+    "parsers": [
+      "yaml"
+    ]
   },
   "type": "object",
   "properties": {

@@ -4,10 +4,20 @@
   "description": "Docs MCP configuration file (.docs-mcp.json) that controls how documentation is chunked, tagged, and indexed for search.",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/speakeasy-api/docs-mcp/refs/heads/main/schemas/docs-mcp.schema.json",
-    "sourceSha256": "ca75d690433afa90e1aa7dee4b811af52d1266969ce87be195921ffe79c12051"
+    "sourceSha256": "ca8d64b9044dd47a89cd14c3cbae7f6515a946a6558b526f07e7ca9c147e8f2c",
+    "fileMatch": [
+      ".docs-mcp.json"
+    ],
+    "parsers": [
+      "json"
+    ]
   },
   "type": "object",
   "properties": {
+    "$schema": {
+      "description": "JSON Schema URI for editor validation. Typically set automatically by SchemaStore; can be added explicitly.",
+      "type": "string"
+    },
     "version": {
       "type": "string",
       "const": "1",
@@ -92,6 +102,28 @@
             "default": false,
             "description": "When true, this taxonomy dimension identifies content variants that are near-identical in vector space (e.g. the same API operation documented in multiple SDK languages). At search time, results sharing the same content identity — determined by normalizing this field's value out of the filepath — are collapsed to the highest-scoring result. Has no effect when a filter for this field is active, since the filter already restricts to a single value.",
             "type": "boolean"
+          },
+          "properties": {
+            "description": "Per-value configuration for this taxonomy dimension. Keys are taxonomy values (e.g. 'typescript', 'python').",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "mcp_resource": {
+                  "default": false,
+                  "description": "When true, documents with this taxonomy dimension value are exposed as first-class MCP resources.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "mcp_resource"
+              ],
+              "additionalProperties": false,
+              "description": "Per-value configuration for a taxonomy dimension value."
+            }
           }
         },
         "required": [

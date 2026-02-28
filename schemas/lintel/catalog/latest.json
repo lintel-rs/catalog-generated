@@ -1,22 +1,44 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/lintel/catalog/latest.json",
-  "title": "catalog.json",
-  "description": "Schema catalog index that maps file patterns to JSON Schema URLs.\n\nA catalog is a collection of schema entries used by editors and tools to\nautomatically associate files with the correct schema for validation and\ncompletion. Follows the SchemaStore catalog format.\n\nSee: <https://json.schemastore.org/schema-catalog.json>",
+  "title": "Schema Catalog",
+  "description": "Schema catalog index that maps file patterns to JSON Schema URLs.\n\nA catalog is a collection of schema entries used by editors and tools to\nautomatically associate files with the correct schema for validation and\ncompletion. Follows the `SchemaStore` catalog format.\n\nSee: <https://json.schemastore.org/schema-catalog.json>",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lintel-rs/catalog/master/schemas/lintel/catalog.json",
+    "sourceSha256": "5b62f9ece63fff62def8b2258ed6a213511d95dc3c945dae410b5004e50b0337",
+    "fileMatch": [
+      "catalog.json",
+      "**/catalog.json"
+    ],
+    "parsers": [
+      "json"
+    ],
+    "catalogDescription": "Schema catalog index mapping file patterns to JSON Schema URLs."
+  },
   "type": "object",
   "properties": {
+    "$schema": {
+      "description": "The `$schema` URL for this catalog. Defaults to the Lintel catalog schema.",
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
     "version": {
-      "description": "The catalog format version. Currently always `1`.",
+      "description": "The catalog format version.",
       "type": "integer",
       "format": "uint32",
-      "minimum": 0
+      "minimum": 0,
+      "default": 1
     },
     "title": {
       "description": "An optional human-readable title for the catalog.",
       "type": [
         "string",
         "null"
-      ]
+      ],
+      "default": null
     },
     "schemas": {
       "description": "The list of schema entries in this catalog.",
@@ -30,7 +52,8 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/CatalogGroup"
-      }
+      },
+      "default": []
     }
   },
   "$defs": {
@@ -48,7 +71,8 @@
         },
         "description": {
           "description": "A short description of what the schema validates.",
-          "type": "string"
+          "type": "string",
+          "default": ""
         },
         "url": {
           "description": "The URL where the schema can be fetched.",
@@ -88,7 +112,6 @@
       },
       "required": [
         "name",
-        "description",
         "url"
       ]
     },
@@ -121,7 +144,6 @@
     }
   },
   "required": [
-    "version",
     "schemas"
   ]
 }

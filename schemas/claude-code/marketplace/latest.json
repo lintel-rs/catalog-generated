@@ -3,6 +3,18 @@
   "$id": "https://catalog.lintel.tools/schemas/claude-code/marketplace/latest.json",
   "title": "Claude Code Marketplace",
   "description": "Schema for [Claude Code marketplace](https://code.claude.com/docs/en/plugin-marketplaces) catalog (`.claude-plugin/marketplace.json`). Marketplaces distribute plugins to teams and communities, providing centralized discovery, version tracking, and automatic updates. Each marketplace lists plugins with their sources (local paths, GitHub repos, git URLs, npm packages, or pip packages). Users add marketplaces via `/plugin marketplace add` and install individual plugins with `/plugin install plugin-name@marketplace-name`.",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/lintel-rs/catalog/master/schemas/claude-code/marketplace.json",
+    "sourceSha256": "e384a8b15aea368420746f6f677c735c071650a85e61d941ffa2b3f1bfa4fe06",
+    "fileMatch": [
+      "**/.claude-plugin/marketplace.json",
+      ".claude-plugin/marketplace.json"
+    ],
+    "parsers": [
+      "json"
+    ],
+    "catalogDescription": "Claude Code plugin marketplace catalog."
+  },
   "type": "object",
   "properties": {
     "name": {
@@ -119,7 +131,7 @@
           ]
         },
         "author": {
-          "$ref": "#/$defs/Author",
+          "$ref": "https://catalog.lintel.tools/schemas/claude-code/author/latest.json",
           "description": "Plugin author information."
         },
         "homepage": {
@@ -187,15 +199,15 @@
           "default": true
         },
         "commands": {
-          "$ref": "#/$defs/PathOrPaths",
+          "$ref": "https://catalog.lintel.tools/schemas/claude-code/path-or-paths/latest.json",
           "description": "Custom paths to command files or directories, relative to the plugin root."
         },
         "agents": {
-          "$ref": "#/$defs/PathOrPaths",
+          "$ref": "https://catalog.lintel.tools/schemas/claude-code/path-or-paths/latest.json",
           "description": "Custom paths to agent files, relative to the plugin root."
         },
         "skills": {
-          "$ref": "#/$defs/PathOrPaths",
+          "$ref": "https://catalog.lintel.tools/schemas/claude-code/path-or-paths/latest.json",
           "description": "Custom paths to skill directories, relative to the plugin root."
         },
         "hooks": {
@@ -213,7 +225,7 @@
               "description": "Array of paths."
             },
             {
-              "$ref": "#/$defs/Hooks",
+              "$ref": "https://catalog.lintel.tools/schemas/claude-code/hooks/latest.json",
               "description": "Inline hook definitions."
             }
           ]
@@ -242,7 +254,7 @@
                     "description": "Reference to an already-configured server."
                   },
                   {
-                    "$ref": "#/$defs/McpServerConfig",
+                    "$ref": "https://catalog.lintel.tools/schemas/claude-code/mcp-server-config/latest.json",
                     "description": "Inline definition."
                   }
                 ]
@@ -251,7 +263,7 @@
           ]
         },
         "outputStyles": {
-          "$ref": "#/$defs/PathOrPaths",
+          "$ref": "https://catalog.lintel.tools/schemas/claude-code/path-or-paths/latest.json",
           "description": "Custom paths to output style files or directories."
         },
         "lspServers": {
@@ -272,7 +284,7 @@
               "type": "object",
               "description": "Inline LSP server definitions.",
               "additionalProperties": {
-                "$ref": "#/$defs/LspServerConfig"
+                "$ref": "https://catalog.lintel.tools/schemas/claude-code/lsp-server-config/latest.json"
               }
             }
           ]
@@ -452,394 +464,6 @@
       "required": [
         "source",
         "package"
-      ],
-      "additionalProperties": false
-    },
-    "Author": {
-      "type": "object",
-      "description": "Author information.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Author's display name.",
-          "examples": [
-            "Dev Team"
-          ]
-        },
-        "email": {
-          "type": "string",
-          "description": "Author's email address.",
-          "examples": [
-            "dev@company.com"
-          ]
-        },
-        "url": {
-          "type": "string",
-          "description": "Author's website or profile URL.",
-          "examples": [
-            "https://github.com/author"
-          ]
-        }
-      },
-      "additionalProperties": false
-    },
-    "PathOrPaths": {
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "A single relative path starting with `./`."
-        },
-        {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Array of relative paths, each starting with `./`."
-        }
-      ]
-    },
-    "McpServerConfig": {
-      "type": "object",
-      "description": "[MCP server](https://code.claude.com/docs/en/mcp) configuration. Use `${CLAUDE_PLUGIN_ROOT}` for plugin-relative paths.",
-      "properties": {
-        "command": {
-          "type": "string",
-          "description": "Executable to run. Use `${CLAUDE_PLUGIN_ROOT}` for plugin paths.",
-          "examples": [
-            "python",
-            "node",
-            "npx"
-          ]
-        },
-        "args": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Arguments to pass to the command."
-        },
-        "env": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Environment variables. Values support `${CLAUDE_PLUGIN_ROOT}`."
-        },
-        "cwd": {
-          "type": "string",
-          "description": "Working directory for the server process."
-        },
-        "timeout": {
-          "type": "number",
-          "description": "Connection timeout in milliseconds."
-        }
-      },
-      "required": [
-        "command"
-      ]
-    },
-    "LspServerConfig": {
-      "type": "object",
-      "description": "[LSP server](https://code.claude.com/docs/en/plugins-reference#lsp-servers) configuration. The binary must be installed separately.",
-      "properties": {
-        "command": {
-          "type": "string",
-          "description": "The LSP binary to execute (must be in `PATH`).",
-          "examples": [
-            "gopls",
-            "typescript-language-server"
-          ]
-        },
-        "extensionToLanguage": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Maps file extensions to language identifiers.",
-          "examples": [
-            {
-              ".go": "go"
-            }
-          ]
-        },
-        "args": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Command-line arguments."
-        },
-        "transport": {
-          "type": "string",
-          "enum": [
-            "stdio",
-            "socket"
-          ],
-          "default": "stdio",
-          "description": "Communication transport."
-        },
-        "env": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Environment variables."
-        },
-        "initializationOptions": {
-          "type": "object",
-          "description": "Options passed during initialization."
-        },
-        "settings": {
-          "type": "object",
-          "description": "Settings passed via `workspace/didChangeConfiguration`."
-        },
-        "workspaceFolder": {
-          "type": "string",
-          "description": "Workspace folder path."
-        },
-        "startupTimeout": {
-          "type": "number",
-          "description": "Max startup wait time (ms)."
-        },
-        "shutdownTimeout": {
-          "type": "number",
-          "description": "Max shutdown wait time (ms)."
-        },
-        "restartOnCrash": {
-          "type": "boolean",
-          "description": "Auto-restart on crash."
-        },
-        "maxRestarts": {
-          "type": "number",
-          "description": "Max restart attempts."
-        }
-      },
-      "required": [
-        "command",
-        "extensionToLanguage"
-      ]
-    },
-    "Hooks": {
-      "type": "object",
-      "description": "Map of [hook event](https://code.claude.com/docs/en/hooks#hook-events) names to arrays of matcher groups.",
-      "properties": {
-        "SessionStart": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when a session starts. Matcher filters by source: `startup`, `resume`, `clear`, `compact`."
-        },
-        "UserPromptSubmit": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when the user submits a prompt. **No matcher support**."
-        },
-        "PreToolUse": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires before a tool is executed. Matcher filters by tool name."
-        },
-        "PermissionRequest": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when a tool requests permission. Matcher filters by tool name."
-        },
-        "PostToolUse": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires after a tool executes successfully. Matcher filters by tool name."
-        },
-        "PostToolUseFailure": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires after a tool execution fails. Matcher filters by tool name."
-        },
-        "Notification": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires on notifications. Matcher filters by type."
-        },
-        "SubagentStart": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when a subagent is spawned. Matcher filters by agent type."
-        },
-        "SubagentStop": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when a subagent stops. Matcher filters by agent type."
-        },
-        "Stop": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when Claude's turn ends. **No matcher support**."
-        },
-        "TeammateIdle": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when a teammate goes idle. **No matcher support**."
-        },
-        "TaskCompleted": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when a task is marked completed. **No matcher support**."
-        },
-        "ConfigChange": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when a configuration file changes. Matcher filters by source: `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`."
-        },
-        "PreCompact": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires before context compaction. Matcher filters by trigger: `manual`, `auto`."
-        },
-        "SessionEnd": {
-          "$ref": "#/$defs/MatcherGroupArray",
-          "description": "Fires when a session ends. Matcher filters by exit reason."
-        }
-      },
-      "additionalProperties": false
-    },
-    "MatcherGroupArray": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/MatcherGroup"
-      }
-    },
-    "MatcherGroup": {
-      "type": "object",
-      "description": "A matcher group pairs an optional regex filter with an array of hook handlers. Omit `matcher` to fire on every occurrence.",
-      "properties": {
-        "matcher": {
-          "type": "string",
-          "description": "Regex pattern. Use `|` for OR, `.*` for wildcards.",
-          "examples": [
-            "Bash",
-            "Edit|Write"
-          ]
-        },
-        "hooks": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/HookHandler"
-          }
-        }
-      },
-      "required": [
-        "hooks"
-      ]
-    },
-    "HookHandler": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/CommandHook"
-        },
-        {
-          "$ref": "#/$defs/PromptHook"
-        },
-        {
-          "$ref": "#/$defs/AgentHook"
-        }
-      ]
-    },
-    "CommandHook": {
-      "type": "object",
-      "description": "Runs a shell command. Receives [hook context as JSON on stdin](https://code.claude.com/docs/en/hooks#common-input-fields). **Exit 0**: success. **Exit 2**: blocking error. **Other**: non-blocking error.",
-      "properties": {
-        "type": {
-          "const": "command"
-        },
-        "command": {
-          "type": "string",
-          "description": "Shell command or script. Use `${CLAUDE_PLUGIN_ROOT}` for plugin paths."
-        },
-        "timeout": {
-          "type": "number",
-          "description": "Max execution time in seconds.",
-          "default": 600
-        },
-        "statusMessage": {
-          "type": "string",
-          "description": "Spinner message."
-        },
-        "async": {
-          "type": "boolean",
-          "description": "Run in background. Only for `PostToolUse`/`PostToolUseFailure`.",
-          "default": false
-        },
-        "once": {
-          "type": "boolean",
-          "description": "Run once per session then remove.",
-          "default": false
-        }
-      },
-      "required": [
-        "type",
-        "command"
-      ],
-      "additionalProperties": false
-    },
-    "PromptHook": {
-      "type": "object",
-      "description": "Single-turn LLM [prompt hook](https://code.claude.com/docs/en/hooks#prompt-based-hooks). Must respond `{ok: true}` or `{ok: false, reason: \"...\"}`. Cannot use tools.",
-      "properties": {
-        "type": {
-          "const": "prompt"
-        },
-        "prompt": {
-          "type": "string",
-          "description": "Evaluation prompt. Use `$ARGUMENTS` for hook context."
-        },
-        "model": {
-          "type": "string",
-          "description": "Model for evaluation.",
-          "examples": [
-            "haiku"
-          ]
-        },
-        "timeout": {
-          "type": "number",
-          "description": "Max execution time in seconds.",
-          "default": 30
-        },
-        "statusMessage": {
-          "type": "string",
-          "description": "Spinner message."
-        },
-        "once": {
-          "type": "boolean",
-          "description": "Run once per session then remove.",
-          "default": false
-        }
-      },
-      "required": [
-        "type",
-        "prompt"
-      ],
-      "additionalProperties": false
-    },
-    "AgentHook": {
-      "type": "object",
-      "description": "Multi-turn LLM [agent hook](https://code.claude.com/docs/en/hooks#agent-based-hooks) with tool access. Must respond `{ok: true}` or `{ok: false, reason: \"...\"}`. Can explore the codebase.",
-      "properties": {
-        "type": {
-          "const": "agent"
-        },
-        "prompt": {
-          "type": "string",
-          "description": "Verification prompt. Use `$ARGUMENTS` for hook context."
-        },
-        "model": {
-          "type": "string",
-          "description": "Model for the agent.",
-          "examples": [
-            "sonnet"
-          ]
-        },
-        "timeout": {
-          "type": "number",
-          "description": "Max execution time in seconds.",
-          "default": 60
-        },
-        "statusMessage": {
-          "type": "string",
-          "description": "Spinner message."
-        },
-        "once": {
-          "type": "boolean",
-          "description": "Run once per session then remove.",
-          "default": false
-        }
-      },
-      "required": [
-        "type",
-        "prompt"
       ],
       "additionalProperties": false
     }

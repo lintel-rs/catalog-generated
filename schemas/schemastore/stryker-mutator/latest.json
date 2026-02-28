@@ -5,7 +5,14 @@
   "description": "JSON schema for the Stryker Mutator configuration file",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
-    "sourceSha256": "557236b465f1a6cea9bce98c19b672aef401123ddbba21a468f23467074cffa8"
+    "sourceSha256": "c376ac3771a7a2d28d658eddd471cbe2e057ed26078e657bf1c8bd121a2b98b7",
+    "fileMatch": [
+      "stryker.conf.json",
+      "stryker-*.conf.json"
+    ],
+    "parsers": [
+      "json"
+    ]
   },
   "type": "object",
   "properties": {
@@ -40,8 +47,22 @@
       }
     },
     "concurrency": {
-      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.",
-      "type": "number"
+      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases. You can also specify a percentage string (e.g., \"50%\") to compute the worker count as a percentage of the logical CPU cores available (0%-100%).",
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 1
+        },
+        {
+          "type": "string",
+          "pattern": "^(100|[1-9]?[0-9])%$"
+        }
+      ],
+      "examples": [
+        4,
+        "50%",
+        "100%"
+      ]
     },
     "commandRunner": {
       "description": "Options used by the command test runner. Note: these options will only be used when the command test runner is activated (this is the default)",
