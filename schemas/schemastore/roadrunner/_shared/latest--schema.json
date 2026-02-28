@@ -1,130 +1,158 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json",
-  "title": "roadrunner-pool",
-  "description": "All the valid configuration parameters for the pool plugin for RoadRunner.",
+  "title": "roadrunner-logger",
+  "description": "All the valid configuration parameters for the Logger plugin for RoadRunner.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/roadrunner-server/pool/refs/heads/master/schema.json",
-    "sourceSha256": "d30e6e40f8739afef7ef3a8b866ed8cf9814c86e4e4a0899e06fdee100fd8c7c",
-    "invalid": true
+    "source": "https://raw.githubusercontent.com/roadrunner-server/logger/refs/heads/master/schema.json",
+    "sourceSha256": "b0611c988214c2ad733c6acc778d2bc53d8d1c72c74b42cc91e8a50153365cb7"
   },
   "type": "object",
   "properties": {
-    "debug": {
-      "description": "In debug mode, workers are created immediately before RR passes jobs to them, exiting once the job completes. This defeats the purpose of a worker pool and should only be used during development.",
-      "type": "boolean",
-      "default": false
+    "mode": {
+      "$ref": "#/$defs/LogMode"
     },
-    "command": {
-      "type": "string",
-      "description": "The command to use for the pool. If defined, this will override the value in `server.command` for this pool only.",
-      "examples": [
-        "php worker.php"
-      ]
+    "level": {
+      "$ref": "#/$defs/LogLevel"
     },
-    "num_workers": {
-      "description": "The number of worker processes to start. Zero or undefined defaults to the number of logical CPUs.",
-      "type": "integer",
-      "minimum": 0,
-      "default": 0
+    "line_ending": {
+      "$ref": "#/$defs/LogLineEnding"
     },
-    "max_jobs": {
-      "description": "The maximum number of executions a worker may perform before it is terminated and a new process is started. Zero or undefined means no limit.",
-      "type": "integer",
-      "minimum": 0,
-      "default": 0
+    "encoding": {
+      "$ref": "#/$defs/LogEncoding"
     },
-    "max_queue_size": {
-      "description": "The maximum size of the internal job queue. This is the limit of pending, incoming jobs that await worker allocation. After the limit is reached, all additional jobs will be rejected with an error. Zero or undefined means no limit.",
-      "type": "integer",
-      "minimum": 0,
-      "default": 0
+    "output": {
+      "$ref": "#/$defs/LogOutput"
     },
-    "allocate_timeout": {
-      "description": "The maximum duration an incoming job is allowed to wait for a worker. Zero or undefined defaults to 60s.",
-      "$ref": "#/$defs/duration",
-      "default": "60s"
+    "err_output": {
+      "$ref": "#/$defs/LogOutput"
     },
-    "reset_timeout": {
-      "description": "The maximum duration to wait for the `pool.Reset` operation (`./rr reset`) to complete. Zero or undefined defaults to 60s.",
-      "$ref": "#/$defs/duration",
-      "default": "60s"
+    "file_logger_options": {
+      "$ref": "#/$defs/FileLoggerOptions"
     },
-    "stream_timeout": {
-      "description": "The maximum duration to wait for stream cancellation. Zero or undefined defaults to 60s.",
-      "$ref": "#/$defs/duration",
-      "default": "60s"
-    },
-    "destroy_timeout": {
-      "description": "The maximum duration to wait for worker termination/deallocation. If a worker has not stopped after this period, the process will be killed. Zero or undefined defaults to 60s.",
-      "$ref": "#/$defs/duration",
-      "default": "60s"
-    },
-    "dynamic_allocator": {
-      "title": "Auto-scaling/dynamic Workers",
-      "description": "Configuration options for auto-scaling/dynamic workers. If not defined, worker auto-scaling is disabled.",
+    "channels": {
+      "description": "You can configure logging for each plugin individually. The key is the plugin name and the value is logging options in same format as the parent.",
       "type": "object",
       "additionalProperties": false,
-      "properties": {
-        "max_workers": {
-          "description": "The maximum number of workers that may be dynamically allocated.",
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100,
-          "default": 10
-        },
-        "spawn_rate": {
-          "description": "The maximum number of workers that may be spawned per NoFreeWorkers error (limited to `max_workers`).",
-          "type": "integer",
-          "minimum": 1,
-          "default": 5
-        },
-        "idle_timeout": {
-          "description": "The duration after which idle dynamically allocated workers will be deallocated.",
-          "$ref": "#/$defs/duration",
-          "default": "1m"
-        }
-      }
-    },
-    "supervisor": {
-      "title": "Pool Supervisor",
-      "description": "The pool supervisor is used to control workers. If not defined, the pool has no supervision.",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "watch_tick": {
-          "description": "Duration between worker state checks. Defaults to 5s.",
-          "$ref": "#/$defs/duration",
-          "default": "5s"
-        },
-        "ttl": {
-          "description": "The maximum duration a worker is allowed to live (soft limit). If a worker exceeds this limit while processing a job, it will be terminated afterward. Zero or undefined means no limit.",
-          "$ref": "#/$defs/duration",
-          "default": "0s"
-        },
-        "idle_ttl": {
-          "description": "The maximum duration a worker may spend in idle mode after first processing a job (soft limit). If a worker exceeds this value during execution, it will be terminated afterward. Zero or undefined means no limit.",
-          "$ref": "#/$defs/duration",
-          "default": "0s"
-        },
-        "max_worker_memory": {
-          "description": "The maximum memory allocation allowed for a worker (soft limit) in MB. If a worker exceeds this value during execution, it will be terminated afterward. This should generally be set to a value lower than your PHP memory_limit, if one is specified. Zero or undefined means no limit.",
-          "type": "integer",
-          "minimum": 0,
-          "default": 0
-        },
-        "exec_ttl": {
-          "description": "The maximum duration any job (hard limit) is allowed to take. If a job exceeds this time limit, the worker processing it will be terminated. Zero or undefined means no limit.",
-          "$ref": "#/$defs/duration",
-          "default": "0s"
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-zA-Z0-9._-]+$": {
+          "description": "Custom logging options for the plugin specified as this object's key.",
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "mode": {
+              "$ref": "#/$defs/LogMode"
+            },
+            "level": {
+              "$ref": "#/$defs/LogLevel"
+            },
+            "line_ending": {
+              "$ref": "#/$defs/LogLineEnding"
+            },
+            "encoding": {
+              "$ref": "#/$defs/LogEncoding"
+            },
+            "output": {
+              "$ref": "#/$defs/LogOutput"
+            },
+            "err_output": {
+              "$ref": "#/$defs/LogOutput"
+            },
+            "file_logger_options": {
+              "$ref": "#/$defs/FileLoggerOptions"
+            }
+          }
         }
       }
     }
   },
   "$defs": {
-    "duration": {
-      "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration"
+    "FileLoggerOptions": {
+      "description": "File logger options.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "log_output": {
+          "type": "string",
+          "description": "Path to the log file. Uses <processname>-lumberjack.log and the OS temp (i.e. `/tmp`) directory if empty."
+        },
+        "max_size": {
+          "type": "integer",
+          "description": "Maximum file size in MB.",
+          "minimum": 0,
+          "default": 100
+        },
+        "max_age": {
+          "type": "integer",
+          "description": "The maximum number of days to retain old log files based on the timestamp encoded in their filename. Empty or zero defaults to 24 days.",
+          "minimum": 0,
+          "default": 24
+        },
+        "max_backups": {
+          "type": "integer",
+          "description": "The maximum number of old log files to retain. Empty or zero defaults to 10.",
+          "minimum": 0,
+          "default": 10
+        },
+        "compress": {
+          "type": "boolean",
+          "description": "Whether to compress log files.",
+          "default": false
+        }
+      }
+    },
+    "LogMode": {
+      "description": "Logging mode",
+      "type": "string",
+      "default": "development",
+      "enum": [
+        "none",
+        "off",
+        "production",
+        "development",
+        "raw"
+      ]
+    },
+    "LogLevel": {
+      "description": "Logging level",
+      "type": "string",
+      "default": "debug",
+      "enum": [
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "panic"
+      ]
+    },
+    "LogEncoding": {
+      "description": "Encoding format. Default depends on logging mode. For production, `json` is the default, else `console`. Also supports any third-party encodings registered via RegisterEncoder.",
+      "type": "string",
+      "enum": [
+        "console",
+        "json"
+      ]
+    },
+    "LogOutput": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "examples": [
+          "stdout",
+          "stderr",
+          "/var/log/rr_errors.log"
+        ]
+      }
+    },
+    "LogLineEnding": {
+      "description": "Line-ending to use for logging.",
+      "type": "string",
+      "default": "\n"
     }
   },
+  "minProperties": 1,
   "additionalProperties": false
 }
