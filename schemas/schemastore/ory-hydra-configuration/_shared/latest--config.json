@@ -1,25 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/ory-hydra-configuration/_shared/latest--config.json",
-  "title": "Ory Hydra Configuration",
+  "title": "ORY Hydra Configuration",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/ory/hydra/v2.0.2/spec/config.json",
-    "sourceSha256": "30f9a48c425627c5520e5e85b7d3cdce89fdb2368d0b787b74ef8f8c1d24c17f"
+    "source": "https://raw.githubusercontent.com/ory/hydra/v1.10.6/spec/config.json",
+    "sourceSha256": "4f79fdbed758df0159e7ff3b0059015811543346cd9536833df84e692718d6b8"
   },
   "type": "object",
   "properties": {
-    "db": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Configures the database connection",
-      "properties": {
-        "ignore_unknown_table_columns": {
-          "type": "boolean",
-          "description": "Ignore scan errors when columns in the SQL result have no fields in the destination struct",
-          "default": false
-        }
-      }
-    },
     "log": {
       "type": "object",
       "additionalProperties": false,
@@ -43,11 +31,6 @@
           "type": "boolean",
           "description": "Logs sensitive values such as cookie and URL parameter.",
           "default": false
-        },
-        "redaction_text": {
-          "type": "string",
-          "title": "Sensitive log value redaction text",
-          "description": "Text to use, when redacting sensitive log value."
         },
         "format": {
           "type": "string",
@@ -82,7 +65,7 @@
             },
             "host": {
               "type": "string",
-              "description": "The interface or unix socket Ory Hydra should listen and handle public API requests on. Use the prefix `unix:` to specify a path to a unix socket. Leave empty to listen on all interfaces.",
+              "description": "The interface or unix socket ORY Hydra should listen and handle public API requests on. Use the prefix \"unix:\" to specify a path to a unix socket. Leave empty to listen on all interfaces.",
               "default": "",
               "examples": [
                 "localhost"
@@ -94,7 +77,7 @@
             "socket": {
               "$ref": "#/$defs/socket"
             },
-            "request_log": {
+            "access_log": {
               "type": "object",
               "additionalProperties": false,
               "description": "Access Log configuration for public server.",
@@ -126,7 +109,7 @@
             },
             "host": {
               "type": "string",
-              "description": "The interface or unix socket Ory Hydra should listen and handle administrative API requests on. Use the prefix `unix:` to specify a path to a unix socket. Leave empty to listen on all interfaces.",
+              "description": "The interface or unix socket ORY Hydra should listen and handle administrative API requests on. Use the prefix \"unix:\" to specify a path to a unix socket. Leave empty to listen on all interfaces.",
               "default": "",
               "examples": [
                 "localhost"
@@ -138,7 +121,7 @@
             "socket": {
               "$ref": "#/$defs/socket"
             },
-            "request_log": {
+            "access_log": {
               "type": "object",
               "additionalProperties": false,
               "description": "Access Log configuration for admin server.",
@@ -154,6 +137,16 @@
               "allOf": [
                 {
                   "$ref": "#/$defs/tls_config"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Setting enabled to false drops the TLS requirement for the admin endpoint, even if TLS is enabled on the public endpoint.",
+                      "default": true
+                    }
+                  }
                 }
               ]
             }
@@ -183,39 +176,6 @@
               "examples": [
                 true
               ]
-            },
-            "domain": {
-              "title": "HTTP Cookie Domain",
-              "description": "Sets the cookie domain for session and CSRF cookies. Useful when dealing with subdomains. Use with care!",
-              "type": "string"
-            },
-            "secure": {
-              "title": "HTTP Cookie Secure Flag in Development Mode",
-              "description": "Sets the HTTP Cookie secure flag in development mode. HTTP Cookies always have the secure flag in production mode.",
-              "type": "boolean",
-              "default": false
-            },
-            "names": {
-              "title": "Cookie Names",
-              "description": "Sets the session cookie name. Use with care!",
-              "type": "object",
-              "properties": {
-                "login_csrf": {
-                  "type": "string",
-                  "title": "CSRF Cookie Name",
-                  "default": "ory_hydra_login_csrf"
-                },
-                "consent_csrf": {
-                  "type": "string",
-                  "title": "CSRF Cookie Name",
-                  "default": "ory_hydra_consent_csrf"
-                },
-                "session": {
-                  "type": "string",
-                  "title": "Session Cookie Name",
-                  "default": "ory_hydra_session"
-                }
-              }
             }
           }
         }
@@ -223,60 +183,7 @@
     },
     "dsn": {
       "type": "string",
-      "description": "Sets the data source name. This configures the backend where Ory Hydra persists data. If dsn is `memory`, data will be written to memory and is lost when you restart this instance. Ory Hydra supports popular SQL databases. For more detailed configuration information go to: <https://www.ory.sh/docs/hydra/dependencies-environment#sql>"
-    },
-    "clients": {
-      "title": "Global outgoing network settings",
-      "description": "Configure how outgoing network calls behave.",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "http": {
-          "title": "Global HTTP client configuration",
-          "description": "Configure how outgoing HTTP calls behave.",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "disallow_private_ip_ranges": {
-              "title": "Disallow private IP ranges",
-              "description": "Disallow all outgoing HTTP calls to private IP ranges. This feature can help protect against SSRF attacks.",
-              "type": "boolean",
-              "default": false
-            }
-          }
-        }
-      }
-    },
-    "hsm": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Configures Hardware Security Module.",
-      "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "library": {
-          "type": "string",
-          "description": "Full path (including file extension) of the HSM vendor PKCS#11 library"
-        },
-        "pin": {
-          "type": "string",
-          "description": "PIN code for token operations"
-        },
-        "slot": {
-          "type": "integer",
-          "description": "Slot ID of the token to use (if label is not specified)"
-        },
-        "token_label": {
-          "type": "string",
-          "description": "Label of the token to use (if slot is not specified). If both slot and label are set, token label takes preference over slot. In this case first slot, that contains this label is used."
-        },
-        "key_set_prefix": {
-          "type": "string",
-          "description": "Key set prefix can be used in case of multiple Ory Hydra instances need to store keys on the same HSM partition. For example if `hsm.key_set_prefix=app1.` then key set `hydra.openid.id-token` would be generated/requested/deleted on HSM with `CKA_LABEL=app1.hydra.openid.id-token`.",
-          "default": ""
-        }
-      }
+      "description": "Sets the data source name. This configures the backend where ORY Hydra persists data. If dsn is \"memory\", data will be written to memory and is lost when you restart this instance. ORY Hydra supports popular SQL databases. For more detailed configuration information go to: <https://www.ory.sh/docs/hydra/dependencies-environment#sql>"
     },
     "webfinger": {
       "type": "object",
@@ -311,7 +218,7 @@
             "jwks_url": {
               "type": "string",
               "description": "Overwrites the JWKS URL",
-              "format": "uri-reference",
+              "format": "uri",
               "examples": [
                 "https://my-service.com/.well-known/jwks.json"
               ]
@@ -319,7 +226,7 @@
             "token_url": {
               "type": "string",
               "description": "Overwrites the OAuth2 Token URL",
-              "format": "uri-reference",
+              "format": "uri",
               "examples": [
                 "https://my-service.com/oauth2/token"
               ]
@@ -327,7 +234,7 @@
             "auth_url": {
               "type": "string",
               "description": "Overwrites the OAuth2 Auth URL",
-              "format": "uri-reference",
+              "format": "uri",
               "examples": [
                 "https://my-service.com/oauth2/auth"
               ]
@@ -335,14 +242,14 @@
             "client_registration_url": {
               "description": "Sets the OpenID Connect Dynamic Client Registration Endpoint",
               "type": "string",
-              "format": "uri-reference",
+              "format": "uri",
               "examples": [
                 "https://my-service.com/clients"
               ]
             },
             "supported_claims": {
               "type": "array",
-              "description": "A list of supported claims to be broadcasted. Claim `sub` is always included.",
+              "description": "A list of supported claims to be broadcasted. Claim \"sub\" is always included.",
               "items": {
                 "type": "string"
               },
@@ -369,8 +276,8 @@
             },
             "userinfo_url": {
               "type": "string",
-              "description": "A URL of the userinfo endpoint to be advertised at the OpenID Connect Discovery endpoint /.well-known/openid-configuration. Defaults to Ory Hydra's userinfo endpoint at /userinfo. Set this value if you want to handle this endpoint yourself.",
-              "format": "uri-reference",
+              "description": "A URL of the userinfo endpoint to be advertised at the OpenID Connect Discovery endpoint /.well-known/openid-configuration. Defaults to ORY Hydra's userinfo endpoint at /userinfo. Set this value if you want to handle this endpoint yourself.",
+              "format": "uri",
               "examples": [
                 "https://example.org/my-custom-userinfo-endpoint"
               ]
@@ -392,9 +299,6 @@
             "supported_types": {
               "type": "array",
               "description": "A list of algorithms to enable.",
-              "default": [
-                "public"
-              ],
               "items": {
                 "type": "string",
                 "enum": [
@@ -417,31 +321,20 @@
               ]
             }
           },
-          "anyOf": [
-            {
-              "if": {
-                "properties": {
-                  "supported_types": {
-                    "contains": {
-                      "const": "pairwise"
-                    }
-                  }
+          "if": {
+            "properties": {
+              "supported_types": {
+                "contains": {
+                  "const": "pairwise"
                 }
-              },
-              "then": {
-                "required": [
-                  "pairwise"
-                ]
-              }
-            },
-            {
-              "not": {
-                "required": [
-                  "supported_types"
-                ]
               }
             }
-          ],
+          },
+          "then": {
+            "required": [
+              "pairwise"
+            ]
+          },
           "examples": [
             {
               "supported_types": [
@@ -459,14 +352,9 @@
           "additionalProperties": false,
           "description": "Configures OpenID Connect Dynamic Client Registration (exposed as admin endpoints /clients/...).",
           "properties": {
-            "enabled": {
-              "type": "boolean",
-              "description": "Enable dynamic client registration.",
-              "default": false
-            },
             "default_scope": {
               "type": "array",
-              "description": "The OpenID Connect Dynamic Client Registration specification has no concept of whitelisting OAuth 2.0 Scope. If you want to expose Dynamic Client Registration, you should set the default scope enabled for newly registered clients. Keep in mind that users can overwrite this default by setting the `scope` key in the registration payload, effectively disabling the concept of whitelisted scopes.",
+              "description": "The OpenID Connect Dynamic Client Registration specification has no concept of whitelisting OAuth 2.0 Scope. If you want to expose Dynamic Client Registration, you should set the default scope enabled for newly registered clients. Keep in mind that users can overwrite this default by setting the \"scope\" key in the registration payload, effectively disabling the concept of whitelisted scopes.",
               "items": {
                 "type": "string"
               },
@@ -492,7 +380,7 @@
           "properties": {
             "issuer": {
               "type": "string",
-              "description": "This value will be used as the `issuer` in access and ID tokens. It must be specified and using HTTPS protocol, unless --dev is set. This should typically be equal to the public value.",
+              "description": "This value will be used as the \"issuer\" in access and ID tokens. It must be specified and using HTTPS protocol, unless --dangerous-force-http is set. This should typically be equal to the public value.",
               "format": "uri",
               "examples": [
                 "https://localhost:4444/"
@@ -500,65 +388,52 @@
             },
             "public": {
               "type": "string",
-              "description": "This is the base location of the public endpoints of your Ory Hydra installation. This should typically be equal to the issuer value. If left unspecified, it falls back to the issuer value.",
+              "description": "This is the base location of the public endpoints of your ORY Hydra installation. This should typically be equal to the issuer value. If left unspecified, it falls back to the issuer value.",
               "format": "uri",
               "examples": [
                 "https://localhost:4444/"
-              ]
-            },
-            "admin": {
-              "type": "string",
-              "description": "This is the base location of the admin endpoints of your Ory Hydra installation.",
-              "format": "uri",
-              "examples": [
-                "https://localhost:4445/"
               ]
             }
           }
         },
         "login": {
           "type": "string",
-          "description": "Sets the OAuth2 Login Endpoint URL of the OAuth2 User Login & Consent flow. Defaults to an internal fallback URL showing an error.",
-          "format": "uri-reference",
+          "description": "Sets the login endpoint of the User Login & Consent flow. Defaults to an internal fallback URL showing an error.",
+          "format": "uri",
           "examples": [
-            "https://my-login.app/login",
-            "/ui/login"
+            "https://my-login.app/login"
           ]
         },
         "consent": {
           "type": "string",
           "description": "Sets the consent endpoint of the User Login & Consent flow. Defaults to an internal fallback URL showing an error.",
-          "format": "uri-reference",
+          "format": "uri",
           "examples": [
-            "https://my-consent.app/consent",
-            "/ui/consent"
+            "https://my-consent.app/consent"
           ]
         },
         "logout": {
           "type": "string",
           "description": "Sets the logout endpoint. Defaults to an internal fallback URL showing an error.",
-          "format": "uri-reference",
+          "format": "uri",
           "examples": [
-            "https://my-logout.app/logout",
-            "/ui/logout"
+            "https://my-logout.app/logout"
           ]
         },
         "error": {
           "type": "string",
           "description": "Sets the error endpoint. The error ui will be shown when an OAuth2 error occurs that which can not be sent back to the client. Defaults to an internal fallback URL showing an error.",
-          "format": "uri-reference",
+          "format": "uri",
           "examples": [
-            "https://my-error.app/error",
-            "/ui/error"
+            "https://my-error.app/error"
           ]
         },
         "post_logout_redirect": {
           "type": "string",
           "description": "When a user agent requests to logout, it will be redirected to this url afterwards per default.",
-          "format": "uri-reference",
+          "format": "uri",
           "examples": [
-            "https://my-example.app/logout-successful",
-            "/ui"
+            "https://my-example.app/logout-successful"
           ]
         }
       }
@@ -572,7 +447,8 @@
           "description": "Defines how scopes are matched. For more details have a look at <https://github.com/ory/fosite#scopes>",
           "enum": [
             "exact",
-            "wildcard"
+            "wildcard",
+            "DEPRECATED_HIERARCHICAL_SCOPE_STRATEGY"
           ],
           "default": "wildcard"
         },
@@ -664,9 +540,17 @@
               "type": "boolean",
               "default": true,
               "title": "Encrypt OAuth2 Session",
-              "description": "If set to true (default) Ory Hydra encrypt OAuth2 and OpenID Connect session data using AES-GCM and the system secret before persisting it in the database."
+              "description": "If set to true (default) ORY Hydra encrypt OAuth2 and OpenID Connect session data using AES-GCM and the system secret before persisting it in the database."
             }
           }
+        },
+        "include_legacy_error_fields": {
+          "type": "boolean",
+          "description": "Set this to true if you want to include the `error_hint` and `error_debug` legacy fields in error responses. We recommend to set this to `false` unless you have clients using these fields.",
+          "default": false,
+          "examples": [
+            true
+          ]
         },
         "exclude_not_before_claim": {
           "type": "boolean",
@@ -693,22 +577,12 @@
         "hashers": {
           "type": "object",
           "additionalProperties": false,
-          "description": "Configures hashing algorithms. Supports only BCrypt and PBKDF2 at the moment.",
+          "description": "Configures hashing algorithms. Supports only BCrypt at the moment.",
           "properties": {
-            "algorithm": {
-              "title": "Password hashing algorithm",
-              "description": "One of the values: pbkdf2, bcrypt.\n\nWarning! This value can not be changed once set as all existing OAuth 2.0 Clients will not be able to sign in any more.",
-              "type": "string",
-              "default": "pbkdf2",
-              "enum": [
-                "pbkdf2",
-                "bcrypt"
-              ]
-            },
             "bcrypt": {
               "type": "object",
               "additionalProperties": false,
-              "description": "Configures the BCrypt hashing algorithm used for hashing OAuth 2.0 Client Secrets.",
+              "description": "Configures the BCrypt hashing algorithm used for hashing Client Secrets.",
               "properties": {
                 "cost": {
                   "type": "integer",
@@ -716,19 +590,6 @@
                   "default": 10,
                   "minimum": 4,
                   "maximum": 31
-                }
-              }
-            },
-            "pbkdf2": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the PBKDF2 hashing algorithm used for hashing OAuth 2.0 Client Secrets.",
-              "properties": {
-                "iterations": {
-                  "type": "integer",
-                  "description": "Sets the PBKDF2 iterations. The higher the value, the more CPU time is being used to generate hashes.",
-                  "default": 25000,
-                  "minimum": 1
                 }
               }
             }
@@ -760,52 +621,12 @@
           "properties": {
             "default_grant_allowed_scope": {
               "type": "boolean",
-              "description": "Automatically grant authorized OAuth2 Scope in OAuth2 Client Credentials Flow. Each OAuth2 Client is allowed to request a predefined OAuth2 Scope (for example `read write`). If this option is enabled, the full\nscope is automatically granted when performing the OAuth2 Client Credentials flow.\n\nIf disabled, the OAuth2 Client has to request the scope in the OAuth2 request by providing the `scope` query parameter. Setting this option to true is common if you need compatibility with MITREid.",
+              "description": "Defines how scopes are added if the request doesn't contains any scope",
               "examples": [
                 false
               ]
             }
           }
-        },
-        "grant": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "jwt": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Authorization Grants using JWT configuration",
-              "properties": {
-                "jti_optional": {
-                  "type": "boolean",
-                  "description": "Configures if the JSON Web Token ID (`jti`) claim is required in the JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants (RFC7523). If set to `false`, the `jti` claim is required. Set this value to `true` only after careful consideration.",
-                  "default": false
-                },
-                "iat_optional": {
-                  "type": "boolean",
-                  "description": "Configures if the issued at (`iat`) claim is required in the JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants (RFC7523). If set to `false`, the `iat` claim is required. Set this value to `true` only after careful consideration.",
-                  "default": false
-                },
-                "max_ttl": {
-                  "description": "Configures what the maximum age of a JWT assertion used in the JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants (RFC7523) can be. This feature uses the `exp` claim and `iat` claim to calculate assertion age. Assertions exceeding the max age will be denied. Useful as a safety measure and recommended to keep below 720h. This governs the `grant.jwt.max_ttl` setting.",
-                  "default": "720h",
-                  "allOf": [
-                    {
-                      "$ref": "#/$defs/duration"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "refresh_token_hook": {
-          "type": "string",
-          "description": "Sets the refresh token hook endpoint. If set it will be called during token refresh to receive updated token claims.",
-          "format": "uri",
-          "examples": [
-            "https://my-example.app/token-refresh-hook"
-          ]
         }
       }
     },
@@ -860,7 +681,7 @@
     "tracing": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Ory Hydra supports distributed tracing.",
+      "description": "ORY Hydra supports distributed tracing.",
       "properties": {
         "provider": {
           "type": "string",
@@ -870,8 +691,7 @@
             "zipkin",
             "datadog",
             "elastic-apm",
-            "instana",
-            "otel"
+            "instana"
           ],
           "examples": [
             "jaeger"
@@ -881,7 +701,7 @@
           "type": "string",
           "description": "Specifies the service name to use on the tracer.",
           "examples": [
-            "Ory Hydra"
+            "ORY Hydra"
           ]
         },
         "providers": {
@@ -1048,7 +868,7 @@
     "cgroups": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Ory Hydra can respect Linux container CPU quota",
+      "description": "ORY Hydra can respect Linux container CPU quota",
       "properties": {
         "v1": {
           "type": "object",
@@ -1066,12 +886,6 @@
           }
         }
       }
-    },
-    "dev": {
-      "type": "boolean",
-      "title": "Enable development mode",
-      "description": "If true, disables critical security measures to allow easier local development. Do not use in production.",
-      "default": false
     }
   },
   "$defs": {
@@ -1149,10 +963,11 @@
             ]
           },
           "uniqueItems": true,
-          "default": [],
+          "default": [
+            "*"
+          ],
           "examples": [
             [
-              "*",
               "https://example.com",
               "https://*.example.com",
               "https://*.foo.example.com"
@@ -1167,11 +982,7 @@
             "GET",
             "PUT",
             "PATCH",
-            "DELETE",
-            "CONNECT",
-            "HEAD",
-            "OPTIONS",
-            "TRACE"
+            "DELETE"
           ],
           "items": {
             "type": "string",
@@ -1192,12 +1003,8 @@
           "type": "array",
           "description": "A list of non simple headers the client is allowed to use with cross-domain requests.",
           "default": [
-            "Accept",
-            "Content-Type",
-            "Content-Length",
-            "Accept-Language",
-            "Content-Language",
-            "Authorization"
+            "Authorization",
+            "Content-Type"
           ],
           "items": {
             "type": "string"
@@ -1207,12 +1014,6 @@
           "type": "array",
           "description": "Sets which headers are safe to expose to the API of a CORS API specification.",
           "default": [
-            "Cache-Control",
-            "Expires",
-            "Last-Modified",
-            "Pragma",
-            "Content-Length",
-            "Content-Language",
             "Content-Type"
           ],
           "items": {
@@ -1223,6 +1024,11 @@
           "type": "boolean",
           "description": "Sets whether the request can include user credentials like cookies, HTTP authentication or client side SSL certificates.",
           "default": true
+        },
+        "options_passthrough": {
+          "type": "boolean",
+          "description": "TODO",
+          "default": false
         },
         "max_age": {
           "type": "integer",
@@ -1291,20 +1097,15 @@
     },
     "duration": {
       "type": "string",
-      "pattern": "^(\\d+(ns|us|ms|s|m|h))+$",
+      "pattern": "^[0-9]+(ns|us|ms|s|m|h)$",
       "examples": [
-        "1h",
-        "1h5m1s"
+        "1h"
       ]
     },
     "tls_config": {
       "type": "object",
       "description": "Configures HTTPS (HTTP over TLS). If configured, the server automatically supports HTTP/2.",
       "properties": {
-        "enabled": {
-          "type": "boolean",
-          "description": "Setting enabled to false drops the TLS requirement for the admin endpoint, even if TLS is enabled on the public endpoint."
-        },
         "key": {
           "description": "Configures the private key (pem encoded).",
           "allOf": [
@@ -1330,6 +1131,5 @@
         }
       }
     }
-  },
-  "additionalProperties": false
+  }
 }
