@@ -1,298 +1,211 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--kontinuous.values.schema.json",
-  "title": "Kontinuous jobs helm chart",
+  "title": "Kontinuous app helm chart",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/charts/jobs/kontinuous.values.schema.json",
-    "sourceSha256": "12fc09a31d798a10144776fa4232dc0d6359df68d34acbe3c3ca9cbc40217182",
+    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/charts/app/kontinuous.values.schema.json",
+    "sourceSha256": "690c9fb9146b1d824ccf6e7b1a0ec91966893c57e25c37ccfa4f5afa823098c6",
     "invalid": true
   },
   "type": "object",
   "properties": {
-    "~chart": {
-      "type": "string",
-      "const": "jobs"
+    "~chart": {},
+    "~forceRestart": {
+      "description": "Force restart on every deployment. default true",
+      "type": "boolean",
+      "default": true
     },
-    "runs": {
+    "~needs": {},
+    "image": {
+      "description": "Full path to docker image",
+      "examples": [
+        "ghcr.io/socialgouv/docker/nginx:7.0.1"
+      ],
+      "type": "string"
+    },
+    "imagePackage": {
+      "description": "Name of the package on the registry",
+      "type": "string"
+    },
+    "imageProject": {
+      "description": "Project name in the docker registry, default to projectName on local registry as harbor, default to organization name on ghcr.io",
+      "type": "string"
+    },
+    "imageRepository": {
+      "description": "Repository for the docker image, default to git repository name",
+      "type": "string"
+    },
+    "probesPath": {
+      "description": "Path to application health probe. Defaults to /healthz",
+      "type": "string",
+      "examples": [
+        "/healthz"
+      ]
+    },
+    "probesPort": {
+      "description": "Port for probes calls",
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "containerPort": {
+      "description": "Container port, defaults to 3000",
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "host": {
+      "description": "Hostname for the deployment",
+      "type": "string"
+    },
+    "ingress": {
       "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "use": {
-            "type": "string",
-            "enum": [
-              "build",
-              "build-kaniko",
-              "create-db",
-              "deactivate",
-              "drop-db",
-              "pg-restore",
-              "psql",
-              "seed-db"
-            ]
-          },
-          "image": {
-            "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Container/properties/image"
-          },
-          "entrypoint": {
-            "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Container/properties/command"
-          },
-          "checkout": {
-            "description": "Should the repo be checked-out to build. defaults to true",
-            "type": "boolean"
-          },
-          "~needs": {
-            "description": "List of kontinuous dependencies",
-            "examples": [
-              "['create-db', 'import-sql', 'anonymize']"
-            ],
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "memoryLimit": {
-            "description": "Kubernetes max memory for the Job before OOMKill",
-            "type": "string"
-          },
-          "memoryRequest": {
-            "description": "Kubernetes memory reservation for the Job",
-            "type": "string"
-          },
-          "retry": {
-            "description": "Retry the job n times.",
-            "type": "number"
-          },
-          "run": {
-            "description": "Commands that will be passed to the job's image.",
-            "type": "string"
-          },
-          "kubernetes": {
-            "description": "Allow access to the Kubernetes API.",
-            "type": "boolean"
-          },
-          "cpuLimit": {
-            "description": "Kubernetes max cpu for the Job before capping",
-            "type": "string"
-          },
-          "cpuRequest": {
-            "description": "Kubernetes cpu reservation for the Job",
-            "type": "string"
-          },
-          "args": {
-            "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Container/properties/args"
-          },
-          "envFrom": {
-            "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Container/properties/envFrom"
-          },
-          "env": {
-            "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Container/properties/env"
-          },
-          "volumeMounts": {
-            "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Container/properties/volumeMounts"
-          },
-          "volumes": {
-            "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.PodSpec/properties/volumes"
-          },
-          "seccompProfile": {
-            "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.SeccompProfile"
-          },
-          "with": {}
+      "description": "Ingress configuration",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "description": "Ingress enable. default to true",
+          "type": "boolean"
         },
-        "if": {
-          "properties": {
-            "use": {
-              "type": "null"
-            }
+        "path": {
+          "description": "URL path to map the ingress to",
+          "type": "string",
+          "examples": [
+            "/"
+          ]
+        },
+        "paths": {
+          "description": "List of URL paths to map the ingress to",
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         },
-        "then": {
-          "properties": {},
-          "required": []
+        "rewriteTarget": {
+          "description": "Redirect path on the service",
+          "type": "string",
+          "examples": [
+            "/$1"
+          ]
         },
-        "else": {
-          "if": {
-            "properties": {
-              "use": {
-                "const": "build"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "use": {
-                "markdownDescription": "Build and register docker image with buildkit.\n\nSee [build source](https://github.com/SocialGouv/kontinuous/tree/master/plugins/contrib/jobs/build)"
-              },
-              "with": {
-                "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json#"
-              }
+        "annotations": {
+          "description": "NGINX ingress annotations, see <https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/>",
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--annotations.schema.json"
+        }
+      }
+    },
+    "certSecretName": {
+      "description": "Name of existing SSL cert secret if any.",
+      "type": "string"
+    },
+    "addVolumes": {
+      "description": "List of PVC claimNames to add to the deployment",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        "[uploads]"
+      ]
+    },
+    "redirectFrom": {
+      "description": "List of hostnames to redirect from",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        "previous.url.com"
+      ]
+    },
+    "autoscale": {
+      "description": "Horizontal pod autoscaling configuration",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable Horizontal pod autoscaling",
+          "type": "boolean",
+          "default": false
+        },
+        "minReplicas": {
+          "description": "Minimum number of replicas",
+          "type": "number",
+          "default": 2
+        },
+        "maxReplicas": {
+          "description": "Minimum number of replicas",
+          "type": "number",
+          "default": 10
+        },
+        "averageUtilization": {
+          "description": "Autoscaling averageUtilization tuning",
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "number",
+              "default": 70
             },
-            "required": [
-              "with"
-            ]
-          },
-          "else": {
-            "if": {
-              "properties": {
-                "use": {
-                  "const": "build-kaniko"
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "use": {
-                  "markdownDescription": "Build and register docker image with kaniko.\n\nSee [build-kaniko source](https://github.com/SocialGouv/kontinuous/tree/master/plugins/contrib/jobs/build-kaniko)"
-                },
-                "with": {
-                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json#"
-                }
-              },
-              "required": [
-                "with"
-              ]
-            },
-            "else": {
-              "if": {
-                "properties": {
-                  "use": {
-                    "const": "create-db"
-                  }
-                }
-              },
-              "then": {
-                "properties": {
-                  "use": {
-                    "markdownDescription": "Create a Postgres Database\n\nSee [create-db source](https://github.com/SocialGouv/kontinuous/tree/master/plugins/contrib/jobs/create-db)"
-                  },
-                  "with": {
-                    "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json#"
-                  }
-                },
-                "required": []
-              },
-              "else": {
-                "if": {
-                  "properties": {
-                    "use": {
-                      "const": "deactivate"
-                    }
-                  }
-                },
-                "then": {
-                  "properties": {
-                    "use": {
-                      "markdownDescription": "Destroy namespace and databases\n\nSee [deactivate source](https://github.com/SocialGouv/kontinuous/tree/master/plugins/contrib/jobs/deactivate)"
-                    },
-                    "with": {
-                      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json#"
-                    }
-                  },
-                  "required": [
-                    "with"
-                  ]
-                },
-                "else": {
-                  "if": {
-                    "properties": {
-                      "use": {
-                        "const": "drop-db"
-                      }
-                    }
-                  },
-                  "then": {
-                    "properties": {
-                      "use": {
-                        "markdownDescription": "Destroy the database\n\nSee [drop-db source](https://github.com/SocialGouv/kontinuous/tree/master/plugins/contrib/jobs/drop-db)"
-                      },
-                      "with": {
-                        "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json#"
-                      }
-                    },
-                    "required": [
-                      "with"
-                    ]
-                  },
-                  "else": {
-                    "if": {
-                      "properties": {
-                        "use": {
-                          "const": "pg-restore"
-                        }
-                      }
-                    },
-                    "then": {
-                      "properties": {
-                        "use": {
-                          "markdownDescription": "Restore the database from a backup storage\n\nSee [pg-restore source](https://github.com/SocialGouv/kontinuous/tree/master/plugins/contrib/jobs/pg-restore)"
-                        },
-                        "with": {
-                          "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json#"
-                        }
-                      },
-                      "required": [
-                        "with"
-                      ]
-                    },
-                    "else": {
-                      "if": {
-                        "properties": {
-                          "use": {
-                            "const": "psql"
-                          }
-                        }
-                      },
-                      "then": {
-                        "properties": {
-                          "use": {
-                            "markdownDescription": "Execute psql commands on the database\n\nSee [psql source](https://github.com/SocialGouv/kontinuous/tree/master/plugins/contrib/jobs/psql)"
-                          },
-                          "with": {
-                            "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json#"
-                          }
-                        },
-                        "required": [
-                          "with"
-                        ]
-                      },
-                      "else": {
-                        "if": {
-                          "properties": {
-                            "use": {
-                              "const": "seed-db"
-                            }
-                          }
-                        },
-                        "then": {
-                          "properties": {
-                            "use": {
-                              "markdownDescription": "Execute a repository .sql on the database\n\nSee [seed-db source](https://github.com/SocialGouv/kontinuous/tree/master/plugins/contrib/jobs/seed-db)"
-                            },
-                            "with": {
-                              "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json#"
-                            }
-                          },
-                          "required": [
-                            "with"
-                          ]
-                        },
-                        "else": {}
-                      }
-                    }
-                  }
-                }
-              }
+            "memory": {
+              "type": "number",
+              "default": 70
             }
           }
         }
-      },
-      "properties": {}
+      }
+    },
+    "strategyType": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.apps.v1.DeploymentStrategy/properties/type"
+    },
+    "env": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Container/properties/env"
+    },
+    "envFrom": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Container/properties/envFrom"
+    },
+    "vars": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "volumes": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.PodSpec/properties/volumes"
+    },
+    "volumeMounts": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Container/properties/volumeMounts"
+    },
+    "replicas": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.apps.v1.DeploymentSpec/properties/replicas"
+    },
+    "resources": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.ResourceRequirements"
+    },
+    "livenessProbe": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Probe",
+      "description": "Periodic probe of container liveness. Container will be restarted if the probe fails. Cannot be updated. More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes>"
+    },
+    "readinessProbe": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Probe",
+      "description": "Periodic probe of container service readiness. Container will be removed from service endpoints if the probe fails. Cannot be updated. More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes>"
+    },
+    "startupProbe": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.Probe",
+      "description": "StartupProbe indicates that the Pod has successfully initialized. If specified, no other probes are executed until this completes successfully. If this probe fails, the Pod will be restarted, just as if the livenessProbe failed. This can be used to provide different probe parameters at the beginning of a Pod's lifecycle, when it might take a long time to load data or warm a cache, than during steady-state operation. This cannot be updated. More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes>"
+    },
+    "securityContext": {
+      "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--_definitions.json#/$defs/io.k8s.api.core.v1.PodSecurityContext",
+      "description": "Setup your securityContext to reduce security risks, see <https://kubernetes.io/docs/tasks/configure-pod-container/security-context/>"
     }
   },
   "additionalProperties": false,
-  "markdownDescription": "The [jobs chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/jobs) provides a way to define de define tasks in your deployment pipeline\n\n💡 See [the jobs documentations](https://socialgouv.github.io/kontinuous/#/./advanced/build?id=meta-values-plugin-needs).",
-  "required": [
-    "runs"
-  ]
+  "markdownDescription": "The [app chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/app) provides all the resources to deploy a kubernetes application\n\n💡 You can use the [meta `~tpl~` prefix](https://socialgouv.github.io/kontinuous/#/./advanced/build?id=meta-values-plugin-tpl) to make any property a [go template](https://docs.gofiber.io/template/html/TEMPLATES_CHEATSHEET/#template-variables)",
+  "patternProperties": {
+    "^\\.": {
+      "type": [
+        "string",
+        "number",
+        "boolean"
+      ]
+    }
+  }
 }

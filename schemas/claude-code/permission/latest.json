@@ -5,7 +5,7 @@
   "description": "A [permission rule](https://code.claude.com/docs/en/permissions#permission-rule-syntax) string that controls tool access in Claude Code. Rules follow the format `Tool` or `Tool(specifier)` and appear in:\n\n- `allow`, `deny`, and `ask` arrays in [settings files](https://code.claude.com/docs/en/settings#settings-files)\n- `allowed-tools` fields in [skills](https://code.claude.com/docs/en/skills) and [commands](https://code.claude.com/docs/en/skills)\n- `tools` and `disallowedTools` fields in [subagents](https://code.claude.com/docs/en/sub-agents)\n\nRules are evaluated in order: **deny → ask → allow**. The first matching rule wins, so deny rules always take precedence. See [manage permissions](https://code.claude.com/docs/en/permissions#manage-permissions).",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/lintel-rs/catalog/master/schemas/claude-code/permission.json",
-    "sourceSha256": "036d26e75e9e549474cf49ea3fef020f1e548e59502ab6dab3accf63a893a23e",
+    "sourceSha256": "3f2e071519d15e39df7569efa49ddb5404d75ccce415a85c95880347bf8af8a4",
     "catalogDescription": "Claude Code permission rule for tool access control."
   },
   "$defs": {
@@ -128,6 +128,18 @@
         "NotebookEdit"
       ]
     },
+    "SkillPermission": {
+      "type": "string",
+      "title": "Skill Permission",
+      "description": "Matches [Skill tool](https://code.claude.com/docs/en/skills) invocations. Controls which skills Claude can trigger via the `Skill` tool.\n\n- `Skill` — all skills\n- `Skill(commit)` — the specific `commit` skill\n- `Skill(my-plugin:my-skill)` — a namespaced plugin skill\n\nSkills are invoked as `/slash-commands` by users or programmatically by other skills. See [skills](https://code.claude.com/docs/en/skills).",
+      "pattern": "^Skill(\\(.*\\))?$",
+      "examples": [
+        "Skill",
+        "Skill(commit)",
+        "Skill(deploy)",
+        "Skill(my-plugin:my-skill)"
+      ]
+    },
     "McpToolPermission": {
       "type": "string",
       "title": "MCP Tool Permission",
@@ -172,6 +184,9 @@
     },
     {
       "$ref": "#/$defs/NotebookEditPermission"
+    },
+    {
+      "$ref": "#/$defs/SkillPermission"
     },
     {
       "$ref": "#/$defs/McpToolPermission"
