@@ -2370,32 +2370,12 @@
           "markdownDescription": "Describes the Custom confirmation message for a manual job [Learn More](https://docs.gitlab.com/ci/yaml/#when).",
           "type": "string"
         },
-        "pages": {
-          "oneOf": [
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "path_prefix": {
-                  "type": "string",
-                  "markdownDescription": "The GitLab Pages URL path prefix used in this version of pages. The given value is converted to lowercase, shortened to 63 bytes, and everything except alphanumeric characters is replaced with a hyphen. Leading and trailing hyphens are not permitted."
-                },
-                "expire_in": {
-                  "type": "string",
-                  "markdownDescription": "How long the deployment should be active. Deployments that have expired are no longer available on the web. Supports a wide variety of formats, e.g. '1 week', '3 mins 4 sec', '2 hrs 20 min', '2h20min', '6 mos 1 day', '47 yrs 6 mos and 4d', '3 weeks and 2 days'. Set to 'never' to prevent extra deployments from expiring. [Learn More](https://docs.gitlab.com/ci/yaml/#pagesexpire_in)."
-                },
-                "publish": {
-                  "type": "string",
-                  "markdownDescription": "A path to a directory that contains the files to be published with Pages."
-                }
-              }
-            },
-            {
-              "type": "boolean",
-              "markdownDescription": "Whether this job should trigger a Pages deploy (Replaces the need to name the job `pages`)",
-              "default": false
-            }
-          ]
+        "dependencies": {
+          "type": "array",
+          "description": "Specify a list of job names from earlier stages from which artifacts should be loaded. By default, all previous artifacts are passed. Use an empty array to skip downloading artifacts.",
+          "items": {
+            "type": "string"
+          }
         },
         "artifacts": {
           "$ref": "#/$defs/artifacts"
@@ -2896,12 +2876,32 @@
           "description": "Deprecated. Use `pages.publish` instead. A path to a directory that contains the files to be published with Pages.",
           "type": "string"
         },
-        "dependentSchemas": {
-          "type": "array",
-          "description": "Specify a list of job names from earlier stages from which artifacts should be loaded. By default, all previous artifacts are passed. Use an empty array to skip downloading artifacts.",
-          "items": {
-            "type": "string"
-          }
+        "pages": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "path_prefix": {
+                  "type": "string",
+                  "markdownDescription": "The GitLab Pages URL path prefix used in this version of pages. The given value is converted to lowercase, shortened to 63 bytes, and everything except alphanumeric characters is replaced with a hyphen. Leading and trailing hyphens are not permitted."
+                },
+                "expire_in": {
+                  "type": "string",
+                  "markdownDescription": "How long the deployment should be active. Deployments that have expired are no longer available on the web. Supports a wide variety of formats, e.g. '1 week', '3 mins 4 sec', '2 hrs 20 min', '2h20min', '6 mos 1 day', '47 yrs 6 mos and 4d', '3 weeks and 2 days'. Set to 'never' to prevent extra deployments from expiring. [Learn More](https://docs.gitlab.com/ci/yaml/#pagesexpire_in)."
+                },
+                "publish": {
+                  "type": "string",
+                  "markdownDescription": "A path to a directory that contains the files to be published with Pages."
+                }
+              }
+            },
+            {
+              "type": "boolean",
+              "markdownDescription": "Whether this job should trigger a Pages deploy (Replaces the need to name the job `pages`)",
+              "default": false
+            }
+          ]
         }
       },
       "oneOf": [

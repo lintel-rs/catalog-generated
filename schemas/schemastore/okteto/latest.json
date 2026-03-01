@@ -243,10 +243,67 @@
       "title": "icon",
       "description": "The icon associated to your development environment in the Okteto UI.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#icon-string-optional-1>"
     },
-    "name": {
-      "type": "string",
-      "title": "name",
-      "description": "The name of your development environment. It defaults to the name of your git repository.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#name-string-optional>"
+    "dependencies": {
+      "oneOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "patternProperties": {
+            ".*": {
+              "properties": {
+                "repository": {
+                  "type": "string",
+                  "title": "repository",
+                  "description": "The Git repository URL of the dependency"
+                },
+                "manifest": {
+                  "type": "string",
+                  "title": "manifest",
+                  "description": "The path to the Okteto manifest file in the repository"
+                },
+                "branch": {
+                  "type": "string",
+                  "title": "branch",
+                  "description": "The Git branch to use"
+                },
+                "variables": {
+                  "patternProperties": {
+                    ".*": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "title": "variables",
+                  "description": "Environment variables to pass to the dependency"
+                },
+                "wait": {
+                  "type": "boolean",
+                  "title": "wait",
+                  "description": "Whether to wait for the dependency to be ready"
+                },
+                "timeout": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(h|m|s)$",
+                  "title": "timeout",
+                  "description": "Maximum time to wait for the dependency to be ready"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "repository"
+              ]
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "title": "dependencies",
+      "description": "A list of repositories you want to deploy as part of your development environment.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#dependencies-string-optional>"
     },
     "dev": {
       "patternProperties": {
@@ -1303,69 +1360,10 @@
       "title": "destroy",
       "description": "A list of commands to destroy external resources created by your development environment.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#destroy-string-optional>"
     },
-    "dependentSchemas": {
-      "title": "dependencies",
-      "description": "A list of repositories you want to deploy as part of your development environment.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#dependencies-string-optional>"
-    },
-    "dependentRequired": {
-      "oneOf": [
-        {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        {
-          "patternProperties": {
-            ".*": {
-              "properties": {
-                "repository": {
-                  "type": "string",
-                  "title": "repository",
-                  "description": "The Git repository URL of the dependency"
-                },
-                "manifest": {
-                  "type": "string",
-                  "title": "manifest",
-                  "description": "The path to the Okteto manifest file in the repository"
-                },
-                "branch": {
-                  "type": "string",
-                  "title": "branch",
-                  "description": "The Git branch to use"
-                },
-                "variables": {
-                  "patternProperties": {
-                    ".*": {
-                      "type": "string"
-                    }
-                  },
-                  "type": "object",
-                  "title": "variables",
-                  "description": "Environment variables to pass to the dependency"
-                },
-                "wait": {
-                  "type": "boolean",
-                  "title": "wait",
-                  "description": "Whether to wait for the dependency to be ready"
-                },
-                "timeout": {
-                  "type": "string",
-                  "pattern": "^[0-9]+(h|m|s)$",
-                  "title": "timeout",
-                  "description": "Maximum time to wait for the dependency to be ready"
-                }
-              },
-              "additionalProperties": false,
-              "type": "object",
-              "required": [
-                "repository"
-              ]
-            }
-          },
-          "type": "object"
-        }
-      ]
+    "name": {
+      "type": "string",
+      "title": "name",
+      "description": "The name of your development environment. It defaults to the name of your git repository.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#name-string-optional>"
     }
   },
   "additionalProperties": false

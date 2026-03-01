@@ -167,12 +167,12 @@
               "description": "The shell script to run in order to build this target.\n\nIt should be a string. This string can be multi-line, in case of scripts with multiple commands.\n\n__Example__\n\n```yaml targets: create_file_deep: build: | mkdir -p deep/dir touch deep/dir/file output: - paths: [deep/dir/file] ```\n\nIn this example, running `zinoma create_file_deep` will execute the commands `mkdir -p deep/dir` and `touch deep/dir/my_file` sequentially.",
               "type": "string"
             },
-            "output": {
-              "description": "Output resources of the target.",
+            "dependencies": {
+              "description": "Dependencies of the target.",
               "default": [],
               "allOf": [
                 {
-                  "$ref": "#/$defs/OutputResources"
+                  "$ref": "#/$defs/Dependencies"
                 }
               ]
             },
@@ -185,14 +185,12 @@
                 }
               ]
             },
-            "dependentSchemas": {
-              "description": "Dependencies of the target."
-            },
-            "dependentRequired": {
+            "output": {
+              "description": "Output resources of the target.",
               "default": [],
               "allOf": [
                 {
-                  "$ref": "#/$defs/Dependencies"
+                  "$ref": "#/$defs/OutputResources"
                 }
               ]
             }
@@ -206,9 +204,14 @@
             "service"
           ],
           "properties": {
-            "service": {
-              "description": "Shell script starting a long-lasting service.\n\nIt should be a string.\n\nIf `zinoma` has no service target to run, it will automatically exit after all build targets ran to completion. On the contrary, if at least one service target is specified in the command line, `zinoma` will keep running even after all build targets completed, so that the services can remain alive.\n\nIn watch mode (when the `--watch` flag is passed to `zinoma`), services are restarted when the relevant paths are modified.\n\n__Example__\n\n```yaml targets: npm_server: input: - paths: [package.json, index.js] service: npm start ```\n\nIn this example, `zinoma npm_server --watch` will run `npm start`, and will restart this process every time `package.json` or `index.js` are updated.",
-              "type": "string"
+            "dependencies": {
+              "description": "Dependencies of the target.",
+              "default": [],
+              "allOf": [
+                {
+                  "$ref": "#/$defs/Dependencies"
+                }
+              ]
             },
             "input": {
               "description": "Input resources of the target.",
@@ -219,16 +222,9 @@
                 }
               ]
             },
-            "dependentSchemas": {
-              "description": "Dependencies of the target."
-            },
-            "dependentRequired": {
-              "default": [],
-              "allOf": [
-                {
-                  "$ref": "#/$defs/Dependencies"
-                }
-              ]
+            "service": {
+              "description": "Shell script starting a long-lasting service.\n\nIt should be a string.\n\nIf `zinoma` has no service target to run, it will automatically exit after all build targets ran to completion. On the contrary, if at least one service target is specified in the command line, `zinoma` will keep running even after all build targets completed, so that the services can remain alive.\n\nIn watch mode (when the `--watch` flag is passed to `zinoma`), services are restarted when the relevant paths are modified.\n\n__Example__\n\n```yaml targets: npm_server: input: - paths: [package.json, index.js] service: npm start ```\n\nIn this example, `zinoma npm_server --watch` will run `npm start`, and will restart this process every time `package.json` or `index.js` are updated.",
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -240,10 +236,8 @@
             "dependencies"
           ],
           "properties": {
-            "dependentSchemas": {
-              "description": "Dependencies of the target."
-            },
-            "dependentRequired": {
+            "dependencies": {
+              "description": "Dependencies of the target.",
               "allOf": [
                 {
                   "$ref": "#/$defs/Dependencies"

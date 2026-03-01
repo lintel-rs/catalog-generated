@@ -6,7 +6,6 @@
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/rescript-lang/rescript-compiler/master/docs/docson/build-schema.json",
     "sourceSha256": "ab31b2dd73ea2e941218c45a4d6fbe9a10a4b5371aaf671a79bb28ba9afddea1",
-    "invalid": true,
     "fileMatch": [
       "bsconfig.json"
     ],
@@ -39,16 +38,9 @@
       },
       "description": "a list of directories that the build system will not look into"
     },
-    "experimental-features": {
-      "type": "object",
-      "description": "Enable experimental compiler features.",
-      "properties": {
-        "LetUnwrap": {
-          "type": "boolean",
-          "description": "Enable `let?` syntax."
-        }
-      },
-      "additionalProperties": false
+    "dependencies": {
+      "$ref": "#/$defs/dependencies",
+      "description": "ReScript dependencies of the library, like in package.json. Currently searches in `node_modules`."
     },
     "dev-dependencies": {
       "$ref": "#/$defs/dependencies",
@@ -137,9 +129,16 @@
       "$ref": "#/$defs/editor",
       "description": "Configure editor functionality, like modules that should be included in autocompletions for given (built-in) types."
     },
-    "dependentSchemas": {
-      "$ref": "#/$defs/dependencies",
-      "description": "ReScript dependencies of the library, like in package.json. Currently searches in `node_modules`."
+    "experimental-features": {
+      "type": "object",
+      "description": "Enable experimental compiler features.",
+      "properties": {
+        "LetUnwrap": {
+          "type": "boolean",
+          "description": "Enable `let?` syntax."
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
@@ -266,23 +265,11 @@
       "type": "string",
       "title": "dependency"
     },
-    "editor": {
-      "type": "object",
-      "properties": {
-        "autocomplete": {
-          "type": "object",
-          "description": "A mapping to extend the autocompletion for a given type with an array of modules. E.g. `{ \"int\": [\"IntUtils\", \"IntExt\"] }` will extend the autocompletion of the `int` type with the values from `IntUtils` and `IntExt` modules.",
-          "patternProperties": {
-            "^[a-zA-Z0-9_.]+$": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "additionalProperties": false
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/bs-dependency"
+      }
     },
     "js-post-build": {
       "type": "object",
@@ -501,11 +488,23 @@
         }
       ]
     },
-    "dependentSchemas": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/bs-dependency"
-      }
+    "editor": {
+      "type": "object",
+      "properties": {
+        "autocomplete": {
+          "type": "object",
+          "description": "A mapping to extend the autocompletion for a given type with an array of modules. E.g. `{ \"int\": [\"IntUtils\", \"IntExt\"] }` will extend the autocompletion of the `int` type with the values from `IntUtils` and `IntExt` modules.",
+          "patternProperties": {
+            "^[a-zA-Z0-9_.]+$": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [

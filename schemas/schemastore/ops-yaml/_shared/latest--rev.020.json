@@ -103,6 +103,161 @@
         }
       }
     },
+    "dependencies": {
+      "title": "Dependencies",
+      "description": "Dependencies listed in the `dependencies` section of `ops.yml` are satisfied when the `ops up` command is run. Some dependencies will be un-satisfied when you run `ops down`; e.g. services will be stopped, but packages won't be uninstalled.\n\nThis feature allows developers that are new to a project to get up and running without knowing anything about the app itself. Your `ops.yml` should allow a developer to `ops up && ops start` to run an application.\n",
+      "markdownDescription": "Dependencies listed in the `dependencies` section of `ops.yml` are satisfied when the `ops up` command is run. Some dependencies will be un-satisfied when you run `ops down`; e.g. services will be stopped, but packages won't be uninstalled.\n\nThis feature allows developers that are new to a project to get up and running without knowing anything about the app itself. Your `ops.yml` should allow a developer to `ops up && ops start` to run an application.\n\n_For more information, see the [Dependencies](https://github.com/nickthecook/ops/blob/main/docs/dependencies.md) documentation on [GitHub](https://github.com/nickthecook/ops)._\n",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "enum": [
+          "apk",
+          "apt",
+          "brew",
+          "cask",
+          "custom",
+          "dir",
+          "docker",
+          "gem",
+          "sshkey"
+        ]
+      },
+      "properties": {
+        "apk": {
+          "title": "apkPackageList",
+          "description": "- Specifies that a particular package from `apk` is needed.\n- Will only run if the `apk` command is in the `$PATH` (usually only on Alpine linux).",
+          "markdownDescription": "* Specifies that a particular package from `apk` is needed.\n* Will only run if the `apk` command is in the `$PATH` (usually only on Alpine linux).",
+          "$ref": "#/$defs/PackageList"
+        },
+        "apt": {
+          "title": "aptPackageList",
+          "description": "- Specifies that a particular package from `apt` is needed.\n- Will only run if the `apt` executable is in the `$PATH`.\n- Can specify a version with, e.g.: `curl/7.52.1-5+deb9u7`.\n- Run `apt-cache policy curl` to get available versions.",
+          "markdownDescription": "* Specifies that a particular package from `apt` is needed.\n* Will only run if the `apt` executable is in the `$PATH`.\n* Can specify a version with, e.g.: `curl/7.52.1-5+deb9u7`.\n* Run `apt-cache policy curl` to get available versions.",
+          "$ref": "#/$defs/PackageList"
+        },
+        "brew": {
+          "title": "brewPackageList",
+          "description": "- Specifies that a particular `brew` package is needed.\n- Will only run if you're on a Mac.",
+          "markdownDescription": "* Specifies that a particular `brew` package is needed.\n* Will only run if you're on a Mac.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PackageBrew"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "cask": {
+          "title": "caskPackageList",
+          "description": "- Specifies that a particular `brew cask` package is needed.\n- Will only run if you're on a Mac.",
+          "markdownDescription": "* Specifies that a particular `brew cask` package is needed.\n* Will only run if you're on a Mac.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PackageBrew"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "custom": {
+          "title": "CustomCommandList",
+          "description": "- Runs the given command.\n- Can't tell if the command needs to be run or not, so always runs it on `ops up`.\n- Therefore, the command should be idempotent.\n- It's also a good idea to prevent it from printing output unless it encounters an error, to keep the ops output clean.\n",
+          "markdownDescription": "* Runs the given command.\n* Can't tell if the command needs to be run or not, so always runs it on `ops up`.\n* Therefore, the command should be [**idempotent**](https://en.wikipedia.org/wiki/Idempotence).\n* It's also a good idea to prevent it from printing output unless it encounters an error, to keep the ops output clean.\n",
+          "type": "array",
+          "items": {
+            "description": "An idempotent command or script to run as a dependency when `ops up` is executed.",
+            "markdownDescription": "An idempotent command or script to run as a dependency when `ops up` is executed.",
+            "type": "string",
+            "allOf": [
+              {
+                "$ref": "#/$defs/CommandString"
+              }
+            ]
+          },
+          "minItems": 1,
+          "examples": [
+            [
+              "bundle install --quiet"
+            ]
+          ]
+        },
+        "dir": {
+          "title": "DirectoryList",
+          "description": "This dependency will ensure the given directory is created when you run `ops up`. This is handy for directories your app needs, but which contain no checked-in files, since `git` won't save empty directories.",
+          "$ref": "#/$defs/PathList"
+        },
+        "docker": {
+          "title": "dockerRepository",
+          "description": "- Specifies that this repo includes a directory with the given name (e.g. `deps/mysql`) that includes a `docker-compose.yml` file.\n- `ops` will change to the given directory and use `docker-compose` to start, stop, and check the status of this service as needed.\n",
+          "markdownDescription": "* Specifies that this repo includes a directory with the given name (e.g. `deps/mysql`) that includes a `docker-compose.yml` file.\n* `ops` will change to the given directory and use `docker-compose` to start, stop, and check the status of this service as needed.\n",
+          "$ref": "#/$defs/PathList"
+        },
+        "gem": {
+          "title": "gemPackageList",
+          "description": "- Installs the gem with the given name.\n- By default, runs `gem install ...`, but can be configured to use `sudo gem install` or `gem install --user-install` (see below).\n",
+          "markdownDescription": "* Installs the gem with the given name.\n* By default, runs `gem install ...`, but can be configured to use `sudo gem install` or `gem install --user-install` (_see below_).\n",
+          "$ref": "#/$defs/PackageList",
+          "examples": [
+            [
+              "ejson"
+            ]
+          ]
+        },
+        "sshkey": {
+          "title": "sshKeyList",
+          "description": "This dependency will create an SSH key pair with key size 4096 and key algorithm `rsa` at `keys/$environment/user@host` and `keys/$environment/user@host.pub`. It will also add it to your SSH agent, if `SSH_AUTH_SOCK` is set, with a lifetime of 3600 seconds (one hour).\n\nThe key comment, which is visible in the output of `ssh-add -l`, will be set to the name of the directory that contains `ops.yml`. For example, if the directory is named `heliograf`, you would see the following output:\n",
+          "markdownDescription": "This dependency will create an SSH key pair with key size 4096 and key algorithm `rsa` at `keys/$environment/user@host` and `keys/$environment/user@host.pub`. It will also add it to your SSH agent, if `SSH_AUTH_SOCK` is set, with a lifetime of 3600 seconds (one hour).\n\nThe key comment, which is visible in the output of `ssh-add -l`, will be set to the name of the directory that contains `ops.yml`. For example, if the directory is named `heliograf`, you would see the following output:\n\n```shell\n$ ssh-add -l\n2048 SHA256:7n9WwisFkDtemOx8O/+D33myKpjOvrjx3PZcNb9y6/Y heliograf (RSA)\n2048 SHA256:Z6oEPBIoBrHv/acYiBGBRYLe2sEONV17tDor3h5eNtc certitude (RSA)\n```\n\nThis output shows that one key from a project called `heliograf` and one key from a project called `certitude` have been loaded.\n",
+          "$ref": "#/$defs/PathList",
+          "examples": [
+            [
+              "keys/$environment/user@host"
+            ]
+          ]
+        },
+        "terraform": {
+          "title": "terraformHandler",
+          "type": "array",
+          "description": "[DEPRECATED] This feature has been removed as of version `0.2.6`.",
+          "markdownDescription": "### `DEPRECATED`\n_This feature has been removed as of version `0.2.6`._\n",
+          "$ref": "#/$defs/Deprecated"
+        }
+      }
+    },
+    "hooks": {
+      "title": "Hooks",
+      "description": "Sometimes you want to run a command before other commands. Some examples:\n\n- You have a number of ops commands that let a developer run different test suites inside a container, and you want to make sure the container image is built beforehand.\n- You have some configuration that needs to happen when the software execution environment changes (e.g. going from dev to staging).\n\nIn this case, you can use the \"hooks feature.\n",
+      "markdownDescription": "Sometimes you want to run a command before other commands. Some examples:\n\n* You have a number of ops commands that let a developer run different test suites inside a container, and you want to make sure the container image is built beforehand.\n* You have some configuration that needs to happen when the software execution environment changes (_e.g. going from `dev` to `staging`_).\n\nIn this case, you can use the `hooks` feature.\n\n_For more information, see the [Hooks](https://github.com/nickthecook/ops/blob/main/docs/hooks.md) documentation on [GitHub](https://github.com/nickthecook/ops)._\n",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "enum": [
+          "before"
+        ]
+      },
+      "properties": {
+        "before": {
+          "title": "BeforeHooks",
+          "description": "A series of hooks that run before actions. They do not run before builtins like `up` or `exec`.\n\n`before` hooks are always executed before secrets are loaded. If you would like a before hook to have access to secrets, create an action with `load_secrets: true` and call the action from a before hook.\n",
+          "markdownDescription": "A series of hooks that run before actions. They do not run before builtins like `up` or `exec`.\n\n`before` hooks are always executed before secrets are loaded. If you would like a before hook to have access to secrets, create an action with `load_secrets: true` and call the action from a before hook.\n",
+          "type": "array",
+          "items": {
+            "description": "A valid command to run before action execution.",
+            "$ref": "#/$defs/CommandString"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "min_version": {
+      "allOf": [
+        {
+          "title": "Minimum Version",
+          "description": "A valid semantic version. If an older version of `ops` (v0.12.0 or later) encounters this file, it will print a message and exit.\n\nThe versions you can set for `min_version` will depend on the `revision` of `ops.yaml` you've specified—if specified at all.\n",
+          "markdownDescription": "A valid [semantic version](https://semver.org). If an older version of `ops` (_`v0.12.0` or later_) encounters this file, it will print a message like this and exit:\n\n> ```\n> ops.yml specifies minimum version of 0.12.2, but ops version is 0.12.0\n> ```\n\nThe versions you can set for `min_version` will depend on the `revision` of `ops.yaml` you've specified—if specified at all.\n\n_For more information, see the [Version Checking](https://github.com/nickthecook/ops/blob/main/docs/why.md#version-checking) documentation on [GitHub](https://github.com/nickthecook/ops)._\n"
+        },
+        {
+          "$ref": "#/$defs/SemVer"
+        }
+      ]
+    },
     "options": {
       "title": "Options",
       "description": "Options allow the user to change some aspects of `ops` behaviour.",
@@ -392,161 +547,6 @@
               "default": "SSH_KEY_PASSPHRASE"
             }
           }
-        }
-      }
-    },
-    "hooks": {
-      "title": "Hooks",
-      "description": "Sometimes you want to run a command before other commands. Some examples:\n\n- You have a number of ops commands that let a developer run different test suites inside a container, and you want to make sure the container image is built beforehand.\n- You have some configuration that needs to happen when the software execution environment changes (e.g. going from dev to staging).\n\nIn this case, you can use the \"hooks feature.\n",
-      "markdownDescription": "Sometimes you want to run a command before other commands. Some examples:\n\n* You have a number of ops commands that let a developer run different test suites inside a container, and you want to make sure the container image is built beforehand.\n* You have some configuration that needs to happen when the software execution environment changes (_e.g. going from `dev` to `staging`_).\n\nIn this case, you can use the `hooks` feature.\n\n_For more information, see the [Hooks](https://github.com/nickthecook/ops/blob/main/docs/hooks.md) documentation on [GitHub](https://github.com/nickthecook/ops)._\n",
-      "type": "object",
-      "minProperties": 1,
-      "propertyNames": {
-        "enum": [
-          "before"
-        ]
-      },
-      "properties": {
-        "before": {
-          "title": "BeforeHooks",
-          "description": "A series of hooks that run before actions. They do not run before builtins like `up` or `exec`.\n\n`before` hooks are always executed before secrets are loaded. If you would like a before hook to have access to secrets, create an action with `load_secrets: true` and call the action from a before hook.\n",
-          "markdownDescription": "A series of hooks that run before actions. They do not run before builtins like `up` or `exec`.\n\n`before` hooks are always executed before secrets are loaded. If you would like a before hook to have access to secrets, create an action with `load_secrets: true` and call the action from a before hook.\n",
-          "type": "array",
-          "items": {
-            "description": "A valid command to run before action execution.",
-            "$ref": "#/$defs/CommandString"
-          },
-          "minItems": 1
-        }
-      }
-    },
-    "min_version": {
-      "allOf": [
-        {
-          "title": "Minimum Version",
-          "description": "A valid semantic version. If an older version of `ops` (v0.12.0 or later) encounters this file, it will print a message and exit.\n\nThe versions you can set for `min_version` will depend on the `revision` of `ops.yaml` you've specified—if specified at all.\n",
-          "markdownDescription": "A valid [semantic version](https://semver.org). If an older version of `ops` (_`v0.12.0` or later_) encounters this file, it will print a message like this and exit:\n\n> ```\n> ops.yml specifies minimum version of 0.12.2, but ops version is 0.12.0\n> ```\n\nThe versions you can set for `min_version` will depend on the `revision` of `ops.yaml` you've specified—if specified at all.\n\n_For more information, see the [Version Checking](https://github.com/nickthecook/ops/blob/main/docs/why.md#version-checking) documentation on [GitHub](https://github.com/nickthecook/ops)._\n"
-        },
-        {
-          "$ref": "#/$defs/SemVer"
-        }
-      ]
-    },
-    "dependentSchemas": {
-      "title": "Dependencies",
-      "description": "Dependencies listed in the `dependencies` section of `ops.yml` are satisfied when the `ops up` command is run. Some dependencies will be un-satisfied when you run `ops down`; e.g. services will be stopped, but packages won't be uninstalled.\n\nThis feature allows developers that are new to a project to get up and running without knowing anything about the app itself. Your `ops.yml` should allow a developer to `ops up && ops start` to run an application.\n",
-      "markdownDescription": "Dependencies listed in the `dependencies` section of `ops.yml` are satisfied when the `ops up` command is run. Some dependencies will be un-satisfied when you run `ops down`; e.g. services will be stopped, but packages won't be uninstalled.\n\nThis feature allows developers that are new to a project to get up and running without knowing anything about the app itself. Your `ops.yml` should allow a developer to `ops up && ops start` to run an application.\n\n_For more information, see the [Dependencies](https://github.com/nickthecook/ops/blob/main/docs/dependencies.md) documentation on [GitHub](https://github.com/nickthecook/ops)._\n",
-      "type": "object",
-      "minProperties": 1,
-      "propertyNames": {
-        "enum": [
-          "apk",
-          "apt",
-          "brew",
-          "cask",
-          "custom",
-          "dir",
-          "docker",
-          "gem",
-          "sshkey"
-        ]
-      },
-      "properties": {
-        "apk": {
-          "title": "apkPackageList",
-          "description": "- Specifies that a particular package from `apk` is needed.\n- Will only run if the `apk` command is in the `$PATH` (usually only on Alpine linux).",
-          "markdownDescription": "* Specifies that a particular package from `apk` is needed.\n* Will only run if the `apk` command is in the `$PATH` (usually only on Alpine linux).",
-          "$ref": "#/$defs/PackageList"
-        },
-        "apt": {
-          "title": "aptPackageList",
-          "description": "- Specifies that a particular package from `apt` is needed.\n- Will only run if the `apt` executable is in the `$PATH`.\n- Can specify a version with, e.g.: `curl/7.52.1-5+deb9u7`.\n- Run `apt-cache policy curl` to get available versions.",
-          "markdownDescription": "* Specifies that a particular package from `apt` is needed.\n* Will only run if the `apt` executable is in the `$PATH`.\n* Can specify a version with, e.g.: `curl/7.52.1-5+deb9u7`.\n* Run `apt-cache policy curl` to get available versions.",
-          "$ref": "#/$defs/PackageList"
-        },
-        "brew": {
-          "title": "brewPackageList",
-          "description": "- Specifies that a particular `brew` package is needed.\n- Will only run if you're on a Mac.",
-          "markdownDescription": "* Specifies that a particular `brew` package is needed.\n* Will only run if you're on a Mac.",
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/PackageBrew"
-          },
-          "minItems": 1,
-          "uniqueItems": true
-        },
-        "cask": {
-          "title": "caskPackageList",
-          "description": "- Specifies that a particular `brew cask` package is needed.\n- Will only run if you're on a Mac.",
-          "markdownDescription": "* Specifies that a particular `brew cask` package is needed.\n* Will only run if you're on a Mac.",
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/PackageBrew"
-          },
-          "minItems": 1,
-          "uniqueItems": true
-        },
-        "custom": {
-          "title": "CustomCommandList",
-          "description": "- Runs the given command.\n- Can't tell if the command needs to be run or not, so always runs it on `ops up`.\n- Therefore, the command should be idempotent.\n- It's also a good idea to prevent it from printing output unless it encounters an error, to keep the ops output clean.\n",
-          "markdownDescription": "* Runs the given command.\n* Can't tell if the command needs to be run or not, so always runs it on `ops up`.\n* Therefore, the command should be [**idempotent**](https://en.wikipedia.org/wiki/Idempotence).\n* It's also a good idea to prevent it from printing output unless it encounters an error, to keep the ops output clean.\n",
-          "type": "array",
-          "items": {
-            "description": "An idempotent command or script to run as a dependency when `ops up` is executed.",
-            "markdownDescription": "An idempotent command or script to run as a dependency when `ops up` is executed.",
-            "type": "string",
-            "allOf": [
-              {
-                "$ref": "#/$defs/CommandString"
-              }
-            ]
-          },
-          "minItems": 1,
-          "examples": [
-            [
-              "bundle install --quiet"
-            ]
-          ]
-        },
-        "dir": {
-          "title": "DirectoryList",
-          "description": "This dependency will ensure the given directory is created when you run `ops up`. This is handy for directories your app needs, but which contain no checked-in files, since `git` won't save empty directories.",
-          "$ref": "#/$defs/PathList"
-        },
-        "docker": {
-          "title": "dockerRepository",
-          "description": "- Specifies that this repo includes a directory with the given name (e.g. `deps/mysql`) that includes a `docker-compose.yml` file.\n- `ops` will change to the given directory and use `docker-compose` to start, stop, and check the status of this service as needed.\n",
-          "markdownDescription": "* Specifies that this repo includes a directory with the given name (e.g. `deps/mysql`) that includes a `docker-compose.yml` file.\n* `ops` will change to the given directory and use `docker-compose` to start, stop, and check the status of this service as needed.\n",
-          "$ref": "#/$defs/PathList"
-        },
-        "gem": {
-          "title": "gemPackageList",
-          "description": "- Installs the gem with the given name.\n- By default, runs `gem install ...`, but can be configured to use `sudo gem install` or `gem install --user-install` (see below).\n",
-          "markdownDescription": "* Installs the gem with the given name.\n* By default, runs `gem install ...`, but can be configured to use `sudo gem install` or `gem install --user-install` (_see below_).\n",
-          "$ref": "#/$defs/PackageList",
-          "examples": [
-            [
-              "ejson"
-            ]
-          ]
-        },
-        "sshkey": {
-          "title": "sshKeyList",
-          "description": "This dependency will create an SSH key pair with key size 4096 and key algorithm `rsa` at `keys/$environment/user@host` and `keys/$environment/user@host.pub`. It will also add it to your SSH agent, if `SSH_AUTH_SOCK` is set, with a lifetime of 3600 seconds (one hour).\n\nThe key comment, which is visible in the output of `ssh-add -l`, will be set to the name of the directory that contains `ops.yml`. For example, if the directory is named `heliograf`, you would see the following output:\n",
-          "markdownDescription": "This dependency will create an SSH key pair with key size 4096 and key algorithm `rsa` at `keys/$environment/user@host` and `keys/$environment/user@host.pub`. It will also add it to your SSH agent, if `SSH_AUTH_SOCK` is set, with a lifetime of 3600 seconds (one hour).\n\nThe key comment, which is visible in the output of `ssh-add -l`, will be set to the name of the directory that contains `ops.yml`. For example, if the directory is named `heliograf`, you would see the following output:\n\n```shell\n$ ssh-add -l\n2048 SHA256:7n9WwisFkDtemOx8O/+D33myKpjOvrjx3PZcNb9y6/Y heliograf (RSA)\n2048 SHA256:Z6oEPBIoBrHv/acYiBGBRYLe2sEONV17tDor3h5eNtc certitude (RSA)\n```\n\nThis output shows that one key from a project called `heliograf` and one key from a project called `certitude` have been loaded.\n",
-          "$ref": "#/$defs/PathList",
-          "examples": [
-            [
-              "keys/$environment/user@host"
-            ]
-          ]
-        },
-        "terraform": {
-          "title": "terraformHandler",
-          "type": "array",
-          "description": "[DEPRECATED] This feature has been removed as of version `0.2.6`.",
-          "markdownDescription": "### `DEPRECATED`\n_This feature has been removed as of version `0.2.6`._\n",
-          "$ref": "#/$defs/Deprecated"
         }
       }
     }

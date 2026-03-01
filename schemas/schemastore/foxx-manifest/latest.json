@@ -57,9 +57,47 @@
       "type": "string",
       "description": "If specified, the / (root) route of the service will automatically redirect to the given relative path, e.g. \"index.html\"."
     },
-    "version": {
-      "type": "string",
-      "description": "The version number of the Foxx service. The version number must follow the semantic versioning format. This will be shown in the web interface."
+    "dependencies": {
+      "type": "object",
+      "description": "The dependencies this service uses, i.e. which APIs its dependencies need to be compatible with.",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string",
+            "description": "The semantic version ranges of the API the service expects.",
+            "default": "*"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the API the service expects.",
+                "default": "*"
+              },
+              "version": {
+                "type": "string",
+                "description": "The semantic version ranges of the API the service expects.",
+                "default": "*"
+              },
+              "description": {
+                "type": "string",
+                "description": "A description of how the API is used or why it is needed."
+              },
+              "required": {
+                "type": "boolean",
+                "description": "Whether the service can not function without this dependency.",
+                "default": true
+              },
+              "multiple": {
+                "type": "boolean",
+                "description": "Whether the dependency can be specified more than once.",
+                "default": false
+              }
+            }
+          }
+        ]
+      }
     },
     "provides": {
       "type": "object",
@@ -186,47 +224,9 @@
       "type": "string",
       "description": "The filename of a thumbnail that will be used alongside the service in the web interface. This should be a JPEG or PNG image that looks good at sizes 50x50 and 160x160."
     },
-    "dependentSchemas": {
-      "type": "object",
-      "description": "The dependencies this service uses, i.e. which APIs its dependencies need to be compatible with.",
-      "additionalProperties": {
-        "oneOf": [
-          {
-            "type": "string",
-            "description": "The semantic version ranges of the API the service expects.",
-            "default": "*"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Name of the API the service expects.",
-                "default": "*"
-              },
-              "version": {
-                "type": "string",
-                "description": "The semantic version ranges of the API the service expects.",
-                "default": "*"
-              },
-              "description": {
-                "type": "string",
-                "description": "A description of how the API is used or why it is needed."
-              },
-              "required": {
-                "type": "boolean",
-                "description": "Whether the service can not function without this dependency.",
-                "default": true
-              },
-              "multiple": {
-                "type": "boolean",
-                "description": "Whether the dependency can be specified more than once.",
-                "default": false
-              }
-            }
-          }
-        ]
-      }
+    "version": {
+      "type": "string",
+      "description": "The version number of the Foxx service. The version number must follow the semantic versioning format. This will be shown in the web interface."
     }
   },
   "id": "https://json.schemastore.org/foxx-manifest.json"

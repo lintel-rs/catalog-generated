@@ -124,8 +124,19 @@
         }
       }
     },
-    "profile": {
-      "$ref": "#/$defs/Profiles"
+    "dependencies": {
+      "description": "Cargo is configured to look for dependencies on [crates.io](https://crates.io) by default. Only\nthe name and a version string are required in this case. In [the cargo\nguide](https://doc.rust-lang.org/cargo/guide/index.html), we specified a dependency on the `time` crate:\n\n```toml\n[dependencies]\ntime = \"0.1.12\"\n```\n\nThe string `\"0.1.12\"` is a [semver](https://github.com/steveklabnik/semver#requirements) version requirement. Since this\nstring does not have any operators in it, it is interpreted the same way as\nif we had specified `\"^0.1.12\"`, which is called a caret requirement.\n\nA dependency can also be defined by a table with additional options:\n\n```toml\n[dependencies]\ntime = { path = \"../time\", version = \"0.1.12\" }\n```",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/Dependency"
+      },
+      "x-tombi-additional-key-label": "crate_name",
+      "x-tombi-table-keys-order": "version-sort",
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html"
+        }
+      }
     },
     "dev-dependencies": {
       "description": "The format of `[dev-dependencies]` is equivalent to `[dependencies]`:\n\n```toml\n[dev-dependencies]\ntempdir = \"0.3\"\n```\n\nDev-dependencies are not used when compiling\na package for building, but are used for compiling tests, examples, and\nbenchmarks.\n\nThese dependencies are *not* propagated to other packages which depend on this\npackage.\n\nYou can also have target-specific development dependencies by using\n`dev-dependencies` in the target section header instead of `dependencies`. For\nexample:\n\n```toml\n[target.'cfg(unix)'.dev-dependencies]\nmio = \"0.0.1\"\n```\n\n> **Note**: When a package is published, only dev-dependencies that specify a\n> `version` will be included in the published crate. For most use cases,\n> dev-dependencies are not needed when published, though some users (like OS\n> packagers) may want to run tests within a crate, so providing a `version` if\n> possible can still be beneficial.\n",
@@ -326,19 +337,8 @@
         "hidden": true
       }
     },
-    "dependentSchemas": {
-      "description": "Cargo is configured to look for dependencies on [crates.io](https://crates.io) by default. Only\nthe name and a version string are required in this case. In [the cargo\nguide](https://doc.rust-lang.org/cargo/guide/index.html), we specified a dependency on the `time` crate:\n\n```toml\n[dependencies]\ntime = \"0.1.12\"\n```\n\nThe string `\"0.1.12\"` is a [semver](https://github.com/steveklabnik/semver#requirements) version requirement. Since this\nstring does not have any operators in it, it is interpreted the same way as\nif we had specified `\"^0.1.12\"`, which is called a caret requirement.\n\nA dependency can also be defined by a table with additional options:\n\n```toml\n[dependencies]\ntime = { path = \"../time\", version = \"0.1.12\" }\n```",
-      "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Dependency"
-      },
-      "x-tombi-additional-key-label": "crate_name",
-      "x-tombi-table-keys-order": "version-sort",
-      "x-taplo": {
-        "links": {
-          "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html"
-        }
-      }
+    "profile": {
+      "$ref": "#/$defs/Profiles"
     }
   },
   "x-tombi-table-keys-order": "schema",
@@ -1179,14 +1179,18 @@
       "title": "Platform",
       "type": "object",
       "properties": {
-        "build_dependencies": {
+        "dependencies": {
+          "description": "Cargo is configured to look for dependencies on [crates.io](https://crates.io) by default. Only\nthe name and a version string are required in this case. In [the cargo\nguide](https://doc.rust-lang.org/cargo/guide/index.html), we specified a dependency on the `time` crate:\n\n```toml\n[dependencies]\ntime = \"0.1.12\"\n```\n\nThe string `\"0.1.12\"` is a [semver](https://github.com/steveklabnik/semver#requirements) version requirement. Since this\nstring does not have any operators in it, it is interpreted the same way as\nif we had specified `\"^0.1.12\"`, which is called a caret requirement.\n\nA dependency can also be defined by a table with additional options:\n\n```toml\n[dependencies]\ntime = { path = \"../time\", version = \"0.1.12\" }\n```",
           "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/Dependency"
           },
+          "x-tombi-additional-key-label": "crate_name",
           "x-tombi-table-keys-order": "version-sort",
           "x-taplo": {
-            "hidden": true
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html"
+            }
           }
         },
         "dev-dependencies": {
@@ -1239,18 +1243,14 @@
             }
           }
         },
-        "dependentSchemas": {
-          "description": "Cargo is configured to look for dependencies on [crates.io](https://crates.io) by default. Only\nthe name and a version string are required in this case. In [the cargo\nguide](https://doc.rust-lang.org/cargo/guide/index.html), we specified a dependency on the `time` crate:\n\n```toml\n[dependencies]\ntime = \"0.1.12\"\n```\n\nThe string `\"0.1.12\"` is a [semver](https://github.com/steveklabnik/semver#requirements) version requirement. Since this\nstring does not have any operators in it, it is interpreted the same way as\nif we had specified `\"^0.1.12\"`, which is called a caret requirement.\n\nA dependency can also be defined by a table with additional options:\n\n```toml\n[dependencies]\ntime = { path = \"../time\", version = \"0.1.12\" }\n```",
+        "build_dependencies": {
           "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/Dependency"
           },
-          "x-tombi-additional-key-label": "crate_name",
           "x-tombi-table-keys-order": "version-sort",
           "x-taplo": {
-            "links": {
-              "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html"
-            }
+            "hidden": true
           }
         }
       },
@@ -1929,10 +1929,14 @@
             }
           }
         },
-        "metadata": {
-          "description": "The `workspace.metadata` table is ignored by Cargo and will not be warned\nabout. This section can be used for tools that would like to store workspace\nconfiguration in `Cargo.toml`. For example:\n\n```toml\n[workspace]\nmembers = [\"member1\", \"member2\"]\n\n[workspace.metadata.webcontents]\nroot = \"path/to/webproject\"\ntool = [\"npm\", \"run\", \"build\"]\n# ...\n```\n\nThere is a similar set of tables at the package level at\n`package.metadata`. While cargo does not specify a\nformat for the content of either of these tables, it is suggested that\nexternal tools may wish to use them in a consistent fashion, such as referring\nto the data in `workspace.metadata` if data is missing from `package.metadata`,\nif that makes sense for the tool in question.\n",
+        "dependencies": {
+          "description": "The `workspace.dependencies` table is where you define dependencies to be\ninherited by members of a workspace.\n\nSpecifying a workspace dependency is similar to [package dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html) except:\n- Dependencies from this table cannot be declared as `optional`\n- [`features`][features] declared in this table are additive with the `features` from `[dependencies]`\n\nYou can then [inherit the workspace dependency as a package dependency](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#inheriting-a-dependency-from-a-workspace)\n\nExample:\n```toml\n# [PROJECT_DIR]/Cargo.toml\n[workspace]\nmembers = [\"bar\"]\n\n[workspace.dependencies]\ncc = \"1.0.73\"\nrand = \"0.8.5\"\nregex = { version = \"1.6.0\", default-features = false, features = [\"std\"] }\n```\n\n```toml\n# [PROJECT_DIR]/bar/Cargo.toml\n[package]\nname = \"bar\"\nversion = \"0.2.0\"\n\n[dependencies]\nregex = { workspace = true, features = [\"unicode\"] }\n\n[build-dependencies]\ncc.workspace = true\n\n[dev-dependencies]\nrand.workspace = true\n```",
           "type": "object",
-          "additionalProperties": true,
+          "additionalProperties": {
+            "$ref": "#/$defs/Dependency"
+          },
+          "x-tombi-additional-key-label": "crate_name",
+          "x-tombi-table-keys-order": "version-sort",
           "x-taplo": {
             "links": {
               "key": "https://doc.rust-lang.org/cargo/reference/workspaces.html#the-workspace-section"
@@ -1948,14 +1952,10 @@
             }
           }
         },
-        "dependentSchemas": {
-          "description": "The `workspace.dependencies` table is where you define dependencies to be\ninherited by members of a workspace.\n\nSpecifying a workspace dependency is similar to [package dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html) except:\n- Dependencies from this table cannot be declared as `optional`\n- [`features`][features] declared in this table are additive with the `features` from `[dependencies]`\n\nYou can then [inherit the workspace dependency as a package dependency](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#inheriting-a-dependency-from-a-workspace)\n\nExample:\n```toml\n# [PROJECT_DIR]/Cargo.toml\n[workspace]\nmembers = [\"bar\"]\n\n[workspace.dependencies]\ncc = \"1.0.73\"\nrand = \"0.8.5\"\nregex = { version = \"1.6.0\", default-features = false, features = [\"std\"] }\n```\n\n```toml\n# [PROJECT_DIR]/bar/Cargo.toml\n[package]\nname = \"bar\"\nversion = \"0.2.0\"\n\n[dependencies]\nregex = { workspace = true, features = [\"unicode\"] }\n\n[build-dependencies]\ncc.workspace = true\n\n[dev-dependencies]\nrand.workspace = true\n```",
+        "metadata": {
+          "description": "The `workspace.metadata` table is ignored by Cargo and will not be warned\nabout. This section can be used for tools that would like to store workspace\nconfiguration in `Cargo.toml`. For example:\n\n```toml\n[workspace]\nmembers = [\"member1\", \"member2\"]\n\n[workspace.metadata.webcontents]\nroot = \"path/to/webproject\"\ntool = [\"npm\", \"run\", \"build\"]\n# ...\n```\n\nThere is a similar set of tables at the package level at\n`package.metadata`. While cargo does not specify a\nformat for the content of either of these tables, it is suggested that\nexternal tools may wish to use them in a consistent fashion, such as referring\nto the data in `workspace.metadata` if data is missing from `package.metadata`,\nif that makes sense for the tool in question.\n",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Dependency"
-          },
-          "x-tombi-additional-key-label": "crate_name",
-          "x-tombi-table-keys-order": "version-sort",
+          "additionalProperties": true,
           "x-taplo": {
             "links": {
               "key": "https://doc.rust-lang.org/cargo/reference/workspaces.html#the-workspace-section"
@@ -2376,7 +2376,7 @@
             "link"
           ]
         },
-        "dependentSchemas": {
+        "dependencies": {
           "type": "boolean",
           "description": "Allow build assets for dependencies."
         }

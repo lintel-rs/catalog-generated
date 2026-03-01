@@ -310,7 +310,7 @@
     "branches": {
       "$ref": "#/$defs/branches"
     },
-    "dependentSchemas": {
+    "dependencies": {
       "$ref": "#/$defs/dependencies"
     }
   },
@@ -1077,106 +1077,35 @@
         }
       ]
     },
-    "taskItem": {
-      "description": "A task entry. Either a predefined task string, or an object with a single task type key.",
+    "dependencies": {
+      "title": "Dependencies",
+      "description": "Plan dependencies configuration.",
       "anyOf": [
         {
-          "$ref": "#/$defs/predefinedTask"
+          "type": "string"
         },
         {
           "type": "object",
-          "minProperties": 1,
-          "maxProperties": 1,
           "properties": {
-            "script": {
-              "$ref": "#/$defs/job/definitions/task"
+            "enabled-for-branches": {
+              "type": "boolean"
             },
-            "maven": {
-              "$ref": "#/$defs/mavenTask"
+            "require-all-stages-passing": {
+              "type": "boolean"
             },
-            "inject-variables": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "file": {
-                      "type": "string"
-                    },
-                    "scope": {
-                      "type": "string"
-                    },
-                    "namespace": {
-                      "type": "string"
-                    },
-                    "conditions": {
-                      "type": "array",
-                      "description": "UNDOCUMENTED. Task execution conditions.",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              ]
+            "block-strategy": {
+              "type": "string"
             },
-            "any-task": {
-              "$ref": "#/$defs/anyTask"
-            },
-            "vcs-branch": {
-              "$ref": "#/$defs/vcsBranchTask"
-            },
-            "vcs-tag": {
-              "$ref": "#/$defs/vcsTagTask"
-            },
-            "vcs-commit": {
-              "$ref": "#/$defs/vcsCommitTask"
-            },
-            "test-parser": {
-              "$ref": "#/$defs/job/definitions/task/properties/test-parser"
-            },
-            "checkout": {
-              "$ref": "#/$defs/job/definitions/task/properties/checkout"
-            },
-            "clean": {
-              "type": "object"
-            }
-          },
-          "additionalProperties": {
-            "description": "UNDOCUMENTED. Other task types supported by Bamboo Specs.",
-            "anyOf": [
-              {
+            "plans": {
+              "type": "array",
+              "items": {
                 "type": "string"
-              },
-              {
-                "type": "object"
-              },
-              {
-                "type": "array"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "integer"
-              },
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
               }
-            ]
+            },
+            "dependencies": {
+              "type": "array"
+            }
           }
-        },
-        {
-          "$ref": "#/$defs/script"
-        },
-        {
-          "$ref": "#/$defs/job/definitions/task"
         }
       ]
     },
@@ -1288,37 +1217,106 @@
         }
       }
     },
-    "dependentSchemas": {
-      "title": "Dependencies",
-      "description": "Plan dependencies configuration."
-    },
-    "dependentRequired": {
+    "taskItem": {
+      "description": "A task entry. Either a predefined task string, or an object with a single task type key.",
       "anyOf": [
         {
-          "type": "string"
+          "$ref": "#/$defs/predefinedTask"
         },
         {
           "type": "object",
+          "minProperties": 1,
+          "maxProperties": 1,
           "properties": {
-            "enabled-for-branches": {
-              "type": "boolean"
+            "script": {
+              "$ref": "#/$defs/job/definitions/task"
             },
-            "require-all-stages-passing": {
-              "type": "boolean"
+            "maven": {
+              "$ref": "#/$defs/mavenTask"
             },
-            "block-strategy": {
-              "type": "string"
+            "inject-variables": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "file": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "conditions": {
+                      "type": "array",
+                      "description": "UNDOCUMENTED. Task execution conditions.",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              ]
             },
-            "plans": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+            "any-task": {
+              "$ref": "#/$defs/anyTask"
             },
-            "dependentSchemas": {
-              "type": "array"
+            "vcs-branch": {
+              "$ref": "#/$defs/vcsBranchTask"
+            },
+            "vcs-tag": {
+              "$ref": "#/$defs/vcsTagTask"
+            },
+            "vcs-commit": {
+              "$ref": "#/$defs/vcsCommitTask"
+            },
+            "test-parser": {
+              "$ref": "#/$defs/job/definitions/task/properties/test-parser"
+            },
+            "checkout": {
+              "$ref": "#/$defs/job/definitions/task/properties/checkout"
+            },
+            "clean": {
+              "type": "object"
             }
+          },
+          "additionalProperties": {
+            "description": "UNDOCUMENTED. Other task types supported by Bamboo Specs.",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              },
+              {
+                "type": "array"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
+        },
+        {
+          "$ref": "#/$defs/script"
+        },
+        {
+          "$ref": "#/$defs/job/definitions/task"
         }
       ]
     }

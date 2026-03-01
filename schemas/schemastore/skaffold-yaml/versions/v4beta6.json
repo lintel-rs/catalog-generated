@@ -962,13 +962,10 @@
           "x-intellij-html-description": "removes old cache volume associated with the specific image and supplies a clean cache volume for build.",
           "default": "false"
         },
-        "volumes": {
-          "items": {
-            "$ref": "#/$defs/BuildpackVolume"
-          },
-          "type": "array",
-          "description": "support mounting host volumes into the container.",
-          "x-intellij-html-description": "support mounting host volumes into the container."
+        "dependencies": {
+          "$ref": "#/$defs/BuildpackDependencies",
+          "description": "file dependencies that skaffold should watch for both rebuilding and file syncing for this artifact.",
+          "x-intellij-html-description": "file dependencies that skaffold should watch for both rebuilding and file syncing for this artifact."
         },
         "env": {
           "items": {
@@ -999,10 +996,13 @@
           "x-intellij-html-description": "indicates that the builder should be trusted.",
           "default": "false"
         },
-        "dependentSchemas": {
-          "$ref": "#/$defs/BuildpackDependencies",
-          "description": "file dependencies that skaffold should watch for both rebuilding and file syncing for this artifact.",
-          "x-intellij-html-description": "file dependencies that skaffold should watch for both rebuilding and file syncing for this artifact."
+        "volumes": {
+          "items": {
+            "$ref": "#/$defs/BuildpackVolume"
+          },
+          "type": "array",
+          "description": "support mounting host volumes into the container.",
+          "x-intellij-html-description": "support mounting host volumes into the container."
         }
       },
       "preferredOrder": [
@@ -1349,7 +1349,7 @@
           "description": "command executed to build the image.",
           "x-intellij-html-description": "command executed to build the image."
         },
-        "dependentSchemas": {
+        "dependencies": {
           "$ref": "#/$defs/CustomDependencies",
           "description": "file dependencies that skaffold should watch for both rebuilding and file syncing for this artifact.",
           "x-intellij-html-description": "file dependencies that skaffold should watch for both rebuilding and file syncing for this artifact."
@@ -1447,15 +1447,15 @@
           "description": "custom command to be executed.  If the command exits with a non-zero return code, the test will be considered to have failed.",
           "x-intellij-html-description": "custom command to be executed.  If the command exits with a non-zero return code, the test will be considered to have failed."
         },
+        "dependencies": {
+          "$ref": "#/$defs/CustomTestDependencies",
+          "description": "additional test-specific file dependencies; changes to these files will re-run this test.",
+          "x-intellij-html-description": "additional test-specific file dependencies; changes to these files will re-run this test."
+        },
         "timeoutSeconds": {
           "type": "integer",
           "description": "sets the wait time for skaffold for the command to complete. If unset or 0, Skaffold will wait until the command completes.",
           "x-intellij-html-description": "sets the wait time for skaffold for the command to complete. If unset or 0, Skaffold will wait until the command completes."
-        },
-        "dependentSchemas": {
-          "$ref": "#/$defs/CustomTestDependencies",
-          "description": "additional test-specific file dependencies; changes to these files will re-run this test.",
-          "x-intellij-html-description": "additional test-specific file dependencies; changes to these files will re-run this test."
         }
       },
       "preferredOrder": [
@@ -2796,10 +2796,10 @@
     },
     "KoArtifact": {
       "properties": {
-        "main": {
-          "type": "string",
-          "description": "location of the main package. It is the pattern passed to `go build`. If main is specified as a relative path, it is relative to the `context` directory. If main is empty, the ko builder uses a default value of `.`. If main is a pattern with wildcards, such as `./...`, the expansion must contain only one main package, otherwise ko fails. Main is ignored if the `ImageName` starts with `ko://`. Example: `./cmd/foo`.",
-          "x-intellij-html-description": "location of the main package. It is the pattern passed to <code>go build</code>. If main is specified as a relative path, it is relative to the <code>context</code> directory. If main is empty, the ko builder uses a default value of <code>.</code>. If main is a pattern with wildcards, such as <code>./...</code>, the expansion must contain only one main package, otherwise ko fails. Main is ignored if the <code>ImageName</code> starts with <code>ko://</code>. Example: <code>./cmd/foo</code>."
+        "dependencies": {
+          "$ref": "#/$defs/KoDependencies",
+          "description": "file dependencies that Skaffold should watch for both rebuilding and file syncing for this artifact.",
+          "x-intellij-html-description": "file dependencies that Skaffold should watch for both rebuilding and file syncing for this artifact."
         },
         "dir": {
           "type": "string",
@@ -2859,10 +2859,10 @@
             "[\"-buildid=\", \"-s\", \"-w\"]"
           ]
         },
-        "dependentSchemas": {
-          "$ref": "#/$defs/KoDependencies",
-          "description": "file dependencies that Skaffold should watch for both rebuilding and file syncing for this artifact.",
-          "x-intellij-html-description": "file dependencies that Skaffold should watch for both rebuilding and file syncing for this artifact."
+        "main": {
+          "type": "string",
+          "description": "location of the main package. It is the pattern passed to `go build`. If main is specified as a relative path, it is relative to the `context` directory. If main is empty, the ko builder uses a default value of `.`. If main is a pattern with wildcards, such as `./...`, the expansion must contain only one main package, otherwise ko fails. Main is ignored if the `ImageName` starts with `ko://`. Example: `./cmd/foo`.",
+          "x-intellij-html-description": "location of the main package. It is the pattern passed to <code>go build</code>. If main is specified as a relative path, it is relative to the <code>context</code> directory. If main is empty, the ko builder uses a default value of <code>.</code>. If main is a pattern with wildcards, such as <code>./...</code>, the expansion must contain only one main package, otherwise ko fails. Main is ignored if the <code>ImageName</code> starts with <code>ko://</code>. Example: <code>./cmd/foo</code>."
         }
       },
       "preferredOrder": [

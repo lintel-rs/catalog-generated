@@ -166,7 +166,23 @@ Schema - Lintel Catalog"
     <table class="meta-table">
       <tr>
         <th>Type</th>
-        <td><span class="type-badge">StdioServer | HttpServer | SseServer</span></td>
+        <td>
+          <span class="type-badge"
+            ><a
+              href="#def-StdioServer"
+              class="type-badge-link"
+              >StdioServer</a
+            > | <a
+              href="#def-HttpServer"
+              class="type-badge-link"
+              >HttpServer</a
+            > | <a
+              href="#def-SseServer"
+              class="type-badge-link"
+              >SseServer</a
+            ></span
+          >
+        </td>
       </tr>
        <tr>
         <th>Schema URL</th>
@@ -183,7 +199,21 @@ Schema - Lintel Catalog"
 <section class="schema-doc">
   <div class="schema-doc-type">
     <span class="label">Type:</span>
-    <span class="type-badge">StdioServer | HttpServer | SseServer</span>
+    <span class="type-badge"
+      ><a
+        href="#def-StdioServer"
+        class="type-badge-link"
+        >StdioServer</a
+      > | <a
+        href="#def-HttpServer"
+        class="type-badge-link"
+        >HttpServer</a
+      > | <a
+        href="#def-SseServer"
+        class="type-badge-link"
+        >SseServer</a
+      ></span
+    >
   </div>
    <div class="desc-html"><p>Configuration for a single <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/mcp">MCP server</a> in Claude Code.</p>
 <p>Supports three transport types:</p>
@@ -202,307 +232,44 @@ Schema - Lintel Catalog"
      <h2 id="oneOf">One of</h2>
   <div class="composition-block">
     <div
-      class="variant-block variant-expanded"
+      class="variant-block"
     >
       <div class="variant-header">
         <span class="variant-index">1.</span>
-        <span class="variant-label">StdioServer</span>
-<span class="type-badge"
+<a
+          href="#def-StdioServer"
+          class="variant-label type-badge-link"
+          >StdioServer</a
+        > <span class="type-badge"
           >object</span
         >      </div>
-      <div class="desc-html"><p>A stdio-based MCP server that runs as a local child process.</p>
-<p>Claude Code launches the specified <code>command</code> and communicates over stdin/stdout using the <a target="_blank" rel="noopener noreferrer" href="https://modelcontextprotocol.io/docs/concepts/transports#stdio">MCP stdio transport</a>.</p>
-<p>If <code>type</code> is omitted and <code>command</code> is present, stdio transport is assumed.</p>
-<p>Use <code>${CLAUDE_PLUGIN_ROOT}</code> in <code>command</code>, <code>args</code>, <code>env</code>, and <code>cwd</code> for plugin-relative paths. All string values support <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion.</p>
-<p><strong>Windows note</strong>: On native Windows (not WSL), servers that use <code>npx</code> require a <code>cmd /c</code> wrapper (e.g. <code>"command": "cmd"</code>, <code>"args": ["/c", "npx", "-y", "@some/package"]</code>).</p>
-</div>
-       <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">command</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>Executable to run.</p>
-<p>Must be in <code>PATH</code> or specified as an absolute or relative path. Supports <code>${VAR}</code> expansion and <code>${CLAUDE_PLUGIN_ROOT}</code> for plugin-relative paths.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;node&quot;</code>, <code>&quot;python&quot;</code>, <code>&quot;npx&quot;</code>, <code>&quot;/usr/local/bin/company-mcp-server&quot;</code>, <code>&quot;${CLAUDE_PLUGIN_ROOT}/servers/db-server&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">type</span>
-    <span class="type-badge">const: &quot;stdio&quot;</span>
-   </div>
-  <div class="desc-html"><p>Transport type.</p>
-<p>Optional for stdio servers — if <code>type</code> is omitted and <code>command</code> is present, stdio is assumed.</p>
-</div>
-     <div class="property-meta">
-    <span class="meta-label">Constant:</span>
-    <code>&quot;stdio&quot;</code>
-  </div>
-    </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">args</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>Command-line arguments passed to the server process.</p>
-<p>Supports <code>${VAR}</code> expansion and <code>${CLAUDE_PLUGIN_ROOT}</code>.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>[&quot;serve&quot;]</code>, <code>[&quot;--config&quot;,&quot;/etc/company/mcp-config.json&quot;]</code>, <code>[&quot;--port&quot;,&quot;8080&quot;]</code>, <code>[&quot;-y&quot;,&quot;@modelcontextprotocol/server-filesystem&quot;]</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">env</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>Environment variables set when starting the server process.</p>
-<p>These are merged with the parent environment. Values support <code>${VAR}</code> and <code>${VAR:-default}</code> expansion, as well as <code>${CLAUDE_PLUGIN_ROOT}</code> for plugin-relative paths.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>{&quot;DB_PATH&quot;:&quot;${CLAUDE_PLUGIN_ROOT}/data&quot;}</code>, <code>{&quot;COMPANY_API_URL&quot;:&quot;https://internal.company.com&quot;}</code>, <code>{&quot;AIRTABLE_API_KEY&quot;:&quot;${AIRTABLE_API_KEY}&quot;}</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">cwd</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Working directory for the server process.</p>
-<p>If omitted, inherits the current working directory. Supports <code>${CLAUDE_PLUGIN_ROOT}</code> for plugin-relative paths.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;${CLAUDE_PLUGIN_ROOT}&quot;</code>, <code>&quot;/opt/mcp-servers&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">timeout</span>
-    <span class="type-badge">number</span>
-   </div>
-  <div class="desc-html"><p>Connection timeout in milliseconds.</p>
-<p>How long Claude Code waits for the server to start and respond to the initial handshake. Can also be configured globally via the <code>MCP_TIMEOUT</code> environment variable (e.g. <code>MCP_TIMEOUT=10000 claude</code>).</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>10000</code>, <code>30000</code>  </div>
-   </div>        </div>
-    </div>
+     </div>
     <div
-      class="variant-block variant-expanded"
+      class="variant-block"
     >
       <div class="variant-header">
         <span class="variant-index">2.</span>
-        <span class="variant-label">HttpServer</span>
-<span class="type-badge"
+<a
+          href="#def-HttpServer"
+          class="variant-label type-badge-link"
+          >HttpServer</a
+        > <span class="type-badge"
           >object</span
         >      </div>
-      <div class="desc-html"><p>A remote MCP server using the <a target="_blank" rel="noopener noreferrer" href="https://modelcontextprotocol.io/docs/concepts/transports#streamable-http">streamable HTTP transport</a>.</p>
-<p>This is the <strong>recommended transport</strong> for remote/cloud-based MCP servers. Claude Code connects to the server over HTTP/HTTPS.</p>
-<p>Use <code>headers</code> for static authentication (e.g. API keys). For OAuth 2.0 authentication, configure the <code>oauth</code> field and use <code>/mcp</code> in Claude Code to complete the browser login flow.</p>
-<p>All string values support <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion.</p>
-</div>
-       <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">type</span>
-    <span class="type-badge">const: &quot;http&quot;</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>Transport type. Required for HTTP servers.</p>
-</div>
-     <div class="property-meta">
-    <span class="meta-label">Constant:</span>
-    <code>&quot;http&quot;</code>
-  </div>
-    </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">url</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>URL of the remote MCP server endpoint.</p>
-<p>Supports <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;https://api.githubcopilot.com/mcp/&quot;</code>, <code>&quot;https://mcp.sentry.dev/mcp&quot;</code>, <code>&quot;https://mcp.notion.com/mcp&quot;</code>, <code>&quot;https://mcp.paypal.com/mcp&quot;</code>, <code>&quot;${API_BASE_URL:-https://api.example.com}/mcp&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">headers</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>HTTP headers to include with every request.</p>
-<p>Commonly used for static authentication (API keys, bearer tokens). Supports <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion in values.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>{&quot;Authorization&quot;:&quot;Bearer ${MCP_API_KEY}&quot;}</code>, <code>{&quot;X-API-Key&quot;:&quot;${API_KEY}&quot;}</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">oauth</span>
-    <a href="#def-OAuthConfig" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Pre-configured <a target="_blank" rel="noopener noreferrer" href="https://oauth.net/2/">OAuth 2.0</a> client credentials.</p>
-<p>Required when the remote MCP server does not support <a target="_blank" rel="noopener noreferrer" href="https://datatracker.ietf.org/doc/html/rfc7591">dynamic client registration</a>. Register an OAuth app through the server's developer portal and provide the <code>clientId</code> here. The client secret is passed separately via <code>claude mcp add-json --client-secret</code> and stored securely in your system keychain — it is <strong>never</strong> written to config files.</p>
-<p>After configuring, run <code>/mcp</code> in Claude Code to complete the browser authentication flow. Tokens are stored securely and refreshed automatically.</p>
-</div>
-         <details class="nested-properties">
-    <summary>2 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">clientId</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>OAuth client ID obtained from the server's developer portal.</p>
-<p>If the server uses a public OAuth client with no secret, provide only <code>clientId</code> without a corresponding <code>--client-secret</code> flag.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;your-client-id&quot;</code>, <code>&quot;abc123def456&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">callbackPort</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>Local port for the OAuth callback redirect.</p>
-<p>Claude Code starts a temporary HTTP server on this port to receive the OAuth redirect. The redirect URI registered in the server's developer portal must match <code>&lt;http://localhost:&lt;callbackPort&gt;&gt;/callback</code>.</p>
-<p>Choose any available port; it just needs to match the redirect URI you registered.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>8080</code>, <code>3000</code>, <code>9090</code>  </div>
-   </div>      </div>
-  </details>
-</div>        </div>
-    </div>
+     </div>
     <div
-      class="variant-block variant-expanded"
+      class="variant-block"
     >
       <div class="variant-header">
         <span class="variant-index">3.</span>
-        <span class="variant-label">SseServer</span>
-<span class="type-badge"
+<a
+          href="#def-SseServer"
+          class="variant-label type-badge-link"
+          >SseServer</a
+        > <span class="type-badge"
           >object</span
         >      </div>
-      <div class="desc-html"><p>A remote MCP server using the <a target="_blank" rel="noopener noreferrer" href="https://modelcontextprotocol.io/docs/concepts/transports#http-with-sse">SSE (server-sent events) transport</a>.</p>
-<blockquote>
-<p><strong>Deprecated</strong>: The SSE transport is deprecated. Use <a href="#/$defs/HttpServer">HTTP servers</a> instead, where available.</p>
-</blockquote>
-<p>Claude Code connects to the server over HTTP/HTTPS with SSE for server-to-client messages. Configuration is identical to HTTP servers.</p>
-<p>All string values support <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion.</p>
-</div>
-       <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">type</span>
-    <span class="type-badge">const: &quot;sse&quot;</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>Transport type. Required for SSE servers.</p>
-</div>
-     <div class="property-meta">
-    <span class="meta-label">Constant:</span>
-    <code>&quot;sse&quot;</code>
-  </div>
-    </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">url</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>URL of the remote MCP server SSE endpoint.</p>
-<p>Supports <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;https://mcp.asana.com/sse&quot;</code>, <code>&quot;https://mcp.example.com/sse&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">headers</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>HTTP headers to include with every request.</p>
-<p>Commonly used for static authentication (API keys, bearer tokens). Supports <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion in values.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>{&quot;Authorization&quot;:&quot;Bearer ${MCP_API_KEY}&quot;}</code>, <code>{&quot;X-API-Key&quot;:&quot;${API_KEY}&quot;}</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">oauth</span>
-    <a href="#def-OAuthConfig" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Pre-configured <a target="_blank" rel="noopener noreferrer" href="https://oauth.net/2/">OAuth 2.0</a> client credentials.</p>
-<p>Required when the remote MCP server does not support <a target="_blank" rel="noopener noreferrer" href="https://datatracker.ietf.org/doc/html/rfc7591">dynamic client registration</a>. Register an OAuth app through the server's developer portal and provide the <code>clientId</code> here. The client secret is passed separately via <code>claude mcp add-json --client-secret</code> and stored securely in your system keychain — it is <strong>never</strong> written to config files.</p>
-<p>After configuring, run <code>/mcp</code> in Claude Code to complete the browser authentication flow. Tokens are stored securely and refreshed automatically.</p>
-</div>
-         <details class="nested-properties">
-    <summary>2 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">clientId</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>OAuth client ID obtained from the server's developer portal.</p>
-<p>If the server uses a public OAuth client with no secret, provide only <code>clientId</code> without a corresponding <code>--client-secret</code> flag.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;your-client-id&quot;</code>, <code>&quot;abc123def456&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">callbackPort</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>Local port for the OAuth callback redirect.</p>
-<p>Claude Code starts a temporary HTTP server on this port to receive the OAuth redirect. The redirect URI registered in the server's developer portal must match <code>&lt;http://localhost:&lt;callbackPort&gt;&gt;/callback</code>.</p>
-<p>Choose any available port; it just needs to match the redirect URI you registered.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>8080</code>, <code>3000</code>, <code>9090</code>  </div>
-   </div>      </div>
-  </details>
-</div>        </div>
-    </div>
+     </div>
   </div>
    <h2 id="definitions">Definitions</h2>
   <div class="definition-block" id="def-StdioServer">
@@ -518,7 +285,7 @@ Schema - Lintel Catalog"
 <p>Use <code>${CLAUDE_PLUGIN_ROOT}</code> in <code>command</code>, <code>args</code>, <code>env</code>, and <code>cwd</code> for plugin-relative paths. All string values support <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion.</p>
 <p><strong>Windows note</strong>: On native Windows (not WSL), servers that use <code>npx</code> require a <code>cmd /c</code> wrapper (e.g. <code>"command": "cmd"</code>, <code>"args": ["/c", "npx", "-y", "@some/package"]</code>).</p>
 </div>
-       <div class="property-list">
+        <div class="property-list">
  <div
   class="property-item"
 >
@@ -610,7 +377,7 @@ Schema - Lintel Catalog"
 <p>Use <code>headers</code> for static authentication (e.g. API keys). For OAuth 2.0 authentication, configure the <code>oauth</code> field and use <code>/mcp</code> in Claude Code to complete the browser login flow.</p>
 <p>All string values support <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion.</p>
 </div>
-       <div class="property-list">
+        <div class="property-list">
  <div
   class="property-item"
 >
@@ -714,7 +481,7 @@ Schema - Lintel Catalog"
 <p>Claude Code connects to the server over HTTP/HTTPS with SSE for server-to-client messages. Configuration is identical to HTTP servers.</p>
 <p>All string values support <code>${VAR}</code> and <code>${VAR:-default}</code> environment variable expansion.</p>
 </div>
-       <div class="property-list">
+        <div class="property-list">
  <div
   class="property-item"
 >
@@ -815,7 +582,7 @@ Schema - Lintel Catalog"
 <p>Required when the remote MCP server does not support <a target="_blank" rel="noopener noreferrer" href="https://datatracker.ietf.org/doc/html/rfc7591">dynamic client registration</a>. Register an OAuth app through the server's developer portal and provide the <code>clientId</code> here. The client secret is passed separately via <code>claude mcp add-json --client-secret</code> and stored securely in your system keychain — it is <strong>never</strong> written to config files.</p>
 <p>After configuring, run <code>/mcp</code> in Claude Code to complete the browser authentication flow. Tokens are stored securely and refreshed automatically.</p>
 </div>
-       <div class="property-list">
+        <div class="property-list">
  <div
   class="property-item"
 >
@@ -857,7 +624,7 @@ Schema - Lintel Catalog"
         <p>
           Generated by
           <a href="https://github.com/lintel-rs/lintel">Lintel</a>
-          Catalog Builder 0.0.13
+          Catalog Builder 0.0.14
         </p>
       </div>
     </footer>

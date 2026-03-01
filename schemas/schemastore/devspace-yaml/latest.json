@@ -189,17 +189,22 @@
       ],
       "description": "Commands are custom commands that can be executed via 'devspace run COMMAND'. These commands are run within a pseudo bash\nthat also allows executing special commands such as run_watch or is_equal."
     },
-    "localRegistry": {
+    "dependencies": {
       "oneOf": [
         {
-          "$ref": "#/$defs/LocalRegistryConfig"
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/$defs/DependencyConfig"
+            }
+          },
+          "type": "object"
         },
         {
           "type": "string",
           "pattern": "(?ms)^\\$\\$?\\#?\\!?\\((.+)\\)$"
         }
       ],
-      "description": "LocalRegistry specifies the configuration for a local image registry"
+      "description": "Dependencies are sub devspace projects that lie in a local folder or remote git repository that can be executed\nfrom within the pipeline. In contrast to imports, these projects pose as separate fully functional DevSpace projects\nthat typically lie including source code in a different folder and can be used to compose a full microservice\napplication that will be deployed by DevSpace. Each dependency name can only be used once and if you want to use\nthe same project multiple times, make sure to use a different name for each of those instances."
     },
     "pullSecrets": {
       "oneOf": [
@@ -245,24 +250,17 @@
       ],
       "description": "Hooks are actions that are executed at certain points within the pipeline. Hooks are ordered and are executed\nin the order they are specified. They are deprecated and pipelines should be used instead."
     },
-    "dependentSchemas": {
-      "description": "Dependencies are sub devspace projects that lie in a local folder or remote git repository that can be executed\nfrom within the pipeline. In contrast to imports, these projects pose as separate fully functional DevSpace projects\nthat typically lie including source code in a different folder and can be used to compose a full microservice\napplication that will be deployed by DevSpace. Each dependency name can only be used once and if you want to use\nthe same project multiple times, make sure to use a different name for each of those instances."
-    },
-    "dependentRequired": {
+    "localRegistry": {
       "oneOf": [
         {
-          "patternProperties": {
-            ".*": {
-              "$ref": "#/$defs/DependencyConfig"
-            }
-          },
-          "type": "object"
+          "$ref": "#/$defs/LocalRegistryConfig"
         },
         {
           "type": "string",
           "pattern": "(?ms)^\\$\\$?\\#?\\!?\\((.+)\\)$"
         }
-      ]
+      ],
+      "description": "LocalRegistry specifies the configuration for a local image registry"
     }
   },
   "$defs": {

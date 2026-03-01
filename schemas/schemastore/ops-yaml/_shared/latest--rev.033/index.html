@@ -193,6 +193,311 @@ options: ...
 }</code></pre>
        </div>    <div
   class="property-item"
+  id="prop-dependencies"
+>
+  <div class="property-header">
+    <span class="property-name">dependencies</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>Dependencies listed in the <code>dependencies</code> section of <code>ops.yml</code> are satisfied when the <code>ops up</code> command is run. Some dependencies will be un-satisfied when you run <code>ops down</code>; e.g. services will be stopped, but packages won't be uninstalled.</p>
+<p>This feature allows developers that are new to a project to get up and running without knowing anything about the app itself. Your <code>ops.yml</code> should allow a developer to <code>ops up &amp;&amp; ops start</code> to run an application.</p>
+<p><em>For more information, see the <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops/blob/main/docs/dependencies.md">Dependencies</a> documentation on <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops">GitHub</a>.</em></p>
+</div>
+         <details class="nested-properties">
+    <summary>12 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">apk</span>
+    <a href="#def-PackageList" class="type-badge type-badge-link"
+      >PackageVersioned[]</a
+    >
+   </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">apt</span>
+    <a href="#def-PackageList" class="type-badge type-badge-link"
+      >PackageVersioned[]</a
+    >
+   </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">brew</span>
+    <a href="#def-PackageBrew" class="type-badge type-badge-link"
+      >PackageBrew[]</a
+    >
+   </div>
+  <div class="desc-html"><ul>
+<li>Specifies that a particular <code>brew</code> package is needed.</li>
+<li>Will only run if you're on a Mac.</li>
+</ul>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">cask</span>
+    <a href="#def-PackageBrew" class="type-badge type-badge-link"
+      >PackageBrew[]</a
+    >
+   </div>
+  <div class="desc-html"><ul>
+<li>Specifies that a particular <code>brew cask</code> package is needed.</li>
+<li>Will only run if you're on a Mac.</li>
+</ul>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">custom</span>
+    <span class="type-badge">CommandString | object[]</span>
+   </div>
+  <div class="desc-html"><ul>
+<li>Runs the given command.</li>
+<li>Can't tell if the command needs to be run or not, so always runs it on <code>ops up</code>.</li>
+<li>Therefore, the command should be <a target="_blank" rel="noopener noreferrer" href="https://en.wikipedia.org/wiki/Idempotence"><strong>idempotent</strong></a>.</li>
+<li>It's also a good idea to prevent it from printing output unless it encounters an error, to keep the ops output clean.</li>
+</ul>
+<h4><code>custom</code> dependencies with <code>up</code> and <code>down</code></h4>
+<p>If a <code>custom</code> dependency is given as a hash, you can define separate <code>up</code> and <code>down</code> actions that are run when <code>ops up</code> or <code>ops down</code> are called, respectively.</p>
+<pre><code class="language-yaml">dependencies:
+	custom:
+		- init file:
+			up: touch file
+			down: rm file
+</code></pre>
+<p>You can also define only the <code>down</code> command, which will execute on <code>ops down</code>; nothing will be executed by the dependency on <code>ops up</code>.</p>
+<blockquote>
+<p><strong>NOTE:</strong> The lines with <code>up</code> and <code>down</code> are indented past the beginning of the text <code>init file</code>. YAML considers <code>- </code> in a list to be part of the indentation, and <code>up</code> and <code>down</code> must be <em>children</em> of the name of the custom depdenceny, not siblings. Therefore, the following is <strong>incorrect</strong>:</p>
+<pre><code class="language-yaml">dependencies:
+	custom:
+		- init file:
+			up: touch file
+			down: rm file
+</code></pre>
+<p>as it results in a Hash like:</p>
+<pre><code class="language-ruby">{
+	"init file" =&gt; nil,
+	"up" =&gt; "touch file",
+	"down" =&gt; "touch file"
+}
+</code></pre>
+</blockquote>
+</div>
+      <div class="property-meta">
+    <span class="meta-label">Examples:</span> <code>[&quot;bundle install --quiet&quot;,{&quot;init file&quot;:{&quot;up&quot;:&quot;touch file&quot;,&quot;down&quot;:&quot;rm file&quot;}}]</code>  </div>
+   <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">dir</span>
+    <a href="#def-PathList" class="type-badge type-badge-link"
+      >array</a
+    >
+   </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">docker</span>
+    <a href="#def-PathList" class="type-badge type-badge-link"
+      >array</a
+    >
+   </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">gem</span>
+    <a href="#def-PackageList" class="type-badge type-badge-link"
+      >PackageVersioned[]</a
+    >
+   </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">pip</span>
+    <a href="#def-PackagePip" class="type-badge type-badge-link"
+      >PackagePip[]</a
+    >
+   </div>
+  <div class="desc-html"><p>This dependency ensures that the given Python package is installed.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">snap</span>
+    <a href="#def-PackageList" class="type-badge type-badge-link"
+      >PackageVersioned[]</a
+    >
+   </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">sshkey</span>
+    <a href="#def-PathList" class="type-badge type-badge-link"
+      >array</a
+    >
+   </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    ><span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">terraform</span>
+   </div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+  id="prop-forwards"
+>
+  <div class="property-header">
+    <span class="property-name">forwards</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>Sometimes a project is complex enough to split up into multiple directories. In this case, you may have <code>ops.yml</code> files in several places, but still want to provide easy access to these actions from the top-level directory.</p>
+<p>With this config, <code>ops app test</code> will have the same effect as running <code>ops test</code> from the <code>app</code> directory. <code>ops inf deploy</code> will be the same as <code>cd infrastructure &amp;&amp; ops deploy</code>.</p>
+<p>When a command is forwarded to another directory, no config, secrets, or environment variables are set based on the current directory's <code>ops.yml</code>, and no hooks are run from the current directory's <code>ops.yml</code>.</p>
+<p>If you want access to the top-level directory's config or secrets from the subdirectory, link it in the subdirectory's <code>ops.yml</code>:</p>
+<pre><code class="language-yaml">dependencies:
+  custom:
+    - ln -sf ../config config
+</code></pre>
+<p><em>For more information, see the <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops/blob/main/docs/why.md#vforwards">Forwards</a> documentation on <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops">GitHub</a>.</em></p>
+</div>
+       </div>    <div
+  class="property-item"
+  id="prop-hooks"
+>
+  <div class="property-header">
+    <span class="property-name">hooks</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>Sometimes you want to run a command before other commands. Some examples:</p>
+<ul>
+<li>You have a number of ops commands that let a developer run different test suites inside a container, and you want to make sure the container image is built beforehand.</li>
+<li>You have some configuration that needs to happen when the software execution environment changes (<em>e.g. going from <code>dev</code> to <code>staging</code></em>).</li>
+</ul>
+<p>In this case, you can use the <code>hooks</code> feature.</p>
+<p><em>For more information, see the <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops/blob/main/docs/hooks.md">Hooks</a> documentation on <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops">GitHub</a>.</em></p>
+</div>
+         <details class="nested-properties">
+    <summary>1 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">before</span>
+    <a href="#def-CommandString" class="type-badge type-badge-link"
+      >CommandString[]</a
+    >
+   </div>
+  <div class="desc-html"><p>A series of hooks that run before actions. They do not run before builtins like <code>up</code> or <code>exec</code>.</p>
+<p><code>before</code> hooks are always executed before secrets are loaded. If you would like a before hook to have access to secrets, create an action with <code>load_secrets: true</code> and call the action from a before hook.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minItems=1</span
+    >  </div>
+  </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+  id="prop-min_version"
+>
+  <div class="property-header">
+    <span class="property-name">min_version</span>
+   </div>
+        <div class="inline-composition">
+    <span class="meta-label">All of:</span>
+    <span class="inline-variant"
+      >Minimum Version</span
+    >,      <span class="inline-variant"
+      ><a
+        href="#def-SemVer"
+        class="type-badge-link"
+        >SemanticVersion</a
+      >      <span class="type-badge">string</span></span
+    >   </div>
+ </div>    <div
+  class="property-item"
   id="prop-options"
 >
   <div class="property-header">
@@ -297,7 +602,11 @@ options: ...
     <span class="inline-variant"
       >CompletionOptions      <span class="type-badge">object</span></span
     >,      <span class="inline-variant"
-      >Deprecated</span
+      ><a
+        href="#def-Deprecated"
+        class="type-badge-link"
+        >Deprecated</a
+      ></span
     >   </div>
  </div>    <div
   class="property-item"
@@ -362,7 +671,9 @@ options: ...
 >
   <div class="property-header">
     <span class="property-name">environment_aliases</span>
-    <span class="type-badge">NameString[]</span>
+    <a href="#def-NameString" class="type-badge type-badge-link"
+      >NameString[]</a
+    >
    </div>
   <div class="desc-html"><p>Different software systems use different environment variables to determine the software execution environment. E.g. Ruby on Rails uses <code>RAILS_ENV</code>. Thus, <code>ops</code> allows the user to specify which variables should also be set to the name of the software environment.</p>
 <p>If any <code>environment_aliases</code> are specified in <code>ops.yml</code>, <code>ops</code> will not change the value of <code>$environment</code> unless it is listed as well.</p>
@@ -722,299 +1033,6 @@ options: ...
   </details>
 </div>      </div>
   </details>
-</div>    <div
-  class="property-item"
-  id="prop-forwards"
->
-  <div class="property-header">
-    <span class="property-name">forwards</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>Sometimes a project is complex enough to split up into multiple directories. In this case, you may have <code>ops.yml</code> files in several places, but still want to provide easy access to these actions from the top-level directory.</p>
-<p>With this config, <code>ops app test</code> will have the same effect as running <code>ops test</code> from the <code>app</code> directory. <code>ops inf deploy</code> will be the same as <code>cd infrastructure &amp;&amp; ops deploy</code>.</p>
-<p>When a command is forwarded to another directory, no config, secrets, or environment variables are set based on the current directory's <code>ops.yml</code>, and no hooks are run from the current directory's <code>ops.yml</code>.</p>
-<p>If you want access to the top-level directory's config or secrets from the subdirectory, link it in the subdirectory's <code>ops.yml</code>:</p>
-<pre><code class="language-yaml">dependencies:
-  custom:
-    - ln -sf ../config config
-</code></pre>
-<p><em>For more information, see the <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops/blob/main/docs/why.md#vforwards">Forwards</a> documentation on <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops">GitHub</a>.</em></p>
-</div>
-       </div>    <div
-  class="property-item"
-  id="prop-hooks"
->
-  <div class="property-header">
-    <span class="property-name">hooks</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>Sometimes you want to run a command before other commands. Some examples:</p>
-<ul>
-<li>You have a number of ops commands that let a developer run different test suites inside a container, and you want to make sure the container image is built beforehand.</li>
-<li>You have some configuration that needs to happen when the software execution environment changes (<em>e.g. going from <code>dev</code> to <code>staging</code></em>).</li>
-</ul>
-<p>In this case, you can use the <code>hooks</code> feature.</p>
-<p><em>For more information, see the <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops/blob/main/docs/hooks.md">Hooks</a> documentation on <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops">GitHub</a>.</em></p>
-</div>
-         <details class="nested-properties">
-    <summary>1 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">before</span>
-    <span class="type-badge">CommandString[]</span>
-   </div>
-  <div class="desc-html"><p>A series of hooks that run before actions. They do not run before builtins like <code>up</code> or <code>exec</code>.</p>
-<p><code>before</code> hooks are always executed before secrets are loaded. If you would like a before hook to have access to secrets, create an action with <code>load_secrets: true</code> and call the action from a before hook.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    >  </div>
-  </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
-  id="prop-min_version"
->
-  <div class="property-header">
-    <span class="property-name">min_version</span>
-   </div>
-        <div class="inline-composition">
-    <span class="meta-label">All of:</span>
-    <span class="inline-variant"
-      >Minimum Version</span
-    >,      <span class="inline-variant"
-      >SemanticVersion      <span class="type-badge">string</span></span
-    >   </div>
- </div>    <div
-  class="property-item"
-  id="prop-dependentSchemas"
->
-  <div class="property-header">
-    <span class="property-name">dependentSchemas</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>Dependencies listed in the <code>dependencies</code> section of <code>ops.yml</code> are satisfied when the <code>ops up</code> command is run. Some dependencies will be un-satisfied when you run <code>ops down</code>; e.g. services will be stopped, but packages won't be uninstalled.</p>
-<p>This feature allows developers that are new to a project to get up and running without knowing anything about the app itself. Your <code>ops.yml</code> should allow a developer to <code>ops up &amp;&amp; ops start</code> to run an application.</p>
-<p><em>For more information, see the <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops/blob/main/docs/dependencies.md">Dependencies</a> documentation on <a target="_blank" rel="noopener noreferrer" href="https://github.com/nickthecook/ops">GitHub</a>.</em></p>
-</div>
-         <details class="nested-properties">
-    <summary>12 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">apk</span>
-    <a href="#def-PackageList" class="type-badge type-badge-link"
-      >PackageVersioned[]</a
-    >
-   </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">apt</span>
-    <a href="#def-PackageList" class="type-badge type-badge-link"
-      >PackageVersioned[]</a
-    >
-   </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">brew</span>
-    <span class="type-badge">PackageBrew[]</span>
-   </div>
-  <div class="desc-html"><ul>
-<li>Specifies that a particular <code>brew</code> package is needed.</li>
-<li>Will only run if you're on a Mac.</li>
-</ul>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">cask</span>
-    <span class="type-badge">PackageBrew[]</span>
-   </div>
-  <div class="desc-html"><ul>
-<li>Specifies that a particular <code>brew cask</code> package is needed.</li>
-<li>Will only run if you're on a Mac.</li>
-</ul>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">custom</span>
-    <span class="type-badge">CommandString | object[]</span>
-   </div>
-  <div class="desc-html"><ul>
-<li>Runs the given command.</li>
-<li>Can't tell if the command needs to be run or not, so always runs it on <code>ops up</code>.</li>
-<li>Therefore, the command should be <a target="_blank" rel="noopener noreferrer" href="https://en.wikipedia.org/wiki/Idempotence"><strong>idempotent</strong></a>.</li>
-<li>It's also a good idea to prevent it from printing output unless it encounters an error, to keep the ops output clean.</li>
-</ul>
-<h4><code>custom</code> dependencies with <code>up</code> and <code>down</code></h4>
-<p>If a <code>custom</code> dependency is given as a hash, you can define separate <code>up</code> and <code>down</code> actions that are run when <code>ops up</code> or <code>ops down</code> are called, respectively.</p>
-<pre><code class="language-yaml">dependencies:
-	custom:
-		- init file:
-			up: touch file
-			down: rm file
-</code></pre>
-<p>You can also define only the <code>down</code> command, which will execute on <code>ops down</code>; nothing will be executed by the dependency on <code>ops up</code>.</p>
-<blockquote>
-<p><strong>NOTE:</strong> The lines with <code>up</code> and <code>down</code> are indented past the beginning of the text <code>init file</code>. YAML considers <code>- </code> in a list to be part of the indentation, and <code>up</code> and <code>down</code> must be <em>children</em> of the name of the custom depdenceny, not siblings. Therefore, the following is <strong>incorrect</strong>:</p>
-<pre><code class="language-yaml">dependencies:
-	custom:
-		- init file:
-			up: touch file
-			down: rm file
-</code></pre>
-<p>as it results in a Hash like:</p>
-<pre><code class="language-ruby">{
-	"init file" =&gt; nil,
-	"up" =&gt; "touch file",
-	"down" =&gt; "touch file"
-}
-</code></pre>
-</blockquote>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>[&quot;bundle install --quiet&quot;,{&quot;init file&quot;:{&quot;up&quot;:&quot;touch file&quot;,&quot;down&quot;:&quot;rm file&quot;}}]</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">dir</span>
-    <a href="#def-PathList" class="type-badge type-badge-link"
-      >array</a
-    >
-   </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">docker</span>
-    <a href="#def-PathList" class="type-badge type-badge-link"
-      >array</a
-    >
-   </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">gem</span>
-    <a href="#def-PackageList" class="type-badge type-badge-link"
-      >PackageVersioned[]</a
-    >
-   </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">pip</span>
-    <span class="type-badge">PackagePip[]</span>
-   </div>
-  <div class="desc-html"><p>This dependency ensures that the given Python package is installed.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">snap</span>
-    <a href="#def-PackageList" class="type-badge type-badge-link"
-      >PackageVersioned[]</a
-    >
-   </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">sshkey</span>
-    <a href="#def-PathList" class="type-badge type-badge-link"
-      >array</a
-    >
-   </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    ><span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">terraform</span>
-   </div>
-       </div>      </div>
-  </details>
 </div>    </div>
      <h2 id="definitions">Definitions</h2>
   <div class="definition-block" id="def-CommandString">
@@ -1024,14 +1042,14 @@ options: ...
         >string | string</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-Deprecated">
     <div class="definition-header">
       <span class="def-name">Deprecated</span>
     </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-EnvList">
     <div class="definition-header">
@@ -1040,7 +1058,7 @@ options: ...
         >NameString[]</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-FileName">
     <div class="definition-header">
@@ -1049,7 +1067,7 @@ options: ...
         >string</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-LoadSecrets">
     <div class="definition-header">
@@ -1060,7 +1078,7 @@ options: ...
     <div class="definition-body">
       <div class="desc-html"><p>If <code>true</code>, items in <code>secrets.ejson</code> will be loaded before execution, allowing said items to be referenced in the configuration.</p>
 </div>
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-NameString">
     <div class="definition-header">
@@ -1069,7 +1087,7 @@ options: ...
         >string</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-NonEmptyString">
     <div class="definition-header">
@@ -1078,7 +1096,7 @@ options: ...
         >string</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-PackageList">
     <div class="definition-header">
@@ -1087,7 +1105,7 @@ options: ...
         >PackageVersioned[]</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-PackageBrew">
     <div class="definition-header">
@@ -1098,6 +1116,13 @@ options: ...
     <div class="definition-body">
       <div class="desc-html"><p>The name of a <code>brew</code> package. If you need to specify a version, include it after the name, delimited by an <code>@</code> symbol.</p>
 </div>
+       <div class="definition-examples">
+        <span class="meta-label">Examples:</span>
+        <ul>
+          <li><code>&quot;ruby&quot;</code></li>
+          <li><code>&quot;openssl@&quot;</code></li>
+        </ul>
+      </div>
      </div>
   </div>
   <div class="definition-block" id="def-PackagePip">
@@ -1109,6 +1134,13 @@ options: ...
     <div class="definition-body">
       <div class="desc-html"><p>The name of a <code>pip</code> package. If you need to specify a version, include it after the name, delimited by <code>==</code>.</p>
 </div>
+       <div class="definition-examples">
+        <span class="meta-label">Examples:</span>
+        <ul>
+          <li><code>&quot;semver&quot;</code></li>
+          <li><code>&quot;ruamel.yaml==0.17.26&quot;</code></li>
+        </ul>
+      </div>
      </div>
   </div>
   <div class="definition-block" id="def-PackageVersioned">
@@ -1120,6 +1152,13 @@ options: ...
     <div class="definition-body">
       <div class="desc-html"><p>The name of a package. If you need to specify a version, include it after the name, delimited by a space.</p>
 </div>
+       <div class="definition-examples">
+        <span class="meta-label">Examples:</span>
+        <ul>
+          <li><code>&quot;ruby&quot;</code></li>
+          <li><code>&quot;openssl 0.8.0&quot;</code></li>
+        </ul>
+      </div>
      </div>
   </div>
   <div class="definition-block" id="def-Path">
@@ -1129,7 +1168,7 @@ options: ...
         >string</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-PathList">
     <div class="definition-header">
@@ -1138,7 +1177,7 @@ options: ...
         >array</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-SemVer">
     <div class="definition-header">
@@ -1147,14 +1186,14 @@ options: ...
         >string</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   <div class="definition-block" id="def-UseSudo">
     <div class="definition-header">
       <span class="def-name">UseSudo</span>
     </div>
     <div class="definition-body">
-       <div class="property-list">
+        <div class="property-list">
  <div
   class="property-item"
 >
@@ -1177,7 +1216,7 @@ options: ...
         >string</span
       >    </div>
     <div class="definition-body">
-     </div>
+      </div>
   </div>
   </section>
   </article>
@@ -1190,7 +1229,7 @@ options: ...
         <p>
           Generated by
           <a href="https://github.com/lintel-rs/lintel">Lintel</a>
-          Catalog Builder 0.0.13
+          Catalog Builder 0.0.14
         </p>
       </div>
     </footer>

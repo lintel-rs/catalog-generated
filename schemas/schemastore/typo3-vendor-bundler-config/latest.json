@@ -5,7 +5,6 @@
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/eliashaeussler/typo3-vendor-bundler/refs/heads/main/res/typo3-vendor-bundler.schema.json",
     "sourceSha256": "c6833f3d21c9882dc6a93d7d9356402c136afc6b2146561252385bddc95ee0b4",
-    "invalid": true,
     "fileMatch": [
       "typo3-vendor-bundler.json",
       "typo3-vendor-bundler.yaml",
@@ -21,10 +20,8 @@
     "autoload": {
       "$ref": "#/$defs/autoload"
     },
-    "rootPath": {
-      "type": "string",
-      "title": "Relative or absolute path to project root",
-      "description": "This path will be used to calculate paths to configured files if they are configured as relative paths. If the root path is configured as relative path, it is calculated based on the config file path."
+    "dependencies": {
+      "$ref": "#/$defs/dependencies"
     },
     "dependencyExtraction": {
       "$ref": "#/$defs/dependencyExtraction"
@@ -34,8 +31,10 @@
       "title": "Absolute or relative path to composer.json where vendor libraries are managed",
       "default": "Resources/Private/Libs"
     },
-    "dependentSchemas": {
-      "$ref": "#/$defs/dependencies"
+    "rootPath": {
+      "type": "string",
+      "title": "Relative or absolute path to project root",
+      "description": "This path will be used to calculate paths to configured files if they are configured as relative paths. If the root path is configured as relative path, it is calculated based on the config file path."
     }
   },
   "additionalProperties": false,
@@ -68,21 +67,24 @@
       },
       "additionalProperties": false
     },
-    "dependencyExtraction": {
+    "dependencies": {
       "type": "object",
-      "title": "Set of options used to configure automatic dependency extraction of vendor libraries from root composer.json",
+      "title": "Set of options used to bundle dependency information",
       "properties": {
         "enabled": {
           "type": "boolean",
-          "title": "Define whether automatic dependency extraction is enabled",
-          "description": "When enabled, vendor libraries will be extracted from root composer.json, if no separate composer.json for vendor libraries exists already.",
+          "title": "Define whether dependency bundling is enabled",
+          "description": "When enabled, the dependency bundler will be included when executing `composer bundle`.",
           "default": true
         },
-        "failOnProblems": {
+        "sbom": {
+          "$ref": "#/$defs/sbom"
+        },
+        "backup": {
           "type": "boolean",
-          "title": "Define whether extraction should fail if problems are encountered",
-          "description": "When enabled, extraction will fail if problems are encountered during extraction, e.g. if packages cannot be resolved.",
-          "default": true
+          "title": "Define whether to backup source files",
+          "description": "When enabled, original contents of the root composer.json file will be backed up in a separate file",
+          "default": false
         }
       },
       "additionalProperties": false
@@ -118,24 +120,21 @@
       },
       "additionalProperties": false
     },
-    "dependentSchemas": {
+    "dependencyExtraction": {
       "type": "object",
-      "title": "Set of options used to bundle dependency information",
+      "title": "Set of options used to configure automatic dependency extraction of vendor libraries from root composer.json",
       "properties": {
         "enabled": {
           "type": "boolean",
-          "title": "Define whether dependency bundling is enabled",
-          "description": "When enabled, the dependency bundler will be included when executing `composer bundle`.",
+          "title": "Define whether automatic dependency extraction is enabled",
+          "description": "When enabled, vendor libraries will be extracted from root composer.json, if no separate composer.json for vendor libraries exists already.",
           "default": true
         },
-        "sbom": {
-          "$ref": "#/$defs/sbom"
-        },
-        "backup": {
+        "failOnProblems": {
           "type": "boolean",
-          "title": "Define whether to backup source files",
-          "description": "When enabled, original contents of the root composer.json file will be backed up in a separate file",
-          "default": false
+          "title": "Define whether extraction should fail if problems are encountered",
+          "description": "When enabled, extraction will fail if problems are encountered during extraction, e.g. if packages cannot be resolved.",
+          "default": true
         }
       },
       "additionalProperties": false

@@ -112,12 +112,9 @@
           "description": "List of ports to make available to the host machine",
           "$ref": "#/$defs/portMappingList"
         },
-        "labels": {
-          "description": "Labels to apply to the container",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+        "dependencies": {
+          "description": "List of other containers that should be started and healthy before starting this container",
+          "$ref": "#/$defs/containerDependencyList"
         },
         "health_check": {
           "description": "Overrides health check configuration specified in the image or Dockerfile",
@@ -181,9 +178,12 @@
           "type": "string",
           "pattern": "^\\d+\\s*[mkg]?b?$"
         },
-        "dependentSchemas": {
-          "description": "List of other containers that should be started and healthy before starting this container",
-          "$ref": "#/$defs/containerDependencyList"
+        "labels": {
+          "description": "Labels to apply to the container",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "oneOf": [
@@ -232,12 +232,9 @@
           "description": "Name used to group tasks when running `batect --list-tasks`",
           "minLength": 1
         },
-        "customise": {
-          "type": "object",
-          "description": "Customisations for dependency containers run as part of this task",
-          "additionalProperties": {
-            "$ref": "#/$defs/taskContainerCustomisation"
-          }
+        "dependencies": {
+          "description": "List of other containers that should be started and healthy before starting the task container given in `run`",
+          "$ref": "#/$defs/containerDependencyList"
         },
         "prerequisites": {
           "type": "array",
@@ -247,9 +244,12 @@
             "type": "string"
           }
         },
-        "dependentSchemas": {
-          "description": "List of other containers that should be started and healthy before starting the task container given in `run`",
-          "$ref": "#/$defs/containerDependencyList"
+        "customise": {
+          "type": "object",
+          "description": "Customisations for dependency containers run as part of this task",
+          "additionalProperties": {
+            "$ref": "#/$defs/taskContainerCustomisation"
+          }
         }
       },
       "anyOf": [

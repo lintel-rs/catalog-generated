@@ -1,33 +1,56 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/kimmdy-config-file/_shared/latest--kimmdy-yaml-schema.json",
-  "description": "Settings for naive HAT reaction",
+  "description": "Settings for homolysis reactions",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/graeter-group/kimmdy-reactions/main/src/hat_naive/kimmdy-yaml-schema.json",
-    "sourceSha256": "2b5573ad148b9ba7eb3886d348580866f07838fe6c46986de57113ea96e9e2ff"
+    "source": "https://raw.githubusercontent.com/graeter-group/kimmdy-reactions/main/src/homolysis/kimmdy-yaml-schema.json",
+    "sourceSha256": "03ba7ef32f5943b6e9c43ce06af3faa6c01d47272293e79cbe6e1df126e965ed"
   },
   "type": "object",
   "properties": {
-    "frequency_factor": {
-      "type": "number",
-      "description": "Frequency factor",
-      "pytype": "float",
-      "default": 1,
-      "minimum": 1
+    "edis": {
+      "title": "edis",
+      "deprecated": true,
+      "description": "Dissociation energies data file now lives in the kimmdy root config as `config.edissoc`"
     },
-    "h_cutoff": {
-      "type": "number",
-      "description": "Cutoff for H atom",
-      "pytype": "float",
-      "default": 4
+    "itp": {
+      "title": "itp",
+      "deprecated": true,
+      "description": "Additional itp file with bonded parameters is no longer required and directly read from the forcefield."
     },
-    "polling_rate": {
+    "dt_distances": {
+      "title": "dt_distances",
       "type": "number",
-      "description": "Polling rate",
+      "description": "Stepsize in ps for reading distances from the plumed distances.dat file. 0 Means use every frame in the file.",
       "pytype": "float",
-      "default": 1
+      "minimum": 0,
+      "default": 0
+    },
+    "b0_overwrite": {
+      "title": "b0_overwrite",
+      "type": "number",
+      "description": "Global equilibrium bond length used as an offset for calculating bond forces.",
+      "pytype": "float",
+      "minimum": 0,
+      "default": 0
+    },
+    "f0_overwrite": {
+      "title": "f0_overwrite",
+      "type": "number",
+      "description": "Global equilibrium bond force used as an offset for calculating bond forces.",
+      "pytype": "float",
+      "minimum": 0,
+      "default": 0
+    },
+    "recompute_bondstats": {
+      "title": "recompute_bondstats",
+      "type": "boolean",
+      "description": "Recompute bondstats (mean distance and force) even if a .kimmdy.bondstats cache file is found.",
+      "pytype": "bool",
+      "default": false
     },
     "kmc": {
+      "title": "kmc",
       "description": "KMC algorithm for this reaction.",
       "type": "string",
       "pytype": "str",
@@ -35,11 +58,52 @@
         "rfkmc",
         "frm",
         "extrande",
-        "extrande_mod"
+        "extrande_mod",
+        "multi_rfkmc"
       ],
-      "default": "extrande_mod"
+      "default": "rfkmc"
+    },
+    "check_bound": {
+      "type": "boolean",
+      "pytype": "bool",
+      "description": "Check the topology for bonds between plumed atom pairs and only attempt to break them if they are actually bonded.",
+      "default": true
+    },
+    "use_morse": {
+      "type": "boolean",
+      "pytype": "bool",
+      "description": "Calculate transition rates using a morse potential (the default). If set to `false`, a harmonic potential is used instead.",
+      "default": true
+    },
+    "arrhenius_equation": {
+      "title": "arrhenius_equation",
+      "type": "object",
+      "description": "For setting values in the arrhenius equation",
+      "properties": {
+        "frequency_factor": {
+          "type": "number",
+          "description": "Frequency factor",
+          "pytype": "float",
+          "minimum": 0,
+          "default": 0.288
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Temperature",
+          "pytype": "float",
+          "minimum": 0,
+          "default": 300
+        }
+      },
+      "required": [
+        "frequency_factor",
+        "temperature"
+      ],
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
-  "required": []
+  "required": [
+    "edis"
+  ]
 }
