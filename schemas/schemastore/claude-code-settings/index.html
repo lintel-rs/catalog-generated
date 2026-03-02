@@ -233,13 +233,26 @@ Schema - Lintel Catalog"
     >  </div>
   </div>    <div
   class="property-item"
+  id="prop-autoMemoryEnabled"
+>
+  <div class="property-header">
+    <span class="property-name">autoMemoryEnabled</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Enable automatic memory saves that capture useful context to .claude/memory/. Also configurable via CLAUDE_CODE_DISABLE_AUTO_MEMORY environment variable (set to 1 to disable, 0 to enable). See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/memory#auto-memory">https://code.claude.com/docs/en/memory#auto-memory</a></p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>true</code>
+  </div>
+       </div>    <div
+  class="property-item"
   id="prop-autoUpdatesChannel"
 >
   <div class="property-header">
     <span class="property-name">autoUpdatesChannel</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Release channel to follow for updates. Use "stable" for a version that is typically about one week old and skips versions with major regressions, or "latest" (default) for the most recent release</p>
+  <div class="desc-html"><p>Release channel to follow for updates. Use "stable" for a version that is typically about one week old and skips versions with major regressions, or "latest" (default) for the most recent release. Set DISABLE_AUTOUPDATER=1 to disable updates entirely.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;latest&quot;</code>
@@ -305,7 +318,9 @@ Schema - Lintel Catalog"
     <span class="property-name">env</span>
     <span class="type-badge">object</span>
    </div>
-  <div class="desc-html"><p>Environment variables to set for Claude Code sessions. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/model-config#environment-variables">https://code.claude.com/docs/en/model-config#environment-variables</a> for notable variables like CLAUDE_CODE_DISABLE_1M_CONTEXT (disables 1M token context window variants)</p>
+  <div class="desc-html"><p>Environment variables to set for Claude Code sessions. Many environment variables provide settings dimensions not available as dedicated settings.json properties (e.g., thinking tokens, prompt caching, bash timeouts, shell configuration). See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings#environment-variables">https://code.claude.com/docs/en/settings#environment-variables</a> for the full list.
+UNDOCUMENTED: CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS (plugin marketplace git timeout in ms, default 120000, see <a target="_blank" rel="noopener noreferrer" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2151)">https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2151)</a>.
+UNDOCUMENTED: ENABLE_CLAUDEAI_MCP_SERVERS (set to false to opt out of claude.ai MCP servers, see <a target="_blank" rel="noopener noreferrer" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2163)">https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2163)</a>.</p>
 </div>
     <div class="property-meta"><span class="meta-label">Default:</span></div>
   <pre class="code-block"><code>{}</code></pre>
@@ -513,7 +528,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
     <span class="property-name">model</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Override the default model used by Claude Code. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/model-config">https://code.claude.com/docs/en/model-config</a></p>
+  <div class="desc-html"><p>Override the default model used by Claude Code. For finer control, use environment variables: ANTHROPIC_MODEL (runtime override), ANTHROPIC_DEFAULT_OPUS_MODEL, ANTHROPIC_DEFAULT_SONNET_MODEL, ANTHROPIC_DEFAULT_HAIKU_MODEL (per-class pinning), CLAUDE_CODE_SUBAGENT_MODEL (subagent model). See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/model-config">https://code.claude.com/docs/en/model-config</a></p>
 </div>
        </div>    <div
   class="property-item"
@@ -535,7 +550,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
     <span class="property-name">effortLevel</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Control Opus 4.6 adaptive reasoning effort. Lower effort is faster and cheaper for straightforward tasks, higher effort provides deeper reasoning. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/model-config#adjust-effort-level">https://code.claude.com/docs/en/model-config#adjust-effort-level</a></p>
+  <div class="desc-html"><p>Control Opus 4.6 adaptive reasoning effort. Lower effort is faster and cheaper for straightforward tasks, higher effort provides deeper reasoning. Also configurable via CLAUDE_CODE_EFFORT_LEVEL environment variable. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/model-config#adjust-effort-level">https://code.claude.com/docs/en/model-config#adjust-effort-level</a></p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;high&quot;</code>
@@ -1088,7 +1103,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
   <div class="desc-html"><p>Sandbox execution configuration. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/sandboxing">https://code.claude.com/docs/en/sandboxing</a></p>
 </div>
          <details class="nested-properties">
-    <summary>7 nested properties</summary>
+    <summary>8 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -1238,7 +1253,48 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
    </div>
   <div class="desc-html"><p>Enable sandboxed bash</p>
 </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">filesystem</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>Filesystem access control for sandboxed commands. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/sandboxing#filesystem-isolation">https://code.claude.com/docs/en/sandboxing#filesystem-isolation</a></p>
+</div>
+         <details class="nested-properties">
+    <summary>3 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">allowWrite</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Paths where subprocesses are allowed to write. Supports prefixes: // (absolute), ~/ (home directory), / (relative to settings file), ./ or no prefix (relative path)</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">denyWrite</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Paths where subprocesses are explicitly denied write access. Takes precedence over allowWrite</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">denyRead</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Paths where subprocesses are explicitly denied read access</p>
+</div>
        </div>      </div>
+  </details>
+</div>      </div>
   </details>
 </div>    <div
   class="property-item"
@@ -1484,7 +1540,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
     <div class="definition-header">
       <span class="def-name">hookCommand</span>
 <span class="type-badge"
-        >object | object | object</span
+        >object | object | object | object</span
       >    </div>
     <div class="definition-body">
       </div>
@@ -1535,7 +1591,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
         <p>
           Generated by
           <a href="https://github.com/lintel-rs/lintel">Lintel</a>
-          Catalog Builder 0.0.14
+          Catalog Builder 0.0.15
         </p>
       </div>
     </footer>

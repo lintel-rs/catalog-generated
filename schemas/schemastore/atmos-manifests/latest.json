@@ -4,7 +4,7 @@
   "title": "JSON Schema for Atmos Stack Manifest files. Version 1.0. https://atmos.tools",
   "x-lintel": {
     "source": "https://atmos.tools/schemas/atmos/atmos-manifest/1.0/atmos-manifest.json",
-    "sourceSha256": "327e276c2a95391719afe7b85061deb88d2f685dcacba64ec114726303cc629c"
+    "sourceSha256": "678330106ae42d582d740924c131edc009ec4b25a6e157c92f1dd6bd38a696d5"
   },
   "type": "object",
   "properties": {
@@ -1155,6 +1155,9 @@
                       },
                       "type": {
                         "type": "string"
+                      },
+                      "retry": {
+                        "$ref": "#/definitions/workflow_retry"
                       }
                     },
                     "required": [
@@ -1329,6 +1332,60 @@
           "required": [
             "uri"
           ]
+        }
+      ]
+    },
+    "workflow_retry": {
+      "title": "workflow_retry",
+      "description": "Retry configuration for workflow steps",
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^!include"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "max_attempts": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum number of retry attempts"
+            },
+            "initial_delay": {
+              "type": "string",
+              "description": "Initial delay between retries (e.g., '1s', '500ms')"
+            },
+            "max_delay": {
+              "type": "string",
+              "description": "Maximum delay between retries (e.g., '30s', '1m')"
+            },
+            "backoff_strategy": {
+              "type": "string",
+              "enum": [
+                "constant",
+                "linear",
+                "exponential"
+              ],
+              "description": "Strategy for increasing delay between retries"
+            },
+            "multiplier": {
+              "type": "number",
+              "minimum": 1,
+              "description": "Multiplier for exponential/linear backoff"
+            },
+            "random_jitter": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Random jitter factor (0-1) to add to delays"
+            },
+            "max_elapsed_time": {
+              "type": "string",
+              "description": "Maximum total time for all retry attempts (e.g., '5m', '1h')"
+            }
+          },
+          "required": []
         }
       ]
     },
