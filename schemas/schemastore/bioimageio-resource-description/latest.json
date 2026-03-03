@@ -14,7 +14,7 @@
   },
   "$defs": {
     "ArchitectureFromFileDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -66,12 +66,12 @@
           "type": "string"
         },
         "kwargs": {
-          "additionalProperties": {
-            "$ref": "#/$defs/YamlValue"
-          },
+          "type": "object",
           "description": "key word arguments for the `callable`",
           "title": "Kwargs",
-          "type": "object"
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          }
         }
       },
       "required": [
@@ -79,10 +79,10 @@
         "callable"
       ],
       "title": "model.v0_5.ArchitectureFromFileDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "ArchitectureFromLibraryDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "callable": {
           "description": "Identifier of the callable that returns a torch.nn.Module instance.",
@@ -95,12 +95,12 @@
           "type": "string"
         },
         "kwargs": {
-          "additionalProperties": {
-            "$ref": "#/$defs/YamlValue"
-          },
+          "type": "object",
           "description": "key word arguments for the `callable`",
           "title": "Kwargs",
-          "type": "object"
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          }
         },
         "import_from": {
           "description": "Where to import the callable from, i.e. `from <import_from> import <callable>`",
@@ -113,10 +113,10 @@
         "import_from"
       ],
       "title": "model.v0_5.ArchitectureFromLibraryDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "AttachmentsDescr": {
-      "additionalProperties": true,
+      "type": "object",
       "properties": {
         "files": {
           "description": "File attachments",
@@ -145,10 +145,10 @@
         }
       },
       "title": "generic.v0_2.AttachmentsDescr",
-      "type": "object"
+      "additionalProperties": true
     },
     "BadgeDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "A custom badge",
       "properties": {
         "label": {
@@ -211,10 +211,10 @@
         "url"
       ],
       "title": "generic.v0_2.BadgeDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "BatchAxis": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "id": {
           "default": "batch",
@@ -254,10 +254,10 @@
         "type"
       ],
       "title": "model.v0_5.BatchAxis",
-      "type": "object"
+      "additionalProperties": false
     },
     "BiasRisksLimitations": {
-      "additionalProperties": true,
+      "type": "object",
       "description": "Known biases, risks, technical limitations, and recommendations for model use.",
       "properties": {
         "known_biases": {
@@ -293,10 +293,10 @@
         }
       },
       "title": "model.v0_5.BiasRisksLimitations",
-      "type": "object"
+      "additionalProperties": true
     },
     "BinarizeAlongAxisKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `BinarizeDescr`",
       "properties": {
         "threshold": {
@@ -324,10 +324,10 @@
         "axis"
       ],
       "title": "model.v0_5.BinarizeAlongAxisKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "ChannelAxis": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "id": {
           "default": "channel",
@@ -364,10 +364,10 @@
         "channel_names"
       ],
       "title": "model.v0_5.ChannelAxis",
-      "type": "object"
+      "additionalProperties": false
     },
     "DataDependentSize": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "min": {
           "default": 1,
@@ -390,7 +390,7 @@
         }
       },
       "title": "model.v0_5.DataDependentSize",
-      "type": "object"
+      "additionalProperties": false
     },
     "Datetime": {
       "description": "Timestamp in [ISO 8601](#<https://en.wikipedia.org/wiki/ISO_8601)> format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).",
@@ -399,7 +399,7 @@
       "type": "string"
     },
     "EnsureDtypeDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching).\n\nThis can for example be used to ensure the inner neural network model gets a\ndifferent input tensor data type than the fully described bioimage.io model does.\n\nExamples:\n    The described bioimage.io model (incl. preprocessing) accepts any\n    float32-compatible tensor, normalizes it with percentiles and clipping and then\n    casts it to uint8, which is what the neural network in this example expects.\n    - in YAML\n        ```yaml\n        inputs:\n        - data:\n            type: float32  # described bioimage.io model is compatible with any float32 input tensor\n          preprocessing:\n          - id: scale_range\n              kwargs:\n              axes: ['y', 'x']\n              max_percentile: 99.8\n              min_percentile: 5.0\n          - id: clip\n              kwargs:\n              min: 0.0\n              max: 1.0\n          - id: ensure_dtype  # the neural network of the model requires uint8\n              kwargs:\n              dtype: uint8\n        ```\n    - in Python:\n        >>> preprocessing = [\n        ...     ScaleRangeDescr(\n        ...         kwargs=ScaleRangeKwargs(\n        ...           axes= (AxisId('y'), AxisId('x')),\n        ...           max_percentile= 99.8,\n        ...           min_percentile= 5.0,\n        ...         )\n        ...     ),\n        ...     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),\n        ...     EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=\"uint8\")),\n        ... ]",
       "properties": {
         "id": {
@@ -416,10 +416,10 @@
         "kwargs"
       ],
       "title": "model.v0_5.EnsureDtypeDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "EnsureDtypeKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `EnsureDtypeDescr`",
       "properties": {
         "dtype": {
@@ -444,10 +444,10 @@
         "dtype"
       ],
       "title": "model.v0_5.EnsureDtypeKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "EnvironmentalImpact": {
-      "additionalProperties": true,
+      "type": "object",
       "description": "Environmental considerations for model training and deployment.\n\nCarbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).",
       "properties": {
         "hardware_type": {
@@ -517,10 +517,10 @@
         }
       },
       "title": "model.v0_5.EnvironmentalImpact",
-      "type": "object"
+      "additionalProperties": true
     },
     "Evaluation": {
-      "additionalProperties": true,
+      "type": "object",
       "properties": {
         "model_id": {
           "anyOf": [
@@ -649,10 +649,10 @@
         "results"
       ],
       "title": "model.v0_5.Evaluation",
-      "type": "object"
+      "additionalProperties": true
     },
     "FileDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "A file description",
       "properties": {
         "source": {
@@ -699,10 +699,10 @@
         "source"
       ],
       "title": "_internal.io.FileDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "FixedZeroMeanUnitVarianceAlongAxisKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `FixedZeroMeanUnitVarianceDescr`",
       "properties": {
         "mean": {
@@ -742,10 +742,10 @@
         "axis"
       ],
       "title": "model.v0_5.FixedZeroMeanUnitVarianceAlongAxisKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "FixedZeroMeanUnitVarianceDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Subtract a given mean and divide by the standard deviation.\n\nNormalize with fixed, precomputed values for\n`FixedZeroMeanUnitVarianceKwargs.mean` and `FixedZeroMeanUnitVarianceKwargs.std`\nUse `FixedZeroMeanUnitVarianceAlongAxisKwargs` for independent scaling along given\naxes.\n\nExamples:\n1. scalar value for whole tensor\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: fixed_zero_mean_unit_variance\n        kwargs:\n          mean: 103.5\n          std: 13.7\n    ```\n    - in Python\n    >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(\n    ...   kwargs=FixedZeroMeanUnitVarianceKwargs(mean=103.5, std=13.7)\n    ... )]\n\n2. independently along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: fixed_zero_mean_unit_variance\n        kwargs:\n          axis: channel\n          mean: [101.5, 102.5, 103.5]\n          std: [11.7, 12.7, 13.7]\n    ```\n    - in Python\n    >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(\n    ...   kwargs=FixedZeroMeanUnitVarianceAlongAxisKwargs(\n    ...     axis=AxisId(\"channel\"),\n    ...     mean=[101.5, 102.5, 103.5],\n    ...     std=[11.7, 12.7, 13.7],\n    ...   )\n    ... )]",
       "properties": {
         "id": {
@@ -770,10 +770,10 @@
         "kwargs"
       ],
       "title": "model.v0_5.FixedZeroMeanUnitVarianceDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "FixedZeroMeanUnitVarianceKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `FixedZeroMeanUnitVarianceDescr`",
       "properties": {
         "mean": {
@@ -793,10 +793,10 @@
         "std"
       ],
       "title": "model.v0_5.FixedZeroMeanUnitVarianceKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "ImplicitOutputShape": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Output tensor shape depending on an input tensor shape.\n`shape(output_tensor) = shape(input_tensor) * scale + 2 * offset`",
       "properties": {
         "reference_tensor": {
@@ -845,10 +845,10 @@
         "offset"
       ],
       "title": "model.v0_4.ImplicitOutputShape",
-      "type": "object"
+      "additionalProperties": false
     },
     "IndexInputAxis": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "size": {
           "anyOf": [
@@ -909,10 +909,10 @@
         "type"
       ],
       "title": "model.v0_5.IndexInputAxis",
-      "type": "object"
+      "additionalProperties": false
     },
     "IndexOutputAxis": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "id": {
           "default": "index",
@@ -963,10 +963,10 @@
         "size"
       ],
       "title": "model.v0_5.IndexOutputAxis",
-      "type": "object"
+      "additionalProperties": false
     },
     "IntervalOrRatioDataDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "type": {
           "default": "float32",
@@ -1062,10 +1062,10 @@
         }
       },
       "title": "model.v0_5.IntervalOrRatioDataDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "NominalOrOrdinalDataDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "values": {
           "anyOf": [
@@ -1151,10 +1151,10 @@
         "values"
       ],
       "title": "model.v0_5.NominalOrOrdinalDataDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "ParameterizedInputShape": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`.",
       "properties": {
         "min": {
@@ -1181,10 +1181,10 @@
         "step"
       ],
       "title": "model.v0_4.ParameterizedInputShape",
-      "type": "object"
+      "additionalProperties": false
     },
     "ParameterizedSize": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Describes a range of valid tensor axis sizes as `size = min + n*step`.\n\n- **min** and **step** are given by the model description.\n- All blocksize paramters n = 0,1,2,... yield a valid `size`.\n- A greater blocksize paramter n = 0,1,2,... results in a greater **size**.\n  This allows to adjust the axis size more generically.",
       "properties": {
         "min": {
@@ -1203,7 +1203,7 @@
         "step"
       ],
       "title": "model.v0_5.ParameterizedSize",
-      "type": "object"
+      "additionalProperties": false
     },
     "RelativeFilePath": {
       "description": "A path relative to the `rdf.yaml` file (also if the RDF source is a URL).",
@@ -1212,7 +1212,7 @@
       "type": "string"
     },
     "ReproducibilityTolerance": {
-      "additionalProperties": true,
+      "type": "object",
       "description": "Describes what small numerical differences -- if any -- may be tolerated\nin the generated output when executing in different environments.\n\nA tensor element *output* is considered mismatched to the **test_tensor** if\nabs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).\n(Internally we call [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html).)\n\nMotivation:\n    For testing we can request the respective deep learning frameworks to be as\n    reproducible as possible by setting seeds and chosing deterministic algorithms,\n    but differences in operating systems, available hardware and installed drivers\n    may still lead to numerical differences.",
       "properties": {
         "relative_tolerance": {
@@ -1269,10 +1269,10 @@
         }
       },
       "title": "model.v0_5.ReproducibilityTolerance",
-      "type": "object"
+      "additionalProperties": true
     },
     "RunMode": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "anyOf": [
@@ -1288,20 +1288,20 @@
           "title": "Name"
         },
         "kwargs": {
-          "additionalProperties": true,
+          "type": "object",
           "description": "Run mode specific key word arguments",
           "title": "Kwargs",
-          "type": "object"
+          "additionalProperties": true
         }
       },
       "required": [
         "name"
       ],
       "title": "model.v0_4.RunMode",
-      "type": "object"
+      "additionalProperties": false
     },
     "ScaleLinearAlongAxisKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Key word arguments for `ScaleLinearDescr`",
       "properties": {
         "axis": {
@@ -1353,10 +1353,10 @@
         "axis"
       ],
       "title": "model.v0_5.ScaleLinearAlongAxisKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "SizeReference": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nNote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n4. If the reference axis is `concatenable` the referencing axis is assumed to be\n    `concatenable` as well with the same block order.\n\nExample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm².\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.get_size(h, w))\n49\n\n⇒ h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
       "properties": {
         "tensor_id": {
@@ -1384,10 +1384,10 @@
         "axis_id"
       ],
       "title": "model.v0_5.SizeReference",
-      "type": "object"
+      "additionalProperties": false
     },
     "SoftmaxDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n    >>> postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\"channel\")))]",
       "properties": {
         "id": {
@@ -1403,10 +1403,10 @@
         "id"
       ],
       "title": "model.v0_5.SoftmaxDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "SoftmaxKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `SoftmaxDescr`",
       "properties": {
         "axis": {
@@ -1422,10 +1422,10 @@
         }
       },
       "title": "model.v0_5.SoftmaxKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "SpaceInputAxis": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "size": {
           "anyOf": [
@@ -1537,10 +1537,10 @@
         "type"
       ],
       "title": "model.v0_5.SpaceInputAxis",
-      "type": "object"
+      "additionalProperties": false
     },
     "SpaceOutputAxis": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "size": {
           "anyOf": [
@@ -1639,10 +1639,10 @@
         "type"
       ],
       "title": "model.v0_5.SpaceOutputAxis",
-      "type": "object"
+      "additionalProperties": false
     },
     "SpaceOutputAxisWithHalo": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "halo": {
           "description": "The halo should be cropped from the output tensor to avoid boundary effects.\nIt is to be cropped from both sides, i.e. `size_after_crop = size - 2 * halo`.\nTo document a halo that is already cropped by the model use `size.offset` instead.",
@@ -1739,10 +1739,10 @@
         "type"
       ],
       "title": "model.v0_5.SpaceOutputAxisWithHalo",
-      "type": "object"
+      "additionalProperties": false
     },
     "TimeInputAxis": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "size": {
           "anyOf": [
@@ -1846,10 +1846,10 @@
         "type"
       ],
       "title": "model.v0_5.TimeInputAxis",
-      "type": "object"
+      "additionalProperties": false
     },
     "TimeOutputAxis": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "size": {
           "anyOf": [
@@ -1940,10 +1940,10 @@
         "type"
       ],
       "title": "model.v0_5.TimeOutputAxis",
-      "type": "object"
+      "additionalProperties": false
     },
     "TimeOutputAxisWithHalo": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "halo": {
           "description": "The halo should be cropped from the output tensor to avoid boundary effects.\nIt is to be cropped from both sides, i.e. `size_after_crop = size - 2 * halo`.\nTo document a halo that is already cropped by the model use `size.offset` instead.",
@@ -2032,10 +2032,10 @@
         "type"
       ],
       "title": "model.v0_5.TimeOutputAxisWithHalo",
-      "type": "object"
+      "additionalProperties": false
     },
     "TrainingDetails": {
-      "additionalProperties": true,
+      "type": "object",
       "properties": {
         "training_preprocessing": {
           "anyOf": [
@@ -2116,12 +2116,12 @@
           "title": "Loss Function"
         },
         "loss_function_kwargs": {
-          "additionalProperties": {
-            "$ref": "#/$defs/YamlValue"
-          },
+          "type": "object",
           "description": "key word arguments for the `loss_function`",
           "title": "Loss Function Kwargs",
-          "type": "object"
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          }
         },
         "optimizer": {
           "anyOf": [
@@ -2137,12 +2137,12 @@
           "title": "Optimizer"
         },
         "optimizer_kwargs": {
-          "additionalProperties": {
-            "$ref": "#/$defs/YamlValue"
-          },
+          "type": "object",
           "description": "key word arguments for the `optimizer`",
           "title": "Optimizer Kwargs",
-          "type": "object"
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          }
         },
         "regularization": {
           "anyOf": [
@@ -2172,10 +2172,10 @@
         }
       },
       "title": "model.v0_5.TrainingDetails",
-      "type": "object"
+      "additionalProperties": true
     },
     "Uploader": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "email": {
           "description": "Email",
@@ -2201,7 +2201,7 @@
         "email"
       ],
       "title": "generic.v0_2.Uploader",
-      "type": "object"
+      "additionalProperties": false
     },
     "Version": {
       "anyOf": [
@@ -2247,10 +2247,10 @@
           "type": "array"
         },
         {
+          "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/YamlValue"
-          },
-          "type": "object"
+          }
         },
         {
           "type": "null"
@@ -2258,7 +2258,7 @@
       ]
     },
     "bioimageio__spec__application__v0_2__ApplicationDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Bioimage.io description of an application.",
       "properties": {
         "name": {
@@ -2349,9 +2349,7 @@
           "type": "array"
         },
         "config": {
-          "additionalProperties": {
-            "$ref": "#/$defs/YamlValue"
-          },
+          "type": "object",
           "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)",
           "examples": [
             {
@@ -2367,7 +2365,9 @@
             }
           ],
           "title": "Config",
-          "type": "object"
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          }
         },
         "download_url": {
           "anyOf": [
@@ -3364,10 +3364,10 @@
         "type"
       ],
       "title": "application 0.2.4",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__application__v0_3__ApplicationDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Bioimage.io description of an application.",
       "properties": {
         "name": {
@@ -4433,10 +4433,10 @@
         "type"
       ],
       "title": "application 0.3.0",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__dataset__v0_2__DatasetDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage\nprocessing.",
       "properties": {
         "name": {
@@ -4527,9 +4527,7 @@
           "type": "array"
         },
         "config": {
-          "additionalProperties": {
-            "$ref": "#/$defs/YamlValue"
-          },
+          "type": "object",
           "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)",
           "examples": [
             {
@@ -4545,7 +4543,9 @@
             }
           ],
           "title": "Config",
-          "type": "object"
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          }
         },
         "download_url": {
           "anyOf": [
@@ -5534,10 +5534,10 @@
         "type"
       ],
       "title": "dataset 0.2.4",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__dataset__v0_2__LinkedDataset": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Reference to a bioimage.io dataset.",
       "properties": {
         "id": {
@@ -5564,10 +5564,10 @@
         "id"
       ],
       "title": "dataset.v0_2.LinkedDataset",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__dataset__v0_3__DatasetDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage\nprocessing.",
       "properties": {
         "name": {
@@ -6625,10 +6625,10 @@
         "type"
       ],
       "title": "dataset 0.3.0",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__dataset__v0_3__LinkedDataset": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Reference to a bioimage.io dataset.",
       "properties": {
         "version": {
@@ -6654,10 +6654,10 @@
         "id"
       ],
       "title": "dataset.v0_3.LinkedDataset",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__generic__v0_2__Author": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "affiliation": {
           "anyOf": [
@@ -6725,10 +6725,10 @@
         "name"
       ],
       "title": "generic.v0_2.Author",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__generic__v0_2__CiteEntry": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "text": {
           "description": "free text description",
@@ -6769,10 +6769,10 @@
         "text"
       ],
       "title": "generic.v0_2.CiteEntry",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__generic__v0_2__Maintainer": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "affiliation": {
           "anyOf": [
@@ -6840,10 +6840,10 @@
         "github_user"
       ],
       "title": "generic.v0_2.Maintainer",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__generic__v0_3__Author": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "affiliation": {
           "anyOf": [
@@ -6911,17 +6911,17 @@
         "name"
       ],
       "title": "generic.v0_3.Author",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__generic__v0_3__BioimageioConfig": {
-      "additionalProperties": true,
+      "type": "object",
       "description": "bioimage.io internal metadata.",
       "properties": {},
       "title": "generic.v0_3.BioimageioConfig",
-      "type": "object"
+      "additionalProperties": true
     },
     "bioimageio__spec__generic__v0_3__CiteEntry": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "A citation that should be referenced in work using this resource.",
       "properties": {
         "text": {
@@ -6968,10 +6968,10 @@
         "text"
       ],
       "title": "generic.v0_3.CiteEntry",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__generic__v0_3__Config": {
-      "additionalProperties": true,
+      "type": "object",
       "description": "A place to store additional metadata (often tool specific).\n\nSuch additional metadata is typically set programmatically by the respective tool\nor by people with specific insights into the tool.\nIf you want to store additional metadata that does not match any of the other\nfields, think of a key unlikely to collide with anyone elses use-case/tool and save\nit here.\n\nPlease consider creating [an issue in the bioimageio.spec repository](https://github.com/bioimage-io/spec-bioimage-io/issues/new?template=Blank+issue)\nif you are not sure if an existing field could cover your use case\nor if you think such a field should exist.",
       "properties": {
         "bioimageio": {
@@ -6979,10 +6979,10 @@
         }
       },
       "title": "generic.v0_3.Config",
-      "type": "object"
+      "additionalProperties": true
     },
     "bioimageio__spec__generic__v0_3__Maintainer": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "affiliation": {
           "anyOf": [
@@ -7050,10 +7050,10 @@
         "github_user"
       ],
       "title": "generic.v0_3.Maintainer",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__BinarizeDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "BinarizeDescr the tensor with a fixed `BinarizeKwargs.threshold`.\nValues above the threshold will be set to one, values below the threshold to zero.",
       "properties": {
         "name": {
@@ -7070,10 +7070,10 @@
         "kwargs"
       ],
       "title": "model.v0_4.BinarizeDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__BinarizeKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `BinarizeDescr`",
       "properties": {
         "threshold": {
@@ -7086,10 +7086,10 @@
         "threshold"
       ],
       "title": "model.v0_4.BinarizeKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ClipDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Clip tensor values to a range.\n\nSet tensor values below `ClipKwargs.min` to `ClipKwargs.min`\nand above `ClipKwargs.max` to `ClipKwargs.max`.",
       "properties": {
         "name": {
@@ -7106,10 +7106,10 @@
         "kwargs"
       ],
       "title": "model.v0_4.ClipDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ClipKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `ClipDescr`",
       "properties": {
         "min": {
@@ -7128,10 +7128,10 @@
         "max"
       ],
       "title": "model.v0_4.ClipKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__InputTensorDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Tensor name. No duplicates are allowed.",
@@ -7265,10 +7265,10 @@
         "shape"
       ],
       "title": "model.v0_4.InputTensorDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__KerasHdf5WeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -7398,10 +7398,10 @@
         "source"
       ],
       "title": "model.v0_4.KerasHdf5WeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__LinkedModel": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Reference to a bioimage.io model.",
       "properties": {
         "id": {
@@ -7432,10 +7432,10 @@
         "id"
       ],
       "title": "model.v0_4.LinkedModel",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ModelDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.\n\nThese fields are typically stored in a YAML file which we call a model resource description file (model RDF).",
       "properties": {
         "name": {
@@ -7527,9 +7527,7 @@
           "type": "array"
         },
         "config": {
-          "additionalProperties": {
-            "$ref": "#/$defs/YamlValue"
-          },
+          "type": "object",
           "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)",
           "examples": [
             {
@@ -7545,7 +7543,9 @@
             }
           ],
           "title": "Config",
-          "type": "object"
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          }
         },
         "download_url": {
           "anyOf": [
@@ -8647,10 +8647,10 @@
         "weights"
       ],
       "title": "model 0.4.10",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__OnnxWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -8782,10 +8782,10 @@
         "source"
       ],
       "title": "model.v0_4.OnnxWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__OutputTensorDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Tensor name. No duplicates are allowed.",
@@ -8925,10 +8925,10 @@
         "shape"
       ],
       "title": "model.v0_4.OutputTensorDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__PytorchStateDictWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -9079,10 +9079,10 @@
           "title": "Architecture Sha256"
         },
         "kwargs": {
-          "additionalProperties": true,
+          "type": "object",
           "description": "key word arguments for the `architecture` callable",
           "title": "Kwargs",
-          "type": "object"
+          "additionalProperties": true
         },
         "pytorch_version": {
           "anyOf": [
@@ -9102,10 +9102,10 @@
         "architecture"
       ],
       "title": "model.v0_4.PytorchStateDictWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ScaleLinearDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Fixed linear scaling.",
       "properties": {
         "name": {
@@ -9122,10 +9122,10 @@
         "kwargs"
       ],
       "title": "model.v0_4.ScaleLinearDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ScaleLinearKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `ScaleLinearDescr`",
       "properties": {
         "axes": {
@@ -9178,10 +9178,10 @@
         }
       },
       "title": "model.v0_4.ScaleLinearKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ScaleMeanVarianceDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Scale the tensor s.t. its mean and variance match a reference tensor.",
       "properties": {
         "name": {
@@ -9198,10 +9198,10 @@
         "kwargs"
       ],
       "title": "model.v0_4.ScaleMeanVarianceDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ScaleMeanVarianceKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `ScaleMeanVarianceDescr`",
       "properties": {
         "mode": {
@@ -9249,10 +9249,10 @@
         "reference_tensor"
       ],
       "title": "model.v0_4.ScaleMeanVarianceKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ScaleRangeDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Scale with percentiles.",
       "properties": {
         "name": {
@@ -9269,10 +9269,10 @@
         "kwargs"
       ],
       "title": "model.v0_4.ScaleRangeDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ScaleRangeKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `ScaleRangeDescr`\n\nFor `min_percentile`=0.0 (the default) and `max_percentile`=100 (the default)\nthis processing step normalizes data to the [0, 1] intervall.\nFor other percentiles the normalized values will partially be outside the [0, 1]\nintervall. Use `ScaleRange` followed by `ClipDescr` if you want to limit the\nnormalized values to a range.",
       "properties": {
         "mode": {
@@ -9351,10 +9351,10 @@
         "axes"
       ],
       "title": "model.v0_4.ScaleRangeKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__SigmoidDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "The logistic sigmoid funciton, a.k.a. expit function.",
       "properties": {
         "name": {
@@ -9367,10 +9367,10 @@
         "name"
       ],
       "title": "model.v0_4.SigmoidDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__TensorflowJsWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -9500,10 +9500,10 @@
         "source"
       ],
       "title": "model.v0_4.TensorflowJsWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__TensorflowSavedModelBundleWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -9633,10 +9633,10 @@
         "source"
       ],
       "title": "model.v0_4.TensorflowSavedModelBundleWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__TorchscriptWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -9766,10 +9766,10 @@
         "source"
       ],
       "title": "model.v0_4.TorchscriptWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__WeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "keras_hdf5": {
           "anyOf": [
@@ -9839,10 +9839,10 @@
         }
       },
       "title": "model.v0_4.WeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ZeroMeanUnitVarianceDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Subtract mean and divide by variance.",
       "properties": {
         "name": {
@@ -9859,10 +9859,10 @@
         "kwargs"
       ],
       "title": "model.v0_4.ZeroMeanUnitVarianceDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_4__ZeroMeanUnitVarianceKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `ZeroMeanUnitVarianceDescr`",
       "properties": {
         "mode": {
@@ -9951,10 +9951,10 @@
         "axes"
       ],
       "title": "model.v0_4.ZeroMeanUnitVarianceKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__BinarizeDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Binarize the tensor with a fixed threshold.\n\nValues above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: 'channel'\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n    >>> postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId('channel'),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]",
       "properties": {
         "id": {
@@ -9979,10 +9979,10 @@
         "kwargs"
       ],
       "title": "model.v0_5.BinarizeDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__BinarizeKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `BinarizeDescr`",
       "properties": {
         "threshold": {
@@ -9995,10 +9995,10 @@
         "threshold"
       ],
       "title": "model.v0_5.BinarizeKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__BioimageioConfig": {
-      "additionalProperties": true,
+      "type": "object",
       "properties": {
         "reproducibility_tolerance": {
           "default": [],
@@ -10185,10 +10185,10 @@
         }
       },
       "title": "model.v0_5.BioimageioConfig",
-      "type": "object"
+      "additionalProperties": true
     },
     "bioimageio__spec__model__v0_5__ClipDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Set tensor values below min to min and above max to max.\n\nSee `ScaleRangeDescr` for examples.",
       "properties": {
         "id": {
@@ -10205,10 +10205,10 @@
         "kwargs"
       ],
       "title": "model.v0_5.ClipDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ClipKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `ClipDescr`",
       "properties": {
         "min": {
@@ -10295,20 +10295,20 @@
         }
       },
       "title": "model.v0_5.ClipKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__Config": {
-      "additionalProperties": true,
+      "type": "object",
       "properties": {
         "bioimageio": {
           "$ref": "#/$defs/bioimageio__spec__model__v0_5__BioimageioConfig"
         }
       },
       "title": "model.v0_5.Config",
-      "type": "object"
+      "additionalProperties": true
     },
     "bioimageio__spec__model__v0_5__InputTensorDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "id": {
           "default": "input",
@@ -10481,10 +10481,10 @@
         "axes"
       ],
       "title": "model.v0_5.InputTensorDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__KerasHdf5WeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -10581,10 +10581,10 @@
         "tensorflow_version"
       ],
       "title": "model.v0_5.KerasHdf5WeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__LinkedModel": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Reference to a bioimage.io model.",
       "properties": {
         "version": {
@@ -10610,10 +10610,10 @@
         "id"
       ],
       "title": "model.v0_5.LinkedModel",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ModelDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.\nThese fields are typically stored in a YAML file which we call a model resource description file (model RDF).",
       "properties": {
         "name": {
@@ -11710,10 +11710,10 @@
         "weights"
       ],
       "title": "model 0.5.7",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -11829,10 +11829,10 @@
         "opset_version"
       ],
       "title": "model.v0_5.OnnxWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__OutputTensorDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "id": {
           "default": "output",
@@ -12035,10 +12035,10 @@
         "axes"
       ],
       "title": "model.v0_5.OutputTensorDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__PytorchStateDictWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -12164,10 +12164,10 @@
         "pytorch_version"
       ],
       "title": "model.v0_5.PytorchStateDictWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ScaleLinearDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n    >>> preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: 'channel'\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n    >>> preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\"channel\"),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]",
       "properties": {
         "id": {
@@ -12192,10 +12192,10 @@
         "kwargs"
       ],
       "title": "model.v0_5.ScaleLinearDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ScaleLinearKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Key word arguments for `ScaleLinearDescr`",
       "properties": {
         "gain": {
@@ -12212,10 +12212,10 @@
         }
       },
       "title": "model.v0_5.ScaleLinearKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ScaleMeanVarianceDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Scale a tensor's data distribution to match another tensor's mean/std.\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
       "properties": {
         "id": {
@@ -12232,10 +12232,10 @@
         "kwargs"
       ],
       "title": "model.v0_5.ScaleMeanVarianceDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ScaleMeanVarianceKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `ScaleMeanVarianceKwargs`",
       "properties": {
         "reference_tensor": {
@@ -12284,10 +12284,10 @@
         "reference_tensor"
       ],
       "title": "model.v0_5.ScaleMeanVarianceKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ScaleRangeDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: ['y', 'x']\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n    >>> preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId('y'), AxisId('x')),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: ['y', 'x']\n          max_percentile: 99.8\n          min_percentile: 5.0\n              - id: scale_range\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n    >>> preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId('y'), AxisId('x')),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]",
       "properties": {
         "id": {
@@ -12303,10 +12303,10 @@
         "id"
       ],
       "title": "model.v0_5.ScaleRangeDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ScaleRangeKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `ScaleRangeDescr`\n\nFor `min_percentile`=0.0 (the default) and `max_percentile`=100 (the default)\nthis processing step normalizes data to the [0, 1] intervall.\nFor other percentiles the normalized values will partially be outside the [0, 1]\nintervall. Use `ScaleRange` followed by `ClipDescr` if you want to limit the\nnormalized values to a range.",
       "properties": {
         "axes": {
@@ -12377,10 +12377,10 @@
         }
       },
       "title": "model.v0_5.ScaleRangeKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__SigmoidDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n    >>> postprocessing = [SigmoidDescr()]",
       "properties": {
         "id": {
@@ -12393,10 +12393,10 @@
         "id"
       ],
       "title": "model.v0_5.SigmoidDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__TensorflowJsWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -12493,10 +12493,10 @@
         "tensorflow_version"
       ],
       "title": "model.v0_5.TensorflowJsWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__TensorflowSavedModelBundleWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -12610,10 +12610,10 @@
         "tensorflow_version"
       ],
       "title": "model.v0_5.TensorflowSavedModelBundleWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__TorchscriptWeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "source": {
           "anyOf": [
@@ -12710,10 +12710,10 @@
         "pytorch_version"
       ],
       "title": "model.v0_5.TorchscriptWeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__WeightsDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "keras_hdf5": {
           "anyOf": [
@@ -12783,10 +12783,10 @@
         }
       },
       "title": "model.v0_5.WeightsDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Subtract mean and divide by variance.\n\nExamples:\n    Subtract tensor mean and variance\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: zero_mean_unit_variance\n    ```\n    - in Python\n    >>> preprocessing = [ZeroMeanUnitVarianceDescr()]",
       "properties": {
         "id": {
@@ -12802,10 +12802,10 @@
         "id"
       ],
       "title": "model.v0_5.ZeroMeanUnitVarianceDescr",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceKwargs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "key word arguments for `ZeroMeanUnitVarianceDescr`",
       "properties": {
         "axes": {
@@ -12844,10 +12844,10 @@
         }
       },
       "title": "model.v0_5.ZeroMeanUnitVarianceKwargs",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__notebook__v0_2__NotebookDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Bioimage.io description of a Jupyter Notebook.",
       "properties": {
         "name": {
@@ -12938,9 +12938,7 @@
           "type": "array"
         },
         "config": {
-          "additionalProperties": {
-            "$ref": "#/$defs/YamlValue"
-          },
+          "type": "object",
           "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a github repo URL in `config` since we already have the\n`git_repo` field defined in the spec.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource\n(packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files)",
           "examples": [
             {
@@ -12956,7 +12954,9 @@
             }
           ],
           "title": "Config",
-          "type": "object"
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          }
         },
         "download_url": {
           "anyOf": [
@@ -13950,10 +13950,10 @@
         "source"
       ],
       "title": "notebook 0.2.4",
-      "type": "object"
+      "additionalProperties": false
     },
     "bioimageio__spec__notebook__v0_3__NotebookDescr": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Bioimage.io description of a Jupyter notebook.",
       "properties": {
         "name": {
@@ -15016,7 +15016,7 @@
         "source"
       ],
       "title": "notebook 0.3.0",
-      "type": "object"
+      "additionalProperties": false
     }
   },
   "discriminator": {

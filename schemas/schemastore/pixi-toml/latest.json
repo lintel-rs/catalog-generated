@@ -30,6 +30,9 @@
       "title": "Build-Dependencies",
       "description": "The build `conda` dependencies, used in the build process. See <https://pixi.sh/latest/build/dependency_types/> for more information.",
       "type": "object",
+      "propertyNames": {
+        "minLength": 1
+      },
       "additionalProperties": {
         "anyOf": [
           {
@@ -40,15 +43,15 @@
             "$ref": "#/$defs/MatchspecTable"
           }
         ]
-      },
-      "propertyNames": {
-        "minLength": 1
       }
     },
     "dependencies": {
       "title": "Dependencies",
       "description": "The `conda` dependencies, consisting of a package name and a requirement in [MatchSpec](https://github.com/conda/conda/blob/078e7ee79381060217e1ec7f9b0e9cf80ecc8f3f/conda/models/match_spec.py) format",
       "type": "object",
+      "propertyNames": {
+        "minLength": 1
+      },
       "additionalProperties": {
         "anyOf": [
           {
@@ -59,20 +62,17 @@
             "$ref": "#/$defs/MatchspecTable"
           }
         ]
-      },
-      "propertyNames": {
-        "minLength": 1
       }
     },
     "dev": {
       "title": "Dev",
       "description": "Source packages whose dependencies should be installed without building the package itself. Useful for development environments.",
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/SourceSpecTable"
-      },
       "propertyNames": {
         "minLength": 1
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/SourceSpecTable"
       }
     },
     "environments": {
@@ -100,17 +100,25 @@
       "title": "Feature",
       "description": "The features of the project",
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Feature"
-      },
       "propertyNames": {
         "minLength": 1
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/Feature"
       }
     },
     "host-dependencies": {
       "title": "Host-Dependencies",
       "description": "The host `conda` dependencies, used in the build process. See <https://pixi.sh/latest/build/dependency_types/> for more information.",
       "type": "object",
+      "examples": [
+        {
+          "python": ">=3.8"
+        }
+      ],
+      "propertyNames": {
+        "minLength": 1
+      },
       "additionalProperties": {
         "anyOf": [
           {
@@ -121,15 +129,7 @@
             "$ref": "#/$defs/MatchspecTable"
           }
         ]
-      },
-      "propertyNames": {
-        "minLength": 1
-      },
-      "examples": [
-        {
-          "python": ">=3.8"
-        }
-      ]
+      }
     },
     "package": {
       "$ref": "#/$defs/Package",
@@ -143,6 +143,9 @@
       "title": "Pypi-Dependencies",
       "description": "The PyPI dependencies",
       "type": "object",
+      "propertyNames": {
+        "minLength": 1
+      },
       "additionalProperties": {
         "anyOf": [
           {
@@ -168,9 +171,6 @@
             "$ref": "#/$defs/PyPIUrlRequirement"
           }
         ]
-      },
-      "propertyNames": {
-        "minLength": 1
       }
     },
     "pypi-options": {
@@ -185,12 +185,6 @@
       "title": "Target",
       "description": "The targets of the project",
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Target"
-      },
-      "propertyNames": {
-        "minLength": 1
-      },
       "examples": [
         {
           "linux": {
@@ -199,12 +193,21 @@
             }
           }
         }
-      ]
+      ],
+      "propertyNames": {
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/Target"
+      }
     },
     "tasks": {
       "title": "Tasks",
       "description": "The tasks of the project",
       "type": "object",
+      "propertyNames": {
+        "description": "A valid task name."
+      },
       "patternProperties": {
         "^[^\\s\\$]+$": {
           "anyOf": [
@@ -223,9 +226,6 @@
             }
           ]
         }
-      },
-      "propertyNames": {
-        "description": "A valid task name."
       }
     },
     "tool": {
@@ -239,25 +239,16 @@
       "description": "The workspace's metadata information"
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "Activation": {
       "title": "Activation",
       "description": "A description of steps performed when an environment is activated",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "env": {
           "title": "Env",
           "description": "A map of environment variables to values, used in the activation of the environment. These will be set in the shell. Thus these variables are shell specific. Using '$' might not expand to a value in different shells.",
           "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "minLength": 1
-          },
-          "propertyNames": {
-            "minLength": 1
-          },
           "examples": [
             {
               "key": "value"
@@ -265,7 +256,14 @@
             {
               "ARGUMENT": "value"
             }
-          ]
+          ],
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "scripts": {
           "title": "Scripts",
@@ -280,7 +278,8 @@
             "activate.bat"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Build": {
       "title": "Build",
@@ -288,12 +287,14 @@
       "required": [
         "backend"
       ],
-      "additionalProperties": false,
       "properties": {
         "additional-dependencies": {
           "title": "Additional-Dependencies",
           "description": "Additional dependencies to install alongside the build backend",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -304,9 +305,6 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "backend": {
@@ -358,12 +356,6 @@
           "title": "Target",
           "description": "Target-specific build configuration for different platforms",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/BuildTarget"
-          },
-          "propertyNames": {
-            "minLength": 1
-          },
           "examples": [
             {
               "linux-64": {
@@ -372,19 +364,28 @@
                 }
               }
             }
-          ]
+          ],
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/BuildTarget"
+          }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "BuildBackend": {
       "title": "BuildBackend",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "additional-dependencies": {
           "title": "Additional-Dependencies",
           "description": "Additional dependencies to install alongside the build backend",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -395,9 +396,6 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "branch": {
@@ -528,13 +526,13 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "BuildTarget": {
       "title": "BuildTarget",
       "description": "Target-specific build configuration for different platforms",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "config": {
           "title": "Config",
@@ -542,7 +540,8 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ChannelInlineTable": {
       "title": "ChannelInlineTable",
@@ -551,7 +550,6 @@
       "required": [
         "channel"
       ],
-      "additionalProperties": false,
       "properties": {
         "channel": {
           "title": "Channel",
@@ -573,7 +571,8 @@
           "description": "The priority of the channel",
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ChannelPriority": {
       "title": "ChannelPriority",
@@ -591,7 +590,6 @@
       "required": [
         "task"
       ],
-      "additionalProperties": false,
       "properties": {
         "args": {
           "title": "Args",
@@ -636,13 +634,13 @@
           "type": "string",
           "pattern": "^[^\\s\\$]+$"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Environment": {
       "title": "Environment",
       "description": "A composition of the dependencies of features which can be activated to run tasks or provide a shell",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "features": {
           "title": "Features",
@@ -665,13 +663,13 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Feature": {
       "title": "Feature",
       "description": "A composable aspect of the project which can contribute dependencies and tasks to an environment",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "activation": {
           "$ref": "#/$defs/Activation",
@@ -681,6 +679,9 @@
           "title": "Build-Dependencies",
           "description": "The build `conda` dependencies, used in the build process. See <https://pixi.sh/latest/build/dependency_types/> for more information.",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -691,9 +692,6 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "channel-priority": {
@@ -729,6 +727,9 @@
           "title": "Dependencies",
           "description": "The `conda` dependencies, consisting of a package name and a requirement in [MatchSpec](https://github.com/conda/conda/blob/078e7ee79381060217e1ec7f9b0e9cf80ecc8f3f/conda/models/match_spec.py) format",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -739,26 +740,31 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "dev": {
           "title": "Dev",
           "description": "Source packages whose dependencies should be installed without building the package itself. Useful for development environments.",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/SourceSpecTable"
-          },
           "propertyNames": {
             "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/SourceSpecTable"
           }
         },
         "host-dependencies": {
           "title": "Host-Dependencies",
           "description": "The host `conda` dependencies, used in the build process. See <https://pixi.sh/latest/build/dependency_types/> for more information.",
           "type": "object",
+          "examples": [
+            {
+              "python": ">=3.8"
+            }
+          ],
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -769,15 +775,7 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
-          },
-          "examples": [
-            {
-              "python": ">=3.8"
-            }
-          ]
+          }
         },
         "platforms": {
           "title": "Platforms",
@@ -791,6 +789,9 @@
           "title": "Pypi-Dependencies",
           "description": "The PyPI dependencies of this feature",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -816,9 +817,6 @@
                 "$ref": "#/$defs/PyPIUrlRequirement"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "pypi-options": {
@@ -842,12 +840,6 @@
           "title": "Target",
           "description": "Machine-specific aspects of this feature",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Target"
-          },
-          "propertyNames": {
-            "minLength": 1
-          },
           "examples": [
             {
               "linux": {
@@ -856,12 +848,21 @@
                 }
               }
             }
-          ]
+          ],
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/Target"
+          }
         },
         "tasks": {
           "title": "Tasks",
           "description": "The tasks provided by this feature",
           "type": "object",
+          "propertyNames": {
+            "description": "A valid task name."
+          },
           "patternProperties": {
             "^[^\\s\\$]+$": {
               "anyOf": [
@@ -880,18 +881,15 @@
                 }
               ]
             }
-          },
-          "propertyNames": {
-            "description": "A valid task name."
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "FindLinksPath": {
       "title": "FindLinksPath",
       "description": "The path to the directory containing packages",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "path": {
           "title": "Path",
@@ -902,13 +900,13 @@
             "./links"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "FindLinksURL": {
       "title": "FindLinksURL",
       "description": "The URL to the html file containing href-links to packages",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "url": {
           "title": "Url",
@@ -919,12 +917,12 @@
             "https://simple-index-is-here.com"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "LibcFamily": {
       "title": "LibcFamily",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "family": {
           "title": "Family",
@@ -949,13 +947,13 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "MatchspecTable": {
       "title": "MatchspecTable",
       "description": "A precise description of a `conda` package version.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "branch": {
           "title": "Branch",
@@ -1058,7 +1056,8 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Package": {
       "title": "Package",
@@ -1067,7 +1066,6 @@
       "required": [
         "build"
       ],
-      "additionalProperties": false,
       "properties": {
         "authors": {
           "title": "Authors",
@@ -1101,6 +1099,9 @@
           "title": "Build-Dependencies",
           "description": "The build `conda` dependencies, used in the build process. See <https://pixi.sh/latest/build/dependency_types/> for more information.",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -1111,9 +1112,6 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "description": {
@@ -1161,6 +1159,14 @@
           "title": "Host-Dependencies",
           "description": "The host `conda` dependencies, used in the build process. See <https://pixi.sh/latest/build/dependency_types/> for more information.",
           "type": "object",
+          "examples": [
+            {
+              "python": ">=3.8"
+            }
+          ],
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -1171,15 +1177,7 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
-          },
-          "examples": [
-            {
-              "python": ">=3.8"
-            }
-          ]
+          }
         },
         "license": {
           "title": "License",
@@ -1251,6 +1249,9 @@
           "title": "Run-Dependencies",
           "description": "The `conda` dependencies required at runtime. See <https://pixi.sh/latest/build/dependency_types/> for more information.",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -1261,21 +1262,12 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "target": {
           "title": "Target",
           "description": "Machine-specific aspects of the package",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Target"
-          },
-          "propertyNames": {
-            "minLength": 1
-          },
           "examples": [
             {
               "linux": {
@@ -1284,7 +1276,13 @@
                 }
               }
             }
-          ]
+          ],
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/Target"
+          }
         },
         "version": {
           "title": "Version",
@@ -1305,7 +1303,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Platform": {
       "title": "Platform",
@@ -1337,7 +1336,6 @@
     "PyPIGitBranchRequirement": {
       "title": "PyPIGitBranchRequirement",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "branch": {
           "title": "Branch",
@@ -1366,12 +1364,12 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "PyPIGitRevRequirement": {
       "title": "PyPIGitRevRequirement",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "extras": {
           "title": "Extras",
@@ -1400,12 +1398,12 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "PyPIGitTagRequirement": {
       "title": "PyPIGitTagRequirement",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "extras": {
           "title": "Extras",
@@ -1434,18 +1432,26 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "PyPIOptions": {
       "title": "PyPIOptions",
       "description": "Options that determine the behavior of PyPI package resolution and installation",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "dependency-overrides": {
           "title": "Dependency-Overrides",
           "description": "A list of PyPI dependencies that override the resolved dependencies",
           "type": "object",
+          "examples": [
+            {
+              "numpy": ">=1.21.0"
+            }
+          ],
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -1471,15 +1477,7 @@
                 "$ref": "#/$defs/PyPIUrlRequirement"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
-          },
-          "examples": [
-            {
-              "numpy": ">=1.21.0"
-            }
-          ]
+          }
         },
         "extra-index-urls": {
           "title": "Extra-Index-Urls",
@@ -1651,12 +1649,12 @@
             false
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "PyPIPathRequirement": {
       "title": "PyPIPathRequirement",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "editable": {
           "title": "Editable",
@@ -1684,12 +1682,12 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "PyPIUrlRequirement": {
       "title": "PyPIUrlRequirement",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "extras": {
           "title": "Extras",
@@ -1706,12 +1704,12 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "PyPIVersion": {
       "title": "PyPIVersion",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "extras": {
           "title": "Extras",
@@ -1734,7 +1732,8 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "S3Options": {
       "title": "S3Options",
@@ -1745,7 +1744,6 @@
         "region",
         "force-path-style"
       ],
-      "additionalProperties": false,
       "properties": {
         "endpoint-url": {
           "title": "Endpoint-Url",
@@ -1770,7 +1768,8 @@
             "eu-central-1"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "SolveStrategy": {
       "title": "SolveStrategy",
@@ -1786,7 +1785,6 @@
       "title": "SourceLocation",
       "description": "The location of a package's source code.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "branch": {
           "title": "Branch",
@@ -1824,13 +1822,13 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "SourceSpecTable": {
       "title": "SourceSpecTable",
       "description": "A precise description of a source package location.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "branch": {
           "title": "Branch",
@@ -1886,13 +1884,13 @@
           "type": "string",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "SystemRequirements": {
       "title": "SystemRequirements",
       "description": "Platform-specific requirements",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "archspec": {
           "title": "Archspec",
@@ -1973,13 +1971,13 @@
             "true"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Target": {
       "title": "Target",
       "description": "A machine-specific configuration of dependencies and tasks",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "activation": {
           "$ref": "#/$defs/Activation",
@@ -1989,6 +1987,9 @@
           "title": "Build-Dependencies",
           "description": "The build `conda` dependencies, used in the build process. See <https://pixi.sh/latest/build/dependency_types/> for more information.",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -1999,15 +2000,15 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "dependencies": {
           "title": "Dependencies",
           "description": "The `conda` dependencies, consisting of a package name and a requirement in [MatchSpec](https://github.com/conda/conda/blob/078e7ee79381060217e1ec7f9b0e9cf80ecc8f3f/conda/models/match_spec.py) format",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -2018,26 +2019,31 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "dev": {
           "title": "Dev",
           "description": "Source packages whose dependencies should be installed without building the package itself. Useful for development environments.",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/SourceSpecTable"
-          },
           "propertyNames": {
             "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/SourceSpecTable"
           }
         },
         "host-dependencies": {
           "title": "Host-Dependencies",
           "description": "The host `conda` dependencies, used in the build process. See <https://pixi.sh/latest/build/dependency_types/> for more information.",
           "type": "object",
+          "examples": [
+            {
+              "python": ">=3.8"
+            }
+          ],
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -2048,20 +2054,15 @@
                 "$ref": "#/$defs/MatchspecTable"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
-          },
-          "examples": [
-            {
-              "python": ">=3.8"
-            }
-          ]
+          }
         },
         "pypi-dependencies": {
           "title": "Pypi-Dependencies",
           "description": "The PyPI dependencies for this target",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "anyOf": [
               {
@@ -2087,15 +2088,15 @@
                 "$ref": "#/$defs/PyPIUrlRequirement"
               }
             ]
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "tasks": {
           "title": "Tasks",
           "description": "The tasks of the target",
           "type": "object",
+          "propertyNames": {
+            "description": "A valid task name."
+          },
           "patternProperties": {
             "^[^\\s\\$]+$": {
               "anyOf": [
@@ -2114,12 +2115,10 @@
                 }
               ]
             }
-          },
-          "propertyNames": {
-            "description": "A valid task name."
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "TaskArgs": {
       "title": "TaskArgs",
@@ -2128,7 +2127,6 @@
       "required": [
         "arg"
       ],
-      "additionalProperties": false,
       "properties": {
         "arg": {
           "title": "Arg",
@@ -2155,13 +2153,13 @@
           "description": "The default value of the argument",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "TaskInlineTable": {
       "title": "TaskInlineTable",
       "description": "A precise definition of a task.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "args": {
           "title": "Args",
@@ -2290,13 +2288,6 @@
           "title": "Env",
           "description": "A map of environment variables to values, used in the task, these will be overwritten by the shell.",
           "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "minLength": 1
-          },
-          "propertyNames": {
-            "minLength": 1
-          },
           "examples": [
             {
               "key": "value"
@@ -2304,7 +2295,14 @@
             {
               "ARGUMENT": "value"
             }
-          ]
+          ],
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "inputs": {
           "title": "Inputs",
@@ -2324,7 +2322,8 @@
             "minLength": 1
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Workspace": {
       "title": "Workspace",
@@ -2333,7 +2332,6 @@
       "required": [
         "channels"
       ],
-      "additionalProperties": false,
       "properties": {
         "authors": {
           "title": "Authors",
@@ -2351,14 +2349,14 @@
           "title": "Build-Variants",
           "description": "The build variants of the project",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "type": "array",
             "items": {
               "type": "string"
             }
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         },
         "build-variants-files": {
@@ -2544,11 +2542,11 @@
           "title": "Target",
           "description": "The workspace targets",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/WorkspaceTarget"
-          },
           "propertyNames": {
             "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/WorkspaceTarget"
           }
         },
         "version": {
@@ -2560,7 +2558,8 @@
             "1.2.3"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "WorkspaceInheritance": {
       "title": "WorkspaceInheritance",
@@ -2569,7 +2568,6 @@
       "required": [
         "workspace"
       ],
-      "additionalProperties": false,
       "properties": {
         "workspace": {
           "title": "Workspace",
@@ -2577,31 +2575,33 @@
           "type": "boolean",
           "const": true
         }
-      }
+      },
+      "additionalProperties": false
     },
     "WorkspaceTarget": {
       "title": "WorkspaceTarget",
       "description": "Target-specific configuration for a workspace",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "build-variants": {
           "title": "Build-Variants",
           "description": "The build variants for this workspace target",
           "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
           "additionalProperties": {
             "type": "array",
             "items": {
               "type": "string"
             }
-          },
-          "propertyNames": {
-            "minLength": 1
           }
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "anyOf": [
     {
       "required": [

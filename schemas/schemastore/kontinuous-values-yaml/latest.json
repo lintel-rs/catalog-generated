@@ -18,7 +18,6 @@
     "global": {
       "description": "Global variables",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "repositoryName": {
           "description": "Application name, default to GIT repository name",
@@ -122,7 +121,8 @@
             "user-demo"
           ]
         }
-      }
+      },
+      "additionalProperties": true
     },
     "project": {
       "type": "object",
@@ -132,102 +132,6 @@
       "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--kontinuous.values.schema.json"
     }
   },
-  "patternProperties": {
-    "^pg-.*": {
-      "allOf": [
-        {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--kontinuous.values.schema.json"
-        },
-        {
-          "properties": {
-            "~chart": {
-              "type": "string",
-              "const": "pg"
-            }
-          },
-          "type": "object"
-        }
-      ]
-    },
-    "^app-.*": {
-      "allOf": [
-        {
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--kontinuous.values.schema.json"
-        },
-        {
-          "properties": {
-            "~chart": {
-              "type": "string",
-              "const": "app"
-            }
-          },
-          "type": "object"
-        }
-      ]
-    }
-  },
-  "$defs": {
-    "chart": {
-      "type": "object",
-      "properties": {
-        "~chart": {
-          "description": "Kontinuous chart to use",
-          "type": "string",
-          "default": "app",
-          "anyOf": [
-            {
-              "type": "string",
-              "markdownDescription": "Bring your own helm chart. \n\nYou should have an entry with the same name in your `./Chart.yaml`.\n\nSee https://socialgouv.github.io/kontinuous/#/./faq?id=add-a-custom-helm-chart"
-            },
-            {
-              "const": "app",
-              "markdownDescription": "The [app chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/app) provides all the resources to deploy a kubernetes application\n\n💡 You can use the [meta `~tpl~` prefix](https://socialgouv.github.io/kontinuous/#/./advanced/build?id=meta-values-plugin-tpl) to make any property a [go template](https://docs.gofiber.io/template/html/TEMPLATES_CHEATSHEET/#template-variables)"
-            },
-            {
-              "const": "pg",
-              "markdownDescription": "The [pg chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/fabrique/charts/pg) is a wrapper around [cnpg-cluster helm chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/fabrique/charts/pg)"
-            },
-            {
-              "const": "hasura",
-              "markdownDescription": "The [hasura chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/hasura) deploys an [hasura](https://hasura.io) instance"
-            },
-            {
-              "const": "pgweb",
-              "markdownDescription": "The [pgweb chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/fabrique/charts/pgweb) deploys a [pgweb](https://github.com/sosedoff/pgweb) instance"
-            },
-            {
-              "const": "maildev",
-              "markdownDescription": "The [maildev chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/fabrique/charts/maildev) deploys a [maildev](https://github.com/maildev/maildev) instance"
-            },
-            {
-              "const": "redis",
-              "markdownDescription": "The [redis chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/redis) deploys an [redis](https://oauth2-proxy.github.io/redis/) instance"
-            },
-            {
-              "const": "jobs",
-              "markdownDescription": "The [jobs chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/jobs) provides a way to define de define tasks in your deployment pipeline\n\n💡 See [the jobs documentations](https://socialgouv.github.io/kontinuous/#/./advanced/build?id=meta-values-plugin-needs)."
-            }
-          ]
-        },
-        "~needs": {
-          "markdownDescription": "The meta-value `~needs`is used to define dependencies tree between charts and jobs.\n\nYou can target using simple charts or jobs name, or be more specific to avoid collision in more complex cases.\n\nsee [~needs documentation](https://socialgouv.github.io/kontinuous/#https://raw.githubusercontent.com/socialgouv/kontinuous/v1/advanced/build?id=meta-values-plugin-needs)",
-          "title": "Job or deployment dependencies",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "examples": [
-            "[build-app]",
-            "[pg, jobs.build-app]"
-          ]
-        }
-      },
-      "required": [
-        "~chart"
-      ]
-    }
-  },
-  "required": [],
   "additionalProperties": {
     "type": "object",
     "title": "Additional helm chart",
@@ -291,5 +195,101 @@
         }
       }
     ]
+  },
+  "patternProperties": {
+    "^pg-.*": {
+      "allOf": [
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--kontinuous.values.schema.json"
+        },
+        {
+          "properties": {
+            "~chart": {
+              "type": "string",
+              "const": "pg"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "^app-.*": {
+      "allOf": [
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--kontinuous.values.schema.json"
+        },
+        {
+          "properties": {
+            "~chart": {
+              "type": "string",
+              "const": "app"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "required": [],
+  "$defs": {
+    "chart": {
+      "type": "object",
+      "properties": {
+        "~chart": {
+          "description": "Kontinuous chart to use",
+          "type": "string",
+          "default": "app",
+          "anyOf": [
+            {
+              "type": "string",
+              "markdownDescription": "Bring your own helm chart. \n\nYou should have an entry with the same name in your `./Chart.yaml`.\n\nSee https://socialgouv.github.io/kontinuous/#/./faq?id=add-a-custom-helm-chart"
+            },
+            {
+              "const": "app",
+              "markdownDescription": "The [app chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/app) provides all the resources to deploy a kubernetes application\n\n💡 You can use the [meta `~tpl~` prefix](https://socialgouv.github.io/kontinuous/#/./advanced/build?id=meta-values-plugin-tpl) to make any property a [go template](https://docs.gofiber.io/template/html/TEMPLATES_CHEATSHEET/#template-variables)"
+            },
+            {
+              "const": "pg",
+              "markdownDescription": "The [pg chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/fabrique/charts/pg) is a wrapper around [cnpg-cluster helm chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/fabrique/charts/pg)"
+            },
+            {
+              "const": "hasura",
+              "markdownDescription": "The [hasura chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/hasura) deploys an [hasura](https://hasura.io) instance"
+            },
+            {
+              "const": "pgweb",
+              "markdownDescription": "The [pgweb chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/fabrique/charts/pgweb) deploys a [pgweb](https://github.com/sosedoff/pgweb) instance"
+            },
+            {
+              "const": "maildev",
+              "markdownDescription": "The [maildev chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/fabrique/charts/maildev) deploys a [maildev](https://github.com/maildev/maildev) instance"
+            },
+            {
+              "const": "redis",
+              "markdownDescription": "The [redis chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/redis) deploys an [redis](https://oauth2-proxy.github.io/redis/) instance"
+            },
+            {
+              "const": "jobs",
+              "markdownDescription": "The [jobs chart](https://github.com/SocialGouv/kontinuous/blob/master/plugins/contrib/charts/jobs) provides a way to define de define tasks in your deployment pipeline\n\n💡 See [the jobs documentations](https://socialgouv.github.io/kontinuous/#/./advanced/build?id=meta-values-plugin-needs)."
+            }
+          ]
+        },
+        "~needs": {
+          "markdownDescription": "The meta-value `~needs`is used to define dependencies tree between charts and jobs.\n\nYou can target using simple charts or jobs name, or be more specific to avoid collision in more complex cases.\n\nsee [~needs documentation](https://socialgouv.github.io/kontinuous/#https://raw.githubusercontent.com/socialgouv/kontinuous/v1/advanced/build?id=meta-values-plugin-needs)",
+          "title": "Job or deployment dependencies",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            "[build-app]",
+            "[pg, jobs.build-app]"
+          ]
+        }
+      },
+      "required": [
+        "~chart"
+      ]
+    }
   }
 }

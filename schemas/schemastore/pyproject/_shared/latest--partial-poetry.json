@@ -81,10 +81,6 @@
       "items": {
         "type": "object",
         "description": "Information about where the package resides.",
-        "additionalProperties": false,
-        "required": [
-          "include"
-        ],
         "properties": {
           "include": {
             "$ref": "#/$defs/poetry-include-path"
@@ -100,7 +96,11 @@
             "type": "string",
             "description": "Where the package should be installed in the final distribution."
           }
-        }
+        },
+        "required": [
+          "include"
+        ],
+        "additionalProperties": false
       }
     },
     "include": {
@@ -113,10 +113,6 @@
           },
           {
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "path"
-            ],
             "properties": {
               "path": {
                 "$ref": "#/$defs/poetry-include-path"
@@ -124,7 +120,11 @@
               "format": {
                 "$ref": "#/$defs/poetry-package-formats"
               }
-            }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
           }
         ]
       }
@@ -145,24 +145,26 @@
           "description": "The Python versions the package is compatible with."
         }
       },
+      "x-tombi-table-keys-order": "ascending",
       "additionalProperties": {
         "$ref": "#/$defs/poetry-dependency-any"
-      },
-      "x-tombi-table-keys-order": "ascending"
+      }
     },
     "dev-dependencies": {
       "type": "object",
       "description": "This is a hash of package name (keys) and version constraints (values) that this package requires for developing it (testing tools and such).",
+      "additionalProperties": false,
+      "x-tombi-table-keys-order": "ascending",
       "patternProperties": {
         "^[a-zA-Z-_.0-9]+$": {
           "$ref": "#/$defs/poetry-dependency-any"
         }
-      },
-      "additionalProperties": false,
-      "x-tombi-table-keys-order": "ascending"
+      }
     },
     "extras": {
       "type": "object",
+      "additionalProperties": false,
+      "x-tombi-table-keys-order": "ascending",
       "patternProperties": {
         "^[a-zA-Z-_.0-9]+$": {
           "type": "array",
@@ -170,13 +172,13 @@
             "type": "string"
           }
         }
-      },
-      "additionalProperties": false,
-      "x-tombi-table-keys-order": "ascending"
+      }
     },
     "group": {
       "type": "object",
       "description": "This represents groups of dependencies",
+      "additionalProperties": false,
+      "x-tombi-table-keys-order": "ascending",
       "patternProperties": {
         "^[a-zA-Z-_.0-9]+$": {
           "type": "object",
@@ -192,20 +194,18 @@
             "dependencies": {
               "type": "object",
               "description": "The dependencies of this dependency group",
+              "additionalProperties": false,
+              "x-tombi-table-keys-order": "ascending",
               "patternProperties": {
                 "^[a-zA-Z-_.0-9]+$": {
                   "$ref": "#/$defs/poetry-dependency-any"
                 }
-              },
-              "additionalProperties": false,
-              "x-tombi-table-keys-order": "ascending"
+              }
             }
           },
           "additionalProperties": false
         }
-      },
-      "additionalProperties": false,
-      "x-tombi-table-keys-order": "ascending"
+      }
     },
     "build": {
       "$ref": "#/$defs/poetry-build-section"
@@ -213,6 +213,8 @@
     "scripts": {
       "type": "object",
       "description": "A hash of scripts to be installed.",
+      "additionalProperties": false,
+      "x-tombi-table-keys-order": "ascending",
       "patternProperties": {
         "^[a-zA-Z-_.0-9]+$": {
           "anyOf": [
@@ -224,18 +226,17 @@
             }
           ]
         }
-      },
-      "additionalProperties": false,
-      "x-tombi-table-keys-order": "ascending"
+      }
     },
     "plugins": {
       "type": "object",
       "description": "A hash of hashes representing plugins",
+      "additionalProperties": false,
+      "x-tombi-table-keys-order": "ascending",
       "patternProperties": {
         "^dotenv$": {
           "type": "object",
           "description": "Configuration for the poetry-plugin-dotenv",
-          "additionalProperties": false,
           "properties": {
             "ignore": {
               "type": "string",
@@ -245,31 +246,30 @@
               "type": "string",
               "description": "Path to the dotenv file. It can be both absolute or relative."
             }
-          }
+          },
+          "additionalProperties": false
         },
         "^[a-zA-Z-_.0-9]+$": {
           "type": "object",
+          "additionalProperties": false,
           "patternProperties": {
             "^[a-zA-Z-_.0-9]+$": {
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         }
-      },
-      "additionalProperties": false,
-      "x-tombi-table-keys-order": "ascending"
+      }
     },
     "urls": {
       "type": "object",
+      "additionalProperties": false,
+      "x-tombi-table-keys-order": "ascending",
       "patternProperties": {
         "^.+$": {
           "type": "string",
           "description": "The full url of the custom url."
         }
-      },
-      "additionalProperties": false,
-      "x-tombi-table-keys-order": "ascending"
+      }
     },
     "source": {
       "$comment": "The unique 'pypi' source constraint is not implemented yet.",
@@ -278,10 +278,6 @@
         "anyOf": [
           {
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "name"
-            ],
             "properties": {
               "name": {
                 "const": "pypi",
@@ -291,15 +287,14 @@
                 "$ref": "#/$defs/poetry-priority",
                 "description": "The priority of the source."
               }
-            }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "name",
-              "url"
-            ],
             "properties": {
               "name": {
                 "allOf": [
@@ -323,13 +318,17 @@
                 "$ref": "#/$defs/poetry-priority",
                 "description": "The priority of the source."
               }
-            }
+            },
+            "required": [
+              "name",
+              "url"
+            ],
+            "additionalProperties": false
           }
         ]
       }
     }
   },
-  "additionalProperties": true,
   "$defs": {
     "poetry-name": {
       "type": "string",
@@ -426,7 +425,6 @@
       "required": [
         "version"
       ],
-      "additionalProperties": false,
       "properties": {
         "version": {
           "$ref": "#/$defs/poetry-pep440-version"
@@ -466,14 +464,14 @@
           "type": "string",
           "description": "The exclusive source used to search for this dependency."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "poetry-git-dependency": {
       "type": "object",
       "required": [
         "git"
       ],
-      "additionalProperties": false,
       "properties": {
         "git": {
           "description": "The url of the git repository.",
@@ -539,14 +537,14 @@
           "type": "boolean",
           "description": "Whether to install the dependency in development mode."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "poetry-file-dependency": {
       "type": "object",
       "required": [
         "file"
       ],
-      "additionalProperties": false,
       "properties": {
         "file": {
           "type": "string",
@@ -575,14 +573,14 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "poetry-path-dependency": {
       "type": "object",
       "required": [
         "path"
       ],
-      "additionalProperties": false,
       "properties": {
         "path": {
           "type": "string",
@@ -615,14 +613,14 @@
           "type": "boolean",
           "description": "Whether to install the dependency in development mode."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "poetry-url-dependency": {
       "type": "object",
       "required": [
         "url"
       ],
-      "additionalProperties": false,
       "properties": {
         "url": {
           "type": "string",
@@ -651,7 +649,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "poetry-multiple-constraints-dependency": {
       "type": "array",
@@ -696,7 +695,10 @@
     "poetry-extra-scripts": {
       "type": "object",
       "description": "Either a console entry point or a script file that'll be included in the distribution package.",
-      "additionalProperties": false,
+      "required": [
+        "reference",
+        "type"
+      ],
       "properties": {
         "reference": {
           "type": "string",
@@ -718,15 +720,11 @@
           }
         }
       },
-      "required": [
-        "reference",
-        "type"
-      ]
+      "additionalProperties": false
     },
     "poetry-extra-script-legacy": {
       "type": "object",
       "description": "A script that should be installed only if extras are activated.",
-      "additionalProperties": false,
       "properties": {
         "callable": {
           "$ref": "#/$defs/poetry-script-legacy",
@@ -739,7 +737,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "poetry-build-script": {
       "type": "string",
@@ -748,7 +747,6 @@
     "poetry-build-config": {
       "type": "object",
       "description": "Build specific configurations.",
-      "additionalProperties": false,
       "properties": {
         "generate-setup-file": {
           "type": "boolean",
@@ -758,7 +756,8 @@
         "script": {
           "$ref": "#/$defs/poetry-build-script"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "poetry-build-section": {
       "anyOf": [
@@ -779,5 +778,6 @@
         "explicit"
       ]
     }
-  }
+  },
+  "additionalProperties": true
 }

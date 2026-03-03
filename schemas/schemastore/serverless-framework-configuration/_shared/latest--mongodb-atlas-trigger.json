@@ -5,8 +5,7 @@
   "description": "View and manage your application's [triggers](https://www.mongodb.com/docs/atlas/app-services/triggers/overview/).. Source:- <https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git>",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/mongodb-atlas-trigger.json",
-    "sourceSha256": "2a227ea550b6b9a8bf8e32d2aab8c34e7ed4023be9ab725734de1d69d588939d",
-    "invalid": true
+    "sourceSha256": "2a227ea550b6b9a8bf8e32d2aab8c34e7ed4023be9ab725734de1d69d588939d"
   },
   "type": "object",
   "properties": {
@@ -23,19 +22,19 @@
       "description": "The profile is defined in AWS Secret manager. See [Secret Manager Profile setup](../../../examples/profile-secret.yaml)."
     },
     "DatabaseTrigger": {
-      "additionalProperties": false,
+      "$ref": "#/$defs/DatabaseConfig",
       "type": "object",
-      "$ref": "#/$defs/DatabaseConfig"
+      "additionalProperties": false
     },
     "AuthTrigger": {
       "type": "object",
-      "additionalProperties": false,
-      "$ref": "#/$defs/AuthConfig"
+      "$ref": "#/$defs/AuthConfig",
+      "additionalProperties": false
     },
     "ScheduleTrigger": {
-      "additionalProperties": false,
+      "$ref": "#/$defs/ScheduleConfig",
       "type": "object",
-      "$ref": "#/$defs/ScheduleConfig"
+      "additionalProperties": false
     },
     "Name": {
       "oneOf": [
@@ -114,11 +113,10 @@
       "description": "Project Id for application services"
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "AuthConfig": {
       "type": "object",
-      "additionalProperties": false,
+      "title": "MongoDBAtlasTriggerAuthConfigDefinition",
       "required": [
         "OperationType",
         "Providers"
@@ -159,19 +157,15 @@
           }
         }
       },
-      "title": "MongoDBAtlasTriggerAuthConfigDefinition"
+      "additionalProperties": false
     },
     "Event": {
       "type": "object",
-      "additionalProperties": false,
+      "title": "MongoDBAtlasTriggerEventDefinition",
       "properties": {
         "FUNCTION": {
-          "additionalProperties": false,
-          "type": "object",
           "properties": {
             "FuncConfig": {
-              "additionalProperties": false,
-              "type": "object",
               "properties": {
                 "FunctionId": {
                   "oneOf": [
@@ -195,17 +189,17 @@
                   ],
                   "description": "The name of the function that the trigger calls when it\nfires, i.e. the function described by `function_id`.\n\nThis value is the same as the root-level `function_name`.\nYou can either define the value here or in `function_name`.\nThe App Services backend duplicates the value to the configuration location where you did not define it.\n\nFor example, if you define `event_processors.FUNCTION.function_name`, the backend duplicates it to `function_name`."
                 }
-              }
+              },
+              "type": "object",
+              "additionalProperties": false
             }
-          }
+          },
+          "type": "object",
+          "additionalProperties": false
         },
         "AWSEVENTBRIDGE": {
-          "additionalProperties": false,
-          "type": "object",
           "properties": {
             "AWSConfig": {
-              "additionalProperties": false,
-              "type": "object",
               "properties": {
                 "AccountId": {
                   "oneOf": [
@@ -233,15 +227,19 @@
                   "type": "boolean",
                   "description": "If `true`, event objects are serialized using EJSON."
                 }
-              }
+              },
+              "type": "object",
+              "additionalProperties": false
             }
-          }
+          },
+          "type": "object",
+          "additionalProperties": false
         }
       },
-      "title": "MongoDBAtlasTriggerEventDefinition"
+      "additionalProperties": false
     },
     "DatabaseConfig": {
-      "additionalProperties": false,
+      "title": "MongoDBAtlasTriggerDatabaseConfigDefinition",
       "type": "object",
       "properties": {
         "ServiceId": {
@@ -320,10 +318,10 @@
           "description": "If `true`, event ordering is disabled and this Trigger\ncan process events in parallel. If `false`, event\nordering is enabled and the Trigger executes events\nserially."
         }
       },
-      "title": "MongoDBAtlasTriggerDatabaseConfigDefinition"
+      "additionalProperties": false
     },
     "ScheduleConfig": {
-      "additionalProperties": false,
+      "title": "MongoDBAtlasTriggerScheduleConfigDefinition",
       "type": "object",
       "properties": {
         "Schedule": {
@@ -342,9 +340,10 @@
           "description": "If `true`, enabling the trigger after it was disabled\nwill not invoke events that occurred while the trigger\nwas disabled."
         }
       },
-      "title": "MongoDBAtlasTriggerScheduleConfigDefinition"
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "required": [
     "ProjectId",
     "AppId"

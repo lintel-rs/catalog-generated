@@ -5,7 +5,6 @@
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/UI5/manifest/main/schema.json",
     "sourceSha256": "db82b738a4e5243632a8f9d124f5cba69f982dc5b8cca2f80f0beeffe28afa83",
-    "invalid": true,
     "fileMatch": [
       "**/webapp/manifest.json",
       "**/src/main/webapp/manifest.json",
@@ -120,7 +119,16 @@
       "title": "JSON schema for SAP.APP Namespace",
       "description": "Represents general application attributes",
       "type": "object",
-      "additionalProperties": false,
+      "$defs": {
+        "parameter": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "required": [
         "id",
         "type",
@@ -205,7 +213,6 @@
               "required": [
                 "bundleName"
               ],
-              "additionalProperties": false,
               "properties": {
                 "bundleName": {
                   "description": "Represents the alternative for bundleUrl",
@@ -237,14 +244,11 @@
                     "$ref": "#/$defs/enhanceWithSetting"
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             },
             {
               "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "bundleUrl"
-              ],
               "properties": {
                 "bundleUrl": {
                   "description": "Represents the URL for the resource bundle",
@@ -285,7 +289,11 @@
                     "$ref": "#/$defs/enhanceWithSetting"
                   }
                 }
-              }
+              },
+              "required": [
+                "bundleUrl"
+              ],
+              "additionalProperties": false
             }
           ]
         },
@@ -355,10 +363,6 @@
         "tags": {
           "description": "Represents array of keywords",
           "type": "object",
-          "additionalProperties": true,
-          "required": [
-            "keywords"
-          ],
           "properties": {
             "keywords": {
               "$ref": "#/$defs/tag"
@@ -370,7 +374,11 @@
                 "pattern": "^[A-Z0-9_\\-\\/]+$"
               }
             }
-          }
+          },
+          "required": [
+            "keywords"
+          ],
+          "additionalProperties": true
         },
         "ach": {
           "description": "Represents application component hierarchy",
@@ -407,13 +415,13 @@
           "required": [
             "name"
           ],
-          "additionalProperties": false,
           "properties": {
             "name": {
               "description": "Represents an alias for the system",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "openSourceComponents": {
           "description": "Represents a collection of directly used open source libs (not when used via UI5 capsulation)",
@@ -471,16 +479,7 @@
           }
         }
       },
-      "$defs": {
-        "parameter": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            }
-          }
-        }
-      }
+      "additionalProperties": false
     },
     "sap.ui": {
       "title": "JSON schema for SAP.UI Namespace",
@@ -518,7 +517,6 @@
         "icons": {
           "description": "Represents icons which used in application",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "icon": {
               "description": "Represents icon of the app",
@@ -544,7 +542,8 @@
               "description": "Represents 144x144 pixel version for non-retina iPads",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "deviceTypes": {
           "description": "Represents device types on which application is running. Supported device types are desktop, tablet and phone",
@@ -629,10 +628,6 @@
             "dependencies": {
               "description": "Represents external dependences such as libraries or components, that will be loaded by UI5 Core in the initialization phase of your Component and can be used after it",
               "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "minUI5Version"
-              ],
               "properties": {
                 "minUI5Version": {
                   "description": "Represents the minimum version of SAPUI5 that your component requires. It is either a specific version or an array of versions where each major version can only be included once. If array contains more than one version and if version 1 is included it must be at least 1.120.x.",
@@ -658,7 +653,11 @@
                     }
                   }
                 }
-              }
+              },
+              "required": [
+                "minUI5Version"
+              ],
+              "additionalProperties": false
             },
             "models": {
               "description": "Represents models which should be created/destroyed with the life-cycle of the component",
@@ -698,7 +697,6 @@
             "extends": {
               "description": "Represents the extension of an additional component",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "component": {
                   "description": "Represents the component name",
@@ -712,16 +710,12 @@
                   "description": "Represents extensions of the component",
                   "type": "object"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "contentDensities": {
               "description": "Represents object with content density modes the app is supporting. Supported density modes are 'cozy' and 'compact'",
               "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "compact",
-                "cozy"
-              ],
               "properties": {
                 "compact": {
                   "description": "Represents indicator whether compact mode is supported",
@@ -731,7 +725,12 @@
                   "description": "Represents indicator whether cozy mode is supported",
                   "type": "boolean"
                 }
-              }
+              },
+              "required": [
+                "compact",
+                "cozy"
+              ],
+              "additionalProperties": false
             },
             "componentName": {
               "description": "Represents a name of the UI5 component",
@@ -751,12 +750,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "layer",
-                  "appVariantId",
-                  "version"
-                ],
                 "properties": {
                   "layer": {
                     "description": "Represents origin layer of the app variant id",
@@ -770,7 +763,13 @@
                     "description": "Represents version of the app variant id",
                     "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "layer",
+                  "appVariantId",
+                  "version"
+                ],
+                "additionalProperties": false
               }
             },
             "services": {
@@ -786,7 +785,6 @@
             "library": {
               "description": "Represents UI5 library specific properties",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "i18n": {
                   "description": "Setting to define i18n properties of a library. Can either be a boolean, string or object.",
@@ -801,10 +799,6 @@
                     },
                     {
                       "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "bundleUrl"
-                      ],
                       "properties": {
                         "bundleUrl": {
                           "description": "Represents the URL for the resource bundle",
@@ -836,14 +830,17 @@
                             "$ref": "#/$defs/enhanceWithSetting"
                           }
                         }
-                      }
+                      },
+                      "required": [
+                        "bundleUrl"
+                      ],
+                      "additionalProperties": false
                     },
                     {
                       "type": "object",
                       "required": [
                         "bundleName"
                       ],
-                      "additionalProperties": false,
                       "properties": {
                         "bundleName": {
                           "description": "Represents the alternative for bundleUrl",
@@ -875,7 +872,8 @@
                             "$ref": "#/$defs/enhanceWithSetting"
                           }
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     }
                   ]
                 },
@@ -887,7 +885,8 @@
                   "description": "Represents the content of a library. Content are controls, elements, types and interfaces.",
                   "type": "object"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "commands": {
               "description": "Represents a list of UI5 shortcut commands",
@@ -963,7 +962,6 @@
         "deviceType": {
           "type": "object",
           "description": "Represents device types on which the app is running",
-          "additionalProperties": false,
           "properties": {
             "desktop": {
               "description": "Represents indicator whether desktop device is supported, default true",
@@ -977,7 +975,8 @@
               "description": "Represents indicator whether phone device is supported, default true",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -985,7 +984,6 @@
       "title": "JSON schema for SAP.PLATFORM.ABAP Namespace",
       "description": "Represents ABAP platform specific attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1003,13 +1001,13 @@
           "description": "Represents the alternative uri of the app in the ABAP system for starting the application",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.platform.hcp": {
       "title": "JSON schema for SAP.PLATFORM.HCP Namespace",
       "description": "Represents HANA Cloud Platform platform specific attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1045,13 +1043,13 @@
           "description": "Indicates that HCP application is multi-version enabled",
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.platform.cf": {
       "title": "JSON schema for SAP.PLATFORM.CF Namespace",
       "description": "Represents CF(Cloud Foundry) platform specific attributes",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1089,13 +1087,13 @@
             "type": "boolean"
           }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "sap.platform.mobilecards": {
       "title": "JSON schema for SAP.PLATFORM.MOBILECARDS Namespace",
       "description": "Represents Mobile Cards platform specific attributes",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1108,7 +1106,8 @@
           "description": "Represents the compatibility of this app with the Mobile Cards platform.",
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "sap.fiori": {
       "title": "JSON schema for SAP.FIORI Namespace",
@@ -1118,7 +1117,6 @@
         "registrationIds",
         "archeType"
       ],
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1161,13 +1159,13 @@
             "obsolete"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.ui.generic.app": {
       "title": "JSON schema for SAP.UI.GENERIC.APP Namespace",
       "description": "Represents GENERIC APP specific attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "type": "string",
@@ -1204,7 +1202,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.fe": {
       "title": "JSON schema for SAP.FE Namespace",
@@ -1215,7 +1214,6 @@
       "title": "JSON schema for SAP.FLP Namespace",
       "description": "Represents FLP specific attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1285,7 +1283,7 @@
         "origin": {
           "description": "Represents the original tile and target mapping which resulted in this app. Deprecated.",
           "type": "object",
-          "additionalProperties": false,
+          "deprecated": true,
           "properties": {
             "tileId": {
               "description": "Represents the original tile which resulted in this app",
@@ -1296,9 +1294,10 @@
               "type": "string"
             }
           },
-          "deprecated": true
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.ovp": {
       "title": "JSON schema for SAP.OVP Namespace",
@@ -1312,7 +1311,6 @@
           "globalFilterModel"
         ]
       },
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1511,10 +1509,11 @@
             }
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.insights": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Represents Insights attributes",
       "required": [
         "parentAppId",
@@ -1642,7 +1641,7 @@
         }
       },
       "title": "JSON schema for SAP Insights Namespace",
-      "type": "object"
+      "additionalProperties": false
     },
     "sap.wda": {
       "title": "JSON schema for SAP.WDA Namespace",
@@ -1651,7 +1650,6 @@
       "required": [
         "applicationId"
       ],
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1681,13 +1679,13 @@
           "type": "boolean",
           "default": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.apf": {
       "title": "JSON schema for SAP.APF Namespace",
       "description": "Represents APF specific attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1712,7 +1710,8 @@
           "type": "boolean",
           "default": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.cloud.portal": {
       "title": "JSON schema for SAP.CLOUD.PORTAL Namespace",
@@ -1726,7 +1725,6 @@
       "required": [
         "transaction"
       ],
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1746,7 +1744,8 @@
           "type": "string",
           "pattern": "^[A-F0-9]{1,32}$"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.integration": {
       "title": "JSON schema for SAP.INTEGRATION Namespace",
@@ -1803,7 +1802,6 @@
       "required": [
         "wcf-target-id"
       ],
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1817,7 +1815,8 @@
           "type": "string",
           "pattern": "^[a-zA-Z0-9\\/_]{1,10}$"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.ui.smartbusiness.app": {
       "title": "JSON schema for SAP.UI.SMARTBUSINESS.APP Namespace",
@@ -1855,7 +1854,6 @@
       "title": "JSON schema for SAP.COPILOT Namespace",
       "description": "Represents specific attributes for SAP CoPilot",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "_version": {
           "description": "Represents SAP.COPILOT attributes format version. It is managed by namespace owner",
@@ -1868,7 +1866,6 @@
         "contextAnalysis": {
           "description": "Settings for the context analysis features of SAP CoPilot",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "allowAddingObjectsFromAppScreenToCollection": {
               "description": "Enable/Disable the ability for SAP CoPilot to analyze your Application Screens and add the found objects to a Collection",
@@ -1882,12 +1879,12 @@
                 "type": "string"
               }
             }
-          }
+          },
+          "additionalProperties": true
         },
         "digitalAssistant": {
           "description": "Settings for the Digital Assistant features of SAP CoPilot",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "intentDefinition": {
               "description": "A list of Intent",
@@ -1896,7 +1893,6 @@
               "patternProperties": {
                 "^[a-zA-Z0-9_\\.\\-]*$": {
                   "type": "object",
-                  "additionalProperties": true,
                   "properties": {
                     "uri": {
                       "description": "Represents the uri of the intent",
@@ -1913,13 +1909,16 @@
                       "description": "Represents the uri of the translation file",
                       "type": "string"
                     }
-                  }
+                  },
+                  "additionalProperties": true
                 }
               }
             }
-          }
+          },
+          "additionalProperties": true
         }
-      }
+      },
+      "additionalProperties": true
     },
     "sap.map": {
       "title": "JSON schema for SAP.MAP Namespace",
@@ -1930,10 +1929,6 @@
       "title": "JSON schema for SAP.URL Namespace",
       "description": "Represents specific attributes for SAP URL",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "uri"
-      ],
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1946,16 +1941,16 @@
           "description": "Represents URI of an application",
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "uri"
+      ],
+      "additionalProperties": false
     },
     "sap.platform.sfsf": {
       "title": "JSON schema for SAP.PLATFORM.SFSF Namespace",
       "description": "Represents SFSF platform specific attributes",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "appName"
-      ],
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -1976,13 +1971,16 @@
           "description": "Represents the version of the SFSF application",
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "appName"
+      ],
+      "additionalProperties": false
     },
     "sap.cloud": {
       "title": "JSON schema for SAP.CLOUD Namespace",
       "description": "Represents cloud platform specific attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -2003,317 +2001,13 @@
           "type": "boolean",
           "default": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sap.card": {
       "title": "JSON schema for SAP.CARD Namespace",
       "description": "Represents general card attributes",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "header"
-      ],
-      "properties": {
-        "_version": {
-          "description": "Represents SAP.CARD attributes format version. It is managed by namespace owner",
-          "type": "string",
-          "enum": [
-            "1.1.0",
-            "1.2.0",
-            "1.3.0",
-            "1.4.0",
-            "1.5.0",
-            "1.6.0",
-            "1.7.0",
-            "1.8.0",
-            "1.9.0",
-            "1.10.0",
-            "1.11.0",
-            "1.13.0",
-            "1.14.0",
-            "1.15.0",
-            "1.16.0",
-            "1.17.0",
-            "1.18.0",
-            "1.19.0",
-            "1.20.0",
-            "1.21.0",
-            "1.22.0",
-            "1.23.0",
-            "1.24.0",
-            "1.25.0",
-            "1.26.0",
-            "1.27.0",
-            "1.28.0",
-            "1.29.0",
-            "1.30.0",
-            "1.31.0",
-            "1.32.0",
-            "1.33.0",
-            "1.34.0",
-            "1.35.0",
-            "1.36.0",
-            "1.37.0",
-            "1.38.0",
-            "1.39.0",
-            "1.40.0",
-            "1.41.0",
-            "1.42.0",
-            "1.43.0",
-            "1.44.0",
-            "1.45.0",
-            "1.46.0",
-            "1.47.0",
-            "1.48.0",
-            "1.49.0",
-            "1.50.0",
-            "1.51.0",
-            "1.52.0",
-            "1.53.0",
-            "1.54.0",
-            "1.55.0",
-            "1.56.0",
-            "1.57.0",
-            "1.58.0",
-            "1.59.0",
-            "1.60.0"
-          ]
-        },
-        "designtime": {
-          "description": "[Deprecated] The path to the design time folder with assets files",
-          "type": "string",
-          "deprecated": true
-        },
-        "configuration": {
-          "description": "General configuration of the card. Allows to define parameters, destinations, filters and more",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "editor": {
-              "description": "The path to the design time configuration file. Used for Configuration Editor",
-              "type": "string"
-            },
-            "enableMarkdown": {
-              "description": "Markdown enablement for Adaptive Content",
-              "type": "boolean"
-            },
-            "helpId": {
-              "description": "[Experimental] The help-id which will be rendered as data-help-id on the base element of the card",
-              "type": "string"
-            },
-            "modelSizeLimit": {
-              "description": "[Experimental] Represents the maximum number of entries that are used for list bindings",
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/$defs/simpleBinding"
-                }
-              ],
-              "default": 1000
-            },
-            "parameters": {
-              "description": "Map of parameters",
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/$defs/Configuration.Parameter"
-              }
-            },
-            "filters": {
-              "description": "Map of filters",
-              "type": "object",
-              "additionalProperties": {
-                "oneOf": [
-                  {
-                    "$ref": "#/$defs/Configuration.FilterType.Select"
-                  },
-                  {
-                    "$ref": "#/$defs/Configuration.FilterType.DateRange"
-                  },
-                  {
-                    "$ref": "#/$defs/Configuration.FilterType.Search"
-                  },
-                  {
-                    "$ref": "#/$defs/Configuration.FilterType.ComboBox"
-                  }
-                ]
-              }
-            },
-            "destinations": {
-              "description": "Specifies the destinations configured for use by the card",
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/$defs/Configuration.Destinations"
-              }
-            },
-            "useMainDestinations": {
-              "description": "Indicates if child cards should reference the main card's destinations. Must be set to true in child cards to use the main card's destinations",
-              "type": "boolean",
-              "default": false
-            },
-            "csrfTokens": {
-              "description": "Describes the CSRF tokens used by the card",
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/$defs/Configuration.CSRFToken"
-              }
-            },
-            "actionHandlers": {
-              "description": "Contains configuration settings for the default action handlers",
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "submit": {
-                  "description": "Configuration for the submit action handler",
-                  "type": "object"
-                }
-              }
-            },
-            "messages": {
-              "description": "Describes the messages for the card",
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/$defs/Configuration.NoData"
-              }
-            },
-            "componentData": {
-              "description": "[Experimental] Object which will be passed to the component as 'componentData'",
-              "type": "object"
-            },
-            "loadingPlaceholders": {
-              "description": "[Experimental] Object that will represent the loading placeholder of the card",
-              "type": "object",
-              "properties": {
-                "delay": {
-                  "description": "The delay of the loading placeholder",
-                  "type": "number"
-                }
-              }
-            },
-            "childCards": {
-              "description": "[Experimental] Map of child cards",
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/$defs/Configuration.ChildCard"
-              }
-            }
-          }
-        },
-        "type": {
-          "description": "Represents the type of the card's content",
-          "type": "string",
-          "enum": [
-            "AdaptiveCard",
-            "Analytical",
-            "AnalyticsCloud",
-            "Calendar",
-            "Component",
-            "List",
-            "Object",
-            "Table",
-            "Timeline",
-            "WebPage"
-          ]
-        },
-        "data": {
-          "$ref": "#/$defs/data"
-        },
-        "headerPosition": {
-          "description": "Represents card header position - under or over the content",
-          "type": "string",
-          "oneOf": [
-            {
-              "enum": [
-                "Top",
-                "Bottom"
-              ],
-              "default": "Top"
-            },
-            {
-              "$ref": "#/$defs/simpleBinding"
-            }
-          ]
-        },
-        "header": {
-          "description": "Represents card header attributes",
-          "$ref": "#/$defs/HeaderType"
-        },
-        "content": {
-          "description": "Represents card content attributes. Content type should be the same as card type e.g. if card type List is used the content type should also be List"
-        },
-        "extension": {
-          "description": "A path to an Extension implementation. It is resolved relatively to the manifest",
-          "type": "string"
-        },
-        "footer": {
-          "description": "Represent card footer attributes",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "actionsStrip": {
-              "description": "Describes actions strip",
-              "oneOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/$defs/actionsStripItem"
-                  }
-                },
-                {
-                  "$ref": "#/$defs/actionsStrip"
-                }
-              ]
-            },
-            "paginator": {
-              "description": "[Experimental] Describes the paginator",
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "pageSize": {
-                  "description": "Represents the number of the items in one page",
-                  "oneOf": [
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "$ref": "#/$defs/simpleBinding"
-                    }
-                  ]
-                },
-                "totalCount": {
-                  "description": "Represents the total count of the items in all pages",
-                  "oneOf": [
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "$ref": "#/$defs/simpleBinding"
-                    }
-                  ]
-                }
-              }
-            },
-            "visible": {
-              "description": "[Experimental] Visibility of the footer",
-              "$ref": "#/$defs/visibility"
-            },
-            "closeButton": {
-              "description": "[Experimental] Defines the Close button when the card is opened by the ShowCard action",
-              "$ref": "#/$defs/closeButton"
-            }
-          }
-        },
-        "requiredHeight": {
-          "description": "Represents card minimum required height",
-          "type": "string"
-        },
-        "requiredWidth": {
-          "description": "Represents card minimum required width",
-          "type": "string"
-        }
-      },
       "allOf": [
         {
           "if": {
@@ -2495,21 +2189,317 @@
             "type": "object"
           }
         }
-      ]
+      ],
+      "required": [
+        "type",
+        "header"
+      ],
+      "properties": {
+        "_version": {
+          "description": "Represents SAP.CARD attributes format version. It is managed by namespace owner",
+          "type": "string",
+          "enum": [
+            "1.1.0",
+            "1.2.0",
+            "1.3.0",
+            "1.4.0",
+            "1.5.0",
+            "1.6.0",
+            "1.7.0",
+            "1.8.0",
+            "1.9.0",
+            "1.10.0",
+            "1.11.0",
+            "1.13.0",
+            "1.14.0",
+            "1.15.0",
+            "1.16.0",
+            "1.17.0",
+            "1.18.0",
+            "1.19.0",
+            "1.20.0",
+            "1.21.0",
+            "1.22.0",
+            "1.23.0",
+            "1.24.0",
+            "1.25.0",
+            "1.26.0",
+            "1.27.0",
+            "1.28.0",
+            "1.29.0",
+            "1.30.0",
+            "1.31.0",
+            "1.32.0",
+            "1.33.0",
+            "1.34.0",
+            "1.35.0",
+            "1.36.0",
+            "1.37.0",
+            "1.38.0",
+            "1.39.0",
+            "1.40.0",
+            "1.41.0",
+            "1.42.0",
+            "1.43.0",
+            "1.44.0",
+            "1.45.0",
+            "1.46.0",
+            "1.47.0",
+            "1.48.0",
+            "1.49.0",
+            "1.50.0",
+            "1.51.0",
+            "1.52.0",
+            "1.53.0",
+            "1.54.0",
+            "1.55.0",
+            "1.56.0",
+            "1.57.0",
+            "1.58.0",
+            "1.59.0",
+            "1.60.0"
+          ]
+        },
+        "designtime": {
+          "description": "[Deprecated] The path to the design time folder with assets files",
+          "type": "string",
+          "deprecated": true
+        },
+        "configuration": {
+          "description": "General configuration of the card. Allows to define parameters, destinations, filters and more",
+          "type": "object",
+          "properties": {
+            "editor": {
+              "description": "The path to the design time configuration file. Used for Configuration Editor",
+              "type": "string"
+            },
+            "enableMarkdown": {
+              "description": "Markdown enablement for Adaptive Content",
+              "type": "boolean"
+            },
+            "helpId": {
+              "description": "[Experimental] The help-id which will be rendered as data-help-id on the base element of the card",
+              "type": "string"
+            },
+            "modelSizeLimit": {
+              "description": "[Experimental] Represents the maximum number of entries that are used for list bindings",
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/$defs/simpleBinding"
+                }
+              ],
+              "default": 1000
+            },
+            "parameters": {
+              "description": "Map of parameters",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/Configuration.Parameter"
+              }
+            },
+            "filters": {
+              "description": "Map of filters",
+              "type": "object",
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/Configuration.FilterType.Select"
+                  },
+                  {
+                    "$ref": "#/$defs/Configuration.FilterType.DateRange"
+                  },
+                  {
+                    "$ref": "#/$defs/Configuration.FilterType.Search"
+                  },
+                  {
+                    "$ref": "#/$defs/Configuration.FilterType.ComboBox"
+                  }
+                ]
+              }
+            },
+            "destinations": {
+              "description": "Specifies the destinations configured for use by the card",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/Configuration.Destinations"
+              }
+            },
+            "useMainDestinations": {
+              "description": "Indicates if child cards should reference the main card's destinations. Must be set to true in child cards to use the main card's destinations",
+              "type": "boolean",
+              "default": false
+            },
+            "csrfTokens": {
+              "description": "Describes the CSRF tokens used by the card",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/Configuration.CSRFToken"
+              }
+            },
+            "actionHandlers": {
+              "description": "Contains configuration settings for the default action handlers",
+              "type": "object",
+              "properties": {
+                "submit": {
+                  "description": "Configuration for the submit action handler",
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            },
+            "messages": {
+              "description": "Describes the messages for the card",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/Configuration.NoData"
+              }
+            },
+            "componentData": {
+              "description": "[Experimental] Object which will be passed to the component as 'componentData'",
+              "type": "object"
+            },
+            "loadingPlaceholders": {
+              "description": "[Experimental] Object that will represent the loading placeholder of the card",
+              "type": "object",
+              "properties": {
+                "delay": {
+                  "description": "The delay of the loading placeholder",
+                  "type": "number"
+                }
+              }
+            },
+            "childCards": {
+              "description": "[Experimental] Map of child cards",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/Configuration.ChildCard"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "type": {
+          "description": "Represents the type of the card's content",
+          "type": "string",
+          "enum": [
+            "AdaptiveCard",
+            "Analytical",
+            "AnalyticsCloud",
+            "Calendar",
+            "Component",
+            "List",
+            "Object",
+            "Table",
+            "Timeline",
+            "WebPage"
+          ]
+        },
+        "data": {
+          "$ref": "#/$defs/data"
+        },
+        "headerPosition": {
+          "description": "Represents card header position - under or over the content",
+          "type": "string",
+          "oneOf": [
+            {
+              "enum": [
+                "Top",
+                "Bottom"
+              ],
+              "default": "Top"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        },
+        "header": {
+          "description": "Represents card header attributes",
+          "$ref": "#/$defs/HeaderType"
+        },
+        "content": {
+          "description": "Represents card content attributes. Content type should be the same as card type e.g. if card type List is used the content type should also be List"
+        },
+        "extension": {
+          "description": "A path to an Extension implementation. It is resolved relatively to the manifest",
+          "type": "string"
+        },
+        "footer": {
+          "description": "Represent card footer attributes",
+          "type": "object",
+          "properties": {
+            "actionsStrip": {
+              "description": "Describes actions strip",
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/actionsStripItem"
+                  }
+                },
+                {
+                  "$ref": "#/$defs/actionsStrip"
+                }
+              ]
+            },
+            "paginator": {
+              "description": "[Experimental] Describes the paginator",
+              "type": "object",
+              "properties": {
+                "pageSize": {
+                  "description": "Represents the number of the items in one page",
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "$ref": "#/$defs/simpleBinding"
+                    }
+                  ]
+                },
+                "totalCount": {
+                  "description": "Represents the total count of the items in all pages",
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "$ref": "#/$defs/simpleBinding"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "visible": {
+              "description": "[Experimental] Visibility of the footer",
+              "$ref": "#/$defs/visibility"
+            },
+            "closeButton": {
+              "description": "[Experimental] Defines the Close button when the card is opened by the ShowCard action",
+              "$ref": "#/$defs/closeButton"
+            }
+          },
+          "additionalProperties": false
+        },
+        "requiredHeight": {
+          "description": "Represents card minimum required height",
+          "type": "string"
+        },
+        "requiredWidth": {
+          "description": "Represents card minimum required width",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     },
     "sap.package": {
       "title": "JSON schema for SAP.PACKAGE Namespace",
       "description": "Represents general package attributes. Experimental, will be detailed in the future",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "id",
-        "title",
-        "description",
-        "packageVersion",
-        "vendor",
-        "support"
-      ],
       "properties": {
         "_version": {
           "description": "Represents SAP.PACKAGE attributes format version. It is managed by namespace owner",
@@ -2614,10 +2604,6 @@
         "tags": {
           "description": "Represents array of keywords used to find the package",
           "type": "object",
-          "additionalProperties": true,
-          "required": [
-            "keywords"
-          ],
           "properties": {
             "keywords": {
               "$ref": "#/$defs/tag"
@@ -2629,7 +2615,11 @@
                 "pattern": "^[A-Z0-9_\\-\\/]+$"
               }
             }
-          }
+          },
+          "required": [
+            "keywords"
+          ],
+          "additionalProperties": true
         },
         "vendor": {
           "description": "Represents the support information",
@@ -2682,20 +2672,21 @@
             }
           }
         }
-      }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "packageVersion",
+        "vendor",
+        "support"
+      ],
+      "additionalProperties": true
     },
     "sap.artifact": {
       "title": "JSON schema for SAP.ARTIFACT Namespace",
       "description": "Represents general artifact attributes.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "id",
-        "type",
-        "title",
-        "description",
-        "artifactVersion"
-      ],
       "properties": {
         "_version": {
           "description": "Represents SAP.ARTIFACT attributes format version. It is managed by namespace owner",
@@ -2788,10 +2779,6 @@
         "tags": {
           "description": "Represents array of keywords used to find the artifact",
           "type": "object",
-          "additionalProperties": true,
-          "required": [
-            "keywords"
-          ],
           "properties": {
             "keywords": {
               "$ref": "#/$defs/tag"
@@ -2803,9 +2790,21 @@
                 "pattern": "^[A-Z0-9_\\-\\/]+$"
               }
             }
-          }
+          },
+          "required": [
+            "keywords"
+          ],
+          "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "id",
+        "type",
+        "title",
+        "description",
+        "artifactVersion"
+      ],
+      "additionalProperties": true
     },
     "sap.bpa.task": {
       "title": "JSON schema for sap.bpa.task Namespace",
@@ -2816,7 +2815,14 @@
         "category",
         "_version"
       ],
-      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "inputs",
+            "outputs"
+          ]
+        }
+      ],
       "properties": {
         "_version": {
           "description": "Represents attributes format version. It is managed by namespace owner",
@@ -2848,11 +2854,6 @@
           "description": "Represents the outcomes of the task ui",
           "items": {
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "id",
-              "label"
-            ],
             "properties": {
               "id": {
                 "description": "Represents the id of the outcome",
@@ -2872,7 +2873,12 @@
                   "neutral"
                 ]
               }
-            }
+            },
+            "required": [
+              "id",
+              "label"
+            ],
+            "additionalProperties": false
           },
           "minItems": 1,
           "uniqueItems": true,
@@ -2889,14 +2895,7 @@
           }
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "inputs",
-            "outputs"
-          ]
-        }
-      ]
+      "additionalProperties": false
     },
     "sap.cards.ap": {
       "title": "JSON schema for sap.cards.ap namespace",
@@ -3060,7 +3059,6 @@
     "actionsStripItemBindingInfo": {
       "type": "object",
       "description": "[Experimental] Binding info for items of type actionsStripItem",
-      "additionalProperties": false,
       "properties": {
         "template": {
           "$ref": "#/$defs/actionsStripItem"
@@ -3068,11 +3066,11 @@
         "path": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "MicroChart.StackedBar.Bar": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "value": {
           "description": "The actual value shown as a colored horizontal bar",
@@ -3105,11 +3103,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "MicroChart.Bullet.Threshold": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "value": {
           "description": "The value of the threshold",
@@ -3134,14 +3132,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "MicroChart.StackedBar": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "type"
-      ],
       "properties": {
         "type": {
           "description": "Represents the type of the MicroChart",
@@ -3186,14 +3181,14 @@
           "description": "Represents the visibility of the chart bar",
           "$ref": "#/$defs/visibility"
         }
-      }
-    },
-    "MicroChart.Bullet": {
-      "type": "object",
-      "additionalProperties": false,
+      },
       "required": [
         "type"
       ],
+      "additionalProperties": false
+    },
+    "MicroChart.Bullet": {
+      "type": "object",
       "properties": {
         "type": {
           "description": "Represents the type of the MicroChart",
@@ -3275,14 +3270,14 @@
           "description": "Represents the visibility of the chart",
           "$ref": "#/$defs/visibility"
         }
-      }
-    },
-    "MicroChart.Generic": {
-      "type": "object",
-      "additionalProperties": true,
+      },
       "required": [
         "type"
       ],
+      "additionalProperties": false
+    },
+    "MicroChart.Generic": {
+      "type": "object",
       "properties": {
         "type": {
           "description": "Represents the type of the MicroChart",
@@ -3294,12 +3289,15 @@
             "Radial"
           ]
         }
-      }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": true
     },
     "Configuration.Filter.ComboBoxItem": {
       "description": "A single Combo Box filter selection option",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "The title of the filter option",
@@ -3313,12 +3311,12 @@
           "description": "The secondary value for the combo box item",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.Filter.Item": {
       "description": "A single filter selection option",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "The title of the filter option",
@@ -3328,7 +3326,8 @@
           "description": "The unique key of the filter option. Mapped to the filter's value",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.BasicDataType": {
       "description": "Basic data types for parameters and filters",
@@ -3345,11 +3344,6 @@
     "ibnTarget": {
       "description": "The application identifier consisting of semanticObject and action or ",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "semanticObject",
-        "action"
-      ],
       "properties": {
         "semanticObject": {
           "type": "string"
@@ -3357,7 +3351,12 @@
         "action": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "semanticObject",
+        "action"
+      ],
+      "additionalProperties": false
     },
     "hideCardActionParameters": {
       "description": "Parameters for HideCard action",
@@ -3367,7 +3366,6 @@
     "showCardActionParameters": {
       "description": "Parameters for ShowCard action",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "childCardKey": {
           "description": "The key of the card to be shown",
@@ -3407,7 +3405,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "submitActionParameters": {
       "description": "Parameters for Submit action",
@@ -3417,10 +3416,6 @@
     "navigationActionIBParameters": {
       "description": "Parameters for Intent-Based Navigation action",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ibnTarget"
-      ],
       "properties": {
         "ibnTarget": {
           "description": "An application identifier consisting of semanticObject and action",
@@ -3434,15 +3429,15 @@
           "description": "An application specific route that is passed to the target application",
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "ibnTarget"
+      ],
+      "additionalProperties": false
     },
     "navigationActionParameters": {
       "description": "Parameters for Navigation action",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "url"
-      ],
       "properties": {
         "url": {
           "type": "string"
@@ -3450,7 +3445,11 @@
         "target": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false
     },
     "customActionParameters": {
       "description": "Parameters for Custom action",
@@ -3460,7 +3459,6 @@
     "cache": {
       "description": "Cache control settings",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "maxAge": {
           "description": "The maximum age for which the cache is considered fresh",
@@ -3483,16 +3481,12 @@
           "type": "boolean",
           "default": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "batchRequest": {
       "description": "Represents a request which is a part of a batch request",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "url",
-        "method"
-      ],
       "properties": {
         "url": {
           "description": "The URL to make the request to",
@@ -3518,15 +3512,16 @@
           "description": "Represents the request body",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "url",
+        "method"
+      ],
+      "additionalProperties": false
     },
     "extension": {
       "description": "[Experimental] Represents attributes, needed to get data via extension",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "method"
-      ],
       "properties": {
         "method": {
           "description": "The method of the extension, which fetches data",
@@ -3536,7 +3531,11 @@
           "description": "The arguments, with which the method will be called",
           "type": "array"
         }
-      }
+      },
+      "required": [
+        "method"
+      ],
+      "additionalProperties": false
     },
     "service_0": {
       "description": "Represents service that will be used for actions",
@@ -3547,7 +3546,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "name": {
               "description": "Represents name of the Service to be used for the action",
@@ -3556,17 +3554,14 @@
             "parameters": {
               "type": "object"
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
     "request": {
       "description": "Represents request attributes",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "url"
-      ],
       "properties": {
         "mode": {
           "description": "The mode of the request",
@@ -3665,17 +3660,19 @@
           "description": "Cache control settings",
           "$ref": "#/$defs/cache"
         }
-      }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false
     },
     "statusTextFormatter": {
       "type": "object",
       "description": "Defines fields for dynamic status formatting",
-      "additionalProperties": false,
       "properties": {
         "format": {
           "description": "Defines binding information",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "translationKey": {
               "type": "string"
@@ -3683,9 +3680,11 @@
             "parts": {
               "type": "array"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "iconBackgroundColor": {
       "oneOf": [
@@ -3716,7 +3715,6 @@
     "ContentType.Calendar.SpecialDate.Template": {
       "description": "The template for all specialDates",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "startDate": {
           "description": "The start date of the special date. The accepted date format is ISO 8601",
@@ -3759,12 +3757,12 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Calendar.LegendItem.Template": {
       "description": "The template for all legendItems",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "category": {
           "description": "Defines which card component describes the legend item. Available categories: \"calendar\" (represented as square) or \"appointment\" (circle)",
@@ -3807,12 +3805,12 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Calendar.Item.Template": {
       "description": "The template for all items",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "startDate": {
           "description": "The start date of the item. The accepted date format is ISO 8601",
@@ -3873,12 +3871,12 @@
             "$ref": "#/$defs/action"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Calendar.SpecialDate": {
       "description": "Describes each specialDate",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "template": {
           "$ref": "#/$defs/ContentType.Calendar.SpecialDate.Template"
@@ -3887,12 +3885,12 @@
           "description": "Defines the path to the structure holding the data about the specialDates",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Calendar.LegendItem": {
       "description": "Describes each legendItem",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "template": {
           "$ref": "#/$defs/ContentType.Calendar.LegendItem.Template"
@@ -3901,12 +3899,12 @@
           "description": "Defines the path to the structure holding the data about the legendItems",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Calendar.Item": {
       "description": "Describes each item",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "template": {
           "$ref": "#/$defs/ContentType.Calendar.Item.Template"
@@ -3915,12 +3913,12 @@
           "description": "Defines the path to the structure holding the data about the items",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "progressIndicator": {
       "description": "Represents progress indicator attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "state": {
           "description": "Represents state color",
@@ -3948,7 +3946,8 @@
           "description": "Represents progress indicator text",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "identifier": {
       "description": "Represents identifier",
@@ -3959,9 +3958,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
-          "description": "[Deprecated]",
-          "deprecated": true,
           "properties": {
             "url": {
               "type": "string"
@@ -3969,7 +3965,10 @@
             "target": {
               "$ref": "#/$defs/target"
             }
-          }
+          },
+          "description": "[Deprecated]",
+          "deprecated": true,
+          "additionalProperties": false
         }
       ]
     },
@@ -3989,7 +3988,6 @@
     "ContentType.Table.Column": {
       "description": "Represents object item attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "Represents a title of the column; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
@@ -4106,12 +4104,12 @@
           "description": "The custom state icon",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Object.Item.IconGroupIcon": {
       "description": "Definition for icons in the IconGroup",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "src": {
           "type": "string",
@@ -4130,12 +4128,12 @@
           "type": "string",
           "description": "Represents text that will be displayed as a tooltip"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Object.Item.Validation": {
       "description": "[Experimental] Defines the user input validation",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "message": {
           "description": "Defines custom validation message text",
@@ -4211,12 +4209,12 @@
           "description": "An extension function used to validate the value",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Object.Item.ComboBoxItemTemplate": {
       "description": "Template for combo box items",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "The title of the option",
@@ -4226,15 +4224,12 @@
           "description": "The unique key of the option. Mapped to the input's value",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Object.Item.IconGroupTemplate": {
       "description": "Template definition for the icons in the group",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "icon"
-      ],
       "properties": {
         "icon": {
           "$ref": "#/$defs/ContentType.Object.Item.IconGroupIcon"
@@ -4246,12 +4241,15 @@
             "$ref": "#/$defs/action"
           }
         }
-      }
+      },
+      "required": [
+        "icon"
+      ],
+      "additionalProperties": false
     },
     "ContentType.Object.Item.MainIndicator": {
       "description": "Represents the main numeric indicator of the NumericData",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "number": {
           "description": "The value of the main indicator",
@@ -4305,7 +4303,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "target_0": {
       "description": "Specifies where to open an URL",
@@ -4319,7 +4318,6 @@
     "ContentType.Object.Item": {
       "description": "Represents a single item of information. It can contain label, value and image",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "icon": {
           "description": "Defines the icon of the item",
@@ -4351,7 +4349,6 @@
             },
             {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "option": {
                   "description": "The date range option",
@@ -4360,7 +4357,8 @@
                 "values": {
                   "type": "array"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           ]
         },
@@ -4549,7 +4547,6 @@
           "required": [
             "template"
           ],
-          "additionalProperties": false,
           "properties": {
             "template": {
               "$ref": "#/$defs/ContentType.Object.Item.ComboBoxItemTemplate"
@@ -4560,7 +4557,8 @@
               "default": "/",
               "pattern": "^[a-zA-Z0-9_\\.\\-/|@#]*$"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "validations": {
           "type": "array",
@@ -4682,7 +4680,8 @@
             }
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Object.Group": {
       "description": "Represents a group of information for an object",
@@ -4690,7 +4689,6 @@
       "required": [
         "items"
       ],
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "Represents a title of the object group; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
@@ -4743,12 +4741,12 @@
           ],
           "default": "Default"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "simpleIcon": {
       "description": "Represents simple icon attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "src": {
           "type": "string",
@@ -4758,12 +4756,12 @@
           "description": "Represents the visibility state of the icon",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Timeline.Item": {
       "description": "Represents a single timeline item",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "The title of the timeline item",
@@ -4801,11 +4799,11 @@
             "$ref": "#/$defs/action"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Analytical.Field": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "description": "The type of the feed",
@@ -4832,12 +4830,12 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Analytical.Measure": {
       "description": "Measure for the dataset",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "The name of the measure",
@@ -4852,12 +4850,12 @@
           "type": "string",
           "description": "Binding path to the data"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Analytical.Dimension": {
       "description": "Dimension for the dataset",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "The name of the dimension",
@@ -4893,23 +4891,23 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Analytical.AxisText": {
       "description": "Represents descriptive text of the axis",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "visible": {
           "description": "Represents the visibility state of the descriptive axis text",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Analytical.DataLabel": {
       "description": "Represents value attributes in the plot area",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "visible": {
           "description": "Visibility of the data labels",
@@ -4919,13 +4917,13 @@
           "description": "Visibility of data label for total value in some charts",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Analytical.Legend": {
       "description": "[Deprecated] Represents chart legend attributes",
       "deprecated": true,
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "visible": {
           "description": "Defines whether the legend will be visible",
@@ -4965,12 +4963,12 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "icon": {
       "description": "Represents icon attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "src": {
           "type": "string",
@@ -5042,7 +5040,8 @@
           "description": "Represents the visibility state of the icon",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "state": {
       "description": "Represents state of an entity",
@@ -5058,7 +5057,6 @@
     },
     "field": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "label": {
           "description": "Represents a label of the field; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
@@ -5076,12 +5074,12 @@
           "description": "Represents the visibility of the field",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "group": {
       "description": "Represents group of items",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "The title of the group",
@@ -5090,7 +5088,6 @@
         "order": {
           "description": "The order by which the group will be sorted",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "path": {
               "description": "Defines the path to the structure holding the data about the group order",
@@ -5108,14 +5105,15 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.List.Item": {
       "description": "The template for all items",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "The title of the item",
@@ -5208,7 +5206,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "minHeight": {
       "description": "Defines the min-height of the Content as a CSS value",
@@ -5225,7 +5224,6 @@
     "HeaderType.InfoSection.Column": {
       "description": "Represents a column of the info section",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "rows": {
           "description": "Represents the rows of the column",
@@ -5241,7 +5239,8 @@
             "$ref": "#/$defs/HeaderType.InfoSection.Item"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "justifyContent": {
       "description": "Defines how the space is distributed between and around content items",
@@ -5263,7 +5262,6 @@
     "objectStatus": {
       "description": "Represents value and state information for an object",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "description": "Represents the type of the object",
@@ -5328,12 +5326,12 @@
             "$ref": "#/$defs/action"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "HeaderType.InfoSection.Row": {
       "description": "Represents a row of the info section",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "justifyContent": {
           "$ref": "#/$defs/justifyContent"
@@ -5352,7 +5350,8 @@
             "$ref": "#/$defs/HeaderType.InfoSection.Item"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Enums.ValueColor": {
       "enum": [
@@ -5380,7 +5379,6 @@
     "HeaderType.Numeric.SideIndicator": {
       "description": "Represents side indicator attributes which are used for additional information about the main indicator",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "Represents a title of the side indicator",
@@ -5411,12 +5409,12 @@
           "description": "Visibility of the side indicator",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "HeaderType.Numeric.MainIndicator": {
       "description": "Represents the main numeric indicator of the header",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "number": {
           "description": "The value of the main indicator",
@@ -5460,12 +5458,12 @@
           "description": "Visibility of the main indicator",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "HeaderType.InfoSection": {
       "description": "Represents the info section of the header",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "rows": {
           "description": "Represents the rows of the info section",
@@ -5474,7 +5472,8 @@
             "$ref": "#/$defs/HeaderType.InfoSection.Row"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "wrappingType": {
       "description": "The wrapping type for texts",
@@ -5495,7 +5494,6 @@
     "status": {
       "description": "Represents status attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "text": {
           "description": "Represents status text",
@@ -5512,12 +5510,51 @@
           "description": "Represents the visibility of the status text",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "iconWithoutSize": {
       "description": "Represents icon attributes",
       "type": "object",
-      "additionalProperties": false,
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "required": [
+                "src"
+              ]
+            },
+            {
+              "required": [
+                "initials"
+              ]
+            },
+            {
+              "required": [
+                "state"
+              ]
+            }
+          ]
+        },
+        {
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "src",
+                  "state"
+                ]
+              },
+              {
+                "required": [
+                  "initials",
+                  "state"
+                ]
+              }
+            ]
+          }
+        }
+      ],
       "properties": {
         "src": {
           "type": "string",
@@ -5586,45 +5623,7 @@
           "$ref": "#/$defs/visibility"
         }
       },
-      "allOf": [
-        {
-          "anyOf": [
-            {
-              "required": [
-                "src"
-              ]
-            },
-            {
-              "required": [
-                "initials"
-              ]
-            },
-            {
-              "required": [
-                "state"
-              ]
-            }
-          ]
-        },
-        {
-          "not": {
-            "anyOf": [
-              {
-                "required": [
-                  "src",
-                  "state"
-                ]
-              },
-              {
-                "required": [
-                  "initials",
-                  "state"
-                ]
-              }
-            ]
-          }
-        }
-      ]
+      "additionalProperties": false
     },
     "action": {
       "description": "Represents actions that can be applied on card elements",
@@ -5632,62 +5631,6 @@
       "required": [
         "type"
       ],
-      "additionalProperties": false,
-      "properties": {
-        "type": {
-          "description": "The type of the action",
-          "type": "string",
-          "oneOf": [
-            {
-              "enum": [
-                "Custom",
-                "Navigation",
-                "Submit",
-                "ShowCard",
-                "HideCard"
-              ]
-            },
-            {
-              "$ref": "#/$defs/simpleBinding"
-            }
-          ]
-        },
-        "enabled": {
-          "description": "Represents the state of the action",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/$defs/simpleBinding"
-            }
-          ]
-        },
-        "service": {
-          "$ref": "#/$defs/service"
-        },
-        "url": {
-          "description": "[Deprecated] Represents the URL that will be used as navigation target if no service is provided",
-          "deprecated": true,
-          "type": "string"
-        },
-        "parameters": {
-          "description": "Parameters passed to the navigation action handler"
-        },
-        "target": {
-          "description": "[Deprecated] Specifies where to open the 'url', if it is provided",
-          "deprecated": true,
-          "type": "string",
-          "oneOf": [
-            {
-              "$ref": "#/$defs/target"
-            },
-            {
-              "$ref": "#/$defs/simpleBinding"
-            }
-          ]
-        }
-      },
       "allOf": [
         {
           "if": {
@@ -5786,15 +5729,65 @@
             "type": "object"
           }
         }
-      ]
+      ],
+      "properties": {
+        "type": {
+          "description": "The type of the action",
+          "type": "string",
+          "oneOf": [
+            {
+              "enum": [
+                "Custom",
+                "Navigation",
+                "Submit",
+                "ShowCard",
+                "HideCard"
+              ]
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        },
+        "enabled": {
+          "description": "Represents the state of the action",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        },
+        "service": {
+          "$ref": "#/$defs/service"
+        },
+        "url": {
+          "description": "[Deprecated] Represents the URL that will be used as navigation target if no service is provided",
+          "deprecated": true,
+          "type": "string"
+        },
+        "parameters": {
+          "description": "Parameters passed to the navigation action handler"
+        },
+        "target": {
+          "description": "[Deprecated] Specifies where to open the 'url', if it is provided",
+          "deprecated": true,
+          "type": "string",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/target"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
     },
     "HeaderType.Numeric": {
-      "additionalProperties": false,
-      "required": [
-        "type"
-      ],
-      "description": "Represents header with numeric data",
-      "type": "object",
       "properties": {
         "type": {
           "description": "Represents the type of the header",
@@ -5946,12 +5939,15 @@
         "chart": {
           "$ref": "#/$defs/MicroChart"
         }
-      }
+      },
+      "required": [
+        "type"
+      ],
+      "description": "Represents header with numeric data",
+      "type": "object",
+      "additionalProperties": false
     },
     "HeaderType.Default": {
-      "additionalProperties": false,
-      "description": "Represents default header attributes",
-      "type": "object",
       "properties": {
         "type": {
           "description": "Represents the type of the header",
@@ -6057,12 +6053,14 @@
           "description": "[Experimental] Represents the info section of the header",
           "$ref": "#/$defs/HeaderType.InfoSection"
         }
-      }
+      },
+      "description": "Represents default header attributes",
+      "type": "object",
+      "additionalProperties": false
     },
     "ContentType.WebPage": {
       "description": "WebPage content is used to embed HTML page",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "data": {
           "$ref": "#/$defs/data"
@@ -6106,7 +6104,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.AdaptiveCard": {
       "description": "Represents AdaptiveCard content",
@@ -6115,7 +6114,6 @@
     "ContentType.Calendar": {
       "description": "The calendar card is used to display a schedule of a single entity (such as person, resource) for a selected time interval",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "data": {
           "$ref": "#/$defs/data"
@@ -6214,22 +6212,22 @@
             }
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Component": {
       "description": "Represents the configuration for a component card's content",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "minHeight": {
           "$ref": "#/$defs/minHeight"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Object": {
       "description": "Represents object content attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "data": {
           "$ref": "#/$defs/data"
@@ -6267,12 +6265,12 @@
           ],
           "default": true
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Table": {
       "description": "Represents table content attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "data": {
           "$ref": "#/$defs/data"
@@ -6280,7 +6278,6 @@
         "row": {
           "description": "The template for all rows",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "columns": {
               "description": "Defines the columns attributes",
@@ -6312,7 +6309,8 @@
               "type": "string",
               "description": "Defines the semantics of the 'highlight' property. It is used for accessibility purposes"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "maxItems": {
           "description": "Represents number of items",
@@ -6339,12 +6337,12 @@
         "group": {
           "$ref": "#/$defs/group"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.Timeline": {
       "description": "Represents time related content",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "data": {
           "$ref": "#/$defs/data"
@@ -6375,7 +6373,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.AnalyticsCloud": {
       "description": "Represents SAP Analytics Cloud content attributes",
@@ -6385,7 +6384,6 @@
     "ContentType.Analytical": {
       "description": "Represents analytical content attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "data": {
           "$ref": "#/$defs/data"
@@ -6422,7 +6420,7 @@
         "plotArea": {
           "description": "[Deprecated] Describes the plotArea properties",
           "type": "object",
-          "additionalProperties": false,
+          "deprecated": true,
           "properties": {
             "dataLabel": {
               "$ref": "#/$defs/ContentType.Analytical.DataLabel"
@@ -6434,13 +6432,12 @@
               "$ref": "#/$defs/ContentType.Analytical.AxisText"
             }
           },
-          "deprecated": true
+          "additionalProperties": false
         },
         "title": {
           "description": "[Deprecated] Represents title attributes",
           "deprecated": true,
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "visible": {
               "description": "Represents the visibility state of the title",
@@ -6466,7 +6463,8 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "measureAxis": {
           "description": "[Deprecated] Represents the value set for measure axis",
@@ -6520,8 +6518,6 @@
         },
         "popover": {
           "type": "object",
-          "additionalProperties": false,
-          "description": "Configuration for a popover, which will open while pressing chart points",
           "properties": {
             "active": {
               "description": "Whether the popover is connected to the chart. If it's not it won't open",
@@ -6541,7 +6537,6 @@
               "maxItems": 1,
               "items": {
                 "type": "object",
-                "additionalProperties": false,
                 "properties": {
                   "actions": {
                     "description": "Defines actions that will be triggered when the action button is pressed",
@@ -6554,10 +6549,13 @@
                     "type": "string",
                     "description": "The action button text"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
-          }
+          },
+          "description": "Configuration for a popover, which will open while pressing chart points",
+          "additionalProperties": false
         },
         "tooltips": {
           "description": "Visualize the tooltips that are generated by Viz charts.",
@@ -6571,12 +6569,12 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContentType.List": {
       "description": "Represents list content attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "data": {
           "$ref": "#/$defs/data"
@@ -6609,18 +6607,19 @@
         "group": {
           "$ref": "#/$defs/group"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "closeButton": {
       "description": "[Experimental] Represents attributes of the Close button",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "visible": {
           "description": "[Experimental] Represents the visibility of the Close button",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "visibility": {
       "oneOf": [
@@ -6635,17 +6634,16 @@
     },
     "actionsStrip": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "item": {
           "$ref": "#/$defs/actionsStripItemBindingInfo"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "actionsStripItem": {
       "description": "Attributes of actions strip item",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "actions": {
           "description": "Action(s) which will be executed when button is pressed",
@@ -6762,7 +6760,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "HeaderType": {
       "oneOf": [
@@ -6777,7 +6776,6 @@
     "data": {
       "description": "Represents request and response attributes",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "request": {
           "$ref": "#/$defs/request"
@@ -6820,7 +6818,6 @@
         "mockData": {
           "description": "[Experimental] Mock data attributes",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "request": {
               "$ref": "#/$defs/request"
@@ -6836,28 +6833,29 @@
             "extension": {
               "$ref": "#/$defs/extension"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.ChildCard": {
       "description": "Represents a configuration for a child card",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "manifest"
-      ],
       "properties": {
         "manifest": {
           "description": "The manifest of the child card",
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "manifest"
+      ],
+      "additionalProperties": false
     },
     "Configuration.NoData": {
       "description": "Represents a configuration for a NoData",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "description": "Title shown in the illustrated message of the card",
@@ -6875,22 +6873,22 @@
           "description": "Defines the image predefined from sap.m.IllustratedMessage",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.CSRFToken": {
       "description": "Represents a configuration for a CSRF token",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "data": {
           "$ref": "#/$defs/data"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.Destinations": {
       "description": "Represents a configuration for a cloud platform destination",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "The name of the destination. Use the same name which is used in Cloud Platform",
@@ -6908,12 +6906,12 @@
           "description": "A default url which will be used if there is no Host associated with the card",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.FilterType.ComboBox": {
       "description": "[Experimental] ComboBox filter",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "description": "The type of the filter",
@@ -6964,10 +6962,6 @@
         },
         "item": {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "template"
-          ],
           "properties": {
             "template": {
               "$ref": "#/$defs/Configuration.Filter.ComboBoxItem"
@@ -6978,7 +6972,11 @@
               "default": "/",
               "pattern": "^[a-zA-Z0-9_\\.\\-/|@#]*$"
             }
-          }
+          },
+          "required": [
+            "template"
+          ],
+          "additionalProperties": false
         },
         "group": {
           "$ref": "#/$defs/group"
@@ -6987,12 +6985,12 @@
           "description": "Determines whether the filter is visible",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.FilterType.Search": {
       "description": "Search filter",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "description": "The type of the filter",
@@ -7021,12 +7019,12 @@
           "description": "Determines whether the filter is visible",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.FilterType.DateRange": {
       "description": "Date range filter",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "description": "The type of the filter",
@@ -7049,7 +7047,6 @@
         },
         "value": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "option": {
               "description": "The date range option",
@@ -7058,7 +7055,8 @@
             "values": {
               "type": "array"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "options": {
           "description": "Options that will appear in the dropdown",
@@ -7113,12 +7111,12 @@
           "description": "Determines whether the filter is visible",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.FilterType.Select": {
       "description": "Select filter",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "description": "The type of the filter",
@@ -7168,12 +7166,12 @@
           "description": "Determines whether the filter is visible",
           "$ref": "#/$defs/visibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Configuration.Parameter": {
       "description": "Represents configuration parameter",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "value": {
           "description": "The value of the parameter"
@@ -7190,7 +7188,8 @@
           "description": "Description of the parameter for user-friendly visualization in the design-time editor",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "simpleBinding": {
       "type": "string",
@@ -7198,11 +7197,6 @@
     },
     "definingRequest": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "dataSource",
-        "path"
-      ],
       "properties": {
         "dataSource": {
           "description": "Represents reference to dataSource under sap.app",
@@ -7217,7 +7211,12 @@
           "type": "boolean",
           "default": false
         }
-      }
+      },
+      "required": [
+        "dataSource",
+        "path"
+      ],
+      "additionalProperties": false
     },
     "levelsDef": {
       "description": "Plot area is a parent property which defines multiple other properties for smoothness and marker size",
@@ -7232,7 +7231,6 @@
       ],
       "description": "Represents the card properties is a layout variant",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "col": {
           "description": "Represents the grid column",
@@ -7255,12 +7253,12 @@
           "type": "boolean",
           "default": true
         }
-      }
+      },
+      "additionalProperties": false
     },
     "customActionsSetting": {
       "description": "Represents the properties for the custom actions in the Quick View Cards",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "text": {
           "description": "Text displayed for extended actions in Quick View",
@@ -7280,7 +7278,8 @@
           "description": "Position of extended actions in Quick View",
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "timeAxisDef": {
       "description": "Represents the configuration to customize the time axis",
@@ -7294,7 +7293,6 @@
     "plotAreaDef": {
       "description": "Plot area is a parent property which defines multiple other properties for smoothness and marker size",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "isSmoothed": {
           "description": "Represents whether smoother curves are required or not",
@@ -7308,7 +7306,6 @@
         "dataLabel": {
           "type": "object",
           "description": "dataLabel is a parent property that defines other properties for type",
-          "additionalProperties": false,
           "properties": {
             "type": {
               "description": "Defines whether to display percentage values or actual counts in the donut chart",
@@ -7319,14 +7316,15 @@
               ],
               "default": "value"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "objectStreamCardsSettingsDef": {
       "description": "Represents the Object Stream properties - properties that are passed to the Object Stream cards",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "showFirstActionInFooter": {
           "description": "Represents the flag to show first action in footer of the Quickview cards",
@@ -7341,18 +7339,14 @@
             "$ref": "#/$defs/customActionsSetting"
           }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "defaultSpanDef": {
       "description": "Represents the card default grid size in columns and rows",
       "oneOf": [
         {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "cols",
-            "rows"
-          ],
           "properties": {
             "cols": {
               "description": "Represents the number of the number of grid columns",
@@ -7379,7 +7373,12 @@
               "default": 1,
               "pattern": "^[12]$"
             }
-          }
+          },
+          "required": [
+            "cols",
+            "rows"
+          ],
+          "additionalProperties": false
         },
         {
           "type": "string",
@@ -7392,7 +7391,6 @@
     "tab_setting": {
       "description": "Represents the tab specific properties - properties that are passed to a particular tab in a card",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "annotationPath": {
           "description": "Represents the annotation path",
@@ -7436,7 +7434,6 @@
         "chartProperties": {
           "description": "This property is responsible for setting specific chart settings",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "plotArea": {
               "$ref": "#/$defs/plotAreaDef"
@@ -7444,7 +7441,8 @@
             "timeAxis": {
               "$ref": "#/$defs/timeAxisDef"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "colorPalette": {
           "description": "Represents the configuration to customize the column stacked chart",
@@ -7460,7 +7458,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": true
     },
     "card_setting": {
       "description": "Represents the card specific properties - properties that are passed to the card",
@@ -7468,7 +7467,6 @@
       "required": [
         "title"
       ],
-      "additionalProperties": true,
       "properties": {
         "category": {
           "description": "Represents the category of the card- used in the card header",
@@ -7688,7 +7686,6 @@
         "chartProperties": {
           "description": "This property is responsible for setting specific chart settings",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "plotArea": {
               "$ref": "#/$defs/plotAreaDef"
@@ -7696,7 +7693,8 @@
             "timeAxis": {
               "$ref": "#/$defs/timeAxisDef"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "colorPalette": {
           "description": "Represents the configuration to customize the column stacked chart",
@@ -7712,7 +7710,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": true
     },
     "resizableLayoutVariant": {
       "description": "Represents the resizable layout variant",
@@ -7730,7 +7729,6 @@
       "required": [
         "template"
       ],
-      "additionalProperties": false,
       "properties": {
         "sequencePos": {
           "description": "Represents the position of the card in the sequence",
@@ -7757,7 +7755,8 @@
             "$ref": "#/$defs/tab_setting"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "filterFieldName": {
       "type": "object",
@@ -7790,13 +7789,13 @@
     },
     "refreshStrategies_prop_def": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "entitySets": {
           "description": "Represents the map of entity sets configured for refresh strategies",
           "type": "object"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "displayFormatEnum": {
       "type": "string",
@@ -7815,10 +7814,6 @@
       "oneOf": [
         {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "componentName"
-          ],
           "properties": {
             "componentName": {
               "description": "Represents the name of the component to be loaded inside the canvas",
@@ -7834,14 +7829,14 @@
             "pages": {
               "$ref": "#/$defs/component_pages_def"
             }
-          }
+          },
+          "required": [
+            "componentName"
+          ],
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "componentUsage"
-          ],
           "properties": {
             "componentUsage": {
               "description": "Represents the reference to the name of the componentUsages defined in sap.ui5/componentUsages for the component to be loaded inside the canvas",
@@ -7856,16 +7851,16 @@
             "pages": {
               "$ref": "#/$defs/component_pages_def"
             }
-          }
+          },
+          "required": [
+            "componentUsage"
+          ],
+          "additionalProperties": false
         }
       ]
     },
     "routingSpec_def": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "routeName"
-      ],
       "properties": {
         "routeName": {
           "description": "Represents the name of the route",
@@ -7895,13 +7890,15 @@
           "description": "Name of a semantic key field which can be used to identify an instance of this page. Only relevant if nKey is false.",
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "routeName"
+      ],
+      "additionalProperties": false
     },
     "navigation_def": {
       "description": "Represents ...",
       "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
       "properties": {
         "display": {
           "description": "Represents an action triggered by the user on UI: the navigation to display an object",
@@ -7915,14 +7912,12 @@
           "description": "Represents an action triggered by the user on UI: the navigation to edit an object",
           "$ref": "#/$defs/action_prop_def"
         }
-      }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
     },
     "component_def": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
       "properties": {
         "name": {
           "description": "The name of the component",
@@ -7936,7 +7931,11 @@
         "settings": {
           "$ref": "#/$defs/component_setting_def"
         }
-      }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
     },
     "component_pages_def": {
       "type": "object",
@@ -8050,11 +8049,6 @@
     },
     "action_prop_def": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "path",
-        "target"
-      ],
       "properties": {
         "path": {
           "description": "Represents the path in the manifest to the target to which the navigation is bound",
@@ -8068,14 +8062,15 @@
           "description": "Represents the refresh strategies configured for external display navigation while coming back to the source app",
           "$ref": "#/$defs/refreshStrategies_prop_def"
         }
-      }
+      },
+      "required": [
+        "path",
+        "target"
+      ],
+      "additionalProperties": false
     },
     "pages_map": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "component"
-      ],
       "properties": {
         "navigationProperty": {
           "description": "Represents the navigation property that leads to this page. The navigation links of the previous page (the page that calls this one) are determined through this property ",
@@ -8122,14 +8117,14 @@
             }
           }
         }
-      }
-    },
-    "pages_array": {
-      "type": "object",
-      "additionalProperties": false,
+      },
       "required": [
         "component"
       ],
+      "additionalProperties": false
+    },
+    "pages_array": {
+      "type": "object",
       "properties": {
         "navigationProperty": {
           "description": "Represents the navigation property that leads to this page. The navigation links of the previous page (the page that calls this one) are determined through this property ",
@@ -8173,7 +8168,11 @@
             "$ref": "#/$defs/pages_array"
           }
         }
-      }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": false
     },
     "setting_def": {
       "description": "Represents global settings for the application controller",
@@ -8503,7 +8502,6 @@
     "ui5setting": {
       "description": "Represents UI5-specific settings and configuration options that can be applied to models.",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "defaultBindingMode": {
           "description": "Represents default binding mode and must be a string value from sap.ui.model.BindingMode. Possible values: Default, OneTime, OneWay, TwoWay",
@@ -8559,7 +8557,8 @@
             "$ref": "#/$defs/enhanceWithSetting"
           }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "rootView_def": {
       "description": "Represents the root view definition being either the name of the view or the view definition object",
@@ -8572,7 +8571,6 @@
           "required": [
             "viewName"
           ],
-          "additionalProperties": true,
           "properties": {
             "viewName": {
               "description": "Represents the name of the view",
@@ -8600,7 +8598,8 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": true
         }
       ]
     },
@@ -8641,16 +8640,16 @@
                 "bypassed": {
                   "description": "Represents information about targets to display when no route is matched",
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "target"
-                  ],
                   "properties": {
                     "target": {
                       "description": "Represents one or multiple names of targets that are displayed when no route is matched",
                       "$ref": "#/$defs/routeTarget"
                     }
-                  }
+                  },
+                  "required": [
+                    "target"
+                  ],
+                  "additionalProperties": false
                 }
               }
             },
@@ -8731,7 +8730,6 @@
         "id",
         "viewName"
       ],
-      "additionalProperties": true,
       "properties": {
         "viewName": {
           "description": "Represents the name of the view",
@@ -8759,7 +8757,8 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": true
     },
     "routing_flexEnabled": {
       "description": "Represents the configuration of routing",
@@ -8793,16 +8792,16 @@
                 "bypassed": {
                   "description": "Represents information about targets to display when no route is matched",
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "target"
-                  ],
                   "properties": {
                     "target": {
                       "description": "Represents one or multiple names of targets that are displayed when no route is matched",
                       "$ref": "#/$defs/routeTarget"
                     }
-                  }
+                  },
+                  "required": [
+                    "target"
+                  ],
+                  "additionalProperties": false
                 },
                 "viewPath": {
                   "description": "Represents a prefix that is prepended in front of the viewName",
@@ -8948,27 +8947,6 @@
     },
     "command": {
       "description": "Represents a UI5 shortcut command.",
-      "additionalProperties": false,
-      "type": "object",
-      "properties": {
-        "shortcut": {
-          "description": "A string describing a shortcut key combination that, when used by the user, will trigger the command.",
-          "type": "string",
-          "patternTransformCode": "''.split('').map(function(char) { console.log(char);  if (/[a-z]/i.test(char)) { return `[${char.toUpperCase()}${char.toLowerCase()}]`; } else { return char; } } ).join('')",
-          "patternFromRuntime": "^((Ctrl|Shift|Alt)(\\+)?){0,3}([A-Za-z0-9\\.,\\-\\*\\/=]|Plus|Tab|Space|Enter|Backspace|Home|Delete|End|Pageup|Pagedown|Escape|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|F[1-9]|F1[0-2])$",
-          "pattern": "^(([Cc][Tt][Rr][Ll]|[Ss][Hh][Ii][Ff][Tt]|[Aa][Ll][Tt])(\\+)?){0,3}([A-Za-z0-9\\.,\\-\\*\\/=]|[Pp][Ll][Uu][Ss]|[Tt][Aa][Bb]|[Ss][Pp][Aa][Cc][Ee]|[Ee][Nn][Tt][Ee][Rr]|[Bb][Aa][Cc][Kk][Ss][Pp][Aa][Cc][Ee]|[Hh][Oo][Mm][Ee]|[Dd][Ee][Ll][Ee][Tt][Ee]|[Ee][Nn][Dd]|[Pp][Aa][Gg][Ee][Uu][Pp]|[Pp][Aa][Gg][Ee][Dd][Oo][Ww][Nn]|[Ee][Ss][Cc][Aa][Pp][Ee]|[Aa][Rr][Rr][Oo][Ww][Uu][Pp]|[Aa][Rr][Rr][Oo][Ww][Dd][Oo][Ww][Nn]|[Aa][Rr][Rr][Oo][Ww][Ll][Ee][Ff][Tt]|[Aa][Rr][Rr][Oo][Ww][Rr][Ii][Gg][Hh][Tt]|F[1-9]|F1[0-2])$"
-        },
-        "ref": {
-          "description": "A string referencing a predefined shortcut command. Must start with 'sap:'.",
-          "type": "string",
-          "pattern": "^sap:[a-zA-Z0-9_-]+$"
-        },
-        "description": {
-          "description": "A string containing a placeholder that follows the format {{someKey}}.",
-          "type": "string",
-          "pattern": "^\\{\\{[a-zA-Z0-9_]+\\}\\}$"
-        }
-      },
       "oneOf": [
         {
           "required": [
@@ -8990,7 +8968,28 @@
             ]
           }
         }
-      ]
+      ],
+      "type": "object",
+      "properties": {
+        "shortcut": {
+          "description": "A string describing a shortcut key combination that, when used by the user, will trigger the command.",
+          "type": "string",
+          "patternTransformCode": "''.split('').map(function(char) { console.log(char);  if (/[a-z]/i.test(char)) { return `[${char.toUpperCase()}${char.toLowerCase()}]`; } else { return char; } } ).join('')",
+          "patternFromRuntime": "^((Ctrl|Shift|Alt)(\\+)?){0,3}([A-Za-z0-9\\.,\\-\\*\\/=]|Plus|Tab|Space|Enter|Backspace|Home|Delete|End|Pageup|Pagedown|Escape|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|F[1-9]|F1[0-2])$",
+          "pattern": "^(([Cc][Tt][Rr][Ll]|[Ss][Hh][Ii][Ff][Tt]|[Aa][Ll][Tt])(\\+)?){0,3}([A-Za-z0-9\\.,\\-\\*\\/=]|[Pp][Ll][Uu][Ss]|[Tt][Aa][Bb]|[Ss][Pp][Aa][Cc][Ee]|[Ee][Nn][Tt][Ee][Rr]|[Bb][Aa][Cc][Kk][Ss][Pp][Aa][Cc][Ee]|[Hh][Oo][Mm][Ee]|[Dd][Ee][Ll][Ee][Tt][Ee]|[Ee][Nn][Dd]|[Pp][Aa][Gg][Ee][Uu][Pp]|[Pp][Aa][Gg][Ee][Dd][Oo][Ww][Nn]|[Ee][Ss][Cc][Aa][Pp][Ee]|[Aa][Rr][Rr][Oo][Ww][Uu][Pp]|[Aa][Rr][Rr][Oo][Ww][Dd][Oo][Ww][Nn]|[Aa][Rr][Rr][Oo][Ww][Ll][Ee][Ff][Tt]|[Aa][Rr][Rr][Oo][Ww][Rr][Ii][Gg][Hh][Tt]|F[1-9]|F1[0-2])$"
+        },
+        "ref": {
+          "description": "A string referencing a predefined shortcut command. Must start with 'sap:'.",
+          "type": "string",
+          "pattern": "^sap:[a-zA-Z0-9_-]+$"
+        },
+        "description": {
+          "description": "A string containing a placeholder that follows the format {{someKey}}.",
+          "type": "string",
+          "pattern": "^\\{\\{[a-zA-Z0-9_]+\\}\\}$"
+        }
+      },
+      "additionalProperties": false
     },
     "booleanOrString": {
       "oneOf": [
@@ -9005,10 +9004,6 @@
     "enhanceWithSetting_0": {
       "oneOf": [
         {
-          "additionalProperties": false,
-          "required": [
-            "bundleUrl"
-          ],
           "properties": {
             "bundleUrl": {
               "description": "Represents property url for model enhancement",
@@ -9041,13 +9036,16 @@
               }
             }
           },
+          "required": [
+            "bundleUrl"
+          ],
+          "additionalProperties": false,
           "type": "object"
         },
         {
           "required": [
             "bundleName"
           ],
-          "additionalProperties": false,
           "properties": {
             "bundleName": {
               "description": "Represents the alternative for bundleUrl",
@@ -9071,6 +9069,7 @@
               }
             }
           },
+          "additionalProperties": false,
           "type": "object"
         }
       ]
@@ -9078,10 +9077,6 @@
     "terminologySetting": {
       "oneOf": [
         {
-          "additionalProperties": false,
-          "required": [
-            "bundleName"
-          ],
           "properties": {
             "bundleName": {
               "description": "Represents the alternative for bundleUrl",
@@ -9092,13 +9087,13 @@
               "type": "array"
             }
           },
+          "required": [
+            "bundleName"
+          ],
+          "additionalProperties": false,
           "type": "object"
         },
         {
-          "additionalProperties": false,
-          "required": [
-            "bundleUrl"
-          ],
           "properties": {
             "bundleUrl": {
               "description": "Represents the URL for the resource bundle",
@@ -9118,6 +9113,10 @@
               "type": "array"
             }
           },
+          "required": [
+            "bundleUrl"
+          ],
+          "additionalProperties": false,
           "type": "object"
         }
       ]
@@ -9128,7 +9127,6 @@
       "required": [
         "factoryName"
       ],
-      "additionalProperties": true,
       "properties": {
         "factoryName": {
           "description": "Represents the name of the service factory ",
@@ -9140,7 +9138,8 @@
           "type": "boolean",
           "default": false
         }
-      }
+      },
+      "additionalProperties": true
     },
     "version": {
       "type": "string"
@@ -9178,7 +9177,6 @@
     "model": {
       "description": "Represents sapui5 model name",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "description": "Represents model class name",
@@ -9200,7 +9198,8 @@
         "settings": {
           "$ref": "#/$defs/ui5setting"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "component": {
       "description": "Represents sapui5 component name",
@@ -9251,7 +9250,6 @@
       "required": [
         "name"
       ],
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "Represents name of reuse component",
@@ -9271,7 +9269,8 @@
           "type": "boolean",
           "default": true
         }
-      }
+      },
+      "additionalProperties": false
     },
     "resource": {
       "description": "Represents additional resources that need to be loaded for the component",
@@ -9316,7 +9315,6 @@
     "deviceType_0": {
       "type": "object",
       "description": "Represents device types on which the app is running",
-      "additionalProperties": false,
       "properties": {
         "desktop": {
           "description": "Represents indicator whether desktop device is supported, default true",
@@ -9330,7 +9328,8 @@
           "description": "Represents indicator whether phone device is supported, default true",
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "signature_def": {
       "description": "Represents signature for inbound targets ",
@@ -9339,7 +9338,6 @@
         "parameters",
         "additionalParameters"
       ],
-      "additionalProperties": false,
       "properties": {
         "parameters": {
           "type": "object",
@@ -9347,29 +9345,10 @@
           "patternProperties": {
             "^[\\w\\.\\-\\/]+$": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "defaultValue": {
                   "type": "object",
                   "description": " Represents a default Value",
-                  "additionalProperties": false,
-                  "required": [
-                    "value"
-                  ],
-                  "properties": {
-                    "value": {
-                      "description": "Represents a depending on format either a verbatim default value or a reference",
-                      "type": "string"
-                    },
-                    "format": {
-                      "description": "Indicates how 'value' is to be interpreted: ('plain': the 'value' is taken as a literal string value| 'reference': the 'value' is a reference to e.g. a UserDefault parameter (e.g. 'UserDefault.CostCenter'), the resolved parameter value is used)",
-                      "type": "string",
-                      "enum": [
-                        "plain",
-                        "reference"
-                      ]
-                    }
-                  },
                   "anyOf": [
                     {
                       "properties": {
@@ -9411,15 +9390,29 @@
                       },
                       "type": "object"
                     }
-                  ]
+                  ],
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "description": "Represents a depending on format either a verbatim default value or a reference",
+                      "type": "string"
+                    },
+                    "format": {
+                      "description": "Indicates how 'value' is to be interpreted: ('plain': the 'value' is taken as a literal string value| 'reference': the 'value' is a reference to e.g. a UserDefault parameter (e.g. 'UserDefault.CostCenter'), the resolved parameter value is used)",
+                      "type": "string",
+                      "enum": [
+                        "plain",
+                        "reference"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
                 },
                 "filter": {
                   "description": "Represents a filter , only if input parameter matches filter",
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "value"
-                  ],
                   "properties": {
                     "value": {
                       "description": "Represents a depending on format either a verbatim filter value, a regular expression or a reference",
@@ -9434,12 +9427,15 @@
                         "reference"
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "value"
+                  ],
+                  "additionalProperties": false
                 },
                 "launcherValue": {
                   "type": "object",
                   "description": " Represents a value to be used when creating a tile intent for this inbound",
-                  "additionalProperties": false,
                   "properties": {
                     "value": {
                       "oneOf": [
@@ -9469,7 +9465,8 @@
                       "type": "boolean",
                       "deprecated": true
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "required": {
                   "type": "boolean"
@@ -9478,7 +9475,8 @@
                   "description": "Represents the parameter name in legacy ABAP application, e.g. 'RF05L-BUKRS' for parameter 'CompanyCode'",
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
         },
@@ -9491,12 +9489,12 @@
             "notallowed"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "deviceType": {
       "type": "object",
       "description": "Represents device types on which the app is running",
-      "additionalProperties": false,
       "properties": {
         "desktop": {
           "description": "Represents indicator whether desktop device is supported",
@@ -9510,7 +9508,8 @@
           "description": "Represents indicator whether phone device is supported",
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "objectType": {
       "type": "string",
@@ -9529,11 +9528,6 @@
     },
     "dataSourceCustom": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "uri",
-        "customType"
-      ],
       "properties": {
         "uri": {
           "description": "Represents the uri of the data source, should always be given in lower case",
@@ -9567,14 +9561,15 @@
             true
           ]
         }
-      }
+      },
+      "required": [
+        "uri",
+        "customType"
+      ],
+      "additionalProperties": false
     },
     "dataSourceEnum": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "uri"
-      ],
       "properties": {
         "uri": {
           "description": "Represents uri of the data source",
@@ -9605,11 +9600,14 @@
             false
           ]
         }
-      }
+      },
+      "required": [
+        "uri"
+      ],
+      "additionalProperties": false
     },
     "setting": {
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "odataVersion": {
           "description": "Represents version of OData: 2.0 is default",
@@ -9656,18 +9654,19 @@
                 "type": "string"
               }
             },
-            "additionalProperties": false,
             "required": [
               "objectName",
               "objectType"
-            ]
+            ],
+            "additionalProperties": false
           }
         },
         "ignoreAnnotationsFromMetadata": {
           "description": "Indicates whether annotations from metadata should be ignored",
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "outbound": {
       "type": "object",
@@ -9675,11 +9674,6 @@
       "patternProperties": {
         "^[\\w\\.\\-]+$": {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "semanticObject",
-            "action"
-          ],
           "properties": {
             "semanticObject": {
               "description": "Represents a business entity (e.g., 'Employee')",
@@ -9707,12 +9701,10 @@
               "patternProperties": {
                 "^[\\w\\.\\-\\/]+$": {
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "value": {
                       "type": "object",
                       "description": "Describes parameters of navigation intents generated or triggered by the application",
-                      "additionalProperties": false,
                       "properties": {
                         "value": {
                           "description": "Represents a verbatim value (when 'plain' format is used), a pattern (when 'regexp' format is used), a value coming from a UI5 model (when 'binding' format is used), or a User Default reference (when 'reference' format is used)",
@@ -9728,16 +9720,23 @@
                             "binding"
                           ]
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     "required": {
                       "type": "boolean"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               }
             }
-          }
+          },
+          "required": [
+            "semanticObject",
+            "action"
+          ],
+          "additionalProperties": false
         }
       }
     },
@@ -9747,11 +9746,6 @@
       "patternProperties": {
         "^[\\w\\.\\-]+$": {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "semanticObject",
-            "action"
-          ],
           "properties": {
             "semanticObject": {
               "description": "Represents semantic object",
@@ -9839,16 +9833,17 @@
             "signature": {
               "$ref": "#/$defs/signature_def"
             }
-          }
+          },
+          "required": [
+            "semanticObject",
+            "action"
+          ],
+          "additionalProperties": false
         }
       }
     },
     "openSource": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
       "properties": {
         "name": {
           "description": "Represents a name of the open source as appears on the web",
@@ -9862,7 +9857,11 @@
           "description": "Indicates, whether it is part of the app or not",
           "type": "boolean"
         }
-      }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
     },
     "dataSource": {
       "oneOf": [
@@ -9888,10 +9887,6 @@
     "enhanceWithSetting": {
       "oneOf": [
         {
-          "additionalProperties": false,
-          "required": [
-            "bundleUrl"
-          ],
           "properties": {
             "bundleUrl": {
               "description": "Represents property url for model enhancement",
@@ -9925,13 +9920,16 @@
               }
             }
           },
+          "required": [
+            "bundleUrl"
+          ],
+          "additionalProperties": false,
           "type": "object"
         },
         {
           "required": [
             "bundleName"
           ],
-          "additionalProperties": false,
           "properties": {
             "bundleName": {
               "description": "Represents the alternative for bundleUrl",
@@ -9956,6 +9954,7 @@
               }
             }
           },
+          "additionalProperties": false,
           "type": "object"
         }
       ]

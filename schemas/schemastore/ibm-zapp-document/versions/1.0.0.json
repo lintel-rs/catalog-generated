@@ -23,7 +23,6 @@
       "required": [
         "name"
       ],
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "The name of the Z Project.",
@@ -124,14 +123,11 @@
           },
           "minItems": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "propertyGroupItem": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
       "properties": {
         "name": {
           "type": "string",
@@ -164,16 +160,14 @@
           },
           "minItems": 1
         }
-      }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
     },
     "libraryItem": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name",
-        "type",
-        "locations"
-      ],
       "properties": {
         "name": {
           "type": "string",
@@ -209,7 +203,13 @@
             "USER1.SAMPLE.COBCOPY"
           ]
         }
-      }
+      },
+      "required": [
+        "name",
+        "type",
+        "locations"
+      ],
+      "additionalProperties": false
     },
     "person": {
       "description": "A person who has been involved in creating or maintaining this package",
@@ -237,7 +237,50 @@
     "profile": {
       "type": "object",
       "description": "Profiles are additional groups of properties that should only should become valid under specific conditions such as running in a build job or as part of a debug session.",
-      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "name",
+            "type",
+            "settings"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "const": "dbb",
+              "type": "string"
+            },
+            "settings": {
+              "$ref": "#/$defs/dbbSettingsItem"
+            }
+          },
+          "additionalProperties": false,
+          "type": "object"
+        },
+        {
+          "required": [
+            "name",
+            "type",
+            "settings"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "const": "rseapi",
+              "type": "string"
+            },
+            "settings": {
+              "$ref": "#/$defs/rseapiSettingsItem"
+            }
+          },
+          "additionalProperties": false,
+          "type": "object"
+        }
+      ],
       "required": [
         "name",
         "type"
@@ -269,59 +312,10 @@
           "type": "object"
         }
       },
-      "anyOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "settings"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "type": {
-              "const": "dbb",
-              "type": "string"
-            },
-            "settings": {
-              "$ref": "#/$defs/dbbSettingsItem"
-            }
-          },
-          "type": "object"
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "settings"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "type": {
-              "const": "rseapi",
-              "type": "string"
-            },
-            "settings": {
-              "$ref": "#/$defs/rseapiSettingsItem"
-            }
-          },
-          "type": "object"
-        }
-      ]
+      "additionalProperties": false
     },
     "dbbSettingsItem": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "application",
-        "command"
-      ],
-      "description": "DBB build script properties for running User Build on remote host.",
       "properties": {
         "application": {
           "type": "string",
@@ -356,16 +350,16 @@
           },
           "description": "Lists of GLOB patterns that define the files that should be downloaded from USS after the build. Relative path names are interpreted relative to the DBB log directory user setting. If not provided then all files of the user setting location will be downloaded."
         }
-      }
+      },
+      "required": [
+        "application",
+        "command"
+      ],
+      "description": "DBB build script properties for running User Build on remote host.",
+      "additionalProperties": false
     },
     "rseapiSettingsItem": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "RSE API client settings for interactions with a z/OS remote host running an RSE API server.",
-      "required": [
-        "mappings",
-        "default.encoding"
-      ],
       "properties": {
         "mappings": {
           "type": "array",
@@ -378,12 +372,16 @@
           "type": "string",
           "description": "The encoding to be used when no mapping can be found. If not provided then either the user or server default will be used."
         }
-      }
+      },
+      "description": "RSE API client settings for interactions with a z/OS remote host running an RSE API server.",
+      "required": [
+        "mappings",
+        "default.encoding"
+      ],
+      "additionalProperties": false
     },
     "rseapiSettingsItemMapping": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "One mapping that contains at least transfer and resource values.",
       "properties": {
         "extension": {
           "type": "string",
@@ -409,8 +407,6 @@
           "type": "array",
           "items": {
             "type": "object",
-            "additionalProperties": false,
-            "description": "One member mapping that contains at least transfer and resource values.",
             "properties": {
               "extension": {
                 "type": "string",
@@ -432,11 +428,15 @@
                 "type": "string",
                 "description": "The data set member name to be mapped to. Can use a wildcard such as '**CPY'."
               }
-            }
+            },
+            "description": "One member mapping that contains at least transfer and resource values.",
+            "additionalProperties": false
           },
           "description": "A nested mappings array with resource mappings to members of the data sets that were mapped by the parent mapping."
         }
-      }
+      },
+      "description": "One mapping that contains at least transfer and resource values.",
+      "additionalProperties": false
     }
   },
   "anyOf": [

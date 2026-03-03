@@ -6,7 +6,6 @@
   "x-lintel": {
     "source": "https://www.schemastore.org/webextension.json",
     "sourceSha256": "c52f09963903daa7f6495465d522208f41ac8270863263679542bbbbfb17c02d",
-    "invalid": true,
     "fileMatch": [
       "manifest.json"
     ],
@@ -24,7 +23,6 @@
       "title": "background script inclusions",
       "description": "Use the background key to include one or more background scripts, a background page, or a Service worker in your extension.\n\nBackground scripts are the place to put code that needs to maintain a long-term state or perform long-term operations independently of the lifetime of any particular web pages or browser windows.\n\nBackground scripts are loaded as soon as the extension is loaded and stay loaded until the extension is disabled or uninstalled unless persistent is specified as false. You can use any WebExtension APIs in the script if you have requested the necessary permissions.\n\nSee Background scripts for some more details.\n\nThe background key is an object that must have one of these properties (for more information on how these properties are supported, see Browser support)\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/background>",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "page": {
           "description": " If you need specific content in the background page, you can define a page using the page property. This is a String representing a path relative to the manifest.json file to an HTML document included in your extension bundle.\n\nIf you use this property, you can not specify background scripts using scripts, but you can include scripts from the page, just like a normal web page.",
@@ -53,13 +51,13 @@
             "module"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "browser_specific_settings": {
       "title": "browser specific settings",
       "description": "The browser_specific_settings key contains keys that are specific to a particular host application.",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "gecko": {
           "$ref": "#/$defs/gecko_version_support",
@@ -90,13 +88,13 @@
           "description": "Specific for Safari and Safari on IOS",
           "type": "object"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "chrome_settings_overrides": {
       "title": "browser home page",
       "description": "Use the chrome_settings_overrides key to override the browser's home page and add a new search engine.\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides>",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "homepage": {
           "description": "Defines the page to be used as the browser's homepage.\n\nThe replacement is given as a URL. The URL may:\n- point to a file bundled with the extension, in which case it is given as a URL relative to the manifest.json file\n- be a remote URL, such as \"<https://developer.mozilla.org/>\".\n\nIf two or more extensions both set this value, then the setting from the most recently installed one will take precedence.\n\nTo override new tabs, use \"chrome_url_overrides\" instead.\n\nThis is a localizable property.",
@@ -107,11 +105,6 @@
           "title": "search providers",
           "description": "Defines a search provider to add to the browser.\n\nIn the URLs you supply, use \"{searchTerms}\" to interpolate the search term into the URL, like: <https://www.discogs.com/search/?q={searchTerms}>. You can also provide POST parameters to be sent along with the search.\n\nThe search provider will be presented to the user alongside the built-in providers.\n\nAll string properties are localizable.",
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "name",
-            "search_url"
-          ],
           "properties": {
             "name": {
               "description": "The search engine's name, displayed to the user.",
@@ -182,15 +175,20 @@
               "description": "POST parameters to send to suggest_url.",
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "name",
+            "search_url"
+          ],
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "chrome_url_overrides": {
       "title": "custom special pages",
       "description": "Use the chrome_url_overrides key to provide a custom replacement for the documents loaded into various special pages usually provided by the browser itself.\n\nThe replacements are given as a URL to an HTML file. The file must be bundled with the extension: you can't specify a remote URL here. You can specify it relative to the extension's root folder, like: \"path/to/newtab.html\".\n\nThe document can load CSS and JavaScript, just like a normal web page. JavaScript running in the page gets access to the same privileged \"browser.*\" APIs as the extension's background script.\n\nIf two or more extensions both define custom new tab pages, then the last one to be installed or enabled gets to use its value.\n\nAll properties are localizable.\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_url_overrides>",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "bookmarks": {
           "description": "Provide a replacement for the page that shows the bookmarks.",
@@ -207,7 +205,8 @@
           "type": "string",
           "format": "uri-reference"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "commands": {
       "title": "keyboard shortcuts",
@@ -243,7 +242,6 @@
         "required": [
           "matches"
         ],
-        "additionalProperties": false,
         "properties": {
           "matches": {
             "description": "Specifies which pages this content script will be injected into.<br>There are other optional keys including and excluding.<br>In summary: Match the `matches` property, AND match the `include_globs` property, if present, AND NOT match the `exclude_matches` property, if present, AND NOT match the `exclude_globs` property, if present",
@@ -319,7 +317,8 @@
               "MAIN"
             ]
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "content_security_policy": {
@@ -331,10 +330,6 @@
       "title": "declarative net request rulesets",
       "description": "Specify static rulesets for use with declarativeNetRequest.<br><br><https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/declarative_net_request>",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "rule_resources"
-      ],
       "properties": {
         "rule_resources": {
           "description": "An array of rulesets",
@@ -344,12 +339,6 @@
             "title": "ruleset",
             "description": "Definition of a ruleset",
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "id",
-              "enabled",
-              "path"
-            ],
             "properties": {
               "id": {
                 "description": "A non-empty string uniquely identifying the ruleset. IDs beginning with '_' are reserved for internal use.",
@@ -365,10 +354,20 @@
                 "type": "string",
                 "format": "uri-reference"
               }
-            }
+            },
+            "required": [
+              "id",
+              "enabled",
+              "path"
+            ],
+            "additionalProperties": false
           }
         }
-      }
+      },
+      "required": [
+        "rule_resources"
+      ],
+      "additionalProperties": false
     },
     "default_locale": {
       "description": "This key must be present if the extension contains the _locales directory, and must be absent otherwise. It identifies a subdirectory of _locales, and this subdirectory will be used to find the default strings for your extension.<br><br><https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/default_locale>",
@@ -383,7 +382,6 @@
       "title": "developer information",
       "description": "The name of the extension's developer and their homepage URL, intended for display in the browser's user interface.<br>This object only allows for a single developer name and URL to be specified.<br><br><https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/developer>",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "Overrides the `author` key",
@@ -394,7 +392,8 @@
           "type": "string",
           "format": "uri"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "devtools_page": {
       "description": "Use this key to enable your extension to extend the browser's built-in devtools.<br>This key is defined as a URL to an HTML file. The HTML file must be bundled with the extension, and the URL is relative to the extension's root.<br>The use of this manifest key triggers an install-time permission warning about devtools. To avoid an install-time permission warning, mark the feature as optional by listing the \"devtools\" permission in the optional_permissions manifest key.<br><br><https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/devtools_page>",
@@ -405,18 +404,17 @@
       "title": "localization",
       "description": "The dictionaries key specifies the locale_code for which your extension supplies a dictionary (like `en-US`).<br>If you use the dictionaries key, you must also set an ID for your extension using the browser_specific_settings manifest.json key.<br><br><https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/dictionaries>",
       "type": "object",
-      "additionalProperties": false,
       "propertyNames": {
         "description": "Although the dictionary consists of two files, one with a .dic and one with an .aff file extension, only the one with the .dic extension is referenced. The reference is relative to the manifest.json",
         "type": "string",
         "format": "uri-reference"
-      }
+      },
+      "additionalProperties": false
     },
     "externally_connectable": {
       "title": "external extension API",
       "description": "Externally connectable controls which other extensions and web pages can communicate with an extension using runtime.connect() and runtime.sendMessage() message passing. If externally_connectable is not specified, all extensions can communicate with each other but not with web pages.<br><br>Note: For communication with web pages:<br>In Chrome, chrome.runtime.connect and chrome.runtime.sendMessage are used. These methods are only available when there is at least one extension listening for messages, see chrome.runtime will no longer be defined unconditionally in Chrome 106 for more details.<br>In Safari, browser.runtime.connect and browser.runtime.sendMessage are used.<br>In Firefox, neither API is supported. See Firefox bug 1319168.<br><br><https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/externally_connectable>",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "ids": {
           "description": "Enables communication between this extension and other installed extensions specified by extension identifiers. Use the pattern \"*\" to communicate with all extensions.",
@@ -433,7 +431,8 @@
             "format": "regex"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "homepage_url": {
       "description": "URL for the extension's home page.<br>If a developer key containing the \"url\" property and \"homepage_url\" are defined, Firefox uses \"developer.url\" while Opera uses \"homepage_url\". Chrome and Safari do not support the \"developer\" key.<br>This is a localizable property.<br><br><https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/homepage_url>",
@@ -480,16 +479,16 @@
       "title": "keywords",
       "description": "Use the omnibox key to define an omnibox keyword for your extension.\n\nWhen the user types this keyword into the browser's address bar, followed by a space, then any subsequent characters will be sent to the extension using the omnibox API. The extension will then be able to populate the address bar's drop-down suggestions list with its own suggestions.\n\nIf two or more extensions define the same keyword, then the extension that was installed last gets to control the keyword. Any previously installed extensions that defined the same keyword will no longer be able to use the omnibox API.\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/omnibox>",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "keyword"
-      ],
       "properties": {
         "keyword": {
           "description": "The keyword that will trigger your extension.",
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "keyword"
+      ],
+      "additionalProperties": false
     },
     "optional_permissions": {
       "description": "Use the optional_permissions key to list permissions which you want to ask for at runtime, after your add-on has been installed.\nThe key can contain two kinds of permissions: host permissions and API permissions.\nNot all permissions are compatible with all browsers\nSome are granted silently, without user prompt\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/optional_permissions>",
@@ -555,10 +554,6 @@
       "title": "options page",
       "description": "Use the options_ui key to define an options page for your extension.\n\nThe options page contains settings for the extension. The user can access it from the browser's add-ons manager, and you can open it from within your extension using runtime.openOptionsPage().\n\nYou specify options_ui as a path to an HTML file packaged with your extension. The HTML file can include CSS and JavaScript files, just like a normal web page. Unlike a normal page, though, the JavaScript can use all the WebExtension APIs that the extension has permissions for. However, it runs in a different scope than your background scripts.\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_ui>",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "page"
-      ],
       "properties": {
         "page": {
           "description": "The path to an HTML file containing the specification of your options page.\n\nThe path is relative to the location of manifest.json itself.",
@@ -573,7 +568,11 @@
           "type": "boolean",
           "description": "If true, the options page will open in a normal browser tab, rather than being integrated into the browser's add-ons manager."
         }
-      }
+      },
+      "required": [
+        "page"
+      ],
+      "additionalProperties": false
     },
     "page_action": {
       "$ref": "#/$defs/common_action",
@@ -675,12 +674,6 @@
         "title": "protocol handler",
         "description": "A protocol handler specification",
         "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "protocol",
-          "name",
-          "uriTemplate"
-        ],
         "properties": {
           "protocol": {
             "description": "A string defining the protocol. It can either be one of the predefined protocols, or a custom name prefixed with \"web+\" or \"ext+\". For example: \"web+foo\" or \"ext+foo\". The custom name must consist only of lower-case ASCII characters. It's recommended that extensions use the \"ext+\" form.",
@@ -732,7 +725,13 @@
             "description": "A string representing the URL of the handler. This string must include \"%s\" as a placeholder: this will be replaced with the escaped URL of the document to be handled. This URL might be a true URL, or it could be a phone number, email address, or so forth. This is a localizable property.",
             "pattern": "%s"
           }
-        }
+        },
+        "required": [
+          "protocol",
+          "name",
+          "uriTemplate"
+        ],
+        "additionalProperties": false
       }
     },
     "short_name": {
@@ -743,10 +742,6 @@
       "title": "sidebar page",
       "description": "A sidebar is a pane that is displayed at the left-hand side of the browser window, next to the web page. The browser provides a UI that enables the user to see the currently available sidebars and to select a sidebar to display.\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/sidebar_action>",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "default_panel"
-      ],
       "properties": {
         "default_icon": {
           "$ref": "#/$defs/icon"
@@ -767,35 +762,37 @@
         "browser_style": {
           "$ref": "#/$defs/browser_style"
         }
-      }
+      },
+      "required": [
+        "default_panel"
+      ],
+      "additionalProperties": false
     },
     "storage": {
       "title": "storage policies",
       "description": "Use the storage key to specify the name of the schema file that defines the structure of data in managed storage.\n\nManaged data declares the enterprise policies supported by the app. Policies are analogous to options but are configured by a system administrator instead of the user, enabling the app to be configured for all users of an organization.\n\nAfter declaring the policies, they are read from the storage.managed API. However, if a policy value does not conform to the schema, then it is not published by the storage.managed API. It's up to the app to enforce the policies configured by the administrator.\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/storage>",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "managed_schema"
-      ],
       "properties": {
         "managed_schema": {
           "description": "The full path of the file within the extension that defines the schema of the manage storage.",
           "type": "string",
           "format": "uri-reference"
         }
-      }
+      },
+      "required": [
+        "managed_schema"
+      ],
+      "additionalProperties": false
     },
     "theme": {
       "title": "theme",
       "description": "Use the theme key to define a static theme to apply to Firefox.\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme>",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "images": {
           "title": "images",
           "description": "Represents the images to display in various parts of the browser.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "theme_frame": {
               "description": "The URL of a foreground image to be added to the header area and anchored to the upper right corner of the header area.",
@@ -810,13 +807,13 @@
                 "format": "uri-reference"
               }
             }
-          }
+          },
+          "additionalProperties": false
         },
         "colors": {
           "title": "colors",
           "description": "Represents the colors of various parts of the browser.\n\nThese properties define the colors used for different parts of the browser. How these properties affect the Firefox UI can be seen at <https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme#colors>.\n\nAll these properties can be specified as either a string containing any valid CSS color string including hexadecimal (see <https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)>, or an RGB array\n\nNote: Where a component is affected by multiple color properties, the properties are listed in order of precedence.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "bookmark_text": {
               "$ref": "#/$defs/color",
@@ -978,13 +975,13 @@
               "$ref": "#/$defs/color",
               "description": "The color of the separator in the bookmarks toolbar."
             }
-          }
+          },
+          "additionalProperties": false
         },
         "properties": {
           "title": "properties",
           "description": "Affects how the \"additional_backgrounds\" images are displayed and color schemes are applied.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "additional_backgrounds_alignment": {
               "description": "An array of enumeration values defining the alignment of the corresponding \"additional_backgrounds\": array item.",
@@ -1052,23 +1049,24 @@
                 ]
               }
             }
-          }
-        },
-        "type": "object"
-      }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     },
     "user_scripts": {
       "title": "user scripts",
       "description": "Instructs the browser to load a script packaged in the extension, known as the API script, this script is used to export a set of custom API methods for use in user scripts.\n\nNote: The user_script key is required for the userScripts API to function, even if no API script is specified.\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/user_scripts>",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "api_script": {
           "description": "The API script:\n- runs in the content processes.\n- has access to the window and document globals related to the webpage it is attached to.\n- has access to the same subset of WebExtension APIs usually available in a content script.\n\nThe script executes automatically on any webpage defined in matches by userScripts.register. However, this is before the user script sandbox object is created and the custom API methods can be exported.\n\nTo export the custom API methods, the script listens for userScripts.onBeforeScript and then export the custom API methods.\n\nNot every user script may need to consume all of the custom API methods. You can, therefore, include details of the APIs needed in scriptMetadata when running userScripts.register. The API script then accesses the scriptMetadata through the script parameter received by the userScripts.onBeforeScript listener (as script.metadata).",
           "type": "string",
           "format": "uri-reference"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "version": {
       "description": "The version string for the extension.\n\nThe version string consists of 1 to 4 numbers separated by dots, for example, 1.2.3.4. Non-zero numbers must not include a leading zero.\n\nExtension stores and browsers may enforce or warn if the version string doesn't comply with this format. They may also apply restrictions to the range of numbers available.\n\n<https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/version>",
@@ -1125,6 +1123,7 @@
     },
     "type": "object"
   },
+  "additionalProperties": true,
   "$defs": {
     "action": {
       "$ref": "#/$defs/common_action",
@@ -1147,12 +1146,6 @@
           "items": {
             "title": "theme icon",
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "dark",
-              "light",
-              "size"
-            ],
             "properties": {
               "dark": {
                 "description": "A URL pointing to an icon. This icon displays when a theme using dark text is active (such as the Firefox Light theme, and the Default theme if no default_icon is specified).\n\nIcons are specified as URLs relative to the manifest.json file.",
@@ -1172,7 +1165,13 @@
                   32
                 ]
               }
-            }
+            },
+            "required": [
+              "dark",
+              "light",
+              "size"
+            ],
+            "additionalProperties": false
           }
         }
       }
@@ -1203,7 +1202,6 @@
     },
     "command": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "description": {
           "description": "A description of the shortcut; i.e. what it does",
@@ -1212,7 +1210,6 @@
         "suggested_key": {
           "description": "The value of each property is the keyboard shortcut for the command on that platform, as a string containing keys separated by \"+\". The value for \"default\" is used on all platforms that are not explicitly listed.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "default": {
               "$ref": "#/$defs/command_shortcut"
@@ -1235,9 +1232,11 @@
             "ios": {
               "$ref": "#/$defs/command_shortcut"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "command_shortcut": {
       "$comment": "The two modifiers cannot be the same, but that is not validated due to it being inherently obvious and for the sake of the readability of the regex",
@@ -1289,14 +1288,14 @@
         "string",
         "object"
       ],
+      "format": "uri-reference",
       "additionalProperties": false,
       "patternProperties": {
         "^[1-9]\\d+$": {
           "type": "string",
           "format": "uri-reference"
         }
-      },
-      "format": "uri-reference"
+      }
     },
     "match_pattern": {
       "type": "string",
@@ -1315,7 +1314,6 @@
       }
     }
   },
-  "additionalProperties": true,
   "else": {
     "properties": {
       "action": {

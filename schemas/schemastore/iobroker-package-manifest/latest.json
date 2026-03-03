@@ -29,7 +29,16 @@
         "mode",
         "licenseInformation"
       ],
-      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "$ref": "#/$defs/isCompactTrue"
+          },
+          "then": {
+            "$ref": "#/$defs/disallowNodeProcessParams"
+          }
+        }
+      ],
       "description": "Contains all common instance attributes",
       "type": "object",
       "properties": {
@@ -63,12 +72,12 @@
           "type": "object",
           "minProperties": 1,
           "maxProperties": 20,
+          "additionalProperties": false,
           "patternProperties": {
             "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$": {
               "$ref": "#/$defs/multilingual"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "desc": {
           "description": "Description, object for multilingual description",
@@ -88,7 +97,6 @@
         "supportedMessages": {
           "description": "Object which defines, if the adapter supports receiving messages via sendTo. Additionally, it defines if specific messages are supported.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "custom": {
               "description": "If custom messages are supported (same as legacy messagebox)",
@@ -119,7 +127,8 @@
               "description": "If adapter supports getHistory message. (Same as legacy `getHistory`, to avoid problems, set both flags in parallel for now)",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "readme": {
           "description": "Url of the ReadMe file",
@@ -128,10 +137,6 @@
         "adminUI": {
           "description": "Type of the admin UI",
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "config"
-          ],
           "properties": {
             "custom": {
               "description": "UI type of custom tab inside admin UI",
@@ -157,7 +162,11 @@
                 "materialize"
               ]
             }
-          }
+          },
+          "required": [
+            "config"
+          ],
+          "additionalProperties": false
         },
         "automaticUpgrade": {
           "description": "Automatically upgrade the adapter in the configured semver range. Best practice is to leave this as none and let the user opt-in.",
@@ -175,6 +184,7 @@
           "required": [
             "en"
           ],
+          "additionalProperties": false,
           "patternProperties": {
             "en|de|ru|pt|nl|fr|it|es|pl|uk|zh-cn": {
               "type": [
@@ -186,8 +196,7 @@
                 "type": "string"
               }
             }
-          },
-          "additionalProperties": false
+          }
         },
         "authors": {
           "description": "Array of authors as string",
@@ -200,10 +209,6 @@
               },
               {
                 "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "name"
-                ],
                 "properties": {
                   "name": {
                     "type": "string"
@@ -211,7 +216,11 @@
                   "email": {
                     "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
               }
             ]
           }
@@ -242,7 +251,11 @@
               "pattern": "^https://.+$"
             }
           },
-          "additionalProperties": false,
+          "then": {
+            "required": [
+              "link"
+            ]
+          },
           "required": [
             "type"
           ],
@@ -258,11 +271,7 @@
             },
             "type": "object"
           },
-          "then": {
-            "required": [
-              "link"
-            ]
-          }
+          "additionalProperties": false
         },
         "javascriptRules": {
           "type": "object",
@@ -301,11 +310,11 @@
               "type": "string"
             }
           },
-          "additionalProperties": false,
           "required": [
             "url",
             "name"
-          ]
+          ],
+          "additionalProperties": false
         },
         "type": {
           "description": "Type of the adapter",
@@ -410,7 +419,6 @@
         "adminTab": {
           "description": "Adds a Tab which can be shown in admin adapter",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "fa-icon": {
               "description": "Font-Awesome icon name for TAB",
@@ -436,7 +444,8 @@
               "description": "If true, the page sends an 'iobLoaded' event when loaded",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "controller": {
           "description": "Only used by js-controller",
@@ -492,10 +501,14 @@
             "assumption"
           ]
         },
-        "nodeProcessParams": {
+        "dependencies": {
+          "description": "Array like [{\"js-controller\": \">=2.0.0\"}] that describes which ioBroker modules are required for this adapter on the same host",
           "type": "array",
           "items": {
-            "type": "string"
+            "type": [
+              "object",
+              "string"
+            ]
           }
         },
         "enabled": {
@@ -615,10 +628,10 @@
                       ]
                     }
                   },
-                  "additionalProperties": false,
                   "required": [
                     "link"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -971,17 +984,9 @@
           "type": "array",
           "items": {
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "title",
-              "text",
-              "buttons"
-            ],
             "properties": {
               "condition": {
                 "description": "Message will only be shown if condition matches",
-                "additionalProperties": false,
-                "type": "object",
                 "properties": {
                   "operand": {
                     "description": "Operand to connect multiple rules",
@@ -998,7 +1003,9 @@
                       "type": "string"
                     }
                   }
-                }
+                },
+                "type": "object",
+                "additionalProperties": false
               },
               "title": {
                 "description": "Title of the shown message",
@@ -1036,30 +1043,23 @@
                   ]
                 }
               }
-            }
+            },
+            "required": [
+              "title",
+              "text",
+              "buttons"
+            ],
+            "additionalProperties": false
           }
         },
-        "dependentSchemas": {
-          "description": "Array like [{\"js-controller\": \">=2.0.0\"}] that describes which ioBroker modules are required for this adapter on the same host",
+        "nodeProcessParams": {
           "type": "array",
           "items": {
-            "type": [
-              "object",
-              "string"
-            ]
+            "type": "string"
           }
         }
       },
-      "allOf": [
-        {
-          "if": {
-            "$ref": "#/$defs/isCompactTrue"
-          },
-          "then": {
-            "$ref": "#/$defs/disallowNodeProcessParams"
-          }
-        }
-      ]
+      "additionalProperties": false
     },
     "objects": {
       "description": "Objects which will be created for the adapter",
@@ -1086,7 +1086,6 @@
           "description",
           "categories"
         ],
-        "additionalProperties": false,
         "properties": {
           "scope": {
             "type": "string"
@@ -1103,15 +1102,6 @@
             "type": "array",
             "items": {
               "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "category",
-                "name",
-                "severity",
-                "description",
-                "regex",
-                "limit"
-              ],
               "properties": {
                 "category": {
                   "type": "string"
@@ -1141,10 +1131,20 @@
                   "type": "number",
                   "description": "Maximum amount of notifications to collect of this type"
                 }
-              }
+              },
+              "required": [
+                "category",
+                "name",
+                "severity",
+                "description",
+                "regex",
+                "limit"
+              ],
+              "additionalProperties": false
             }
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "native": {
@@ -1169,18 +1169,19 @@
   "required": [
     "common"
   ],
+  "additionalProperties": false,
   "$defs": {
     "multilingual": {
       "type": "object",
       "required": [
         "en"
       ],
+      "additionalProperties": false,
       "patternProperties": {
         "en|de|ru|pt|nl|fr|it|es|pl|uk|zh-cn": {
           "type": "string"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "iobrokerObject": {
       "type": "object",
@@ -1891,6 +1892,5 @@
         "MS-PL"
       ]
     }
-  },
-  "additionalProperties": false
+  }
 }

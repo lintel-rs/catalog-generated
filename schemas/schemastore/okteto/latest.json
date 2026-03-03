@@ -37,11 +37,11 @@
                     "description": "Command to execute"
                   }
                 },
-                "additionalProperties": false,
-                "type": "object",
                 "required": [
                   "command"
-                ]
+                ],
+                "type": "object",
+                "additionalProperties": false
               }
             ]
           },
@@ -78,11 +78,11 @@
                         "description": "Command to execute"
                       }
                     },
-                    "additionalProperties": false,
-                    "type": "object",
                     "required": [
                       "command"
-                    ]
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
                   }
                 ]
               },
@@ -109,12 +109,12 @@
                       "description": "List of services to deploy"
                     }
                   },
-                  "additionalProperties": false,
+                  "description": "Single compose configuration",
                   "type": "object",
                   "required": [
                     "file"
                   ],
-                  "description": "Single compose configuration"
+                  "additionalProperties": false
                 },
                 {
                   "items": {
@@ -131,11 +131,11 @@
                         "description": "List of services to deploy"
                       }
                     },
-                    "additionalProperties": false,
-                    "type": "object",
                     "required": [
                       "file"
-                    ]
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
                   },
                   "type": "array",
                   "description": "List of compose configurations"
@@ -158,13 +158,13 @@
                     "description": "Port number"
                   }
                 },
-                "additionalProperties": false,
-                "type": "object",
                 "required": [
                   "path",
                   "service",
                   "port"
-                ]
+                ],
+                "type": "object",
+                "additionalProperties": false
               },
               "type": "array",
               "description": "List of endpoints"
@@ -201,8 +201,8 @@
                         "description": "List of routes to divert. If empty, all routes are diverted"
                       }
                     },
-                    "additionalProperties": false,
-                    "type": "object"
+                    "type": "object",
+                    "additionalProperties": false
                   },
                   "type": "array",
                   "description": "List of virtual services to divert"
@@ -219,20 +219,20 @@
                         "description": "Namespace of the virtual service"
                       }
                     },
-                    "additionalProperties": false,
-                    "type": "object"
+                    "type": "object",
+                    "additionalProperties": false
                   },
                   "type": "array",
                   "description": "List of hosts to divert in the developer namespace"
                 }
               },
-              "additionalProperties": false,
+              "description": "Configuration for diverting traffic between namespaces",
               "type": "object",
-              "description": "Configuration for diverting traffic between namespaces"
+              "additionalProperties": false
             }
           },
-          "additionalProperties": false,
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false
         }
       ],
       "title": "deploy",
@@ -252,6 +252,7 @@
           "type": "array"
         },
         {
+          "type": "object",
           "patternProperties": {
             ".*": {
               "properties": {
@@ -271,14 +272,14 @@
                   "description": "The Git branch to use"
                 },
                 "variables": {
+                  "description": "Environment variables to pass to the dependency",
+                  "type": "object",
+                  "title": "variables",
                   "patternProperties": {
                     ".*": {
                       "type": "string"
                     }
-                  },
-                  "type": "object",
-                  "title": "variables",
-                  "description": "Environment variables to pass to the dependency"
+                  }
                 },
                 "wait": {
                   "type": "boolean",
@@ -292,20 +293,23 @@
                   "description": "Maximum time to wait for the dependency to be ready"
                 }
               },
-              "additionalProperties": false,
-              "type": "object",
               "required": [
                 "repository"
-              ]
+              ],
+              "type": "object",
+              "additionalProperties": false
             }
-          },
-          "type": "object"
+          }
         }
       ],
       "title": "dependencies",
       "description": "A list of repositories you want to deploy as part of your development environment.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#dependencies-string-optional>"
     },
     "dev": {
+      "additionalProperties": false,
+      "description": "A list of development containers to define the behavior of okteto up and synchronize your code in your development environment.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#dev-object-optional>",
+      "type": "object",
+      "title": "dev",
       "patternProperties": {
         ".*": {
           "properties": {
@@ -344,6 +348,7 @@
             "environment": {
               "oneOf": [
                 {
+                  "type": "object",
                   "patternProperties": {
                     ".*": {
                       "type": [
@@ -352,8 +357,7 @@
                         "number"
                       ]
                     }
-                  },
-                  "type": "object"
+                  }
                 },
                 {
                   "items": {
@@ -403,21 +407,21 @@
                         "title": "name"
                       },
                       "labels": {
+                        "title": "labels",
+                        "type": "object",
                         "patternProperties": {
                           ".*": {
                             "type": "string"
                           }
-                        },
-                        "type": "object",
-                        "title": "labels"
+                        }
                       }
                     },
-                    "additionalProperties": false,
-                    "type": "object",
                     "required": [
                       "localPort",
                       "remotePort"
-                    ]
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
                   }
                 ]
               },
@@ -436,10 +440,10 @@
                   "title": "resources"
                 }
               },
-              "additionalProperties": false,
+              "description": "Allows you to override the okteto init container configuration of your development container.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#initcontainer-object-optional>",
               "type": "object",
               "title": "initContainer",
-              "description": "Allows you to override the okteto init container configuration of your development container.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#initcontainer-object-optional>"
+              "additionalProperties": false
             },
             "interface": {
               "type": "string",
@@ -478,9 +482,9 @@
                           "title": "command"
                         }
                       },
-                      "additionalProperties": false,
+                      "title": "postStart",
                       "type": "object",
-                      "title": "postStart"
+                      "additionalProperties": false
                     },
                     "preStop": {
                       "properties": {
@@ -494,13 +498,13 @@
                           "title": "command"
                         }
                       },
-                      "additionalProperties": false,
+                      "title": "preStop",
                       "type": "object",
-                      "title": "preStop"
+                      "additionalProperties": false
                     }
                   },
-                  "additionalProperties": false,
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": false
                 }
               ],
               "title": "lifecycle",
@@ -509,28 +513,28 @@
             "metadata": {
               "properties": {
                 "annotations": {
+                  "title": "annotations",
+                  "type": "object",
                   "patternProperties": {
                     ".*": {
                       "type": "string"
                     }
-                  },
-                  "type": "object",
-                  "title": "annotations"
+                  }
                 },
                 "labels": {
+                  "title": "labels",
+                  "type": "object",
                   "patternProperties": {
                     ".*": {
                       "type": "string"
                     }
-                  },
-                  "type": "object",
-                  "title": "labels"
+                  }
                 }
               },
-              "additionalProperties": false,
+              "description": "The metadata field allows to inject labels and annotations into your development container.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#metadata-object-optional>",
               "type": "object",
               "title": "metadata",
-              "description": "The metadata field allows to inject labels and annotations into your development container.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#metadata-object-optional>"
+              "additionalProperties": false
             },
             "mode": {
               "type": "string",
@@ -543,14 +547,14 @@
               "default": "sync"
             },
             "nodeSelector": {
+              "description": "Labels that the node must have to schedule the development container\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#nodeselector-mapstringstring-optional>",
+              "type": "object",
+              "title": "nodeSelector",
               "patternProperties": {
                 ".*": {
                   "type": "string"
                 }
-              },
-              "type": "object",
-              "title": "nodeSelector",
-              "description": "Labels that the node must have to schedule the development container\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#nodeselector-mapstringstring-optional>"
+              }
             },
             "persistentVolume": {
               "properties": {
@@ -584,30 +588,30 @@
                   "default": "Filesystem"
                 },
                 "annotations": {
-                  "patternProperties": {
-                    ".*": {
-                      "type": "string"
-                    }
-                  },
+                  "description": "Add annotations to the Okteto persistent volume",
                   "type": "object",
                   "title": "annotations",
-                  "description": "Add annotations to the Okteto persistent volume"
-                },
-                "labels": {
                   "patternProperties": {
                     ".*": {
                       "type": "string"
                     }
-                  },
+                  }
+                },
+                "labels": {
+                  "description": "Add labels to the Okteto persistent volume",
                   "type": "object",
                   "title": "labels",
-                  "description": "Add labels to the Okteto persistent volume"
+                  "patternProperties": {
+                    ".*": {
+                      "type": "string"
+                    }
+                  }
                 }
               },
-              "additionalProperties": false,
+              "description": "Allows you to configure a persistent volume for your development container.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#persistentvolume-object-optional>",
               "type": "object",
               "title": "persistentVolume",
-              "description": "Allows you to configure a persistent volume for your development container.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#persistentvolume-object-optional>"
+              "additionalProperties": false
             },
             "priorityClassName": {
               "type": "string",
@@ -638,8 +642,8 @@
                       "default": false
                     }
                   },
-                  "additionalProperties": false,
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": false
                 }
               ],
               "title": "probes",
@@ -703,24 +707,24 @@
                       "title": "add"
                     }
                   },
-                  "additionalProperties": false,
+                  "title": "capabilities",
                   "type": "object",
-                  "title": "capabilities"
+                  "additionalProperties": false
                 }
               },
-              "additionalProperties": false,
+              "title": "securityContext",
               "type": "object",
-              "title": "securityContext"
+              "additionalProperties": false
             },
             "selector": {
+              "description": "The labels of the Kubernetes deployment/statefulset you want to put on development mode. They must identify a single Kubernetes deployment/statefulset.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#selector-mapstringstring-optional>",
+              "type": "object",
+              "title": "selector",
               "patternProperties": {
                 ".*": {
                   "type": "string"
                 }
-              },
-              "type": "object",
-              "title": "selector",
-              "description": "The labels of the Kubernetes deployment/statefulset you want to put on development mode. They must identify a single Kubernetes deployment/statefulset.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#selector-mapstringstring-optional>"
+              }
             },
             "serviceAccount": {
               "type": "string",
@@ -746,13 +750,13 @@
                     "title": "container"
                   },
                   "environment": {
+                    "title": "environment",
+                    "type": "object",
                     "patternProperties": {
                       ".*": {
                         "type": "string"
                       }
-                    },
-                    "type": "object",
-                    "title": "environment"
+                    }
                   },
                   "image": {
                     "type": "string",
@@ -786,8 +790,8 @@
                     "title": "replicas"
                   }
                 },
-                "additionalProperties": false,
-                "type": "object"
+                "type": "object",
+                "additionalProperties": false
               },
               "type": "array",
               "title": "services",
@@ -827,11 +831,11 @@
                       "default": 300
                     }
                   },
-                  "additionalProperties": false,
-                  "type": "object",
                   "required": [
                     "folders"
-                  ]
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
                 }
               ],
               "title": "sync",
@@ -856,8 +860,8 @@
                       "title": "resources"
                     }
                   },
-                  "additionalProperties": false,
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": false
                 }
               ],
               "title": "timeout",
@@ -901,9 +905,9 @@
                       "title": "ephemeral-storage"
                     }
                   },
-                  "additionalProperties": false,
+                  "title": "requests",
                   "type": "object",
-                  "title": "requests"
+                  "additionalProperties": false
                 },
                 "limits": {
                   "properties": {
@@ -920,26 +924,22 @@
                       "title": "ephemeral-storage"
                     }
                   },
-                  "additionalProperties": false,
+                  "title": "limits",
                   "type": "object",
-                  "title": "limits"
+                  "additionalProperties": false
                 }
               },
-              "additionalProperties": false,
+              "description": "Resource requests and limits for the development container\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#resources-object-optional>",
               "type": "object",
               "title": "resources",
-              "description": "Resource requests and limits for the development container\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#resources-object-optional>"
+              "additionalProperties": false
             }
           },
-          "additionalProperties": false,
+          "description": "The name of each development container must match the name of the Kubernetes Deployment or Statefulset that you want to put on development mode. If the name of your Deployment or Statefulset is dynamically generated, use the selector field to match the Deployment or Statefulset by labels.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#dev-object-optional>",
           "type": "object",
-          "description": "The name of each development container must match the name of the Kubernetes Deployment or Statefulset that you want to put on development mode. If the name of your Deployment or Statefulset is dynamically generated, use the selector field to match the Deployment or Statefulset by labels.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#dev-object-optional>"
+          "additionalProperties": false
         }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "title": "dev",
-      "description": "A list of development containers to define the behavior of okteto up and synchronize your code in your development environment.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#dev-object-optional>"
+      }
     },
     "forward": {
       "items": {
@@ -1006,23 +1006,23 @@
                 "description": "Name of the service to forward to"
               },
               "labels": {
+                "description": "Labels to select the service to forward to",
+                "type": "object",
+                "title": "labels",
                 "patternProperties": {
                   ".*": {
                     "type": "string"
                   }
-                },
-                "type": "object",
-                "title": "labels",
-                "description": "Labels to select the service to forward to"
+                }
               }
             },
-            "additionalProperties": false,
+            "description": "Detailed port forward configuration",
             "type": "object",
             "required": [
               "localPort",
               "remotePort"
             ],
-            "description": "Detailed port forward configuration"
+            "additionalProperties": false
           }
         ]
       },
@@ -1031,6 +1031,10 @@
       "description": "Global port forwards to handle port collisions automatically between multiple okteto up sessions.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#forward-string-optional-1>"
     },
     "external": {
+      "additionalProperties": false,
+      "description": "A list of external resources that are part of your development environment. Use this section for resources that are deployed outside of the Okteto cluster",
+      "type": "object",
+      "title": "external",
       "patternProperties": {
         ".*": {
           "properties": {
@@ -1077,42 +1081,42 @@
                     "description": "The url of the endpoint. Can be set dynamically during deployment using $OKTETO_EXTERNAL_{EXTERNAL_NAME}_ENDPOINTS_{ENDPOINT_NAME}_URL"
                   }
                 },
-                "additionalProperties": false,
-                "type": "object",
                 "required": [
                   "name"
-                ]
+                ],
+                "type": "object",
+                "additionalProperties": false
               },
               "type": "array",
               "title": "endpoints",
               "description": "List of endpoints to access the external resource\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#endpoints-object-required>"
             }
           },
-          "additionalProperties": false,
-          "type": "object",
           "required": [
             "endpoints"
-          ]
+          ],
+          "type": "object",
+          "additionalProperties": false
         }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "title": "external",
-      "description": "A list of external resources that are part of your development environment. Use this section for resources that are deployed outside of the Okteto cluster"
+      }
     },
     "build": {
+      "additionalProperties": false,
+      "description": "A list of images to build as part of your development environment.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#build-object-optional>",
+      "type": "object",
+      "title": "build",
       "patternProperties": {
         ".*": {
           "properties": {
             "args": {
+              "description": "Build arguments, which are environment variables accessible only during the build process. Build arguments with a value containing a $ sign are resolved to the environment variable value on the machine Okteto is running on",
+              "type": "object",
+              "title": "args",
               "patternProperties": {
                 ".*": {
                   "type": "string"
                 }
-              },
-              "type": "object",
-              "title": "args",
-              "description": "Build arguments, which are environment variables accessible only during the build process. Build arguments with a value containing a $ sign are resolved to the environment variable value on the machine Okteto is running on"
+              }
             },
             "context": {
               "type": "string",
@@ -1140,14 +1144,14 @@
               "description": "The name of the image to build and push. In clusters that have Okteto installed, this is optional (if not specified, the Okteto Registry is used)"
             },
             "secrets": {
+              "description": "List of secrets exposed to the build. The value of each secret refers to a file. Okteto will resolve references containing a $ sign in this file to environment variables on the machine Okteto is running on",
+              "type": "object",
+              "title": "secrets",
               "patternProperties": {
                 ".*": {
                   "type": "string"
                 }
-              },
-              "type": "object",
-              "title": "secrets",
-              "description": "List of secrets exposed to the build. The value of each secret refers to a file. Okteto will resolve references containing a $ sign in this file to environment variables on the machine Okteto is running on"
+              }
             },
             "target": {
               "type": "string",
@@ -1155,17 +1159,16 @@
               "description": "Build the specified stage as defined inside the Dockerfile"
             }
           },
-          "additionalProperties": false,
+          "description": "A list of images to build as part of your development environment.\n\n\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#build-object-optional>",
           "type": "object",
-          "description": "A list of images to build as part of your development environment.\n\n\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#build-object-optional>"
+          "additionalProperties": false
         }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "title": "build",
-      "description": "A list of images to build as part of your development environment.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#build-object-optional>"
+      }
     },
     "test": {
+      "description": "A dictionary of Test Containers to run tests using Remote Execution.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#test-object-optional>",
+      "type": "object",
+      "title": "test",
       "patternProperties": {
         ".*": {
           "properties": {
@@ -1202,11 +1205,11 @@
                         "description": "Command to execute"
                       }
                     },
-                    "additionalProperties": false,
-                    "type": "object",
                     "required": [
                       "command"
-                    ]
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
                   }
                 ]
               },
@@ -1246,12 +1249,12 @@
                         "type": "string"
                       }
                     },
-                    "additionalProperties": false,
-                    "type": "object",
                     "required": [
                       "hostname",
                       "ip"
-                    ]
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
                   }
                 ]
               },
@@ -1270,16 +1273,13 @@
               "description": "Skip the test execution if no files have changed since the last test run. This is useful to avoid running tests when the code hasn't changed."
             }
           },
-          "additionalProperties": false,
-          "type": "object",
           "required": [
             "commands"
-          ]
+          ],
+          "type": "object",
+          "additionalProperties": false
         }
-      },
-      "type": "object",
-      "title": "test",
-      "description": "A dictionary of Test Containers to run tests using Remote Execution.\nDocumentation: <https://www.okteto.com/docs/reference/okteto-manifest/#test-object-optional>"
+      }
     },
     "destroy": {
       "oneOf": [
@@ -1300,11 +1300,11 @@
                     "description": "Command to execute"
                   }
                 },
-                "additionalProperties": false,
-                "type": "object",
                 "required": [
                   "command"
-                ]
+                ],
+                "type": "object",
+                "additionalProperties": false
               }
             ]
           },
@@ -1341,11 +1341,11 @@
                         "description": "Command to execute"
                       }
                     },
-                    "additionalProperties": false,
-                    "type": "object",
                     "required": [
                       "command"
-                    ]
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
                   }
                 ]
               },
@@ -1353,8 +1353,8 @@
               "description": "List of commands to execute for destroying resources"
             }
           },
-          "additionalProperties": false,
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false
         }
       ],
       "title": "destroy",

@@ -50,7 +50,7 @@
       "default": [],
       "description": "Default values, see <http://www.qgoda.net/en/docs/defaults>",
       "items": {
-        "additionalProperties": false,
+        "type": "object",
         "description": "A list of objects with properties 'files' and 'values', default => empty",
         "properties": {
           "files": {
@@ -62,20 +62,20 @@
             "type": "array"
           },
           "values": {
-            "additionalProperties": false,
+            "type": "object",
             "default": {},
             "description": "Values that should be set for matching files.",
+            "additionalProperties": false,
             "patternProperties": {
               ".*": {}
-            },
-            "type": "object"
+            }
           }
         },
         "required": [
           "files",
           "values"
         ],
-        "type": "object"
+        "additionalProperties": false
       },
       "type": "array"
     },
@@ -96,17 +96,17 @@
       "type": "array"
     },
     "front-matter-placeholder": {
-      "additionalProperties": false,
+      "type": "object",
       "default": {
         "*": "[% '' %]\n"
       },
       "description": "An object of valid chain names or '*' that give the frontmatter placeholder string for each configured processor chain.",
+      "additionalProperties": false,
       "patternProperties": {
         "(\\*|_[a-zA-Z][_a-zA-Z0-9]*)": {
           "type": "string"
         }
-      },
-      "type": "object"
+      }
     },
     "generator": {
       "default": "Qgoda vv0.11.0 (https://www.qgoda.net/)",
@@ -114,9 +114,10 @@
       "type": "string"
     },
     "helpers": {
-      "additionalProperties": false,
+      "type": "object",
       "default": {},
       "description": "Key-value pairs of command identifiers and the command to run in parallel, when running in watch mode. Default: empty.",
+      "additionalProperties": false,
       "patternProperties": {
         ".+": {
           "items": {
@@ -124,8 +125,7 @@
           },
           "type": "array"
         }
-      },
-      "type": "object"
+      }
     },
     "index": {
       "default": "index",
@@ -166,7 +166,7 @@
       "type": "array"
     },
     "paths": {
-      "additionalProperties": false,
+      "type": "object",
       "default": {},
       "description": "Configurable paths.",
       "properties": {
@@ -203,7 +203,7 @@
         "timestamp",
         "views"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "permalink": {
       "default": "{significant-path}",
@@ -211,7 +211,7 @@
       "type": "string"
     },
     "po": {
-      "additionalProperties": false,
+      "type": "object",
       "default": {},
       "description": "Variables for internationalization (i18n) and the translation workflow.",
       "properties": {
@@ -302,13 +302,13 @@
           "type": "array"
         }
       },
-      "type": "object"
+      "additionalProperties": false
     },
     "post-build": {
       "#ref": "#/defs/buildTasks"
     },
     "post-processors": {
-      "additionalProperties": false,
+      "type": "object",
       "default": {
         "modules": [],
         "options": {}
@@ -326,20 +326,20 @@
           "type": "array"
         },
         "options": {
-          "additionalProperties": false,
+          "type": "object",
           "default": {},
           "description": "Additional options for the post-processor plug-ins",
+          "additionalProperties": false,
           "patternProperties": {
             ".*": {}
-          },
-          "type": "object"
+          }
         }
       },
       "required": [
         "modules",
         "options"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "pre-build": {
       "#ref": "#/defs/buildTasks"
@@ -356,7 +356,7 @@
       "description": "Site-specific variables.  You can also choose the namespace 'site' if you prefer."
     },
     "processors": {
-      "additionalProperties": false,
+      "type": "object",
       "default": {},
       "description": "The processors to use for generating content.",
       "properties": {
@@ -392,9 +392,10 @@
             }
           },
           "description": "The processor chains.",
+          "type": "object",
           "patternProperties": {
             "[_a-zA-Z][a-zA-Z0-9]*": {
-              "additionalProperties": false,
+              "type": "object",
               "description": "Properties of one processor chain.",
               "properties": {
                 "modules": {
@@ -416,13 +417,12 @@
               "required": [
                 "modules"
               ],
-              "type": "object"
+              "additionalProperties": false
             }
-          },
-          "type": "object"
+          }
         },
         "options": {
-          "additionalProperties": true,
+          "type": "object",
           "default": {
             "HTMLFilter": {
               "AnchorTarget": {},
@@ -438,7 +438,7 @@
             }
           },
           "description": "Additional options for the processor plug-ins",
-          "type": "object"
+          "additionalProperties": true
         },
         "triggers": {
           "default": {
@@ -453,13 +453,13 @@
             "xml": "raw"
           },
           "description": "Filename extenders that trigger a  particular chain if not specified in front matter or defaults.",
+          "type": "object",
           "patternProperties": {
             ".+": {
               "description": "The filename extender.",
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         }
       },
       "required": [
@@ -467,7 +467,7 @@
         "options",
         "triggers"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "scm": {
       "const": "git",
@@ -484,20 +484,20 @@
       "type": "string"
     },
     "taxonomies": {
-      "additionalProperties": true,
+      "type": "object",
       "default": {
         "categories": 3,
         "links": 1,
         "tags": 2
       },
       "description": "Key/value pairs of taxonomy names and their respective weights for the computation of relatedness.",
+      "additionalProperties": true,
       "patternProperties": {
         ".+": {
           "nullable": true,
           "type": "integer"
         }
-      },
-      "type": "object"
+      }
     },
     "title": {
       "default": "A new Qgoda Powered Site",
@@ -524,7 +524,7 @@
   "$defs": {
     "buildTasks": {
       "items": {
-        "additionalProperties": false,
+        "type": "object",
         "properties": {
           "name": {
             "description": "Task identifier for the logging.",
@@ -551,7 +551,7 @@
           "name",
           "run"
         ],
-        "type": "object"
+        "additionalProperties": false
       },
       "type": "array"
     }

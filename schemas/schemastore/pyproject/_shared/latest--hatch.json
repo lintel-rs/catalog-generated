@@ -86,6 +86,7 @@
       "type": "object"
     }
   ],
+  "additionalProperties": false,
   "$defs": {
     "Platform": {
       "enum": [
@@ -172,20 +173,20 @@
         }
       },
       "type": "object",
-      "patternProperties": {
-        "env|matrix|name": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Override"
-          }
-        }
-      },
       "properties": {
         "platform": {
           "type": "object",
           "propertyNames": {
             "$ref": "#/$defs/Platform"
           },
+          "additionalProperties": {
+            "$ref": "#/$defs/Override"
+          }
+        }
+      },
+      "patternProperties": {
+        "env|matrix|name": {
+          "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/Override"
           }
@@ -218,12 +219,12 @@
           "type": "boolean",
           "default": false
         },
-        "requires": {
-          "title": "Requires",
-          "description": "Required environment plugins",
+        "dependencies": {
+          "title": "Dependencies",
+          "description": "List of dependencies to install in the environment",
           "x-taplo": {
             "links": {
-              "key": "https://hatch.pypa.io/latest/plugins/environment/reference/#installation"
+              "key": "https://hatch.pypa.io/latest/config/environment/overview/#dependencies"
             }
           },
           "type": "array",
@@ -444,12 +445,12 @@
         "overrides": {
           "$ref": "#/$defs/Overrides"
         },
-        "dependentSchemas": {
-          "title": "Dependencies",
-          "description": "List of dependencies to install in the environment",
+        "requires": {
+          "title": "Requires",
+          "description": "Required environment plugins",
           "x-taplo": {
             "links": {
-              "key": "https://hatch.pypa.io/latest/config/environment/overview/#dependencies"
+              "key": "https://hatch.pypa.io/latest/plugins/environment/reference/#installation"
             }
           },
           "type": "array",
@@ -653,10 +654,10 @@
         }
       },
       "type": "object",
+      "x-tombi-additional-key-label": "target_name",
       "additionalProperties": {
         "$ref": "#/$defs/Target"
-      },
-      "x-tombi-additional-key-label": "target_name"
+      }
     },
     "Hook": {
       "title": "Build hook",
@@ -722,10 +723,10 @@
         }
       },
       "type": "object",
+      "x-tombi-additional-key-label": "hook_name",
       "additionalProperties": {
         "$ref": "#/$defs/Hook"
-      },
-      "x-tombi-additional-key-label": "hook_name"
+      }
     },
     "Build": {
       "title": "Build",
@@ -859,13 +860,6 @@
     "Version": {
       "title": "Version",
       "description": "Version configuration",
-      "additionalProperties": true,
-      "x-taplo": {
-        "links": {
-          "key": "https://hatch.pypa.io/latest/version/#configuration"
-        }
-      },
-      "type": "object",
       "properties": {
         "path": {
           "title": "Path",
@@ -897,7 +891,14 @@
           },
           "type": "string"
         }
-      }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://hatch.pypa.io/latest/version/#configuration"
+        }
+      },
+      "type": "object",
+      "additionalProperties": true
     },
     "PublishIndex": {
       "title": "PublishIndex",
@@ -1018,7 +1019,6 @@
       }
     }
   },
-  "additionalProperties": false,
   "x-taplo-info": {
     "authors": [
       "flying-sheep (https://github.com/flying-sheep)",

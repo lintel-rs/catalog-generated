@@ -5,7 +5,6 @@
   "x-lintel": {
     "source": "https://www.schemastore.org/bxci.schema-2.0.0.json",
     "sourceSha256": "27cf66d3fdc2b1b03de177d0c5abb679880d31772e2f2b1533baaaa839da7054",
-    "invalid": true,
     "fileMatch": [
       "**/bxci.yaml",
       "**/bxci.yml"
@@ -72,10 +71,10 @@
               "additionalProperties": false
             }
           },
-          "additionalProperties": false,
           "required": [
             "docker"
-          ]
+          ],
+          "additionalProperties": false
         },
         "branch": {
           "type": "object",
@@ -394,7 +393,10 @@
     },
     "outputHelmUpdates": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "file",
+        "properties"
+      ],
       "properties": {
         "file": {
           "type": "string",
@@ -406,35 +408,12 @@
           "items": {
             "$ref": "#/$defs/outputHelmUpdatesProperties"
           }
-        },
-        "type": "object"
+        }
       },
-      "required": [
-        "file",
-        "properties"
-      ]
+      "additionalProperties": false
     },
     "outputHelmUpdatesProperties": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "key": {
-          "type": "string",
-          "description": "Yaml property (full path) to be updated"
-        },
-        "env": {
-          "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
-          "description": "Environment variable whose value will be used to update the property"
-        },
-        "value": {
-          "type": "string",
-          "description": "Value to update the given property"
-        }
-      },
-      "required": [
-        "key"
-      ],
       "oneOf": [
         {
           "required": [
@@ -456,7 +435,26 @@
             ]
           }
         }
-      ]
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Yaml property (full path) to be updated"
+        },
+        "env": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+          "description": "Environment variable whose value will be used to update the property"
+        },
+        "value": {
+          "type": "string",
+          "description": "Value to update the given property"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "additionalProperties": false
     },
     "outputHelmPublish": {
       "type": "array",

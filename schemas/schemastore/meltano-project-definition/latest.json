@@ -150,57 +150,57 @@
     },
     "plugins": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "extractors": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/plugins/extractors"
+            "$ref": "#/$defs/extractors"
           }
         },
         "loaders": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/plugins/loaders"
+            "$ref": "#/$defs/loaders"
           }
         },
         "mappers": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/plugins/mappers"
+            "$ref": "#/$defs/mappers"
           }
         },
         "orchestrators": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/plugins/orchestrators"
+            "$ref": "#/$defs/orchestrators"
           }
         },
         "transformers": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/plugins/transformers"
+            "$ref": "#/$defs/transformers"
           }
         },
         "files": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/plugins/files"
+            "$ref": "#/$defs/files"
           }
         },
         "utilities": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/plugins/utilities"
+            "$ref": "#/$defs/utilities"
           }
         },
         "transforms": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/plugins/transforms"
+            "$ref": "#/$defs/transforms"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "schedules": {
       "type": "array",
@@ -330,7 +330,6 @@
       "default": true
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "annotations": {
       "type": "object",
@@ -342,479 +341,20 @@
         "type": "object"
       }
     },
-    "plugins": {
-      "plugin_generic": {
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "annotations": {
-            "$ref": "#/$defs/annotations"
-          },
-          "name": {
-            "type": "string",
-            "description": "The name of the plugin.",
-            "examples": [
-              "target-jsonl"
-            ]
-          },
-          "description": {
-            "type": "string",
-            "description": "A description of the plugin."
-          },
-          "plugin_type": {
-            "type": "string",
-            "description": "The type of the plugin.",
-            "enum": [
-              "extractors",
-              "loaders",
-              "orchestrators",
-              "transformers",
-              "files",
-              "utilities",
-              "transforms",
-              "mappers"
-            ]
-          },
-          "repo": {
-            "type": "string",
-            "description": "The URL of the repository containing the source code for the plugin."
-          },
-          "ext_repo": {
-            "type": "string",
-            "description": "The URL of the repository containing the source code for a Meltano extension plugin that typically wraps some other tool, in which case the 'repo' property is used for the URL of the repository for that tool."
-          },
-          "inherit_from": {
-            "type": "string",
-            "description": "An existing plugin to inherit from."
-          },
-          "pip_url": {
-            "type": "string",
-            "description": "The pip hosted package name or URL",
-            "examples": [
-              "target-jsonl",
-              "git+https://gitlab.com/meltano/tap-facebook.git",
-              "wtforms==2.2.1 apache-airflow==1.10.2"
-            ]
-          },
-          "variant": {
-            "type": "string",
-            "description": "The variant of the plugin."
-          },
-          "namespace": {
-            "type": "string",
-            "description": "The namespace of this plugin",
-            "examples": [
-              "tap_csv",
-              "target_jsonl"
-            ]
-          },
-          "config": {
-            "type": "object",
-            "description": "Your plugin configuration, type 'meltano config <plugin> list' for details"
-          },
-          "label": {
-            "type": "string",
-            "description": "A user friendly label describing the plugin",
-            "examples": [
-              "Stripe",
-              "Facebook Ads"
-            ]
-          },
-          "logo_url": {
-            "type": "string",
-            "description": "An optional logo URL for this plugin"
-          },
-          "python": {
-            "type": "string",
-            "description": "The python version to use for this plugin, specified as a path, as the name of an executable to find within a directory in $PATH, or as a version number (e.g. '3.11'). If not specified, the top-level `python` setting will be used, or if it is not set, the python executable that was used to run Meltano will be used (within a separate virtual environment).",
-            "examples": [
-              "/usr/bin/python3.10",
-              "python",
-              "python3.11",
-              "3.11"
-            ]
-          },
-          "executable": {
-            "type": "string",
-            "description": "The plugin's executable name, as defined in setup.py (if a Python based plugin)",
-            "examples": [
-              "tap-stripe",
-              "tap-covid-19"
-            ]
-          },
-          "settings": {
-            "type": "array",
-            "items": {
-              "$ref": "#/$defs/base_setting"
-            }
-          },
-          "docs": {
-            "type": "string",
-            "description": "A URL to the documentation for this plugin"
-          },
-          "settings_group_validation": {
-            "type": "array",
-            "items": {
-              "type": "array",
-              "description": "A set consisting of one valid combination of required setting names",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "commands": {
-            "type": "object",
-            "description": "A mapping of command names to either a string command, or an object containing info about the command.",
-            "additionalProperties": {
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "annotations": {
-                      "$ref": "#/$defs/annotations"
-                    },
-                    "args": {
-                      "type": "string",
-                      "description": "Command arguments"
-                    },
-                    "description": {
-                      "type": "string",
-                      "description": "Documentation displayed when listing commands"
-                    },
-                    "executable": {
-                      "type": "string",
-                      "description": "Override the plugin's executable for this command"
-                    },
-                    "container_spec": {
-                      "type": "object",
-                      "required": [
-                        "image"
-                      ],
-                      "description": "Container specification for this command",
-                      "properties": {
-                        "annotations": {
-                          "$ref": "#/$defs/annotations"
-                        },
-                        "image": {
-                          "type": "string",
-                          "description": "Container image",
-                          "examples": [
-                            "ghcr.io/dbt-labs/dbt-postgres:latest"
-                          ]
-                        },
-                        "command": {
-                          "type": "string",
-                          "description": "Container command",
-                          "examples": [
-                            "list",
-                            "test",
-                            "compile"
-                          ]
-                        },
-                        "entrypoint": {
-                          "type": "string",
-                          "description": "Container entrypoint"
-                        },
-                        "ports": {
-                          "type": "object",
-                          "description": "Mapping of host to container ports",
-                          "propertyNames": {
-                            "type": "string"
-                          },
-                          "additionalProperties": {
-                            "type": "string"
-                          },
-                          "examples": [
-                            {
-                              "5000": "5000"
-                            }
-                          ]
-                        },
-                        "volumes": {
-                          "type": "array",
-                          "description": "Array of volumes to mount during container execution",
-                          "items": {
-                            "type": "string",
-                            "examples": [
-                              "$MELTANO_PROJECT_ROOT/transform/:/usr/app/"
-                            ]
-                          }
-                        },
-                        "env": {
-                          "$ref": "#/$defs/env"
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "type": "string",
-                  "description": "The command as a string."
-                }
-              ]
-            }
-          },
-          "requires": {
-            "$ref": "#/$defs/requires"
-          },
-          "requires_meltano": {
-            "type": "string",
-            "description": "A version specifier for the Meltano version required by this plugin. If the version of Meltano being used does not satisfy this requirement, Meltano will exit with an error.",
-            "examples": [
-              ">=3,<4",
-              ">=3.6,<3.7"
-            ]
-          },
-          "env": {
-            "$ref": "#/$defs/env"
-          }
+    "env": {
+      "type": "object",
+      "description": "Mapping of environment variables for use in config.",
+      "propertyNames": {
+        "type": "string"
+      },
+      "examples": [
+        {
+          "DBT_PROFILES_DIR": "/usr/app/profile/",
+          "SNOWFLAKE_ACCOUNT": "my.snowflake.account.com"
         }
-      },
-      "extractor_shared": {
-        "type": "object",
-        "properties": {
-          "annotations": {
-            "$ref": "#/$defs/annotations"
-          },
-          "catalog": {
-            "type": "string",
-            "description": "A path to a catalog file (relative to the project directory) to be provided to the extractor when it is run in sync mode."
-          },
-          "load_schema": {
-            "type": "string",
-            "description": "The name of the database schema extracted data should be loaded into."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "An object containing Singer stream and property metadata",
-            "default": {}
-          },
-          "schema": {
-            "type": "object",
-            "description": "An object representing override rules for a Singer stream schema",
-            "default": {}
-          },
-          "state": {
-            "type": "string",
-            "description": "A path to a state file (relative to the project directory) to be provided to the extractor when it is run as part of a pipeline using meltano el or meltano elt."
-          },
-          "select": {
-            "type": "array",
-            "default": [
-              "*.*"
-            ],
-            "description": "An array of entity selection rules in the form '<entity|*>.<attribute|*>'",
-            "items": {
-              "type": "string"
-            }
-          },
-          "select_filter": {
-            "type": "array",
-            "description": "An array of entity selection filter rules that are applied to the extractor's discovered or provided catalog file when the extractor is run.",
-            "items": {
-              "type": "string"
-            },
-            "default": []
-          },
-          "use_cached_catalog": {
-            "type": "boolean",
-            "description": "A boolean that determines if the catalog cache should be used or ignored.",
-            "default": true
-          },
-          "log_parser": {
-            "type": "string",
-            "description": "The log parser to use for the extractor.",
-            "enum": [
-              "singer-sdk"
-            ]
-          }
-        }
-      },
-      "extractors": {
-        "description": "<https://docs.meltano.com/concepts/plugins#extractors>",
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/$defs/plugins/plugin_generic"
-          },
-          {
-            "$ref": "#/$defs/plugins/extractor_shared"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "capabilities": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "properties",
-                    "catalog",
-                    "discover",
-                    "state",
-                    "about",
-                    "stream-maps",
-                    "activate-version",
-                    "batch",
-                    "test",
-                    "log-based",
-                    "schema-flattening",
-                    "structured-logging"
-                  ]
-                }
-              }
-            }
-          }
-        ],
-        "unevaluatedProperties": false
-      },
-      "loaders": {
-        "description": "<https://docs.meltano.com/concepts/plugins#loaders>",
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/$defs/plugins/plugin_generic"
-          },
-          {
-            "properties": {
-              "capabilities": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "about",
-                    "stream-maps",
-                    "activate-version",
-                    "batch",
-                    "soft-delete",
-                    "hard-delete",
-                    "datatype-failsafe",
-                    "schema-flattening",
-                    "structured-logging"
-                  ]
-                }
-              },
-              "dialect": {
-                "type": "string",
-                "description": "The name of the dialect of the target database, so that transformers in the same pipeline can determine the type of database to connect to."
-              }
-            },
-            "type": "object"
-          }
-        ],
-        "unevaluatedProperties": false
-      },
-      "orchestrators": {
-        "description": "<https://docs.meltano.com/concepts/plugins#orchestrators>",
-        "type": "object",
-        "$ref": "#/$defs/plugins/plugin_generic",
-        "unevaluatedProperties": false
-      },
-      "transformers": {
-        "description": "<https://docs.meltano.com/concepts/plugins#transforms>",
-        "type": "object",
-        "$ref": "#/$defs/plugins/plugin_generic",
-        "unevaluatedProperties": false
-      },
-      "files": {
-        "description": "<https://docs.meltano.com/concepts/plugins#file-bundles>",
-        "type": "object",
-        "$ref": "#/$defs/plugins/plugin_generic",
-        "unevaluatedProperties": false
-      },
-      "utilities": {
-        "description": "<https://docs.meltano.com/concepts/plugins#utilities>",
-        "type": "object",
-        "$ref": "#/$defs/plugins/plugin_generic",
-        "unevaluatedProperties": false
-      },
-      "transforms": {
-        "description": "<https://docs.meltano.com/concepts/plugins#transforms>",
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/$defs/plugins/plugin_generic"
-          },
-          {
-            "properties": {
-              "annotations": {
-                "$ref": "#/$defs/annotations"
-              },
-              "vars": {
-                "type": "object",
-                "description": "An object containing dbt model variables"
-              },
-              "package_name": {
-                "type": "string",
-                "description": "The name of the dbt package's internal dbt project: the value of name in dbt_project.yml."
-              }
-            },
-            "type": "object"
-          }
-        ],
-        "unevaluatedProperties": false
-      },
-      "mapper_specific": {
-        "type": "object",
-        "properties": {
-          "annotations": {
-            "$ref": "#/$defs/annotations"
-          },
-          "mappings": {
-            "description": "Name of the invokable mappings and their associated configs.",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "annotations": {
-                  "$ref": "#/$defs/annotations"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "config": {
-                  "type": "object"
-                }
-              }
-            },
-            "required": [
-              "config",
-              "name"
-            ]
-          }
-        }
-      },
-      "mappers": {
-        "description": "<https://docs.meltano.com/concepts/plugins#mappers>",
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/$defs/plugins/plugin_generic"
-          },
-          {
-            "$ref": "#/$defs/plugins/mapper_specific"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "capabilities": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "about",
-                    "stream-maps",
-                    "structured-logging"
-                  ]
-                }
-              }
-            }
-          }
-        ],
-        "unevaluatedProperties": false
+      ],
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "base_setting": {
@@ -822,7 +362,6 @@
       "required": [
         "name"
       ],
-      "additionalProperties": false,
       "properties": {
         "annotations": {
           "$ref": "#/$defs/annotations"
@@ -994,7 +533,8 @@
             "additionalProperties": false
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "schedules": {
       "type": "object",
@@ -1017,7 +557,6 @@
         }
       ],
       "description": "<https://docs.meltano.com/guide/orchestration>",
-      "additionalProperties": false,
       "properties": {
         "annotations": {
           "$ref": "#/$defs/annotations"
@@ -1081,7 +620,8 @@
             "2020-08-06 00:00:00"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "jobs": {
       "type": "object",
@@ -1090,7 +630,6 @@
         "tasks"
       ],
       "description": "<https://docs.meltano.com/reference/command-line-interface#job>",
-      "additionalProperties": false,
       "properties": {
         "annotations": {
           "$ref": "#/$defs/annotations"
@@ -1125,95 +664,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "environments": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "annotations": {
-          "$ref": "#/$defs/annotations"
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the environment."
-        },
-        "config": {
-          "type": "object",
-          "description": "An object of environment specific configurations.",
-          "additionalProperties": false,
-          "properties": {
-            "plugins": {
-              "type": "object",
-              "description": "An object of environment specific plugin configurations.",
-              "properties": {
-                "extractors": {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/$defs/environments/$defs/plugins"
-                      },
-                      {
-                        "$ref": "#/$defs/plugins/extractor_shared"
-                      }
-                    ],
-                    "unevaluatedProperties": false
-                  }
-                },
-                "loaders": {
-                  "type": "array",
-                  "items": {
-                    "unevaluatedProperties": false,
-                    "$ref": "#/$defs/environments/$defs/plugins"
-                  }
-                },
-                "orchestrators": {
-                  "type": "array",
-                  "items": {
-                    "unevaluatedProperties": false,
-                    "$ref": "#/$defs/environments/$defs/plugins"
-                  }
-                },
-                "transformers": {
-                  "type": "array",
-                  "items": {
-                    "unevaluatedProperties": false,
-                    "$ref": "#/$defs/environments/$defs/plugins"
-                  }
-                },
-                "files": {
-                  "type": "array",
-                  "items": {
-                    "unevaluatedProperties": false,
-                    "$ref": "#/$defs/environments/$defs/plugins"
-                  }
-                },
-                "utilities": {
-                  "type": "array",
-                  "items": {
-                    "unevaluatedProperties": false,
-                    "$ref": "#/$defs/environments/$defs/plugins"
-                  }
-                },
-                "transforms": {
-                  "type": "array",
-                  "items": {
-                    "unevaluatedProperties": false,
-                    "$ref": "#/$defs/environments/$defs/plugins"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "env": {
-          "$ref": "#/$defs/env"
-        }
-      },
       "$defs": {
         "plugins": {
           "type": "object",
@@ -1235,7 +690,92 @@
             }
           }
         }
-      }
+      },
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "annotations": {
+          "$ref": "#/$defs/annotations"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the environment."
+        },
+        "config": {
+          "type": "object",
+          "description": "An object of environment specific configurations.",
+          "properties": {
+            "plugins": {
+              "type": "object",
+              "description": "An object of environment specific plugin configurations.",
+              "properties": {
+                "extractors": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/environments/$defs/plugins"
+                      },
+                      {
+                        "$ref": "#/$defs/extractor_shared"
+                      }
+                    ],
+                    "unevaluatedProperties": false
+                  }
+                },
+                "loaders": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/environments/$defs/plugins",
+                    "unevaluatedProperties": false
+                  }
+                },
+                "orchestrators": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/environments/$defs/plugins",
+                    "unevaluatedProperties": false
+                  }
+                },
+                "transformers": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/environments/$defs/plugins",
+                    "unevaluatedProperties": false
+                  }
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/environments/$defs/plugins",
+                    "unevaluatedProperties": false
+                  }
+                },
+                "utilities": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/environments/$defs/plugins",
+                    "unevaluatedProperties": false
+                  }
+                },
+                "transforms": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/environments/$defs/plugins",
+                    "unevaluatedProperties": false
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "env": {
+          "$ref": "#/$defs/env"
+        }
+      },
+      "additionalProperties": false
     },
     "requires": {
       "type": "object",
@@ -1253,7 +793,6 @@
     "plugin_requirement": {
       "type": "object",
       "description": "A single plugin requirement",
-      "additionalProperties": false,
       "properties": {
         "annotations": {
           "$ref": "#/$defs/annotations"
@@ -1266,23 +805,482 @@
           "type": "string",
           "description": "The variant of the required plugin"
         }
+      },
+      "additionalProperties": false
+    },
+    "plugin_generic": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "annotations": {
+          "$ref": "#/$defs/annotations"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the plugin.",
+          "examples": [
+            "target-jsonl"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the plugin."
+        },
+        "plugin_type": {
+          "type": "string",
+          "description": "The type of the plugin.",
+          "enum": [
+            "extractors",
+            "loaders",
+            "orchestrators",
+            "transformers",
+            "files",
+            "utilities",
+            "transforms",
+            "mappers"
+          ]
+        },
+        "repo": {
+          "type": "string",
+          "description": "The URL of the repository containing the source code for the plugin."
+        },
+        "ext_repo": {
+          "type": "string",
+          "description": "The URL of the repository containing the source code for a Meltano extension plugin that typically wraps some other tool, in which case the 'repo' property is used for the URL of the repository for that tool."
+        },
+        "inherit_from": {
+          "type": "string",
+          "description": "An existing plugin to inherit from."
+        },
+        "pip_url": {
+          "type": "string",
+          "description": "The pip hosted package name or URL",
+          "examples": [
+            "target-jsonl",
+            "git+https://gitlab.com/meltano/tap-facebook.git",
+            "wtforms==2.2.1 apache-airflow==1.10.2"
+          ]
+        },
+        "variant": {
+          "type": "string",
+          "description": "The variant of the plugin."
+        },
+        "namespace": {
+          "type": "string",
+          "description": "The namespace of this plugin",
+          "examples": [
+            "tap_csv",
+            "target_jsonl"
+          ]
+        },
+        "config": {
+          "type": "object",
+          "description": "Your plugin configuration, type 'meltano config <plugin> list' for details"
+        },
+        "label": {
+          "type": "string",
+          "description": "A user friendly label describing the plugin",
+          "examples": [
+            "Stripe",
+            "Facebook Ads"
+          ]
+        },
+        "logo_url": {
+          "type": "string",
+          "description": "An optional logo URL for this plugin"
+        },
+        "python": {
+          "type": "string",
+          "description": "The python version to use for this plugin, specified as a path, as the name of an executable to find within a directory in $PATH, or as a version number (e.g. '3.11'). If not specified, the top-level `python` setting will be used, or if it is not set, the python executable that was used to run Meltano will be used (within a separate virtual environment).",
+          "examples": [
+            "/usr/bin/python3.10",
+            "python",
+            "python3.11",
+            "3.11"
+          ]
+        },
+        "executable": {
+          "type": "string",
+          "description": "The plugin's executable name, as defined in setup.py (if a Python based plugin)",
+          "examples": [
+            "tap-stripe",
+            "tap-covid-19"
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/base_setting"
+          }
+        },
+        "docs": {
+          "type": "string",
+          "description": "A URL to the documentation for this plugin"
+        },
+        "settings_group_validation": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "description": "A set consisting of one valid combination of required setting names",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "commands": {
+          "type": "object",
+          "description": "A mapping of command names to either a string command, or an object containing info about the command.",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "annotations": {
+                    "$ref": "#/$defs/annotations"
+                  },
+                  "args": {
+                    "type": "string",
+                    "description": "Command arguments"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Documentation displayed when listing commands"
+                  },
+                  "executable": {
+                    "type": "string",
+                    "description": "Override the plugin's executable for this command"
+                  },
+                  "container_spec": {
+                    "type": "object",
+                    "required": [
+                      "image"
+                    ],
+                    "description": "Container specification for this command",
+                    "properties": {
+                      "annotations": {
+                        "$ref": "#/$defs/annotations"
+                      },
+                      "image": {
+                        "type": "string",
+                        "description": "Container image",
+                        "examples": [
+                          "ghcr.io/dbt-labs/dbt-postgres:latest"
+                        ]
+                      },
+                      "command": {
+                        "type": "string",
+                        "description": "Container command",
+                        "examples": [
+                          "list",
+                          "test",
+                          "compile"
+                        ]
+                      },
+                      "entrypoint": {
+                        "type": "string",
+                        "description": "Container entrypoint"
+                      },
+                      "ports": {
+                        "type": "object",
+                        "description": "Mapping of host to container ports",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "examples": [
+                          {
+                            "5000": "5000"
+                          }
+                        ],
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "volumes": {
+                        "type": "array",
+                        "description": "Array of volumes to mount during container execution",
+                        "items": {
+                          "type": "string",
+                          "examples": [
+                            "$MELTANO_PROJECT_ROOT/transform/:/usr/app/"
+                          ]
+                        }
+                      },
+                      "env": {
+                        "$ref": "#/$defs/env"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "string",
+                "description": "The command as a string."
+              }
+            ]
+          }
+        },
+        "requires": {
+          "$ref": "#/$defs/requires"
+        },
+        "requires_meltano": {
+          "type": "string",
+          "description": "A version specifier for the Meltano version required by this plugin. If the version of Meltano being used does not satisfy this requirement, Meltano will exit with an error.",
+          "examples": [
+            ">=3,<4",
+            ">=3.6,<3.7"
+          ]
+        },
+        "env": {
+          "$ref": "#/$defs/env"
+        }
       }
     },
-    "env": {
+    "extractor_shared": {
       "type": "object",
-      "description": "Mapping of environment variables for use in config.",
-      "propertyNames": {
-        "type": "string"
-      },
-      "additionalProperties": {
-        "type": "string"
-      },
-      "examples": [
-        {
-          "DBT_PROFILES_DIR": "/usr/app/profile/",
-          "SNOWFLAKE_ACCOUNT": "my.snowflake.account.com"
+      "properties": {
+        "annotations": {
+          "$ref": "#/$defs/annotations"
+        },
+        "catalog": {
+          "type": "string",
+          "description": "A path to a catalog file (relative to the project directory) to be provided to the extractor when it is run in sync mode."
+        },
+        "load_schema": {
+          "type": "string",
+          "description": "The name of the database schema extracted data should be loaded into."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "An object containing Singer stream and property metadata",
+          "default": {}
+        },
+        "schema": {
+          "type": "object",
+          "description": "An object representing override rules for a Singer stream schema",
+          "default": {}
+        },
+        "state": {
+          "type": "string",
+          "description": "A path to a state file (relative to the project directory) to be provided to the extractor when it is run as part of a pipeline using meltano el or meltano elt."
+        },
+        "select": {
+          "type": "array",
+          "default": [
+            "*.*"
+          ],
+          "description": "An array of entity selection rules in the form '<entity|*>.<attribute|*>'",
+          "items": {
+            "type": "string"
+          }
+        },
+        "select_filter": {
+          "type": "array",
+          "description": "An array of entity selection filter rules that are applied to the extractor's discovered or provided catalog file when the extractor is run.",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "use_cached_catalog": {
+          "type": "boolean",
+          "description": "A boolean that determines if the catalog cache should be used or ignored.",
+          "default": true
+        },
+        "log_parser": {
+          "type": "string",
+          "description": "The log parser to use for the extractor.",
+          "enum": [
+            "singer-sdk"
+          ]
         }
-      ]
+      }
+    },
+    "extractors": {
+      "description": "<https://docs.meltano.com/concepts/plugins#extractors>",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/plugin_generic"
+        },
+        {
+          "$ref": "#/$defs/extractor_shared"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "properties",
+                  "catalog",
+                  "discover",
+                  "state",
+                  "about",
+                  "stream-maps",
+                  "activate-version",
+                  "batch",
+                  "test",
+                  "log-based",
+                  "schema-flattening",
+                  "structured-logging"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "loaders": {
+      "description": "<https://docs.meltano.com/concepts/plugins#loaders>",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/plugin_generic"
+        },
+        {
+          "properties": {
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "about",
+                  "stream-maps",
+                  "activate-version",
+                  "batch",
+                  "soft-delete",
+                  "hard-delete",
+                  "datatype-failsafe",
+                  "schema-flattening",
+                  "structured-logging"
+                ]
+              }
+            },
+            "dialect": {
+              "type": "string",
+              "description": "The name of the dialect of the target database, so that transformers in the same pipeline can determine the type of database to connect to."
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "orchestrators": {
+      "description": "<https://docs.meltano.com/concepts/plugins#orchestrators>",
+      "type": "object",
+      "$ref": "#/$defs/plugin_generic",
+      "unevaluatedProperties": false
+    },
+    "transformers": {
+      "description": "<https://docs.meltano.com/concepts/plugins#transforms>",
+      "type": "object",
+      "$ref": "#/$defs/plugin_generic",
+      "unevaluatedProperties": false
+    },
+    "files": {
+      "description": "<https://docs.meltano.com/concepts/plugins#file-bundles>",
+      "type": "object",
+      "$ref": "#/$defs/plugin_generic",
+      "unevaluatedProperties": false
+    },
+    "utilities": {
+      "description": "<https://docs.meltano.com/concepts/plugins#utilities>",
+      "type": "object",
+      "$ref": "#/$defs/plugin_generic",
+      "unevaluatedProperties": false
+    },
+    "transforms": {
+      "description": "<https://docs.meltano.com/concepts/plugins#transforms>",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/plugin_generic"
+        },
+        {
+          "properties": {
+            "annotations": {
+              "$ref": "#/$defs/annotations"
+            },
+            "vars": {
+              "type": "object",
+              "description": "An object containing dbt model variables"
+            },
+            "package_name": {
+              "type": "string",
+              "description": "The name of the dbt package's internal dbt project: the value of name in dbt_project.yml."
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "mapper_specific": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "$ref": "#/$defs/annotations"
+        },
+        "mappings": {
+          "description": "Name of the invokable mappings and their associated configs.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "annotations": {
+                "$ref": "#/$defs/annotations"
+              },
+              "name": {
+                "type": "string"
+              },
+              "config": {
+                "type": "object"
+              }
+            },
+            "additionalProperties": false
+          },
+          "required": [
+            "config",
+            "name"
+          ]
+        }
+      }
+    },
+    "mappers": {
+      "description": "<https://docs.meltano.com/concepts/plugins#mappers>",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/plugin_generic"
+        },
+        {
+          "$ref": "#/$defs/mapper_specific"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "about",
+                  "stream-maps",
+                  "structured-logging"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
     }
-  }
+  },
+  "additionalProperties": false
 }

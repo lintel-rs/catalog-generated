@@ -4,7 +4,7 @@
   "description": "Traefik v2 Dynamic Configuration File Provider",
   "x-lintel": {
     "source": "https://www.schemastore.org/traefik-v3-file-provider.json",
-    "sourceSha256": "89d76dc1744976503905efa6586cce250b9ce3e23fc9b6223b484138ddd4891f"
+    "sourceSha256": "8734891c888025bd1821a52f9c743c44bc5b10bcbb01aa84fb267c3f67b1416e"
   },
   "type": "object",
   "properties": {
@@ -52,7 +52,6 @@
     },
     "udp": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "routers": {
           "type": "object",
@@ -68,12 +67,12 @@
             "$ref": "#/$defs/udpService"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "tls": {
       "type": "object",
       "description": "Configures the TLS connection, TLS options, and certificate stores.",
-      "additionalProperties": false,
       "properties": {
         "certificates": {
           "type": "array",
@@ -160,12 +159,9 @@
           "patternProperties": {
             "[a-zA-Z0-9-_]+": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "defaultCertificate": {
                   "type": "object",
-                  "additionalProperties": false,
-                  "description": "Traefik can use a default certificate for connections without a SNI, or without a matching domain. If no default certificate is provided, Traefik generates and uses a self-signed certificate.",
                   "properties": {
                     "certFile": {
                       "type": "string"
@@ -173,12 +169,12 @@
                     "keyFile": {
                       "type": "string"
                     }
-                  }
+                  },
+                  "description": "Traefik can use a default certificate for connections without a SNI, or without a matching domain. If no default certificate is provided, Traefik generates and uses a self-signed certificate.",
+                  "additionalProperties": false
                 },
                 "defaultGeneratedCert": {
                   "type": "object",
-                  "additionalProperties": false,
-                  "description": "GeneratedCert defines the default generated certificate configuration.",
                   "properties": {
                     "resolver": {
                       "type": "string",
@@ -201,16 +197,19 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "description": "GeneratedCert defines the default generated certificate configuration.",
+                  "additionalProperties": false
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "httpRouter": {
       "type": "object",
@@ -283,11 +282,11 @@
           }
         }
       },
-      "additionalProperties": false,
       "required": [
         "rule",
         "service"
-      ]
+      ],
+      "additionalProperties": false
     },
     "httpLoadBalancerService": {
       "type": "object",
@@ -403,10 +402,10 @@
           "type": "string"
         }
       },
-      "additionalProperties": false,
       "required": [
         "servers"
-      ]
+      ],
+      "additionalProperties": false
     },
     "httpWeightedService": {
       "type": "object",
@@ -821,6 +820,30 @@
           "items": {
             "type": "string"
           }
+        },
+        "forwardBody": {
+          "type": "boolean",
+          "description": "Sets the forwardBody option to true to send the Body. As body is read inside Traefik before forwarding, this breaks streaming."
+        },
+        "maxBodySize": {
+          "type": "number",
+          "description": "Sets the maxBodySize to limit the body size in bytes. If body is bigger than this, it returns a 401 (unauthorized)."
+        },
+        "maxResponseBodySize": {
+          "type": "number",
+          "description": "Sets the maxResponseBodySize to limit the response body size from the authentication server in bytes."
+        },
+        "headerField": {
+          "type": "string",
+          "description": "Defines a header field to store the authenticated user."
+        },
+        "preserveLocationHeader": {
+          "type": "boolean",
+          "description": "Defines whether to forward the Location header to the client as is or prefix it with the domain name of the authentication server."
+        },
+        "preserveRequestMethod": {
+          "type": "boolean",
+          "description": "Defines whether to preserve the original request method while forwarding the request to the authentication server."
         }
       },
       "additionalProperties": false
@@ -1315,10 +1338,10 @@
           "description": "The initialInterval option defines the first wait time in the exponential backoff series."
         }
       },
-      "additionalProperties": false,
       "required": [
         "attempts"
-      ]
+      ],
+      "additionalProperties": false
     },
     "stripPrefixMiddleware": {
       "type": "object",
@@ -1657,11 +1680,11 @@
           }
         }
       },
-      "additionalProperties": false,
       "required": [
         "rule",
         "service"
-      ]
+      ],
+      "additionalProperties": false
     },
     "tcpLoadBalancerService": {
       "type": "object",
@@ -1700,10 +1723,10 @@
           "type": "string"
         }
       },
-      "additionalProperties": false,
       "required": [
         "servers"
-      ]
+      ],
+      "additionalProperties": false
     },
     "tcpWeightedService": {
       "type": "object",
@@ -1721,18 +1744,18 @@
                 "type": "number"
               }
             },
-            "additionalProperties": false,
             "required": [
               "name",
               "weight"
-            ]
+            ],
+            "additionalProperties": false
           }
         }
       },
-      "additionalProperties": false,
       "required": [
         "services"
-      ]
+      ],
+      "additionalProperties": false
     },
     "tcpService": {
       "type": "object",
@@ -1772,10 +1795,10 @@
           "description": "There must be one (and only one) UDP service referenced per UDP router. Services are the target for the router."
         }
       },
-      "additionalProperties": false,
       "required": [
         "service"
-      ]
+      ],
+      "additionalProperties": false
     },
     "udpLoadBalancerService": {
       "type": "object",
@@ -1798,10 +1821,10 @@
           }
         }
       },
-      "additionalProperties": false,
       "required": [
         "servers"
-      ]
+      ],
+      "additionalProperties": false
     },
     "udpWeightedService": {
       "type": "object",
@@ -1819,18 +1842,18 @@
                 "type": "number"
               }
             },
-            "additionalProperties": false,
             "required": [
               "name",
               "weight"
-            ]
+            ],
+            "additionalProperties": false
           }
         }
       },
-      "additionalProperties": false,
       "required": [
         "services"
-      ]
+      ],
+      "additionalProperties": false
     },
     "udpService": {
       "type": "object",
@@ -1855,5 +1878,6 @@
         }
       ]
     }
-  }
+  },
+  "additionalProperties": false
 }

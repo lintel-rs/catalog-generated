@@ -4,7 +4,6 @@
   "x-lintel": {
     "source": "https://www.schemastore.org/mboats-config-0.1.json",
     "sourceSha256": "8fb0ea0058c0275140afb5a7716e85bf227469ac15ee590da23307ee3d77c0cf",
-    "invalid": true,
     "fileMatch": [
       "*.mboats.yaml",
       "*.mboats.yml"
@@ -17,7 +16,7 @@
   "$defs": {
     "Main": {
       "type": "object",
-      "additionalProperties": true,
+      "title": "Properties",
       "properties": {
         "mboats": {
           "$ref": "#/$defs/MBOATS"
@@ -30,11 +29,11 @@
         "mboats",
         "app"
       ],
-      "title": "Properties"
+      "additionalProperties": true
     },
     "Application": {
       "type": "object",
-      "additionalProperties": true,
+      "title": "Application Properties",
       "properties": {
         "appId": {
           "type": "string",
@@ -49,11 +48,262 @@
         "appId",
         "appName"
       ],
-      "title": "Application Properties"
+      "additionalProperties": true
     },
     "MBOATS": {
       "type": "object",
-      "additionalProperties": false,
+      "$defs": {
+        "AWSEC2": {
+          "type": "object",
+          "title": "AWS EC2 Configuration",
+          "properties": {
+            "publicName": {
+              "type": "string"
+            },
+            "serverPort": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "publicName",
+            "serverPort"
+          ],
+          "additionalProperties": false
+        },
+        "AWSS3": {
+          "type": "object",
+          "title": "AWS S3 Configuration",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "accessKeyId": {
+              "type": "string"
+            },
+            "secretAccessKey": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
+            "bucket": {
+              "type": "string"
+            },
+            "identityPoolId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "accessKeyId",
+            "bucket",
+            "enabled",
+            "identityPoolId",
+            "region",
+            "secretAccessKey"
+          ],
+          "additionalProperties": false
+        },
+        "CucumberOptions": {
+          "type": "object",
+          "title": "CucumberOptions",
+          "properties": {
+            "featuresPath": {
+              "type": "string"
+            },
+            "stepdefsPackage": {
+              "type": "string"
+            },
+            "tagExpression": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "featuresPath",
+            "stepdefsPackage",
+            "tagExpression"
+          ],
+          "additionalProperties": false
+        },
+        "Email": {
+          "type": "object",
+          "$defs": {
+            "Auth": {
+              "type": "object",
+              "title": "Auth",
+              "properties": {
+                "$clientId": {
+                  "type": "string"
+                },
+                "$clientSecret": {
+                  "type": "string"
+                },
+                "$refreshToken": {
+                  "type": "string"
+                },
+                "$refreshUrl": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              },
+              "required": [
+                "$clientId",
+                "$clientSecret",
+                "$refreshToken",
+                "$refreshUrl"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "properties": {
+            "auth": {
+              "$ref": "#/$defs/MBOATS/$defs/Email/$defs/Auth"
+            },
+            "invitationLinkRegex": {
+              "type": "string"
+            },
+            "oktaTokenRegex": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "auth",
+            "invitationLinkRegex",
+            "oktaTokenRegex"
+          ],
+          "title": "Email Configuration",
+          "additionalProperties": false
+        },
+        "MongoDB": {
+          "type": "object",
+          "$defs": {
+            "Collection": {
+              "type": "object",
+              "title": "Collection",
+              "properties": {
+                "report": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "report"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "username": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "connectionString": {
+              "type": "string"
+            },
+            "database": {
+              "type": "string"
+            },
+            "collection": {
+              "$ref": "#/$defs/MBOATS/$defs/MongoDB/$defs/Collection"
+            }
+          },
+          "required": [
+            "collection",
+            "connectionString",
+            "database",
+            "enabled",
+            "password",
+            "username"
+          ],
+          "title": "MongoDB Configuration",
+          "additionalProperties": false
+        },
+        "NetworkLogs": {
+          "type": "object",
+          "$defs": {
+            "Request": {
+              "type": "object",
+              "title": "Request",
+              "properties": {
+                "headers": {
+                  "type": "boolean"
+                },
+                "cookies": {
+                  "type": "boolean"
+                },
+                "body": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "body",
+                "cookies",
+                "headers"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "request": {
+              "$ref": "#/$defs/MBOATS/$defs/NetworkLogs/$defs/Request"
+            },
+            "response": {
+              "$ref": "#/$defs/MBOATS/$defs/NetworkLogs/$defs/Request"
+            }
+          },
+          "required": [
+            "enabled",
+            "request",
+            "response"
+          ],
+          "title": "NetworkLogs",
+          "additionalProperties": false
+        },
+        "Threadbare": {
+          "type": "object",
+          "title": "Threadbare Configuration",
+          "properties": {
+            "server": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "server"
+          ],
+          "additionalProperties": false
+        },
+        "Video": {
+          "type": "object",
+          "title": "Video",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "location": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string"
+            },
+            "prefix": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "format",
+            "location",
+            "prefix"
+          ],
+          "additionalProperties": false
+        }
+      },
       "properties": {
         "pageLoadTimeout": {
           "type": "integer",
@@ -121,281 +371,30 @@
           ]
         },
         "video": {
-          "$ref": "#/$defs/MBOATS/definitions/Video"
+          "$ref": "#/$defs/MBOATS/$defs/Video"
         },
         "networkLogs": {
-          "$ref": "#/$defs/MBOATS/definitions/NetworkLogs"
+          "$ref": "#/$defs/MBOATS/$defs/NetworkLogs"
         },
         "email": {
-          "$ref": "#/$defs/MBOATS/definitions/Email"
+          "$ref": "#/$defs/MBOATS/$defs/Email"
         },
         "mongodb": {
-          "$ref": "#/$defs/MBOATS/definitions/MongoDB"
+          "$ref": "#/$defs/MBOATS/$defs/MongoDB"
         },
         "awss3": {
-          "$ref": "#/$defs/MBOATS/definitions/AWSS3"
+          "$ref": "#/$defs/MBOATS/$defs/AWSS3"
         },
         "awsec2": {
-          "$ref": "#/$defs/MBOATS/definitions/AWSEC2"
+          "$ref": "#/$defs/MBOATS/$defs/AWSEC2"
         },
         "threadbare": {
-          "$ref": "#/$defs/MBOATS/definitions/Threadbare"
+          "$ref": "#/$defs/MBOATS/$defs/Threadbare"
         }
       },
       "required": [],
       "title": "MBOATS Properties",
-      "$defs": {
-        "AWSEC2": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "publicName": {
-              "type": "string"
-            },
-            "serverPort": {
-              "type": "integer"
-            }
-          },
-          "required": [
-            "publicName",
-            "serverPort"
-          ],
-          "title": "AWS EC2 Configuration"
-        },
-        "AWSS3": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            },
-            "accessKeyId": {
-              "type": "string"
-            },
-            "secretAccessKey": {
-              "type": "string"
-            },
-            "region": {
-              "type": "string"
-            },
-            "bucket": {
-              "type": "string"
-            },
-            "identityPoolId": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "accessKeyId",
-            "bucket",
-            "enabled",
-            "identityPoolId",
-            "region",
-            "secretAccessKey"
-          ],
-          "title": "AWS S3 Configuration"
-        },
-        "CucumberOptions": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "featuresPath": {
-              "type": "string"
-            },
-            "stepdefsPackage": {
-              "type": "string"
-            },
-            "tagExpression": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "featuresPath",
-            "stepdefsPackage",
-            "tagExpression"
-          ],
-          "title": "CucumberOptions"
-        },
-        "Email": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "auth": {
-              "$ref": "#/$defs/MBOATS/definitions/Email/definitions/Auth"
-            },
-            "invitationLinkRegex": {
-              "type": "string"
-            },
-            "oktaTokenRegex": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "auth",
-            "invitationLinkRegex",
-            "oktaTokenRegex"
-          ],
-          "title": "Email Configuration",
-          "$defs": {
-            "Auth": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "$clientId": {
-                  "type": "string"
-                },
-                "$clientSecret": {
-                  "type": "string"
-                },
-                "$refreshToken": {
-                  "type": "string"
-                },
-                "$refreshUrl": {
-                  "type": "string",
-                  "format": "uri"
-                }
-              },
-              "required": [
-                "$clientId",
-                "$clientSecret",
-                "$refreshToken",
-                "$refreshUrl"
-              ],
-              "title": "Auth"
-            }
-          }
-        },
-        "MongoDB": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            },
-            "username": {
-              "type": "string"
-            },
-            "password": {
-              "type": "string"
-            },
-            "connectionString": {
-              "type": "string"
-            },
-            "database": {
-              "type": "string"
-            },
-            "collection": {
-              "$ref": "#/$defs/MBOATS/definitions/MongoDB/definitions/Collection"
-            }
-          },
-          "required": [
-            "collection",
-            "connectionString",
-            "database",
-            "enabled",
-            "password",
-            "username"
-          ],
-          "title": "MongoDB Configuration",
-          "$defs": {
-            "Collection": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "report": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "report"
-              ],
-              "title": "Collection"
-            }
-          }
-        },
-        "NetworkLogs": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            },
-            "request": {
-              "$ref": "#/$defs/MBOATS/definitions/NetworkLogs/definitions/Request"
-            },
-            "response": {
-              "$ref": "#/$defs/MBOATS/definitions/NetworkLogs/definitions/Request"
-            }
-          },
-          "required": [
-            "enabled",
-            "request",
-            "response"
-          ],
-          "title": "NetworkLogs",
-          "$defs": {
-            "Request": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "headers": {
-                  "type": "boolean"
-                },
-                "cookies": {
-                  "type": "boolean"
-                },
-                "body": {
-                  "type": "boolean"
-                }
-              },
-              "required": [
-                "body",
-                "cookies",
-                "headers"
-              ],
-              "title": "Request"
-            }
-          }
-        },
-        "Threadbare": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "server": {
-              "type": "null"
-            }
-          },
-          "required": [
-            "server"
-          ],
-          "title": "Threadbare Configuration"
-        },
-        "Video": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            },
-            "location": {
-              "type": "string"
-            },
-            "format": {
-              "type": "string"
-            },
-            "prefix": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "enabled",
-            "format",
-            "location",
-            "prefix"
-          ],
-          "title": "Video"
-        }
-      }
+      "additionalProperties": false
     }
   }
 }

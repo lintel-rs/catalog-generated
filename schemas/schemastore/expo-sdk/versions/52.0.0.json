@@ -20,7 +20,730 @@
         "name",
         "slug"
       ],
-      "additionalProperties": false,
+      "$defs": {
+        "Android": {
+          "description": "Configuration that is specific to the Android platform.",
+          "type": "object",
+          "properties": {
+            "publishManifestPath": {
+              "description": "The manifest for the Android version of your app will be written to this path during publish.",
+              "type": "string"
+            },
+            "publishBundlePath": {
+              "description": "The bundle for the Android version of your app will be written to this path during publish.",
+              "type": "string"
+            },
+            "package": {
+              "description": "The package name for your Android standalone app. You make it up, but it needs to be unique on the Play Store. See [this StackOverflow question](http://stackoverflow.com/questions/6273892/android-package-name-convention).",
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$"
+            },
+            "versionCode": {
+              "description": "Version number required by Google Play. Increment by one for each release. Must be a positive integer. [Learn more](https://developer.android.com/studio/publish/versioning.html)",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2100000000
+            },
+            "backgroundColor": {
+              "description": "The background color for your Android app, behind any of your React views. Overrides the top-level `backgroundColor` key if it is present.",
+              "type": "string",
+              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
+            },
+            "userInterfaceStyle": {
+              "description": "Configuration to force the app to always use the light or dark user-interface appearance, such as \"dark mode\", or make it automatically adapt to the system preferences. If not provided, defaults to `light`.",
+              "type": "string",
+              "enum": [
+                "light",
+                "dark",
+                "automatic"
+              ]
+            },
+            "useNextNotificationsApi": {
+              "description": "@deprecated A Boolean value that indicates whether the app should use the new notifications API.",
+              "type": "boolean"
+            },
+            "icon": {
+              "description": "Local path or remote URL to an image to use for your app\"s icon on Android. If specified, this overrides the top-level `icon` key. We recommend that you use a 1024x1024 png file (transparency is recommended for the Google Play Store). This icon will appear on the home screen and within the Expo app.",
+              "type": "string"
+            },
+            "adaptiveIcon": {
+              "description": "Settings for an Adaptive Launcher Icon on Android. [Learn more](https://developer.android.com/guide/practices/ui_guidelines/icon_design_adaptive)",
+              "type": "object",
+              "properties": {
+                "foregroundImage": {
+                  "description": "Local path or remote URL to an image to use for your app\"s icon on Android. If specified, this overrides the top-level `icon` and the `android.icon` keys. Should follow the [specified guidelines](https://developer.android.com/guide/practices/ui_guidelines/icon_design_adaptive). This icon will appear on the home screen.",
+                  "type": "string"
+                },
+                "backgroundImage": {
+                  "description": "Local path or remote URL to a background image for your app\"s Adaptive Icon on Android. If specified, this overrides the `backgroundColor` key. Must have the same dimensions as  foregroundImage`, and has no effect if `foregroundImage` is not specified. Should follow the [specified guidelines](https://developer.android.com/guide/practices/ui_guidelines/icon_design_adaptive).",
+                  "type": "string"
+                },
+                "backgroundColor": {
+                  "description": "Color to use as the background for your app\"s Adaptive Icon on Android. Defaults to white, `#FFFFFF`. Has no effect if `foregroundImage` is not specified.",
+                  "type": "string",
+                  "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
+                }
+              },
+              "additionalProperties": false
+            },
+            "playStoreUrl": {
+              "description": "URL to your app on the Google Play Store, if you have deployed it there. This is used to link to your store page from your Expo project page if your app is public.",
+              "pattern": "^https://play\\.google\\.com/",
+              "type": [
+                "string"
+              ]
+            },
+            "permissions": {
+              "description": "List of permissions used by the standalone app. \n\n To use ONLY the following minimum necessary permissions and none of the extras supported by Expo in a default managed app, set `permissions` to `[]`. The minimum necessary permissions do not require a Privacy Policy when uploading to Google Play Store and are: \n• receive data from Internet \n• view network connections \n• full network access \n• change your audio settings \n• prevent device from sleeping \n\n To use ALL permissions supported by Expo by default, do not specify the `permissions` key. \n\n  To use the minimum necessary permissions ALONG with certain additional permissions, specify those extras in `permissions`, e.g.\n\n `[ \"CAMERA\", \"ACCESS_FINE_LOCATION\" ]`.\n\n  You can specify the following permissions depending on what you need:\n\n- `ACCESS_COARSE_LOCATION`\n- `ACCESS_FINE_LOCATION`\n- `ACCESS_BACKGROUND_LOCATION`\n- `CAMERA`\n- `RECORD_AUDIO`\n- `READ_CONTACTS`\n- `WRITE_CONTACTS`\n- `READ_CALENDAR`\n- `WRITE_CALENDAR`\n- `READ_EXTERNAL_STORAGE`\n- `WRITE_EXTERNAL_STORAGE`\n- `USE_FINGERPRINT`\n- `USE_BIOMETRIC`\n- `WRITE_SETTINGS`\n- `VIBRATE`\n- `READ_PHONE_STATE`\n- `com.anddoes.launcher.permission.UPDATE_COUNT`\n- `com.android.launcher.permission.INSTALL_SHORTCUT`\n- `com.google.android.c2dm.permission.RECEIVE`\n- `com.google.android.gms.permission.ACTIVITY_RECOGNITION`\n- `com.google.android.providers.gsf.permission.READ_GSERVICES`\n- `com.htc.launcher.permission.READ_SETTINGS`\n- `com.htc.launcher.permission.UPDATE_SHORTCUT`\n- `com.majeur.launcher.permission.UPDATE_BADGE`\n- `com.sec.android.provider.badge.permission.READ`\n- `com.sec.android.provider.badge.permission.WRITE`\n- `com.sonyericsson.home.permission.BROADCAST_BADGE`\n",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "googleServicesFile": {
+              "description": "[Firebase Configuration File](https://support.google.com/firebase/answer/7015592) Location of the `GoogleService-Info.plist` file for configuring Firebase. Including this key automatically enables FCM in your standalone app.",
+              "type": "string"
+            },
+            "config": {
+              "type": "object",
+              "description": "Note: This property key is not included in the production manifest and will evaluate to `undefined`. It is used internally only in the build process, because it contains API keys that some may want to keep private.",
+              "properties": {
+                "branch": {
+                  "description": "[Branch](https://branch.io/) key to hook up Branch linking services.",
+                  "type": "object",
+                  "properties": {
+                    "apiKey": {
+                      "description": "Your Branch API key",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "googleMaps": {
+                  "description": "[Google Maps Android SDK](https://developers.google.com/maps/documentation/android-api/signup) configuration for your standalone app.",
+                  "type": "object",
+                  "properties": {
+                    "apiKey": {
+                      "description": "Your Google Maps Android SDK API key",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "googleMobileAdsAppId": {
+                  "description": "[Google Mobile Ads App ID](https://support.google.com/admob/answer/6232340) Google AdMob App ID. ",
+                  "type": "string"
+                },
+                "googleMobileAdsAutoInit": {
+                  "description": "A boolean indicating whether to initialize Google App Measurement and begin sending user-level event data to Google immediately when the app starts. The default in Expo (Client and in standalone apps) is `false`. [Sets the opposite of the given value to the following key in `Info.plist`](https://developers.google.com/admob/ios/eu-consent#delay_app_measurement_optional)",
+                  "type": "boolean"
+                },
+                "googleSignIn": {
+                  "description": "@deprecated Use `googleServicesFile` instead. [Google Sign-In Android SDK](https://developers.google.com/identity/sign-in/android/start-integrating) keys for your standalone app.",
+                  "type": "object",
+                  "properties": {
+                    "apiKey": {
+                      "description": "The Android API key. Can be found in the credentials section of the developer console or in `google-services.json`.",
+                      "type": "string"
+                    },
+                    "certificateHash": {
+                      "description": "The SHA-1 hash of the signing certificate used to build the APK without any separator (`:`). Can be found in `google-services.json`. <https://developers.google.com/android/guides/client-auth>",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "splash": {
+              "description": "Configuration for loading and splash screen for managed and standalone Android apps.",
+              "type": "object",
+              "properties": {
+                "backgroundColor": {
+                  "description": "Color to fill the loading screen background",
+                  "type": "string",
+                  "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
+                },
+                "resizeMode": {
+                  "description": "Determines how the `image` will be displayed in the splash loading screen. Must be one of `cover`, `contain` or `native`, defaults to `contain`.",
+                  "enum": [
+                    "cover",
+                    "contain",
+                    "native"
+                  ],
+                  "type": "string"
+                },
+                "image": {
+                  "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
+                  "type": "string"
+                },
+                "mdpi": {
+                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Natural sized image (baseline)`",
+                  "type": "string"
+                },
+                "hdpi": {
+                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Scale 1.5x`",
+                  "type": "string"
+                },
+                "xhdpi": {
+                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Scale 2x`",
+                  "type": "string"
+                },
+                "xxhdpi": {
+                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Scale 3x`",
+                  "type": "string"
+                },
+                "xxxhdpi": {
+                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Scale 4x`",
+                  "type": "string"
+                }
+              }
+            },
+            "intentFilters": {
+              "description": "Configuration for setting an array of custom intent filters in Android manifest. [Learn more](https://developer.android.com/guide/components/intents-filters)",
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "autoVerify": {
+                    "description": "You may also use an intent filter to set your app as the default handler for links (without showing the user a dialog with options). To do so use `true` and then configure your server to serve a JSON file verifying that you own the domain. [Learn more](developer.android.com/training/app-links)",
+                    "type": "boolean"
+                  },
+                  "action": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "scheme": {
+                            "description": "the scheme of the URL, e.g. `https`",
+                            "type": "string"
+                          },
+                          "host": {
+                            "description": "the hostname, e.g. `myapp.io`",
+                            "type": "string"
+                          },
+                          "port": {
+                            "description": "the port, e.g. `3000`",
+                            "type": "string"
+                          },
+                          "path": {
+                            "description": "an exact path for URLs that should be matched by the filter, e.g. `/records`",
+                            "type": "string"
+                          },
+                          "pathPattern": {
+                            "description": " a regex for paths that should be matched by the filter, e.g. `.*`",
+                            "type": "string"
+                          },
+                          "pathPrefix": {
+                            "description": "a prefix for paths that should be matched by the filter, e.g. `/records/` will match `/records/123`",
+                            "type": "string"
+                          },
+                          "mimeType": {
+                            "description": "a MIME type for URLs that should be matched by the filter",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": [
+                          "array"
+                        ],
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "scheme": {
+                              "description": "the scheme of the URL, e.g. `https`",
+                              "type": "string"
+                            },
+                            "host": {
+                              "description": "the hostname, e.g. `myapp.io`",
+                              "type": "string"
+                            },
+                            "port": {
+                              "description": "the port, e.g. `3000`",
+                              "type": "string"
+                            },
+                            "path": {
+                              "description": "an exact path for URLs that should be matched by the filter, e.g. `/records`",
+                              "type": "string"
+                            },
+                            "pathPattern": {
+                              "description": " a regex for paths that should be matched by the filter, e.g. `.*`",
+                              "type": "string"
+                            },
+                            "pathPrefix": {
+                              "description": "a prefix for paths that should be matched by the filter, e.g. `/records/` will match `/records/123`",
+                              "type": "string"
+                            },
+                            "mimeType": {
+                              "description": "a MIME type for URLs that should be matched by the filter",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      }
+                    ]
+                  },
+                  "category": {
+                    "anyOf": [
+                      {
+                        "type": [
+                          "string"
+                        ]
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "action"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "allowBackup": {
+              "description": "Allows your user\"s app data to be automatically backed up to their Google Drive. If this is set to false, no backup or restore of the application will ever be performed (this is useful if your app deals with sensitive information). Defaults to the Android default, which is `true`.",
+              "type": "boolean"
+            },
+            "softwareKeyboardLayoutMode": {
+              "description": "Determines how the software keyboard will impact the layout of your application. This maps to the `android:windowSoftInputMode` property. Defaults to `resize`. Valid values: `resize`, `pan`.",
+              "enum": [
+                "resize",
+                "pan"
+              ],
+              "type": "string"
+            },
+            "jsEngine": {
+              "description": "Specifies the JavaScript engine. Supported only on EAS Build. Defaults to `jsc`. Valid values: `hermes`, `jsc`.",
+              "type": "string",
+              "enum": [
+                "hermes",
+                "jsc"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "AndroidIntentFiltersData": {
+          "type": "object",
+          "properties": {
+            "scheme": {
+              "description": "the scheme of the URL, e.g. `https`",
+              "type": "string"
+            },
+            "host": {
+              "description": "the hostname, e.g. `myapp.io`",
+              "type": "string"
+            },
+            "port": {
+              "description": "the port, e.g. `3000`",
+              "type": "string"
+            },
+            "path": {
+              "description": "an exact path for URLs that should be matched by the filter, e.g. `/records`",
+              "type": "string"
+            },
+            "pathPattern": {
+              "description": " a regex for paths that should be matched by the filter, e.g. `.*`",
+              "type": "string"
+            },
+            "pathPrefix": {
+              "description": "a prefix for paths that should be matched by the filter, e.g. `/records/` will match `/records/123`",
+              "type": "string"
+            },
+            "mimeType": {
+              "description": "a MIME type for URLs that should be matched by the filter",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "IOS": {
+          "description": "Configuration that is specific to the iOS platform.",
+          "type": "object",
+          "properties": {
+            "publishManifestPath": {
+              "description": "The manifest for the iOS version of your app will be written to this path during publish.",
+              "type": "string"
+            },
+            "publishBundlePath": {
+              "description": "The bundle for the iOS version of your app will be written to this path during publish.",
+              "type": "string"
+            },
+            "bundleIdentifier": {
+              "description": "The bundle identifier for your iOS standalone app. You make it up, but it needs to be unique on the App Store. See [this StackOverflow question](http://stackoverflow.com/questions/11347470/what-does-bundle-identifier-mean-in-the-ios-project).",
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9.-]+$"
+            },
+            "buildNumber": {
+              "description": "Build number for your iOS standalone app. Corresponds to `CFBundleVersion` and must match Apple\"s [specified format](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-102364). (Note: Transporter will pull the value for `Version Number` from `expo.version` and NOT from `expo.ios.buildNumber`.)",
+              "type": "string",
+              "pattern": "^[A-Za-z0-9\\.]+$"
+            },
+            "backgroundColor": {
+              "description": "The background color for your iOS app, behind any of your React views. Overrides the top-level `backgroundColor` key if it is present.",
+              "type": "string",
+              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
+            },
+            "icon": {
+              "description": "Local path or remote URL to an image to use for your app\"s icon on iOS. If specified, this overrides the top-level `icon` key. Use a 1024x1024 icon which follows Apple\"s interface guidelines for icons, including color profile and transparency. \n\n Expo will generate the other required sizes. This icon will appear on the home screen and within the Expo app.",
+              "type": "string"
+            },
+            "merchantId": {
+              "description": "Merchant ID for use with Apple Pay in your standalone app.",
+              "type": "string"
+            },
+            "appStoreUrl": {
+              "description": "URL to your app on the Apple App Store, if you have deployed it there. This is used to link to your store page from your Expo project page if your app is public.",
+              "pattern": "^https://(itunes|apps)\\.apple\\.com/.*?\\d+",
+              "type": [
+                "string"
+              ]
+            },
+            "config": {
+              "type": "object",
+              "description": "Note: This property key is not included in the production manifest and will evaluate to `undefined`. It is used internally only in the build process, because it contains API keys that some may want to keep private.",
+              "properties": {
+                "branch": {
+                  "description": "[Branch](https://branch.io/) key to hook up Branch linking services.",
+                  "type": "object",
+                  "properties": {
+                    "apiKey": {
+                      "description": "Your Branch API key",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "usesNonExemptEncryption": {
+                  "description": "Sets `ITSAppUsesNonExemptEncryption` in the standalone ipa\"s Info.plist to the given boolean value.",
+                  "type": "boolean"
+                },
+                "googleMapsApiKey": {
+                  "description": "[Google Maps iOS SDK](https://developers.google.com/maps/documentation/ios-sdk/start) key for your standalone app.",
+                  "type": "string"
+                },
+                "googleMobileAdsAppId": {
+                  "description": "[Google Mobile Ads App ID](https://support.google.com/admob/answer/6232340) Google AdMob App ID. ",
+                  "type": "string"
+                },
+                "googleMobileAdsAutoInit": {
+                  "description": "A boolean indicating whether to initialize Google App Measurement and begin sending user-level event data to Google immediately when the app starts. The default in Expo (Go and in standalone apps) is `false`. [Sets the opposite of the given value to the following key in `Info.plist`.](https://developers.google.com/admob/ios/eu-consent#delay_app_measurement_optional)",
+                  "type": "boolean"
+                },
+                "googleSignIn": {
+                  "description": "[Google Sign-In iOS SDK](https://developers.google.com/identity/sign-in/ios/start-integrating) keys for your standalone app.",
+                  "type": "object",
+                  "properties": {
+                    "reservedClientId": {
+                      "description": "The reserved client ID URL scheme. Can be found in `GoogleService-Info.plist`.",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "googleServicesFile": {
+              "description": "[Firebase Configuration File](https://support.google.com/firebase/answer/7015592) Location of the `GoogleService-Info.plist` file for configuring Firebase.",
+              "type": "string"
+            },
+            "supportsTablet": {
+              "description": "Whether your standalone iOS app supports tablet screen sizes. Defaults to `false`.",
+              "type": "boolean"
+            },
+            "isTabletOnly": {
+              "description": "If true, indicates that your standalone iOS app does not support handsets, and only supports tablets.",
+              "type": "boolean"
+            },
+            "requireFullScreen": {
+              "description": "If true, indicates that your standalone iOS app does not support Slide Over and Split View on iPad. Defaults to `true` currently, but will change to `false` in a future SDK version.",
+              "type": "boolean"
+            },
+            "userInterfaceStyle": {
+              "description": "Configuration to force the app to always use the light or dark user-interface appearance, such as \"dark mode\", or make it automatically adapt to the system preferences. If not provided, defaults to `light`.",
+              "type": "string",
+              "enum": [
+                "light",
+                "dark",
+                "automatic"
+              ]
+            },
+            "infoPlist": {
+              "description": "Dictionary of arbitrary configuration to add to your standalone app\"s native Info.plist. Applied prior to all other Expo-specific configuration. No other validation is performed, so use this at your own risk of rejection from the App Store.",
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "entitlements": {
+              "description": "Dictionary of arbitrary configuration to add to your standalone app\"s native *.entitlements (plist). Applied prior to all other Expo-specific configuration. No other validation is performed, so use this at your own risk of rejection from the App Store.",
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "associatedDomains": {
+              "description": "An array that contains Associated Domains for the standalone app. [Learn more](https://developer.apple.com/documentation/safariservices/supporting_associated_domains).",
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "usesIcloudStorage": {
+              "description": "A boolean indicating if the app uses iCloud Storage for `DocumentPicker`. See `DocumentPicker` docs for details.",
+              "type": "boolean"
+            },
+            "usesAppleSignIn": {
+              "description": "A boolean indicating if the app uses Apple Sign-In. See `AppleAuthentication` docs for details.",
+              "type": "boolean"
+            },
+            "accessesContactNotes": {
+              "description": "A Boolean value that indicates whether the app may access the notes stored in contacts. You must [receive permission from Apple](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_contacts_notes) before you can submit your app for review with this capability.",
+              "type": "boolean"
+            },
+            "splash": {
+              "description": "Configuration for loading and splash screen for standalone iOS apps.",
+              "type": "object",
+              "properties": {
+                "xib": {
+                  "description": "@deprecated Apple has deprecated `.xib` splash screens in favor of `.storyboard` files. Local path to a XIB file as the loading screen. It overrides other loading screen options. Note: This will only be used in the standalone app (i.e., after you build the app). It will not be used in the Expo Go.",
+                  "type": "string"
+                },
+                "backgroundColor": {
+                  "description": "Color to fill the loading screen background",
+                  "type": "string",
+                  "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
+                },
+                "resizeMode": {
+                  "description": "Determines how the `image` will be displayed in the splash loading screen. Must be one of `cover` or `contain`, defaults to `contain`.",
+                  "enum": [
+                    "cover",
+                    "contain"
+                  ],
+                  "type": "string"
+                },
+                "image": {
+                  "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
+                  "type": "string"
+                },
+                "tabletImage": {
+                  "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "Splash": {
+          "description": "Configuration for loading and splash screen for standalone apps.",
+          "type": "object",
+          "properties": {
+            "backgroundColor": {
+              "description": "Color to fill the loading screen background",
+              "type": "string",
+              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
+            },
+            "resizeMode": {
+              "description": "Determines how the `image` will be displayed in the splash loading screen. Must be one of `cover` or `contain`, defaults to `contain`.",
+              "enum": [
+                "cover",
+                "contain"
+              ],
+              "type": "string"
+            },
+            "image": {
+              "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "PublishHook": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "config": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        },
+        "Web": {
+          "description": "Configuration that is specific to the web platform.",
+          "type": "object",
+          "properties": {
+            "favicon": {
+              "description": "Relative path of an image to use for your app\"s favicon.",
+              "type": "string"
+            },
+            "name": {
+              "description": "Defines the title of the document, defaults to the outer level name",
+              "type": "string"
+            },
+            "shortName": {
+              "description": "A short version of the app\"s name, 12 characters or fewer. Used in app launcher and new tab pages. Maps to `short_name` in the PWA manifest.json. Defaults to the `name` property.",
+              "type": "string"
+            },
+            "lang": {
+              "description": "Specifies the primary language for the values in the name and short_name members. This value is a string containing a single language tag.",
+              "type": "string"
+            },
+            "scope": {
+              "description": "Defines the navigation scope of this website\"s context. This restricts what web pages can be viewed while the manifest is applied. If the user navigates outside the scope, it returns to a normal web page inside a browser tab/window. If the scope is a relative URL, the base URL will be the URL of the manifest.",
+              "type": "string"
+            },
+            "themeColor": {
+              "description": "Defines the color of the Android tool bar, and may be reflected in the app\"s preview in task switchers.",
+              "type": "string",
+              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
+            },
+            "description": {
+              "description": "Provides a general description of what the pinned website does.",
+              "type": "string"
+            },
+            "dir": {
+              "description": "Specifies the primary text direction for the name, short_name, and description members. Together with the lang member, it helps the correct display of right-to-left languages.",
+              "enum": [
+                "auto",
+                "ltr",
+                "rtl"
+              ],
+              "type": "string"
+            },
+            "display": {
+              "description": "Defines the developers\" preferred display mode for the website.",
+              "enum": [
+                "fullscreen",
+                "standalone",
+                "minimal-ui",
+                "browser"
+              ],
+              "type": "string"
+            },
+            "startUrl": {
+              "description": "The URL that loads when a user launches the application (e.g., when added to home screen), typically the index. Note: This has to be a relative URL, relative to the manifest URL.",
+              "type": "string"
+            },
+            "orientation": {
+              "description": "Defines the default orientation for all the website\"s top level browsing contexts.",
+              "enum": [
+                "any",
+                "natural",
+                "landscape",
+                "landscape-primary",
+                "landscape-secondary",
+                "portrait",
+                "portrait-primary",
+                "portrait-secondary"
+              ],
+              "type": "string"
+            },
+            "backgroundColor": {
+              "description": "Defines the expected \"background color\" for the website. This value repeats what is already available in the site\"s CSS, but can be used by browsers to draw the background color of a shortcut when the manifest is available before the stylesheet has loaded. This creates a smooth transition between launching the web application and loading the site\"s content.",
+              "type": "string",
+              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
+            },
+            "barStyle": {
+              "description": "If content is set to default, the status bar appears normal. If set to black, the status bar has a black background. If set to black-translucent, the status bar is black and translucent. If set to default or black, the web content is displayed below the status bar. If set to black-translucent, the web content is displayed on the entire screen, partially obscured by the status bar.",
+              "enum": [
+                "default",
+                "black",
+                "black-translucent"
+              ],
+              "type": "string"
+            },
+            "preferRelatedApplications": {
+              "description": "Hints for the user agent to indicate to the user that the specified native applications (defined in expo.ios and expo.android) are recommended over the website.",
+              "type": "boolean"
+            },
+            "dangerous": {
+              "description": "Experimental features. These will break without deprecation notice.",
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "splash": {
+              "description": "Configuration for PWA splash screens.",
+              "type": "object",
+              "properties": {
+                "backgroundColor": {
+                  "description": "Color to fill the loading screen background",
+                  "type": "string",
+                  "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
+                },
+                "resizeMode": {
+                  "description": "Determines how the `image` will be displayed in the splash loading screen. Must be one of `cover` or `contain`, defaults to `contain`.",
+                  "enum": [
+                    "cover",
+                    "contain"
+                  ],
+                  "type": "string"
+                },
+                "image": {
+                  "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
+                  "type": "string"
+                }
+              }
+            },
+            "config": {
+              "description": "Firebase web configuration. Used by the expo-firebase packages on both web and native. [Learn more](https://firebase.google.com/docs/reference/js/firebase.html#initializeapp)",
+              "type": "object",
+              "properties": {
+                "firebase": {
+                  "type": "object",
+                  "properties": {
+                    "apiKey": {
+                      "type": "string"
+                    },
+                    "authDomain": {
+                      "type": "string"
+                    },
+                    "databaseURL": {
+                      "type": "string"
+                    },
+                    "projectId": {
+                      "type": "string"
+                    },
+                    "storageBucket": {
+                      "type": "string"
+                    },
+                    "messagingSenderId": {
+                      "type": "string"
+                    },
+                    "appId": {
+                      "type": "string"
+                    },
+                    "measurementId": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": true
+        }
+      },
       "properties": {
         "name": {
           "description": "The name of your app as it appears both within Expo Go and on your home screen as a standalone app.",
@@ -428,7 +1151,6 @@
         "ios": {
           "description": "Configuration that is specific to the iOS platform.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "appleTeamId": {
               "description": "The Apple development team ID to use for all native targets. You can find your team ID in [the Apple Developer Portal](https://developer.apple.com/help/account/manage-your-team/locate-your-team-id/).",
@@ -466,7 +1188,6 @@
                 {
                   "description": "Configuration that is specific to the iOS platform icons.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "light": {
                       "description": "The light icon. It will appear when neither dark nor tinted icons are used, or if they are not provided.",
@@ -480,7 +1201,8 @@
                       "description": "The tinted icon. It will appear for the app when the user\"s system appearance is tinted. See Apple\"s [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/app-icons#iOS-iPadOS) for more information.",
                       "type": "string"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               ]
             },
@@ -588,11 +1310,6 @@
                   "description": "A list of required reasons of why your app uses restricted API categories. [Learn more](https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api)",
                   "items": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "NSPrivacyAccessedAPIType",
-                      "NSPrivacyAccessedAPITypeReasons"
-                    ],
                     "properties": {
                       "NSPrivacyAccessedAPIType": {
                         "type": "string",
@@ -606,7 +1323,12 @@
                           "type": "string"
                         }
                       }
-                    }
+                    },
+                    "required": [
+                      "NSPrivacyAccessedAPIType",
+                      "NSPrivacyAccessedAPITypeReasons"
+                    ],
+                    "additionalProperties": false
                   }
                 },
                 "NSPrivacyTrackingDomains": {
@@ -626,13 +1348,6 @@
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "NSPrivacyCollectedDataType",
-                      "NSPrivacyCollectedDataTypeLinked",
-                      "NSPrivacyCollectedDataTypeTracking",
-                      "NSPrivacyCollectedDataTypePurposes"
-                    ],
                     "properties": {
                       "NSPrivacyCollectedDataType": {
                         "type": "string"
@@ -650,7 +1365,14 @@
                           "type": "string"
                         }
                       }
-                    }
+                    },
+                    "required": [
+                      "NSPrivacyCollectedDataType",
+                      "NSPrivacyCollectedDataTypeLinked",
+                      "NSPrivacyCollectedDataTypeTracking",
+                      "NSPrivacyCollectedDataTypePurposes"
+                    ],
+                    "additionalProperties": false
                   }
                 }
               },
@@ -780,12 +1502,12 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "android": {
           "description": "Configuration that is specific to the Android platform.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "publishManifestPath": {
               "description": "The manifest for the Android version of your app will be written to this path during publish.",
@@ -915,7 +1637,6 @@
             "splash": {
               "description": "Configuration for loading and splash screen for managed and standalone Android apps.",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "backgroundColor": {
                   "description": "Color to fill the loading screen background",
@@ -999,7 +1720,8 @@
                     }
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "intentFilters": {
               "description": "Configuration for setting an array of custom intent filters in Android manifest. [Learn more](https://developer.android.com/guide/components/intents-filters)",
@@ -1108,10 +1830,10 @@
                     ]
                   }
                 },
-                "additionalProperties": false,
                 "required": [
                   "action"
-                ]
+                ],
+                "additionalProperties": false
               }
             },
             "allowBackup": {
@@ -1171,12 +1893,12 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "web": {
           "description": "Configuration that is specific to the web platform.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "output": {
               "description": "Sets the export method for the web app for both `expo start` and `expo export`. `static` statically renders HTML files for every route in the `app/` directory, which is available only in Expo Router apps. `single` outputs a Single Page Application (SPA), with a single `index.html` in the output folder, and has no statically indexable HTML. `server` outputs static HTML, and API Routes for hosting with a custom Node.js server. Defaults to `single`.",
@@ -1283,7 +2005,6 @@
             "splash": {
               "description": "Configuration for PWA splash screens.",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "backgroundColor": {
                   "description": "Color to fill the loading screen background",
@@ -1302,16 +2023,15 @@
                   "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "config": {
               "description": "Firebase web configuration. Used by the expo-firebase packages on both web and native. [Learn more](https://firebase.google.com/docs/reference/js/firebase.html#initializeapp)",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "firebase": {
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "apiKey": {
                       "type": "string"
@@ -1337,9 +2057,11 @@
                     "measurementId": {
                       "type": "string"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "bundler": {
               "description": "Sets the bundler to use for the web platform. Only supported in the local CLI `npx expo`. Defaults to `webpack` if the `@expo/webpack-config` package is installed, if not, it defaults to `metro`.",
@@ -1349,12 +2071,12 @@
               ],
               "default": "metro"
             }
-          }
+          },
+          "additionalProperties": true
         },
         "experiments": {
           "description": "Enable experimental features that may be unstable, unsupported, or removed without deprecation notices.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "baseUrl": {
               "description": "Export a website relative to a subpath of a domain. The path will be prepended as-is to links to all bundled resources. Prefix the path with a `/` (recommended) to load all resources relative to the server root. If the path **does not** start with a `/` then resources will be loaded relative to the code that requests them, this could lead to unexpected behavior. Example \"/subpath\". Defaults to \"\" (empty string).",
@@ -1401,7 +2123,8 @@
               "type": "boolean",
               "default": false
             }
-          }
+          },
+          "additionalProperties": false
         },
         "_internal": {
           "description": "Internal properties for developer tools",
@@ -1417,730 +2140,7 @@
           "additionalProperties": true
         }
       },
-      "$defs": {
-        "Android": {
-          "description": "Configuration that is specific to the Android platform.",
-          "type": "object",
-          "properties": {
-            "publishManifestPath": {
-              "description": "The manifest for the Android version of your app will be written to this path during publish.",
-              "type": "string"
-            },
-            "publishBundlePath": {
-              "description": "The bundle for the Android version of your app will be written to this path during publish.",
-              "type": "string"
-            },
-            "package": {
-              "description": "The package name for your Android standalone app. You make it up, but it needs to be unique on the Play Store. See [this StackOverflow question](http://stackoverflow.com/questions/6273892/android-package-name-convention).",
-              "type": "string",
-              "pattern": "^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$"
-            },
-            "versionCode": {
-              "description": "Version number required by Google Play. Increment by one for each release. Must be a positive integer. [Learn more](https://developer.android.com/studio/publish/versioning.html)",
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 2100000000
-            },
-            "backgroundColor": {
-              "description": "The background color for your Android app, behind any of your React views. Overrides the top-level `backgroundColor` key if it is present.",
-              "type": "string",
-              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
-            },
-            "userInterfaceStyle": {
-              "description": "Configuration to force the app to always use the light or dark user-interface appearance, such as \"dark mode\", or make it automatically adapt to the system preferences. If not provided, defaults to `light`.",
-              "type": "string",
-              "enum": [
-                "light",
-                "dark",
-                "automatic"
-              ]
-            },
-            "useNextNotificationsApi": {
-              "description": "@deprecated A Boolean value that indicates whether the app should use the new notifications API.",
-              "type": "boolean"
-            },
-            "icon": {
-              "description": "Local path or remote URL to an image to use for your app\"s icon on Android. If specified, this overrides the top-level `icon` key. We recommend that you use a 1024x1024 png file (transparency is recommended for the Google Play Store). This icon will appear on the home screen and within the Expo app.",
-              "type": "string"
-            },
-            "adaptiveIcon": {
-              "description": "Settings for an Adaptive Launcher Icon on Android. [Learn more](https://developer.android.com/guide/practices/ui_guidelines/icon_design_adaptive)",
-              "type": "object",
-              "properties": {
-                "foregroundImage": {
-                  "description": "Local path or remote URL to an image to use for your app\"s icon on Android. If specified, this overrides the top-level `icon` and the `android.icon` keys. Should follow the [specified guidelines](https://developer.android.com/guide/practices/ui_guidelines/icon_design_adaptive). This icon will appear on the home screen.",
-                  "type": "string"
-                },
-                "backgroundImage": {
-                  "description": "Local path or remote URL to a background image for your app\"s Adaptive Icon on Android. If specified, this overrides the `backgroundColor` key. Must have the same dimensions as  foregroundImage`, and has no effect if `foregroundImage` is not specified. Should follow the [specified guidelines](https://developer.android.com/guide/practices/ui_guidelines/icon_design_adaptive).",
-                  "type": "string"
-                },
-                "backgroundColor": {
-                  "description": "Color to use as the background for your app\"s Adaptive Icon on Android. Defaults to white, `#FFFFFF`. Has no effect if `foregroundImage` is not specified.",
-                  "type": "string",
-                  "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
-                }
-              },
-              "additionalProperties": false
-            },
-            "playStoreUrl": {
-              "description": "URL to your app on the Google Play Store, if you have deployed it there. This is used to link to your store page from your Expo project page if your app is public.",
-              "pattern": "^https://play\\.google\\.com/",
-              "type": [
-                "string"
-              ]
-            },
-            "permissions": {
-              "description": "List of permissions used by the standalone app. \n\n To use ONLY the following minimum necessary permissions and none of the extras supported by Expo in a default managed app, set `permissions` to `[]`. The minimum necessary permissions do not require a Privacy Policy when uploading to Google Play Store and are: \n• receive data from Internet \n• view network connections \n• full network access \n• change your audio settings \n• prevent device from sleeping \n\n To use ALL permissions supported by Expo by default, do not specify the `permissions` key. \n\n  To use the minimum necessary permissions ALONG with certain additional permissions, specify those extras in `permissions`, e.g.\n\n `[ \"CAMERA\", \"ACCESS_FINE_LOCATION\" ]`.\n\n  You can specify the following permissions depending on what you need:\n\n- `ACCESS_COARSE_LOCATION`\n- `ACCESS_FINE_LOCATION`\n- `ACCESS_BACKGROUND_LOCATION`\n- `CAMERA`\n- `RECORD_AUDIO`\n- `READ_CONTACTS`\n- `WRITE_CONTACTS`\n- `READ_CALENDAR`\n- `WRITE_CALENDAR`\n- `READ_EXTERNAL_STORAGE`\n- `WRITE_EXTERNAL_STORAGE`\n- `USE_FINGERPRINT`\n- `USE_BIOMETRIC`\n- `WRITE_SETTINGS`\n- `VIBRATE`\n- `READ_PHONE_STATE`\n- `com.anddoes.launcher.permission.UPDATE_COUNT`\n- `com.android.launcher.permission.INSTALL_SHORTCUT`\n- `com.google.android.c2dm.permission.RECEIVE`\n- `com.google.android.gms.permission.ACTIVITY_RECOGNITION`\n- `com.google.android.providers.gsf.permission.READ_GSERVICES`\n- `com.htc.launcher.permission.READ_SETTINGS`\n- `com.htc.launcher.permission.UPDATE_SHORTCUT`\n- `com.majeur.launcher.permission.UPDATE_BADGE`\n- `com.sec.android.provider.badge.permission.READ`\n- `com.sec.android.provider.badge.permission.WRITE`\n- `com.sonyericsson.home.permission.BROADCAST_BADGE`\n",
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "googleServicesFile": {
-              "description": "[Firebase Configuration File](https://support.google.com/firebase/answer/7015592) Location of the `GoogleService-Info.plist` file for configuring Firebase. Including this key automatically enables FCM in your standalone app.",
-              "type": "string"
-            },
-            "config": {
-              "type": "object",
-              "description": "Note: This property key is not included in the production manifest and will evaluate to `undefined`. It is used internally only in the build process, because it contains API keys that some may want to keep private.",
-              "properties": {
-                "branch": {
-                  "description": "[Branch](https://branch.io/) key to hook up Branch linking services.",
-                  "type": "object",
-                  "properties": {
-                    "apiKey": {
-                      "description": "Your Branch API key",
-                      "type": "string"
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                "googleMaps": {
-                  "description": "[Google Maps Android SDK](https://developers.google.com/maps/documentation/android-api/signup) configuration for your standalone app.",
-                  "type": "object",
-                  "properties": {
-                    "apiKey": {
-                      "description": "Your Google Maps Android SDK API key",
-                      "type": "string"
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                "googleMobileAdsAppId": {
-                  "description": "[Google Mobile Ads App ID](https://support.google.com/admob/answer/6232340) Google AdMob App ID. ",
-                  "type": "string"
-                },
-                "googleMobileAdsAutoInit": {
-                  "description": "A boolean indicating whether to initialize Google App Measurement and begin sending user-level event data to Google immediately when the app starts. The default in Expo (Client and in standalone apps) is `false`. [Sets the opposite of the given value to the following key in `Info.plist`](https://developers.google.com/admob/ios/eu-consent#delay_app_measurement_optional)",
-                  "type": "boolean"
-                },
-                "googleSignIn": {
-                  "description": "@deprecated Use `googleServicesFile` instead. [Google Sign-In Android SDK](https://developers.google.com/identity/sign-in/android/start-integrating) keys for your standalone app.",
-                  "type": "object",
-                  "properties": {
-                    "apiKey": {
-                      "description": "The Android API key. Can be found in the credentials section of the developer console or in `google-services.json`.",
-                      "type": "string"
-                    },
-                    "certificateHash": {
-                      "description": "The SHA-1 hash of the signing certificate used to build the APK without any separator (`:`). Can be found in `google-services.json`. <https://developers.google.com/android/guides/client-auth>",
-                      "type": "string"
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              },
-              "additionalProperties": false
-            },
-            "splash": {
-              "description": "Configuration for loading and splash screen for managed and standalone Android apps.",
-              "type": "object",
-              "properties": {
-                "backgroundColor": {
-                  "description": "Color to fill the loading screen background",
-                  "type": "string",
-                  "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
-                },
-                "resizeMode": {
-                  "description": "Determines how the `image` will be displayed in the splash loading screen. Must be one of `cover`, `contain` or `native`, defaults to `contain`.",
-                  "enum": [
-                    "cover",
-                    "contain",
-                    "native"
-                  ],
-                  "type": "string"
-                },
-                "image": {
-                  "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
-                  "type": "string"
-                },
-                "mdpi": {
-                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Natural sized image (baseline)`",
-                  "type": "string"
-                },
-                "hdpi": {
-                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Scale 1.5x`",
-                  "type": "string"
-                },
-                "xhdpi": {
-                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Scale 2x`",
-                  "type": "string"
-                },
-                "xxhdpi": {
-                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Scale 3x`",
-                  "type": "string"
-                },
-                "xxxhdpi": {
-                  "description": "Local path or remote URL to an image to fill the background of the loading screen in \"native\" mode. Image size and aspect ratio are up to you. [Learn more]( <https://developer.android.com/training/multiscreen/screendensities)> \n\n `Scale 4x`",
-                  "type": "string"
-                }
-              }
-            },
-            "intentFilters": {
-              "description": "Configuration for setting an array of custom intent filters in Android manifest. [Learn more](https://developer.android.com/guide/components/intents-filters)",
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                "type": "object",
-                "properties": {
-                  "autoVerify": {
-                    "description": "You may also use an intent filter to set your app as the default handler for links (without showing the user a dialog with options). To do so use `true` and then configure your server to serve a JSON file verifying that you own the domain. [Learn more](developer.android.com/training/app-links)",
-                    "type": "boolean"
-                  },
-                  "action": {
-                    "type": "string"
-                  },
-                  "data": {
-                    "anyOf": [
-                      {
-                        "type": "object",
-                        "properties": {
-                          "scheme": {
-                            "description": "the scheme of the URL, e.g. `https`",
-                            "type": "string"
-                          },
-                          "host": {
-                            "description": "the hostname, e.g. `myapp.io`",
-                            "type": "string"
-                          },
-                          "port": {
-                            "description": "the port, e.g. `3000`",
-                            "type": "string"
-                          },
-                          "path": {
-                            "description": "an exact path for URLs that should be matched by the filter, e.g. `/records`",
-                            "type": "string"
-                          },
-                          "pathPattern": {
-                            "description": " a regex for paths that should be matched by the filter, e.g. `.*`",
-                            "type": "string"
-                          },
-                          "pathPrefix": {
-                            "description": "a prefix for paths that should be matched by the filter, e.g. `/records/` will match `/records/123`",
-                            "type": "string"
-                          },
-                          "mimeType": {
-                            "description": "a MIME type for URLs that should be matched by the filter",
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": false
-                      },
-                      {
-                        "type": [
-                          "array"
-                        ],
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "scheme": {
-                              "description": "the scheme of the URL, e.g. `https`",
-                              "type": "string"
-                            },
-                            "host": {
-                              "description": "the hostname, e.g. `myapp.io`",
-                              "type": "string"
-                            },
-                            "port": {
-                              "description": "the port, e.g. `3000`",
-                              "type": "string"
-                            },
-                            "path": {
-                              "description": "an exact path for URLs that should be matched by the filter, e.g. `/records`",
-                              "type": "string"
-                            },
-                            "pathPattern": {
-                              "description": " a regex for paths that should be matched by the filter, e.g. `.*`",
-                              "type": "string"
-                            },
-                            "pathPrefix": {
-                              "description": "a prefix for paths that should be matched by the filter, e.g. `/records/` will match `/records/123`",
-                              "type": "string"
-                            },
-                            "mimeType": {
-                              "description": "a MIME type for URLs that should be matched by the filter",
-                              "type": "string"
-                            }
-                          },
-                          "additionalProperties": false
-                        }
-                      }
-                    ]
-                  },
-                  "category": {
-                    "anyOf": [
-                      {
-                        "type": [
-                          "string"
-                        ]
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "additionalProperties": false,
-                "required": [
-                  "action"
-                ]
-              }
-            },
-            "allowBackup": {
-              "description": "Allows your user\"s app data to be automatically backed up to their Google Drive. If this is set to false, no backup or restore of the application will ever be performed (this is useful if your app deals with sensitive information). Defaults to the Android default, which is `true`.",
-              "type": "boolean"
-            },
-            "softwareKeyboardLayoutMode": {
-              "description": "Determines how the software keyboard will impact the layout of your application. This maps to the `android:windowSoftInputMode` property. Defaults to `resize`. Valid values: `resize`, `pan`.",
-              "enum": [
-                "resize",
-                "pan"
-              ],
-              "type": "string"
-            },
-            "jsEngine": {
-              "description": "Specifies the JavaScript engine. Supported only on EAS Build. Defaults to `jsc`. Valid values: `hermes`, `jsc`.",
-              "type": "string",
-              "enum": [
-                "hermes",
-                "jsc"
-              ]
-            }
-          },
-          "additionalProperties": false
-        },
-        "AndroidIntentFiltersData": {
-          "type": "object",
-          "properties": {
-            "scheme": {
-              "description": "the scheme of the URL, e.g. `https`",
-              "type": "string"
-            },
-            "host": {
-              "description": "the hostname, e.g. `myapp.io`",
-              "type": "string"
-            },
-            "port": {
-              "description": "the port, e.g. `3000`",
-              "type": "string"
-            },
-            "path": {
-              "description": "an exact path for URLs that should be matched by the filter, e.g. `/records`",
-              "type": "string"
-            },
-            "pathPattern": {
-              "description": " a regex for paths that should be matched by the filter, e.g. `.*`",
-              "type": "string"
-            },
-            "pathPrefix": {
-              "description": "a prefix for paths that should be matched by the filter, e.g. `/records/` will match `/records/123`",
-              "type": "string"
-            },
-            "mimeType": {
-              "description": "a MIME type for URLs that should be matched by the filter",
-              "type": "string"
-            }
-          },
-          "additionalProperties": false
-        },
-        "IOS": {
-          "description": "Configuration that is specific to the iOS platform.",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "publishManifestPath": {
-              "description": "The manifest for the iOS version of your app will be written to this path during publish.",
-              "type": "string"
-            },
-            "publishBundlePath": {
-              "description": "The bundle for the iOS version of your app will be written to this path during publish.",
-              "type": "string"
-            },
-            "bundleIdentifier": {
-              "description": "The bundle identifier for your iOS standalone app. You make it up, but it needs to be unique on the App Store. See [this StackOverflow question](http://stackoverflow.com/questions/11347470/what-does-bundle-identifier-mean-in-the-ios-project).",
-              "type": "string",
-              "pattern": "^[a-zA-Z0-9.-]+$"
-            },
-            "buildNumber": {
-              "description": "Build number for your iOS standalone app. Corresponds to `CFBundleVersion` and must match Apple\"s [specified format](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-102364). (Note: Transporter will pull the value for `Version Number` from `expo.version` and NOT from `expo.ios.buildNumber`.)",
-              "type": "string",
-              "pattern": "^[A-Za-z0-9\\.]+$"
-            },
-            "backgroundColor": {
-              "description": "The background color for your iOS app, behind any of your React views. Overrides the top-level `backgroundColor` key if it is present.",
-              "type": "string",
-              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
-            },
-            "icon": {
-              "description": "Local path or remote URL to an image to use for your app\"s icon on iOS. If specified, this overrides the top-level `icon` key. Use a 1024x1024 icon which follows Apple\"s interface guidelines for icons, including color profile and transparency. \n\n Expo will generate the other required sizes. This icon will appear on the home screen and within the Expo app.",
-              "type": "string"
-            },
-            "merchantId": {
-              "description": "Merchant ID for use with Apple Pay in your standalone app.",
-              "type": "string"
-            },
-            "appStoreUrl": {
-              "description": "URL to your app on the Apple App Store, if you have deployed it there. This is used to link to your store page from your Expo project page if your app is public.",
-              "pattern": "^https://(itunes|apps)\\.apple\\.com/.*?\\d+",
-              "type": [
-                "string"
-              ]
-            },
-            "config": {
-              "type": "object",
-              "description": "Note: This property key is not included in the production manifest and will evaluate to `undefined`. It is used internally only in the build process, because it contains API keys that some may want to keep private.",
-              "properties": {
-                "branch": {
-                  "description": "[Branch](https://branch.io/) key to hook up Branch linking services.",
-                  "type": "object",
-                  "properties": {
-                    "apiKey": {
-                      "description": "Your Branch API key",
-                      "type": "string"
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                "usesNonExemptEncryption": {
-                  "description": "Sets `ITSAppUsesNonExemptEncryption` in the standalone ipa\"s Info.plist to the given boolean value.",
-                  "type": "boolean"
-                },
-                "googleMapsApiKey": {
-                  "description": "[Google Maps iOS SDK](https://developers.google.com/maps/documentation/ios-sdk/start) key for your standalone app.",
-                  "type": "string"
-                },
-                "googleMobileAdsAppId": {
-                  "description": "[Google Mobile Ads App ID](https://support.google.com/admob/answer/6232340) Google AdMob App ID. ",
-                  "type": "string"
-                },
-                "googleMobileAdsAutoInit": {
-                  "description": "A boolean indicating whether to initialize Google App Measurement and begin sending user-level event data to Google immediately when the app starts. The default in Expo (Go and in standalone apps) is `false`. [Sets the opposite of the given value to the following key in `Info.plist`.](https://developers.google.com/admob/ios/eu-consent#delay_app_measurement_optional)",
-                  "type": "boolean"
-                },
-                "googleSignIn": {
-                  "description": "[Google Sign-In iOS SDK](https://developers.google.com/identity/sign-in/ios/start-integrating) keys for your standalone app.",
-                  "type": "object",
-                  "properties": {
-                    "reservedClientId": {
-                      "description": "The reserved client ID URL scheme. Can be found in `GoogleService-Info.plist`.",
-                      "type": "string"
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              },
-              "additionalProperties": false
-            },
-            "googleServicesFile": {
-              "description": "[Firebase Configuration File](https://support.google.com/firebase/answer/7015592) Location of the `GoogleService-Info.plist` file for configuring Firebase.",
-              "type": "string"
-            },
-            "supportsTablet": {
-              "description": "Whether your standalone iOS app supports tablet screen sizes. Defaults to `false`.",
-              "type": "boolean"
-            },
-            "isTabletOnly": {
-              "description": "If true, indicates that your standalone iOS app does not support handsets, and only supports tablets.",
-              "type": "boolean"
-            },
-            "requireFullScreen": {
-              "description": "If true, indicates that your standalone iOS app does not support Slide Over and Split View on iPad. Defaults to `true` currently, but will change to `false` in a future SDK version.",
-              "type": "boolean"
-            },
-            "userInterfaceStyle": {
-              "description": "Configuration to force the app to always use the light or dark user-interface appearance, such as \"dark mode\", or make it automatically adapt to the system preferences. If not provided, defaults to `light`.",
-              "type": "string",
-              "enum": [
-                "light",
-                "dark",
-                "automatic"
-              ]
-            },
-            "infoPlist": {
-              "description": "Dictionary of arbitrary configuration to add to your standalone app\"s native Info.plist. Applied prior to all other Expo-specific configuration. No other validation is performed, so use this at your own risk of rejection from the App Store.",
-              "type": "object",
-              "properties": {},
-              "additionalProperties": true
-            },
-            "entitlements": {
-              "description": "Dictionary of arbitrary configuration to add to your standalone app\"s native *.entitlements (plist). Applied prior to all other Expo-specific configuration. No other validation is performed, so use this at your own risk of rejection from the App Store.",
-              "type": "object",
-              "properties": {},
-              "additionalProperties": true
-            },
-            "associatedDomains": {
-              "description": "An array that contains Associated Domains for the standalone app. [Learn more](https://developer.apple.com/documentation/safariservices/supporting_associated_domains).",
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                "type": "string"
-              }
-            },
-            "usesIcloudStorage": {
-              "description": "A boolean indicating if the app uses iCloud Storage for `DocumentPicker`. See `DocumentPicker` docs for details.",
-              "type": "boolean"
-            },
-            "usesAppleSignIn": {
-              "description": "A boolean indicating if the app uses Apple Sign-In. See `AppleAuthentication` docs for details.",
-              "type": "boolean"
-            },
-            "accessesContactNotes": {
-              "description": "A Boolean value that indicates whether the app may access the notes stored in contacts. You must [receive permission from Apple](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_contacts_notes) before you can submit your app for review with this capability.",
-              "type": "boolean"
-            },
-            "splash": {
-              "description": "Configuration for loading and splash screen for standalone iOS apps.",
-              "type": "object",
-              "properties": {
-                "xib": {
-                  "description": "@deprecated Apple has deprecated `.xib` splash screens in favor of `.storyboard` files. Local path to a XIB file as the loading screen. It overrides other loading screen options. Note: This will only be used in the standalone app (i.e., after you build the app). It will not be used in the Expo Go.",
-                  "type": "string"
-                },
-                "backgroundColor": {
-                  "description": "Color to fill the loading screen background",
-                  "type": "string",
-                  "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
-                },
-                "resizeMode": {
-                  "description": "Determines how the `image` will be displayed in the splash loading screen. Must be one of `cover` or `contain`, defaults to `contain`.",
-                  "enum": [
-                    "cover",
-                    "contain"
-                  ],
-                  "type": "string"
-                },
-                "image": {
-                  "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
-                  "type": "string"
-                },
-                "tabletImage": {
-                  "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "Splash": {
-          "description": "Configuration for loading and splash screen for standalone apps.",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "backgroundColor": {
-              "description": "Color to fill the loading screen background",
-              "type": "string",
-              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
-            },
-            "resizeMode": {
-              "description": "Determines how the `image` will be displayed in the splash loading screen. Must be one of `cover` or `contain`, defaults to `contain`.",
-              "enum": [
-                "cover",
-                "contain"
-              ],
-              "type": "string"
-            },
-            "image": {
-              "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
-              "type": "string"
-            }
-          }
-        },
-        "PublishHook": {
-          "type": "object",
-          "additionalProperties": true,
-          "properties": {
-            "file": {
-              "type": "string"
-            },
-            "config": {
-              "type": "object",
-              "additionalProperties": true,
-              "properties": {}
-            }
-          }
-        },
-        "Web": {
-          "description": "Configuration that is specific to the web platform.",
-          "type": "object",
-          "additionalProperties": true,
-          "properties": {
-            "favicon": {
-              "description": "Relative path of an image to use for your app\"s favicon.",
-              "type": "string"
-            },
-            "name": {
-              "description": "Defines the title of the document, defaults to the outer level name",
-              "type": "string"
-            },
-            "shortName": {
-              "description": "A short version of the app\"s name, 12 characters or fewer. Used in app launcher and new tab pages. Maps to `short_name` in the PWA manifest.json. Defaults to the `name` property.",
-              "type": "string"
-            },
-            "lang": {
-              "description": "Specifies the primary language for the values in the name and short_name members. This value is a string containing a single language tag.",
-              "type": "string"
-            },
-            "scope": {
-              "description": "Defines the navigation scope of this website\"s context. This restricts what web pages can be viewed while the manifest is applied. If the user navigates outside the scope, it returns to a normal web page inside a browser tab/window. If the scope is a relative URL, the base URL will be the URL of the manifest.",
-              "type": "string"
-            },
-            "themeColor": {
-              "description": "Defines the color of the Android tool bar, and may be reflected in the app\"s preview in task switchers.",
-              "type": "string",
-              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
-            },
-            "description": {
-              "description": "Provides a general description of what the pinned website does.",
-              "type": "string"
-            },
-            "dir": {
-              "description": "Specifies the primary text direction for the name, short_name, and description members. Together with the lang member, it helps the correct display of right-to-left languages.",
-              "enum": [
-                "auto",
-                "ltr",
-                "rtl"
-              ],
-              "type": "string"
-            },
-            "display": {
-              "description": "Defines the developers\" preferred display mode for the website.",
-              "enum": [
-                "fullscreen",
-                "standalone",
-                "minimal-ui",
-                "browser"
-              ],
-              "type": "string"
-            },
-            "startUrl": {
-              "description": "The URL that loads when a user launches the application (e.g., when added to home screen), typically the index. Note: This has to be a relative URL, relative to the manifest URL.",
-              "type": "string"
-            },
-            "orientation": {
-              "description": "Defines the default orientation for all the website\"s top level browsing contexts.",
-              "enum": [
-                "any",
-                "natural",
-                "landscape",
-                "landscape-primary",
-                "landscape-secondary",
-                "portrait",
-                "portrait-primary",
-                "portrait-secondary"
-              ],
-              "type": "string"
-            },
-            "backgroundColor": {
-              "description": "Defines the expected \"background color\" for the website. This value repeats what is already available in the site\"s CSS, but can be used by browsers to draw the background color of a shortcut when the manifest is available before the stylesheet has loaded. This creates a smooth transition between launching the web application and loading the site\"s content.",
-              "type": "string",
-              "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
-            },
-            "barStyle": {
-              "description": "If content is set to default, the status bar appears normal. If set to black, the status bar has a black background. If set to black-translucent, the status bar is black and translucent. If set to default or black, the web content is displayed below the status bar. If set to black-translucent, the web content is displayed on the entire screen, partially obscured by the status bar.",
-              "enum": [
-                "default",
-                "black",
-                "black-translucent"
-              ],
-              "type": "string"
-            },
-            "preferRelatedApplications": {
-              "description": "Hints for the user agent to indicate to the user that the specified native applications (defined in expo.ios and expo.android) are recommended over the website.",
-              "type": "boolean"
-            },
-            "dangerous": {
-              "description": "Experimental features. These will break without deprecation notice.",
-              "type": "object",
-              "properties": {},
-              "additionalProperties": true
-            },
-            "splash": {
-              "description": "Configuration for PWA splash screens.",
-              "type": "object",
-              "properties": {
-                "backgroundColor": {
-                  "description": "Color to fill the loading screen background",
-                  "type": "string",
-                  "pattern": "^(?:#|(&#x23;))[0-9a-fA-F]{6}$"
-                },
-                "resizeMode": {
-                  "description": "Determines how the `image` will be displayed in the splash loading screen. Must be one of `cover` or `contain`, defaults to `contain`.",
-                  "enum": [
-                    "cover",
-                    "contain"
-                  ],
-                  "type": "string"
-                },
-                "image": {
-                  "description": "Local path or remote URL to an image to fill the background of the loading screen. Image size and aspect ratio are up to you. Must be a .png.",
-                  "type": "string"
-                }
-              }
-            },
-            "config": {
-              "description": "Firebase web configuration. Used by the expo-firebase packages on both web and native. [Learn more](https://firebase.google.com/docs/reference/js/firebase.html#initializeapp)",
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "firebase": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "apiKey": {
-                      "type": "string"
-                    },
-                    "authDomain": {
-                      "type": "string"
-                    },
-                    "databaseURL": {
-                      "type": "string"
-                    },
-                    "projectId": {
-                      "type": "string"
-                    },
-                    "storageBucket": {
-                      "type": "string"
-                    },
-                    "messagingSenderId": {
-                      "type": "string"
-                    },
-                    "appId": {
-                      "type": "string"
-                    },
-                    "measurementId": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

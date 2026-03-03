@@ -15,7 +15,7 @@
   "type": "object",
   "properties": {
     "package": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "artifact": {
           "type": "string"
@@ -24,10 +24,10 @@
       "required": [
         "artifact"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "configuration": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "entrypoint": {
           "type": "string"
@@ -95,7 +95,13 @@
           "description": "Whether to run Lambda in VPC. If true and vpcConfig is not provided, uses tenant settings or environment variables as fallback."
         },
         "vpcConfig": {
-          "additionalProperties": false,
+          "else": {
+            "not": {
+              "required": [
+                "lambdaLayers"
+              ]
+            }
+          },
           "properties": {
             "securityGroupIds": {
               "items": {
@@ -134,16 +140,10 @@
             },
             "type": "object"
           },
-          "else": {
-            "not": {
-              "required": [
-                "lambdaLayers"
-              ]
-            }
-          }
+          "additionalProperties": false
         },
         "stsAccess": {
-          "additionalProperties": false,
+          "type": "object",
           "properties": {
             "assumeRoles": {
               "items": {
@@ -157,7 +157,7 @@
           "required": [
             "assumeRoles"
           ],
-          "type": "object"
+          "additionalProperties": false
         }
       },
       "required": [
@@ -166,10 +166,10 @@
         "runtime",
         "memorySize"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "service": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "region": {
           "type": "string"
@@ -189,7 +189,7 @@
         "type",
         "uuid"
       ],
-      "type": "object"
+      "additionalProperties": false
     }
   },
   "required": [

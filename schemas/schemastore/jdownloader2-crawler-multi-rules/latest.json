@@ -18,7 +18,93 @@
   "type": "array",
   "items": {
     "type": "object",
-    "additionalProperties": false,
+    "allOf": [
+      {
+        "if": {
+          "$comment": "Check if rule is not DEEPDECRYPT and disallow deepPattern. packageNamePattern and passwordPattern being non-null",
+          "properties": {
+            "rule": {
+              "not": {
+                "const": "DEEPDECRYPT"
+              }
+            }
+          },
+          "type": "object"
+        },
+        "then": {
+          "properties": {
+            "deepPattern": {
+              "type": "null"
+            },
+            "packageNamePattern": {
+              "type": "null"
+            },
+            "passwordPattern": {
+              "type": "null"
+            }
+          },
+          "type": "object"
+        }
+      },
+      {
+        "if": {
+          "$comment": "Check if rule is not REWRITE and disallow rewriteReplaceWith being non-null",
+          "properties": {
+            "rule": {
+              "not": {
+                "const": "REWRITE"
+              }
+            }
+          },
+          "type": "object"
+        },
+        "then": {
+          "properties": {
+            "rewriteReplaceWith": {
+              "type": "null"
+            }
+          },
+          "type": "object"
+        }
+      },
+      {
+        "if": {
+          "$comment": "Check if rule is not DIRECTHTTP, DEEPDECRYPT, SUBMITFORM or FOLLOWREDIRECT and disallow updateCookies being non-null",
+          "properties": {
+            "rule": {
+              "not": {
+                "oneOf": [
+                  {
+                    "const": "DIRECTHTTP"
+                  },
+                  {
+                    "const": "DEEPDECRYPT"
+                  },
+                  {
+                    "const": "SUBMITFORM"
+                  },
+                  {
+                    "const": "FOLLOWREDIRECT"
+                  }
+                ]
+              }
+            }
+          },
+          "type": "object"
+        },
+        "then": {
+          "properties": {
+            "updateCookies": {
+              "type": "null"
+            },
+            "cookies": {
+              "type": "null"
+            }
+          },
+          "type": "object"
+        }
+      }
+    ],
     "required": [
       "enabled",
       "name",
@@ -157,92 +243,6 @@
         "format": "regex"
       }
     },
-    "allOf": [
-      {
-        "if": {
-          "$comment": "Check if rule is not DEEPDECRYPT and disallow deepPattern. packageNamePattern and passwordPattern being non-null",
-          "properties": {
-            "rule": {
-              "not": {
-                "const": "DEEPDECRYPT"
-              }
-            }
-          },
-          "type": "object"
-        },
-        "then": {
-          "properties": {
-            "deepPattern": {
-              "type": "null"
-            },
-            "packageNamePattern": {
-              "type": "null"
-            },
-            "passwordPattern": {
-              "type": "null"
-            }
-          },
-          "type": "object"
-        }
-      },
-      {
-        "if": {
-          "$comment": "Check if rule is not REWRITE and disallow rewriteReplaceWith being non-null",
-          "properties": {
-            "rule": {
-              "not": {
-                "const": "REWRITE"
-              }
-            }
-          },
-          "type": "object"
-        },
-        "then": {
-          "properties": {
-            "rewriteReplaceWith": {
-              "type": "null"
-            }
-          },
-          "type": "object"
-        }
-      },
-      {
-        "if": {
-          "$comment": "Check if rule is not DIRECTHTTP, DEEPDECRYPT, SUBMITFORM or FOLLOWREDIRECT and disallow updateCookies being non-null",
-          "properties": {
-            "rule": {
-              "not": {
-                "oneOf": [
-                  {
-                    "const": "DIRECTHTTP"
-                  },
-                  {
-                    "const": "DEEPDECRYPT"
-                  },
-                  {
-                    "const": "SUBMITFORM"
-                  },
-                  {
-                    "const": "FOLLOWREDIRECT"
-                  }
-                ]
-              }
-            }
-          },
-          "type": "object"
-        },
-        "then": {
-          "properties": {
-            "updateCookies": {
-              "type": "null"
-            },
-            "cookies": {
-              "type": "null"
-            }
-          },
-          "type": "object"
-        }
-      }
-    ]
+    "additionalProperties": false
   }
 }

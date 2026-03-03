@@ -819,6 +819,7 @@
                   "$comment": "https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#onworkflow_callinputs",
                   "description": "When using the workflow_call keyword, you can optionally specify inputs that are passed to the called workflow from the caller workflow.",
                   "type": "object",
+                  "additionalProperties": false,
                   "patternProperties": {
                     "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
                       "$comment": "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputsinput_id",
@@ -860,13 +861,13 @@
                       ],
                       "additionalProperties": false
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 "outputs": {
                   "$comment": "https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#onworkflow_calloutputs",
                   "description": "When using the workflow_call keyword, you can optionally specify inputs that are passed to the called workflow from the caller workflow.",
                   "type": "object",
+                  "additionalProperties": false,
                   "patternProperties": {
                     "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
                       "$comment": "https://docs.github.com/en/actions/sharing-automations/creating-actions/metadata-syntax-for-github-actions#outputsoutput_id",
@@ -889,12 +890,12 @@
                       ],
                       "additionalProperties": false
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 "secrets": {
                   "$comment": "https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#onworkflow_callsecrets",
                   "description": "A map of the secrets that can be used in the called workflow. Within the called workflow, you can use the secrets context to refer to a secret.",
+                  "additionalProperties": false,
                   "patternProperties": {
                     "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
                       "$comment": "https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#onworkflow_callsecretssecret_id",
@@ -913,8 +914,7 @@
                       "additionalProperties": false,
                       "type": "object"
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 }
               },
               "type": "object"
@@ -927,12 +927,12 @@
                   "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/metadata-syntax-for-github-actions#inputs",
                   "description": "Input parameters allow you to specify data that the action expects to use during runtime. GitHub stores input parameters as environment variables. Input ids with uppercase letters are converted to lowercase during runtime. We recommended using lowercase input ids.",
                   "type": "object",
+                  "additionalProperties": false,
                   "patternProperties": {
                     "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
                       "$ref": "#/$defs/workflowDispatchInput"
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 }
               },
               "additionalProperties": false,
@@ -1022,6 +1022,8 @@
       "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobs",
       "description": "A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.\nEach job runs in a fresh instance of the virtual environment specified by runs-on.\nYou can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see <https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits>.",
       "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
       "patternProperties": {
         "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
           "oneOf": [
@@ -1033,9 +1035,7 @@
             }
           ]
         }
-      },
-      "minProperties": 1,
-      "additionalProperties": false
+      }
     },
     "run-name": {
       "$comment": "https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#run-name",
@@ -1050,6 +1050,8 @@
     "on",
     "jobs"
   ],
+  "additionalProperties": false,
+  "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions",
   "$defs": {
     "architecture": {
       "type": "string",
@@ -1215,7 +1217,6 @@
     },
     "permissions-event": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "actions": {
           "$ref": "#/$defs/permissions-level"
@@ -1269,7 +1270,8 @@
         "statuses": {
           "$ref": "#/$defs/permissions-level"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "permissions-level": {
       "type": "string",
@@ -1444,7 +1446,9 @@
         {
           "$comment": "https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners/use-custom-images#mapping-syntax",
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "image-name"
+          ],
           "description": "You can use the mapping syntax with `snapshot` to define both the `image-name` and the optional `version`. When you specify a major version, the minor versioning automatically increments if that major version already exists. Patch versions are not supported.",
           "properties": {
             "image-name": {
@@ -1456,15 +1460,20 @@
               "pattern": "^\\d+(\\.\\d+|\\*)?$"
             }
           },
-          "required": [
-            "image-name"
-          ]
+          "additionalProperties": false
         }
       ]
     },
     "step": {
       "type": "object",
-      "additionalProperties": false,
+      "dependentRequired": {
+        "working-directory": [
+          "run"
+        ],
+        "shell": [
+          "run"
+        ]
+      },
       "properties": {
         "id": {
           "$comment": "https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsid",
@@ -1560,14 +1569,7 @@
           ]
         }
       ],
-      "dependentRequired": {
-        "working-directory": [
-          "run"
-        ],
-        "shell": [
-          "run"
-        ]
-      }
+      "additionalProperties": false
     },
     "types": {
       "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#onevent_nametypes",
@@ -1609,6 +1611,21 @@
       "oneOf": [
         {
           "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/configuration"
+                },
+                "minItems": 1
+              },
+              {
+                "$ref": "#/$defs/expressionSyntax"
+              }
+            ]
+          },
+          "minProperties": 1,
           "patternProperties": {
             "^(in|ex)clude$": {
               "$comment": "https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#example-including-configurations-in-a-matrix-build",
@@ -1628,22 +1645,7 @@
                 }
               ]
             }
-          },
-          "additionalProperties": {
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/$defs/configuration"
-                },
-                "minItems": 1
-              },
-              {
-                "$ref": "#/$defs/expressionSyntax"
-              }
-            ]
-          },
-          "minProperties": 1
+          }
         },
         {
           "$ref": "#/$defs/expressionSyntax"
@@ -1840,10 +1842,10 @@
           "$comment": "https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idoutputs",
           "description": "A map of outputs for a job. Job outputs are available to all downstream jobs that depend on this job.",
           "type": "object",
+          "minProperties": 1,
           "additionalProperties": {
             "type": "string"
-          },
-          "minProperties": 1
+          }
         },
         "env": {
           "$comment": "https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idenv",
@@ -2118,7 +2120,5 @@
       ],
       "additionalProperties": false
     }
-  },
-  "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions",
-  "additionalProperties": false
+  }
 }

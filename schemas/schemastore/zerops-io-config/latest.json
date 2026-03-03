@@ -277,6 +277,8 @@
                 "description": "Defines what files or folders will be copied from the build container to the prepare runtime container. The prepare runtime container is used to customize your runtime environment."
               },
               "envVariables": {
+                "description": "Defines the environment variables for the build environment.",
+                "type": "object",
                 "additionalProperties": {
                   "oneOf": [
                     {
@@ -289,17 +291,15 @@
                       "type": "boolean"
                     }
                   ]
-                },
-                "type": "object",
-                "description": "Defines the environment variables for the build environment."
+                }
               }
             },
-            "additionalProperties": false,
+            "description": "Build pipeline configuration.",
             "type": "object",
             "required": [
               "deployFiles"
             ],
-            "description": "Build pipeline configuration."
+            "additionalProperties": false
           },
           "deploy": {
             "properties": {
@@ -324,13 +324,13 @@
                         "description": "Defines the URL path of the HTTP GET request."
                       }
                     },
-                    "additionalProperties": false,
+                    "description": "Configures the readiness check to request a local URL using a http GET method.",
                     "type": "object",
                     "required": [
                       "port",
                       "path"
                     ],
-                    "description": "Configures the readiness check to request a local URL using a http GET method."
+                    "additionalProperties": false
                   },
                   "exec": {
                     "properties": {
@@ -339,12 +339,12 @@
                         "description": "Defines a local command to be run. The command has access to the same environment variables. A single string is required. If you need to run multiple commands create a shell script or, use a multiline format as in the example below."
                       }
                     },
-                    "additionalProperties": false,
+                    "description": "Configures the readiness check to run a local command.",
                     "type": "object",
                     "required": [
                       "command"
                     ],
-                    "description": "Configures the readiness check to run a local command."
+                    "additionalProperties": false
                   },
                   "failureTimeout": {
                     "type": "integer",
@@ -355,17 +355,17 @@
                     "description": "Time interval between readiness check attempts."
                   }
                 },
-                "additionalProperties": false,
+                "description": "Defines a readiness check. Requires either httpGet object or exec object.",
                 "type": "object",
-                "description": "Defines a readiness check. Requires either httpGet object or exec object."
+                "additionalProperties": false
               },
               "temporaryShutdown": {
                 "type": "boolean"
               }
             },
-            "additionalProperties": false,
+            "description": "Deploy configuration.",
             "type": "object",
-            "description": "Deploy configuration."
+            "additionalProperties": false
           },
           "run": {
             "properties": {
@@ -533,12 +533,12 @@
                     ]
                   }
                 },
-                "additionalProperties": false,
-                "type": "object",
                 "required": [
                   "target",
                   "delimiter"
-                ]
+                ],
+                "type": "object",
+                "additionalProperties": false
               },
               "healthCheck": {
                 "properties": {
@@ -561,13 +561,13 @@
                         "description": "Defines the URL path of the HTTP GET request."
                       }
                     },
-                    "additionalProperties": false,
+                    "description": "Configures the health check to request a local URL using a http GET method.",
                     "type": "object",
                     "required": [
                       "port",
                       "path"
                     ],
-                    "description": "Configures the health check to request a local URL using a http GET method."
+                    "additionalProperties": false
                   },
                   "exec": {
                     "properties": {
@@ -576,12 +576,12 @@
                         "description": "Defines a local command to be run. The command has access to the same environment variables. A single string is required. If you need to run multiple commands create a shell script or, use a multiline format as in the example below."
                       }
                     },
-                    "additionalProperties": false,
+                    "description": "Configures the health check to run a local command.",
                     "type": "object",
                     "required": [
                       "command"
                     ],
-                    "description": "Configures the health check to run a local command."
+                    "additionalProperties": false
                   },
                   "failureTimeout": {
                     "type": "integer",
@@ -600,9 +600,9 @@
                     "description": "Time interval between health check attempts."
                   }
                 },
-                "additionalProperties": false,
+                "description": "Defines a health check.",
                 "type": "object",
-                "description": "Defines a health check."
+                "additionalProperties": false
               },
               "routing": {
                 "properties": {
@@ -637,12 +637,12 @@
                           "description": "Whether query parameters should be preserved. Used in non-masked redirects."
                         }
                       },
-                      "additionalProperties": false,
-                      "type": "object",
                       "required": [
                         "from",
                         "to"
-                      ]
+                      ],
+                      "type": "object",
+                      "additionalProperties": false
                     },
                     "type": "array"
                   },
@@ -654,25 +654,25 @@
                           "description": "Relative path to be matched against request location. May contain * at the end for prefix-based match."
                         },
                         "values": {
+                          "description": "Header name as Key and raw content as Value, e.g. \"Access-Control-Allow-Origin\": \"'*' always\"",
+                          "type": "object",
                           "additionalProperties": {
                             "type": "string"
-                          },
-                          "type": "object",
-                          "description": "Header name as Key and raw content as Value, e.g. \"Access-Control-Allow-Origin\": \"'*' always\""
+                          }
                         }
                       },
-                      "additionalProperties": false,
-                      "type": "object",
                       "required": [
                         "for",
                         "values"
-                      ]
+                      ],
+                      "type": "object",
+                      "additionalProperties": false
                     },
                     "type": "array"
                   }
                 },
-                "additionalProperties": false,
-                "type": "object"
+                "type": "object",
+                "additionalProperties": false
               },
               "ports": {
                 "items": {
@@ -697,16 +697,18 @@
                       "description": "Set to true if a web server is running on the port. Zerops uses this information for the configuration of public access. True is available only in combination with the TCP protocol. Default value is false."
                     }
                   },
-                  "additionalProperties": false,
-                  "type": "object",
                   "required": [
                     "port"
-                  ]
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
                 },
                 "type": "array",
                 "description": "Specifies one or more internal ports on which your application will listen."
               },
               "envVariables": {
+                "description": "Defines the environment variables for the runtime environment.",
+                "type": "object",
                 "additionalProperties": {
                   "oneOf": [
                     {
@@ -719,9 +721,7 @@
                       "type": "boolean"
                     }
                   ]
-                },
-                "type": "object",
-                "description": "Defines the environment variables for the runtime environment."
+                }
               },
               "startCommands": {
                 "items": {
@@ -743,11 +743,11 @@
                       "description": "Defines one or more commands to be run each time a new runtime container is started or a container is restarted."
                     }
                   },
-                  "additionalProperties": false,
-                  "type": "object",
                   "required": [
                     "command"
-                  ]
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
                 },
                 "type": "array",
                 "description": "Defines the start commands for the runtime environment."
@@ -772,21 +772,21 @@
                       "description": "If set to true, the job runs on all containers; otherwise, it runs on a single container (default: false)"
                     }
                   },
-                  "additionalProperties": false,
-                  "type": "object",
                   "required": [
                     "timing",
                     "command",
                     "allContainers"
-                  ]
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
                 },
                 "type": "array",
                 "description": "A list of cron jobs with their respective schedule (timing), the command to run (command), and additional options like allContainers and workingDir."
               }
             },
-            "additionalProperties": false,
+            "description": "Runtime configuration.",
             "type": "object",
-            "description": "Runtime configuration."
+            "additionalProperties": false
           },
           "extends": {
             "oneOf": [
@@ -802,18 +802,18 @@
             ]
           }
         },
-        "additionalProperties": false,
-        "type": "object",
         "required": [
           "setup"
-        ]
+        ],
+        "type": "object",
+        "additionalProperties": false
       },
       "type": "array",
       "description": "The top-level element is always zerops."
     }
   },
-  "additionalProperties": false,
   "required": [
     "zerops"
-  ]
+  ],
+  "additionalProperties": false
 }

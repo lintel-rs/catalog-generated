@@ -17,7 +17,6 @@
     "OutblocksProject": {
       "title": "Outblocks",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string"
@@ -53,13 +52,25 @@
           "description": "Project-wide default app settings.",
           "$ref": "#/$defs/Defaults"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "DNS": {
       "title": "DNS",
       "type": "array",
       "items": {
-        "additionalProperties": false,
+        "oneOf": [
+          {
+            "required": [
+              "domain"
+            ]
+          },
+          {
+            "required": [
+              "domains"
+            ]
+          }
+        ],
         "properties": {
           "domain": {
             "type": "string"
@@ -78,25 +89,13 @@
             "$ref": "#/$defs/SSL"
           }
         },
-        "oneOf": [
-          {
-            "required": [
-              "domain"
-            ]
-          },
-          {
-            "required": [
-              "domains"
-            ]
-          }
-        ],
+        "additionalProperties": false,
         "type": "object"
       }
     },
     "SSL": {
       "title": "SSL",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "cert_file": {
           "description": "Public key file path. Required to be in PEM format.",
@@ -114,11 +113,12 @@
           "description": "Private key value in PEM format.",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "State": {
       "type": "object",
-      "additionalProperties": true,
+      "title": "State",
       "properties": {
         "type": {
           "description": "State type, plugin specific value e.g. 'gcp' for gcp plugin or use 'local' for local state.",
@@ -132,18 +132,18 @@
       "required": [
         "type"
       ],
-      "title": "State"
+      "additionalProperties": true
     },
     "Secrets": {
       "type": "object",
-      "additionalProperties": true,
+      "title": "Secrets",
       "properties": {
         "type": {
           "description": "Secrets provider type, plugin specific value e.g. 'gcp' for gcp plugin.",
           "type": "string"
         }
       },
-      "title": "Secrets"
+      "additionalProperties": true
     },
     "Dependencies": {
       "title": "Dependencies",
@@ -321,27 +321,26 @@
     "DependencyRun": {
       "title": "Run",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "plugin": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "DependencyDeploy": {
       "title": "Deploy",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "plugin": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "Monitoring": {
       "title": "Monitoring",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "plugin": {
           "description": "Monitoring plugin override. Defaults to first supported plugin available.",
@@ -361,25 +360,12 @@
             "$ref": "#/$defs/MonitoringTarget"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "MonitoringChannel": {
       "title": "Monitoring channels",
       "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "type": {
-          "description": "Notification channel type. Possible values: slack, email.",
-          "type": "string",
-          "enum": [
-            "slack",
-            "email"
-          ]
-        }
-      },
-      "required": [
-        "type"
-      ],
       "allOf": [
         {
           "if": {
@@ -432,12 +418,28 @@
             "type": "object"
           }
         }
-      ]
+      ],
+      "properties": {
+        "type": {
+          "description": "Notification channel type. Possible values: slack, email.",
+          "type": "string",
+          "enum": [
+            "slack",
+            "email"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": true
     },
     "MonitoringTarget": {
       "title": "Monitoring target",
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
       "properties": {
         "url": {
           "description": "Target full url.",
@@ -461,27 +463,24 @@
           }
         }
       },
-      "required": [
-        "url"
-      ]
+      "additionalProperties": false
     },
     "Plugin": {
       "title": "Plugin",
       "type": "object",
-      "additionalProperties": true,
+      "required": [
+        "name"
+      ],
       "properties": {
         "name": {
           "type": "string"
         }
       },
-      "required": [
-        "name"
-      ]
+      "additionalProperties": true
     },
     "Defaults": {
       "title": "Defaults",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "deploy": {
           "description": "Deploy config.",
@@ -495,41 +494,41 @@
           "description": "Run config.",
           "$ref": "#/$defs/DefaultRun"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "DefaultDeploy": {
       "title": "Deploy defaults",
       "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "plugin": {
-          "description": "Deploy plugin override. Defaults to first supported plugin available.",
-          "type": "string"
-        }
-      },
       "env": {
         "description": "Additional environment variables added to every app that supports environment variables.",
         "type": "object",
         "additionalProperties": {
           "type": "string"
         }
-      }
+      },
+      "properties": {
+        "plugin": {
+          "description": "Deploy plugin override. Defaults to first supported plugin available.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
     },
     "DefaultDNS": {
       "title": "DNS defaults",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "plugin": {
           "description": "DNS plugin override. Defaults to first supported plugin available.",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "DefaultRun": {
       "title": "Run defaults",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "plugin": {
           "description": "Run plugin override. Defaults to first supported plugin available.",
@@ -542,7 +541,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": true
     }
   },
   "$ref": "#/$defs/OutblocksProject"

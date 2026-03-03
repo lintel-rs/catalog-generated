@@ -4,7 +4,7 @@
   "title": "Options",
   "x-lintel": {
     "source": "https://json.schemastore.org/ty.json",
-    "sourceSha256": "f840a7e4ff511a0dfcbea2cc8519807eaa2deda8eab2ce89228c2adc8f2d144e"
+    "sourceSha256": "fb1b54a6d8b951709b22a7c800afa2e598ea37640f6b05e0c712c952f1be0d1a"
   },
   "type": "object",
   "properties": {
@@ -72,7 +72,6 @@
       ]
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "AnalysisOptions": {
       "type": "object",
@@ -553,6 +552,16 @@
         "escape-character-in-forward-annotation": {
           "title": "detects forward type annotations with escape characters",
           "description": "## What it does\nChecks for forward annotations that contain escape characters.\n\n## Why is this bad?\nStatic analysis tools like ty can't analyze type annotations that contain escape characters.\n\n## Example\n\n```python\ndef foo() -> \"intt\\b\": ...\n```",
+          "default": "error",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Level"
+            }
+          ]
+        },
+        "final-on-non-method": {
+          "title": "detects `@final` applied to non-method functions",
+          "description": "## What it does\nChecks for `@final` decorators applied to non-method functions.\n\n## Why is this bad?\nThe `@final` decorator is only meaningful on methods and classes.\nApplying it to a module-level function or a nested function has no\neffect and is likely a mistake.\n\n## Example\n\n```python\nfrom typing import final\n\n# Error: @final is not allowed on non-method functions\n@final\ndef my_function() -> int:\n    return 0\n```",
           "default": "error",
           "oneOf": [
             {
@@ -1250,6 +1259,16 @@
             }
           ]
         },
+        "shadowed-type-variable": {
+          "title": "detects type variables that shadow type variables from outer scopes",
+          "description": "## What it does\nChecks for type variables in nested generic classes or functions that shadow type variables\nfrom an enclosing scope.\n\n## Why is this bad?\nShadowing type variables makes the code confusing and is disallowed by the typing spec.\n\n## Examples\n```python\nclass Outer[T]:\n    # Error: `T` is already used by `Outer`\n    class Inner[T]: ...\n\n    # Error: `T` is already used by `Outer`\n    def method[T](self, x: T) -> T: ...\n```\n\n## References\n- [Typing spec: Generics](https://typing.python.org/en/latest/spec/generics.html#introduction)",
+          "default": "error",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Level"
+            }
+          ]
+        },
         "static-assert-error": {
           "title": "Failed static assertion",
           "description": "## What it does\nMakes sure that the argument of `static_assert` is statically known to be true.\n\n## Why is this bad?\nA `static_assert` call represents an explicit request from the user\nfor the type checker to emit an error if the argument cannot be verified\nto evaluate to `True` in a boolean context.\n\n## Examples\n```python\nfrom ty_extensions import static_assert\n\nstatic_assert(1 + 1 == 3)  # error: evaluates to `False`\n\nstatic_assert(int(2.0 * 3.0) == 6)  # error: does not have a statically known truthiness\n```",
@@ -1533,5 +1552,6 @@
     "string": {
       "type": "string"
     }
-  }
+  },
+  "additionalProperties": false
 }

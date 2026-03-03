@@ -39,7 +39,6 @@
         "settings": {
           "type": "object",
           "description": "General settings, often changed by configs and command line.\n\nThese settings control global behaviour of the ChordPro program and can be changed by configs and command line.",
-          "additionalProperties": false,
           "properties": {
             "chordnames": {
               "default": "strict",
@@ -231,12 +230,12 @@
               "type": "boolean",
               "default": false
             }
-          }
+          },
+          "additionalProperties": false
         },
         "chord-formats": {
           "description": "Format to show chord names. May contain markup",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "common": {
               "description": "Format string for rendering common chord names.",
@@ -253,12 +252,12 @@
               "type": "string",
               "default": "%{root|%{}%{qual|<sup>%{}</sup>}%{ext|<sup>%{}</sup>}%{bass|/<sub>%{}</sub>}|%{name}}"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "diagrams": {
           "type": "object",
           "description": "Printing chord diagrams. Selects which chords to print at the end of the song.\nBy default, ChordPro will include diagrams for all known chords that have been used in a song.\nThe `suppress` list can be used to filter chords from showing diagrams, for example for chords that you consider trivial.\nNote: The type of diagram (string or keyboard) is determined by the value of `instrument.type`.",
-          "additionalProperties": false,
           "properties": {
             "show": {
               "type": "string",
@@ -292,7 +291,8 @@
               },
               "default": []
             }
-          }
+          },
+          "additionalProperties": false
         },
         "assets": {
           "$comment": "Not sure yet which category this property belongs in.",
@@ -484,7 +484,40 @@
           "type": "array",
           "items": {
             "type": "object",
-            "additionalProperties": false,
+            "examples": [
+              {
+                "fields": [
+                  "songindex"
+                ],
+                "label": "Table of Contents",
+                "line": "%{title}",
+                "pageno": "%{page}",
+                "omit": false,
+                "template": "stdtoc"
+              },
+              {
+                "fields": [
+                  "sorttitle",
+                  "artist"
+                ],
+                "label": "Contents by Title",
+                "line": "%{title}%{artist| - %{}}",
+                "pageno": "%{page}",
+                "omit": false,
+                "template": "stdtoc"
+              },
+              {
+                "fields": [
+                  "artist",
+                  "sorttitle"
+                ],
+                "label": "Contents by Artist",
+                "line": "%{artist|%{} - }%{title}",
+                "pageno": "%{page}",
+                "omit": true,
+                "template": "stdtoc"
+              }
+            ],
             "properties": {
               "break": {
                 "default": "",
@@ -534,53 +567,20 @@
                 "default": "%{page}"
               }
             },
-            "examples": [
-              {
-                "fields": [
-                  "songindex"
-                ],
-                "label": "Table of Contents",
-                "line": "%{title}",
-                "pageno": "%{page}",
-                "omit": false,
-                "template": "stdtoc"
-              },
-              {
-                "fields": [
-                  "sorttitle",
-                  "artist"
-                ],
-                "label": "Contents by Title",
-                "line": "%{title}%{artist| - %{}}",
-                "pageno": "%{page}",
-                "omit": false,
-                "template": "stdtoc"
-              },
-              {
-                "fields": [
-                  "artist",
-                  "sorttitle"
-                ],
-                "label": "Contents by Artist",
-                "line": "%{artist|%{} - }%{title}",
-                "pageno": "%{page}",
-                "omit": true,
-                "template": "stdtoc"
-              }
-            ]
+            "additionalProperties": false
           }
         },
         "diagnostics": {
           "type": "object",
           "description": "When ChordPro detects errors while analyzing a song, it will use this format to show diagnostic messages.\nIn the format, `\"%f\"` will be replaced by the song file name, `\"%n\"` by the line number in the file where the error was detected, %m by the diagnostig message, and `\"%l\"` will be replaced by the original content of the line.\nNote you cannot use song metadata here.",
-          "additionalProperties": false,
           "properties": {
             "format": {
               "type": "string",
               "description": "Format for error messages.",
               "default": "\"%f\", line %n, %m\\n\\t%l"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "gridstrum": {
           "description": "Grid strum overrides.",
@@ -595,7 +595,6 @@
         "instrument": {
           "description": "Description of the instrument.\nActual values are set from an included instrument config.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "description": {
               "description": "Descriptive instrument name.",
@@ -607,25 +606,28 @@
               "type": "string",
               "default": ""
             }
-          }
+          },
+          "additionalProperties": false
         },
         "markup": {
           "description": "Settings for the markup processor.\nShortcodes allow user defined markup, e.g. <foo>...</foo>.\n```\nmarkup.shortcode {\n   heavy :  \"weight='bold' size='large'\"\n}\nEach occurrence of <heavy>...</heavy> will be replaced by\n<span weight='bold' size='large'>...</span>.\n```",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "shortcodes": {
               "description": "",
               "type": "object",
               "additionalProperties": true
             }
-          }
+          },
+          "additionalProperties": false
         },
         "meta": {
           "description": "Globally defined (added) meta data,\nThis is explicitly NOT intended for the metadata items above.\nDo NOT remove or change `_configversion`!",
           "type": "object",
-          "additionalProperties": {
-            "type": "object"
+          "default": {
+            "_configversion": [
+              6
+            ]
           },
           "properties": {
             "_configversion": {
@@ -640,17 +642,14 @@
               ]
             }
           },
-          "default": {
-            "_configversion": [
-              6
-            ]
+          "additionalProperties": {
+            "type": "object"
           }
         },
         "metadata": {
           "title": "Metadata",
           "description": "Metadata.\nFor these keys you can use `{meta key ...}` as well as `{key ...}`.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "autosplit": {
               "type": "boolean",
@@ -691,12 +690,12 @@
               "type": "boolean",
               "default": true
             }
-          }
+          },
+          "additionalProperties": false
         },
         "notes": {
           "description": "Note (chord root) names.\nIn case of alternatives, the first one is used for output.\nNote that it is tempting to use real sharps and flats for output, but most fonts don't have the glyphs.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "system": {
               "$ref": "#/$defs/noteSystem",
@@ -716,7 +715,8 @@
               "$ref": "#/$defs/noteNameArray",
               "description": "Note names, using flats. `\\u266d` is MUSICAL SYMBOL FLAT."
             }
-          }
+          },
+          "additionalProperties": false
         },
         "dates": {
           "type": "object",
@@ -726,14 +726,14 @@
             "today": {
               "description": "Today's date.",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "format": {
                   "description": "Format.",
                   "type": "string",
                   "default": "%A, %B %e, %Y"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
         },
@@ -767,7 +767,6 @@
         "user": {
           "description": "User settings.\nThese (optional) settings can be used to add user information.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "name": {
               "type": "string",
@@ -779,12 +778,12 @@
               "description": "Full user name.",
               "default": ""
             }
-          }
+          },
+          "additionalProperties": false
         },
         "toc": {
           "description": "Deprecated. Table of Contents (obsolete, do not use).",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "line": {
               "default": "%{title}",
@@ -802,7 +801,8 @@
               "default": "Table of Contents",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -837,12 +837,27 @@
                 "chorus": {
                   "description": "Appearance of chorus.",
                   "type": "object",
-                  "additionalProperties": false,
+                  "examples": [
+                    {
+                      "indent": 0,
+                      "bar": {
+                        "offset": 8,
+                        "width": 1,
+                        "color": "foreground"
+                      },
+                      "tag": "Chorus",
+                      "recall": {
+                        "choruslike": false,
+                        "tag": "Chorus",
+                        "type": "comment",
+                        "quote": false
+                      }
+                    }
+                  ],
                   "properties": {
                     "bar": {
                       "description": "Appearance of chorus side bar.\nSuppress by setting offset and/or width to zero (`0`).",
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "color": {
                           "$ref": "#/$defs/color",
@@ -861,7 +876,8 @@
                           "default": 1,
                           "minimum": 0
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     "indent": {
                       "description": "Indentation of the chorus, not including bar.",
@@ -872,7 +888,6 @@
                     "recall": {
                       "description": "Appearance of chorus recall.",
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "choruslike": {
                           "description": "Quote the chorus like a chorus.",
@@ -902,7 +917,8 @@
                           ],
                           "default": "comment"
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     "tag": {
                       "description": "Label for Chorus.",
@@ -910,23 +926,7 @@
                       "default": "Chorus"
                     }
                   },
-                  "examples": [
-                    {
-                      "indent": 0,
-                      "bar": {
-                        "offset": 8,
-                        "width": 1,
-                        "color": "foreground"
-                      },
-                      "tag": "Chorus",
-                      "recall": {
-                        "choruslike": false,
-                        "tag": "Chorus",
-                        "type": "comment",
-                        "quote": false
-                      }
-                    }
-                  ]
+                  "additionalProperties": false
                 },
                 "columnspace": {
                   "description": "Distance between columns in multi-column mode.\nWhen output is produced in multiple columns, this is the space between the columns, in pt.",
@@ -937,7 +937,6 @@
                 "corefonts": {
                   "description": "Experimental: Remap corefonts to real truetype fonts.\nThis requires a set of truetype fonts to be available in the `fontdir` under a well-defined name. See the docs.\nFontsets currenly supported are `\"free\"` for the GNU Free Fonts, and `\"tex\"` for the Tex Gyre fonts.\nValue `false` inhibits remapping.\nValue `null` will have ChordPro look for the fonts itself.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "remap": {
                       "description": "Value \"false\" inhibits remapping.\nValue \"null\" will have ChordPro look for the fonts itself.",
@@ -961,7 +960,8 @@
                       ],
                       "default": null
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "csv": {
                   "type": "object",
@@ -972,7 +972,17 @@
                       "description": "The fields for the CSV.",
                       "items": {
                         "type": "object",
-                        "additionalProperties": false,
+                        "examples": [
+                          {
+                            "name": "years",
+                            "meta": "year"
+                          },
+                          {
+                            "name": "my_field",
+                            "value": "text",
+                            "omit": true
+                          }
+                        ],
                         "properties": {
                           "name": {
                             "description": "The field name in the exported CSV.",
@@ -1007,17 +1017,7 @@
                             ]
                           }
                         ],
-                        "examples": [
-                          {
-                            "name": "years",
-                            "meta": "year"
-                          },
-                          {
-                            "name": "my_field",
-                            "value": "text",
-                            "omit": true
-                          }
-                        ]
+                        "additionalProperties": false
                       }
                     },
                     "separator": {
@@ -1236,12 +1236,12 @@
                     },
                     "dingbats": {
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "": {
                           "type": "string"
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     }
                   },
                   "default": {
@@ -1289,7 +1289,6 @@
                 "fonts": {
                   "description": "`fonts` maps output elements to fonts as defined in `fontconfig`.\n\nSome element mappings can be specified, but it's not needed for all since they default to other elements:\nsubtitle       --> text\nchorus         --> text\ncomment        --> text\ncomment_italic --> chord\ncomment_box    --> chord\nannotation     --> chord\ntoc            --> text\ngrid           --> chord\ngrid_margin    --> comment\nfooter         --> subtitle @ 60%\nempty          --> text\ndiagram        --> comment\ndiagram_base   --> text (but at a small size)",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "annotation": {
                       "$ref": "#/$defs/fontspec",
@@ -1488,7 +1487,8 @@
                       "$ref": "#/$defs/fontspec",
                       "description": "The font for the base fret numbers in chord diagrams. Default is the setting for `text` but at a small size."
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "footspace": {
                   "description": "Space for page footers.",
@@ -1499,7 +1499,54 @@
                 "formats": {
                   "description": "Page formats.\nEach of these page classes can have settings for a page title, subtitle, footer, and background. The settings inherit from `default` to `title` to `first`. So a `title` page has everything a `default` page has, and a `first` page has everything a `title` page has. `filler` pages are empty by default.\nAll heading strings may contain references to metadata in the form %{name}, for example %{title}. The current page number can be obtained with %{page}, and the song index in the songbook with %{songindex}. For a complete description on how to use metadata in heading strings, see [here](https://chordpro.org/chordpro/chordpro-configuration-format-strings/).\nWhen even/odd page printing is selected, the left and right parts are swapped on even pages.\nBy default, the \"title\" element shows the value of metadata item \"title\", centered on the page. Likewise \"subtitle\".\nNOTE: The \"title\" and \"subtitle\" page elements have the same names as the default metadata values which may be confusing. To show metadata item, e.g. \"artist\", add its value to one of the title/subtitle fields. Don't try to add an artist page element.",
                   "type": "object",
-                  "additionalProperties": false,
+                  "examples": [
+                    {
+                      "default": {
+                        "title": [
+                          "",
+                          "",
+                          ""
+                        ],
+                        "subtitle": [
+                          "",
+                          "",
+                          ""
+                        ],
+                        "footer": [
+                          "%{title}",
+                          "",
+                          "%{page}"
+                        ],
+                        "background": ""
+                      },
+                      "title": {
+                        "title": [
+                          "",
+                          "%{title}",
+                          ""
+                        ],
+                        "subtitle": [
+                          "",
+                          "%{subtitle}",
+                          ""
+                        ],
+                        "footer": [
+                          "",
+                          "",
+                          "%{page}"
+                        ],
+                        "background": ""
+                      },
+                      "first": {
+                        "footer": [
+                          "",
+                          "",
+                          ""
+                        ],
+                        "background": ""
+                      }
+                    }
+                  ],
                   "properties": {
                     "default": {
                       "$ref": "#/$defs/pageFormat",
@@ -1552,64 +1599,15 @@
                       }
                     }
                   },
-                  "examples": [
-                    {
-                      "default": {
-                        "title": [
-                          "",
-                          "",
-                          ""
-                        ],
-                        "subtitle": [
-                          "",
-                          "",
-                          ""
-                        ],
-                        "footer": [
-                          "%{title}",
-                          "",
-                          "%{page}"
-                        ],
-                        "background": ""
-                      },
-                      "title": {
-                        "title": [
-                          "",
-                          "%{title}",
-                          ""
-                        ],
-                        "subtitle": [
-                          "",
-                          "%{subtitle}",
-                          ""
-                        ],
-                        "footer": [
-                          "",
-                          "",
-                          "%{page}"
-                        ],
-                        "background": ""
-                      },
-                      "first": {
-                        "footer": [
-                          "",
-                          "",
-                          ""
-                        ],
-                        "background": ""
-                      }
-                    }
-                  ]
+                  "additionalProperties": false
                 },
                 "grids": {
                   "description": "Grid section lines.\nSuppress when `show` is `false`, e.g. for singers.\nEnable by setting the width to the desired width.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "cellbar": {
                       "description": "The `width` and `color` of the cell bar lines.",
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "color": {
                           "$ref": "#/$defs/color",
@@ -1624,7 +1622,8 @@
                             0
                           ]
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     "show": {
                       "description": "Show grid context in output.",
@@ -1639,7 +1638,6 @@
                     "symbols": {
                       "description": "Properties of special symbols.",
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "color": {
                           "$ref": "#/$defs/color",
@@ -1649,12 +1647,12 @@
                             "blue"
                           ]
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     "volta": {
                       "description": "Properties of the volta.",
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "color": {
                           "$ref": "#/$defs/color",
@@ -1669,9 +1667,11 @@
                           "description": "Volta span (fraction of measure).",
                           "default": 0.7
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "head-first-only": {
                   "description": "Heading on first page only, add the headspace to the other pages so they become larger.",
@@ -1687,8 +1687,11 @@
                 "info": {
                   "description": "PDF Properties.\nArbitrary key/values may be added.\nNote that the context for substitutions is the first song.",
                   "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
+                  "default": {
+                    "title": "%{title}",
+                    "author": "",
+                    "subject": "",
+                    "keywords": ""
                   },
                   "properties": {
                     "author": {
@@ -1712,11 +1715,8 @@
                       "default": "%{title}"
                     }
                   },
-                  "default": {
-                    "title": "%{title}",
-                    "author": "",
-                    "subject": "",
-                    "keywords": ""
+                  "additionalProperties": {
+                    "type": "string"
                   }
                 },
                 "kbdiagrams": {
@@ -1791,7 +1791,6 @@
                 "labels": {
                   "description": "This opens a margin for margin labels.\nWhen `width` is set to a positive value, the lyrics and associated chords will be indented by this amount and section labels, if any, are printed.\nWhen `width` is set to `\"auto\"`, the song will indented automatically, but only if labels are actually used.\n`align` will control how the labels are aligned in the margin.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "align": {
                       "description": "Alignment for the labels.",
@@ -1829,7 +1828,8 @@
                         "comment_box"
                       ]
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "library": {
                   "description": "Choose a `PDF::API2` compatible library, or leave empty to have ChordPro choose one for you.",
@@ -1865,7 +1865,6 @@
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                       "collapse": {
                         "description": "Initial display is collapsed.",
@@ -1913,7 +1912,8 @@
                         "type": "boolean",
                         "default": false
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   "default": [
                     {
@@ -1984,7 +1984,6 @@
                 "songbook": {
                   "description": "New style page control.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "align-songs": {
                       "default": true,
@@ -2071,7 +2070,8 @@
                       ],
                       "default": false
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "showlayout": {
                   "description": "Show the page layout structure.\nThis is mainly for design and debugging.",
@@ -2081,7 +2081,6 @@
                 "spacing": {
                   "description": "Baseline distances as a factor of the font size.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "chords": {
                       "description": "Spacing between chords and lyrics in songlines.",
@@ -2123,7 +2122,8 @@
                       "type": "number",
                       "default": 1.4
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "split-marker": {
                   "description": "Split marker for syllables that are smaller than chord width.\n`split-marker` is a 3-part array: `start`, `repeat`, and `final`, or can be a single string representing `start`.\n`final` is always printed, last.\n`start` is printed if there is enough room.\n`repeat` is printed repeatedly to fill the rest.\nIf `split-marker` is a single string, this is `start`.\nAll elements may be left empty strings.",
@@ -2154,7 +2154,6 @@
                   "title": "Theme",
                   "description": "These settings can be used to control the foreground and background colours of the PDF output.\nValid values include colour names, full hex strings (`\"#555555\"`), or `\"none\"`.\nBackground `\"none\"` or `\"white\"` means there will be no background colour added to the output.\nIt may be useful to put your theme settings in a separate config file, together with additional settings that make up the theme.\nOther configuration settings that use colours can use `foreground`, `foreground-light`, `foreground-medium`, and `background` to refer to the colours defined in the theme.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "foreground": {
                       "$ref": "#/$defs/colorspec",
@@ -2176,7 +2175,8 @@
                       "description": "Background colour. Usually white.",
                       "default": "none"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "titles-directive-ignore": {
                   "description": "Traditionally, the `{titles}` directive was used to control titles flush. ChordPro has a much more powerful mechanism but this can conflict with legacy `{titles}` directives. If you use custom title formatting, setting `titles-directive-ignore` to a true makes ChordPro ignore the legacy directives.\nA `{titles: left}` directive may conflict with customized formats. Set to `true` to ignore the directive.",
@@ -2207,7 +2207,6 @@
                 "styles": {
                   "description": "Stylesheets for display and printing.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "display": {
                       "description": "Relative path to a CSS file to use for styling displayed HTML output (rather than printed).",
@@ -2219,7 +2218,8 @@
                       "type": "string",
                       "default": "chordpro_print.css"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               },
               "type": "object"
@@ -2537,7 +2537,6 @@
         "a2crd": {
           "description": "Settings for A2Crd (input) frontend.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "infer-titles": {
               "description": "Treat leading lyrics lines as title/subtitle lines.\nThe first non-empty, non-chord, non-directive lines are taken to be the song title and subtitle.",
@@ -2563,7 +2562,8 @@
               ],
               "default": "pct_chords"
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2611,7 +2611,6 @@
                 "templates": {
                   "description": "Templates for LaTeX generation.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "comment": {
                       "description": "Helper template to render comments.",
@@ -2628,7 +2627,8 @@
                       "type": "string",
                       "format": "uri-reference"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               },
               "type": "object"
@@ -2880,7 +2880,6 @@
     "pageFormat": {
       "description": "Page format.\nAll elements can have three fields, that are placed to the left side, centered, and right side of the page.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "title": {
           "$ref": "#/$defs/tptspec",
@@ -2902,11 +2901,27 @@
             "examples/bgdemo.pdf:5"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "fontConfigFont": {
       "type": "object",
-      "additionalProperties": false,
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "italic"
+              ]
+            },
+            {
+              "required": [
+                "bolditalic"
+              ]
+            }
+          ]
+        }
+      },
       "required": [
         ""
       ],
@@ -2960,22 +2975,7 @@
           ]
         }
       },
-      "else": {
-        "not": {
-          "anyOf": [
-            {
-              "required": [
-                "italic"
-              ]
-            },
-            {
-              "required": [
-                "bolditalic"
-              ]
-            }
-          ]
-        }
-      }
+      "additionalProperties": false
     },
     "fontClass": {
       "type": "string",
@@ -3117,7 +3117,23 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "anyOf": [
+            {
+              "required": [
+                "description"
+              ]
+            },
+            {
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "required": [
+                "file"
+              ]
+            }
+          ],
           "properties": {
             "name": {
               "type": "string",
@@ -3160,23 +3176,7 @@
               ]
             }
           },
-          "anyOf": [
-            {
-              "required": [
-                "description"
-              ]
-            },
-            {
-              "required": [
-                "name"
-              ]
-            },
-            {
-              "required": [
-                "file"
-              ]
-            }
-          ]
+          "additionalProperties": false
         }
       ],
       "examples": [
@@ -3361,24 +3361,6 @@
     },
     "parserPreprocessingElement": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "replace"
-      ],
-      "properties": {
-        "replace": {
-          "type": "string",
-          "description": "A string that replaces occurrences of `target`/`pattern`."
-        },
-        "flags": {
-          "type": "string",
-          "description": "Regular expression flags.",
-          "examples": [
-            "g",
-            "gi"
-          ]
-        }
-      },
       "oneOf": [
         {
           "required": [
@@ -3405,11 +3387,35 @@
           },
           "type": "object"
         }
-      ]
+      ],
+      "required": [
+        "replace"
+      ],
+      "properties": {
+        "replace": {
+          "type": "string",
+          "description": "A string that replaces occurrences of `target`/`pattern`."
+        },
+        "flags": {
+          "type": "string",
+          "description": "Regular expression flags.",
+          "examples": [
+            "g",
+            "gi"
+          ]
+        }
+      },
+      "additionalProperties": false
     },
     "parserspec": {
       "type": "object",
-      "additionalProperties": false,
+      "default": {
+        "preprocess": {
+          "all": [],
+          "directive": [],
+          "songline": []
+        }
+      },
       "properties": {
         "altbrackets": {
           "default": null,
@@ -3421,7 +3427,6 @@
         },
         "preprocess": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "all": {
               "type": "array",
@@ -3433,7 +3438,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "additionalProperties": false,
                 "anyOf": [
                   {
                     "$ref": "#/$defs/parserPreprocessingElement"
@@ -3448,7 +3452,8 @@
                     },
                     "type": "object"
                   }
-                ]
+                ],
+                "additionalProperties": false
               }
             },
             "songline": {
@@ -3457,16 +3462,11 @@
                 "$ref": "#/$defs/parserPreprocessingElement"
               }
             }
-          }
+          },
+          "additionalProperties": false
         }
       },
-      "default": {
-        "preprocess": {
-          "all": [],
-          "directive": [],
-          "songline": []
-        }
-      }
+      "additionalProperties": false
     },
     "backendChorusRecallSettings": {
       "type": "object",
@@ -3475,11 +3475,29 @@
         "chorus": {
           "type": "object",
           "description": "Appearance of chorus recall.\nDefault: print the tag using the type.\nAlternatively quote the lines of the preceding chorus.\nIf no tag+type or quote: use `{chorus}`.\nNote: Variant 'msp' always uses `{chorus}`.",
-          "additionalProperties": false,
+          "default": {
+            "recall": {
+              "tag": "",
+              "type": "",
+              "quote": false
+            }
+          },
           "properties": {
             "recall": {
               "type": "object",
-              "additionalProperties": false,
+              "anyOf": [
+                {
+                  "required": [
+                    "tag",
+                    "type"
+                  ]
+                },
+                {
+                  "required": [
+                    "quote"
+                  ]
+                }
+              ],
               "properties": {
                 "tag": {
                   "description": "Label for recalled chorus.",
@@ -3503,19 +3521,7 @@
                   "default": false
                 }
               },
-              "anyOf": [
-                {
-                  "required": [
-                    "tag",
-                    "type"
-                  ]
-                },
-                {
-                  "required": [
-                    "quote"
-                  ]
-                }
-              ]
+              "additionalProperties": false
             }
           },
           "examples": [
@@ -3526,13 +3532,7 @@
               }
             }
           ],
-          "default": {
-            "recall": {
-              "tag": "",
-              "type": "",
-              "quote": false
-            }
-          }
+          "additionalProperties": false
         }
       }
     },

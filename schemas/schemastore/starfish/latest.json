@@ -5,7 +5,6 @@
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/veepee-oss/json-schema/refs/heads/main/starfish/1-latest/starfish-schema.json",
     "sourceSha256": "c77a107ec701d2ccf34886225cef1a61ab6379a7b03a6f7a00ec85b7fbb4b2fe",
-    "invalid": true,
     "fileMatch": [
       "starfish.yml"
     ],
@@ -18,11 +17,11 @@
     "applications": {
       "description": "Declare all your applications here",
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^[a-z][-a-z0-9]+$": {
           "type": "object",
           "description": "Application definition",
-          "additionalProperties": false,
           "properties": {
             "applicationId": {
               "oneOf": [
@@ -39,7 +38,6 @@
             "chart": {
               "type": "object",
               "description": "Chart to deploy",
-              "additionalProperties": false,
               "properties": {
                 "name": {
                   "$ref": "#/$defs/lowercaseStringDashes",
@@ -61,7 +59,8 @@
                   "$ref": "#/$defs/url",
                   "description": "Source repository where to look for the chart. Defaults to <https://myregistry.eu/artifactory/veepee-sre-helm>"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "locations": {
               "type": "object",
@@ -74,8 +73,7 @@
                   "itemCount": {
                     "$ref": "#/$defs/envZone"
                   }
-                },
-                "type": "object"
+                }
               }
             },
             "info": {
@@ -92,30 +90,28 @@
             "global": {
               "type": "object",
               "description": "Global configuration for Starfish",
-              "additionalProperties": false,
               "properties": {
                 "vault": {
                   "type": "object",
                   "description": "Configuration to use Hashicorp Vault service",
-                  "additionalProperties": false,
                   "properties": {
                     "serverUrl": {
                       "$ref": "#/$defs/url",
                       "description": "URL of your Vault server"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "contract": {
               "type": "object",
               "description": "Availability contract for the application",
-              "additionalProperties": false,
               "properties": {
                 "sla": {
                   "type": "object",
                   "description": "Service Level Agreement definition",
-                  "additionalProperties": false,
                   "properties": {
                     "availability": {
                       "type": "number",
@@ -123,12 +119,12 @@
                       "exclusiveMinimum": 0,
                       "maximum": 100
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "slo": {
                   "type": "object",
                   "description": "Service Level Objective definition",
-                  "additionalProperties": false,
                   "properties": {
                     "availability": {
                       "type": "number",
@@ -141,7 +137,8 @@
                       "pattern": "^[0-9]+(m|µ)?s$",
                       "description": "Service response time (i.e: 100ms)"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "sli": {
                   "type": "array",
@@ -150,7 +147,6 @@
                 "rto": {
                   "type": "object",
                   "description": "Recovery Time Objective: how fast we expect to recover the service in case of an issue",
-                  "additionalProperties": false,
                   "properties": {
                     "monday": {
                       "$ref": "#/$defs/rto"
@@ -173,14 +169,15 @@
                     "sunday": {
                       "$ref": "#/$defs/rto"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "ciConfig": {
               "type": "object",
               "description": "Customize the CI for this app",
-              "additionalProperties": false,
               "properties": {
                 "deployPerDc": {
                   "type": "boolean",
@@ -196,7 +193,6 @@
                 "build": {
                   "type": "object",
                   "description": "Configure build steps in CI",
-                  "additionalProperties": false,
                   "properties": {
                     "enable": {
                       "type": "boolean",
@@ -218,12 +214,12 @@
                       "$ref": "#/$defs/buildDependencies",
                       "description": "Paths to watch for changes to trigger a new build and/or deploy. Overrides config.build.dependencies"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "test": {
                   "type": "object",
                   "description": "Configure test steps in CI",
-                  "additionalProperties": false,
                   "properties": {
                     "enable": {
                       "type": "boolean",
@@ -268,7 +264,8 @@
                         "type": "string"
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "smartTemplate": {
                   "type": "string",
@@ -277,7 +274,6 @@
                 "jobs": {
                   "type": "object",
                   "description": "Configure jobs in CI",
-                  "additionalProperties": false,
                   "properties": {
                     "compile": {
                       "$ref": "#/$defs/ciJob",
@@ -319,7 +315,8 @@
                       "$ref": "#/$defs/ciJob",
                       "description": "Configure validate steps in CI"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "sonar": {
                   "$ref": "#/$defs/sonar",
@@ -329,12 +326,12 @@
                   "$ref": "#/$defs/argoStatusCallback",
                   "description": "Configure argoStatusCallback in CI"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "monitoring": {
               "type": "object",
               "description": "Setup automatic monitoring of your application",
-              "additionalProperties": false,
               "properties": {
                 "probe": {
                   "type": "string",
@@ -363,7 +360,6 @@
                   "patternProperties": {
                     "^([-a-zA-Z0-9_]+)$": {
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "probe": {
                           "type": "string",
@@ -382,16 +378,18 @@
                             }
                           }
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     }
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         }
-      },
-      "additionalProperties": false
+      }
     },
     "locations": {
       "type": "object",
@@ -404,8 +402,7 @@
           "itemCount": {
             "$ref": "#/$defs/envZone"
           }
-        },
-        "type": "object"
+        }
       }
     },
     "info": {
@@ -415,12 +412,10 @@
     "config": {
       "description": "Customize starfish behaviour",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "build": {
           "type": "object",
           "description": "Customize builds globally",
-          "additionalProperties": false,
           "properties": {
             "dependencies": {
               "$ref": "#/$defs/buildDependencies",
@@ -430,12 +425,12 @@
               "type": "boolean",
               "description": "Enable/disable docker report in MR"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "k8s": {
           "type": "object",
           "description": "Specific configuration for Kubernetes",
-          "additionalProperties": false,
           "properties": {
             "environments": {
               "description": "Which environments should we deploy your apps to",
@@ -444,7 +439,8 @@
                 "$ref": "#/$defs/additionalEnv"
               }
             }
-          }
+          },
+          "additionalProperties": false
         },
         "nomad": {
           "$ref": "#/properties/config/properties/k8s",
@@ -453,7 +449,6 @@
         "api": {
           "type": "object",
           "description": "Customize Api urls",
-          "additionalProperties": false,
           "properties": {
             "n8n": {
               "type": "string",
@@ -467,12 +462,12 @@
               "type": "string",
               "description": "flipt url"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "ci": {
           "type": "object",
           "description": "Customize some CI settings",
-          "additionalProperties": false,
           "properties": {
             "badgeImg": {
               "type": "string",
@@ -485,13 +480,13 @@
             "build": {
               "type": "object",
               "description": "Customize builds globally",
-              "additionalProperties": false,
               "properties": {
                 "starfishProvidedDockerfile": {
                   "type": "string",
                   "description": "Name of Dockerfile provided by Starfish tech templates (default to Dockerfile.starfish)"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "webHookPipelineURL": {
               "type": "string",
@@ -519,7 +514,6 @@
             "lint": {
               "type": "object",
               "description": "Configure lint steps in CI",
-              "additionalProperties": false,
               "properties": {
                 "enable": {
                   "type": "boolean",
@@ -536,7 +530,8 @@
                     "$ref": "#/$defs/linter"
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "techTemplates": {
               "type": "object",
@@ -552,7 +547,6 @@
             "security": {
               "type": "object",
               "description": "Configure security steps in CI",
-              "additionalProperties": false,
               "properties": {
                 "enable": {
                   "type": "boolean",
@@ -566,11 +560,11 @@
                   "type": "string",
                   "description": "Badge URL for security ci"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "semantic": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "badgeImgDefault": {
                   "type": "string",
@@ -584,18 +578,19 @@
                   "type": "string",
                   "description": "Badge URL for semantic ci"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "quality": {
               "type": "object",
               "description": "Configure quality steps in CI",
-              "additionalProperties": false,
               "properties": {
                 "enable": {
                   "type": "boolean",
                   "description": "Enable/disable quality jobs"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "sonar": {
               "$ref": "#/$defs/sonar",
@@ -604,7 +599,6 @@
             "smartChanges": {
               "type": "object",
               "description": "Configure smart changes detection",
-              "additionalProperties": false,
               "properties": {
                 "build": {
                   "type": "string",
@@ -630,18 +624,19 @@
                   "type": "string",
                   "description": "lastCommitInBranch (default) or firstCommitInBranch"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "fastDeploy": {
               "type": "object",
               "description": "Configure fast deploy feature",
-              "additionalProperties": false,
               "properties": {
                 "enable": {
                   "type": "boolean",
                   "description": "Enable fast deploy feature, default false (flipt feature flag)"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "outputFolder": {
               "$ref": "#/$defs/filesystemPath",
@@ -661,7 +656,6 @@
               "patternProperties": {
                 "^([-a-z]+)$": {
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "location": {
                       "anyOf": [
@@ -689,14 +683,14 @@
                     "path": {
                       "$ref": "#/$defs/filesystemPath"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               }
             },
             "deployment": {
               "type": "object",
               "description": "Controls how will be deployed your application",
-              "additionalProperties": false,
               "properties": {
                 "orchestrator": {
                   "type": "string",
@@ -706,7 +700,6 @@
                 "manual": {
                   "type": "object",
                   "description": "Decides which environment will be deployed manually or not. If not set, feature, integration and staging will be deployed automatically. Production would be manually deployed",
-                  "additionalProperties": false,
                   "properties": {
                     "feature": {
                       "type": "boolean",
@@ -724,12 +717,12 @@
                       "type": "boolean",
                       "description": "Manually deploy production (default: true)"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "allowFailure": {
                   "type": "object",
                   "description": "Decides which environment can block the pipeline in case of failure",
-                  "additionalProperties": false,
                   "properties": {
                     "integration": {
                       "type": "boolean",
@@ -743,12 +736,12 @@
                       "type": "boolean",
                       "description": "Allow failure production (default: true)"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "waitForPreflight": {
                   "type": "object",
                   "description": "Decides which environment can wait for preflights",
-                  "additionalProperties": false,
                   "properties": {
                     "integration": {
                       "type": "boolean",
@@ -762,7 +755,8 @@
                       "type": "boolean",
                       "description": "Wait for preflight in production (default: true)"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "statusFile": {
                   "type": "string",
@@ -772,15 +766,18 @@
                   "type": "array",
                   "description": "Additional arguments to pass to helm when deploying your application"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "argoStatusCallback": {
               "$ref": "#/$defs/argoStatusCallback",
               "description": "Configure argoStatusCallback in CI"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "required": [
@@ -790,7 +787,6 @@
     "infoApp": {
       "description": "DO NOT USE: Starfish internal usage. This allows to give several informations about an app",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "contact": {
           "type": "string",
@@ -830,12 +826,12 @@
           "$ref": "#/$defs/MyTool",
           "description": "MyTool fields"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "infoGlobal": {
       "description": "DO NOT USE: Starfish internal usage. This allows to give several informations for the deployment",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "domain": {
           "type": "string",
@@ -866,7 +862,8 @@
           "$ref": "#/$defs/MyTool",
           "description": "MyTool fields"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "slackChannel": {
       "type": "string",
@@ -942,7 +939,6 @@
     "envZone": {
       "type": "object",
       "description": "Map of deployment location (environment + zone)",
-      "additionalProperties": false,
       "properties": {
         "zoneList": {
           "type": "array",
@@ -950,11 +946,11 @@
             "$ref": "#/$defs/zone"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "additionalEnv": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string"
@@ -965,11 +961,11 @@
         "cluster": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "MyTool": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "domain": {
           "type": "string"
@@ -983,7 +979,8 @@
         "domainAccountId": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "componentDependency": {
       "description": "Gives information about external dependencies such as APIs",
@@ -996,14 +993,14 @@
             },
             {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "criticity": {
                   "type": "string",
                   "description": "Criticity of the dependency: mandatory or optional",
                   "pattern": "^(optional|mandatory)$"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           ]
         }
@@ -1055,7 +1052,6 @@
     "templateConfiguration": {
       "type": "object",
       "description": "Gitlab configuration to include the linter",
-      "additionalProperties": false,
       "properties": {
         "project": {
           "$ref": "#/$defs/urlPath",
@@ -1071,12 +1067,12 @@
           "pattern": "^[-./_A-z0-9]+\\.ya?ml$",
           "description": "File to load from the linter CI repository"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ciJob": {
       "type": "object",
       "description": "Configure job in CI",
-      "additionalProperties": false,
       "properties": {
         "enable": {
           "type": "boolean",
@@ -1134,12 +1130,12 @@
         "type": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "sonar": {
       "type": "object",
       "description": "Configure Sonarqube steps in CI",
-      "additionalProperties": false,
       "properties": {
         "enable": {
           "type": "boolean",
@@ -1171,12 +1167,12 @@
           "type": "string",
           "description": "additional sonar command line options"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "argoStatusCallback": {
       "type": "object",
       "description": "Setup automatic monitoring of your application",
-      "additionalProperties": false,
       "properties": {
         "enable": {
           "type": "boolean",
@@ -1188,7 +1184,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

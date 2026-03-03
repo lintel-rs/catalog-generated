@@ -5,7 +5,6 @@
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/loft-sh/vcluster/main/chart/values.schema.json",
     "sourceSha256": "a3238ef7c2982e31f18047a4ea923ada3d3d738a31a3f336ac76f10ae474a43f",
-    "invalid": true,
     "fileMatch": [
       "vCluster.yml",
       "vCluster.yaml",
@@ -60,12 +59,12 @@
     "plugins": {
       "anyOf": [
         {
+          "type": "object",
           "patternProperties": {
             ".*": {
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         {
           "type": "object"
@@ -74,10 +73,10 @@
           "type": "object"
         }
       ],
+      "description": "Define which vCluster plugins to load.",
       "additionalProperties": {
         "$ref": "#/$defs/Plugins"
-      },
-      "description": "Define which vCluster plugins to load."
+      }
     },
     "experimental": {
       "$ref": "#/$defs/Experimental",
@@ -98,12 +97,12 @@
     "plugin": {
       "anyOf": [
         {
+          "type": "object",
           "patternProperties": {
             ".*": {
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         {
           "type": "object"
@@ -112,10 +111,10 @@
           "type": "object"
         }
       ],
+      "description": "Plugin specifies which vCluster plugins to enable. Use \"plugins\" instead. Do not use this option anymore.",
       "additionalProperties": {
         "$ref": "#/$defs/Plugin"
-      },
-      "description": "Plugin specifies which vCluster plugins to enable. Use \"plugins\" instead. Do not use this option anymore."
+      }
     },
     "logging": {
       "$ref": "#/$defs/Logging",
@@ -138,7 +137,6 @@
       "description": "Platform holds vCluster Platform specific configuration."
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "APIService": {
       "properties": {
@@ -147,9 +145,9 @@
           "description": "Service is a reference to the service for the API server."
         }
       },
-      "additionalProperties": false,
+      "description": "APIService holds configuration related to the api server",
       "type": "object",
-      "description": "APIService holds configuration related to the api server"
+      "additionalProperties": false
     },
     "APIServiceService": {
       "properties": {
@@ -166,9 +164,9 @@
           "description": "Port is the target port on the host service to connect to."
         }
       },
-      "additionalProperties": false,
+      "description": "APIServiceService holds the service name and namespace of the host apiservice.",
       "type": "object",
-      "description": "APIServiceService holds the service name and namespace of the host apiservice."
+      "additionalProperties": false
     },
     "AutoUpgrade": {
       "properties": {
@@ -185,11 +183,11 @@
           "description": "ImagePullPolicy is the policy how to pull the image."
         },
         "nodeSelector": {
+          "description": "NodeSelector is the node selector for the auto upgrade. If empty will select all worker nodes.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "NodeSelector is the node selector for the auto upgrade. If empty will select all worker nodes."
+          }
         },
         "binariesPath": {
           "type": "string",
@@ -204,8 +202,8 @@
           "description": "Concurrency is the number of nodes that can be upgraded at the same time."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "BackingStore": {
       "properties": {
@@ -218,8 +216,8 @@
           "description": "Database defines that a database backend should be used as the backend for the virtual cluster. This uses a project called kine under the hood which is a shim for bridging Kubernetes and relational databases."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CNI": {
       "properties": {
@@ -228,8 +226,8 @@
           "description": "Flannel holds dedicated Flannel configuration."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CNIFlannel": {
       "properties": {
@@ -250,8 +248,8 @@
           "description": "ImagePullPolicy is the policy how to pull the image."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CentralAdmission": {
       "properties": {
@@ -270,8 +268,8 @@
           "description": "MutatingWebhooks are mutating webhooks that should be enforced in the virtual cluster"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CertManager": {
       "properties": {
@@ -284,9 +282,9 @@
           "description": "Sync contains advanced configuration for syncing cert-manager resources."
         }
       },
-      "additionalProperties": false,
+      "description": "CertManager reuses a host cert-manager and makes its CRDs from it available inside the vCluster",
       "type": "object",
-      "description": "CertManager reuses a host cert-manager and makes its CRDs from it available inside the vCluster"
+      "additionalProperties": false
     },
     "CertManagerSync": {
       "properties": {
@@ -297,8 +295,8 @@
           "$ref": "#/$defs/CertManagerSyncFromHost"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CertManagerSyncFromHost": {
       "properties": {
@@ -307,8 +305,8 @@
           "description": "ClusterIssuers defines if (and which) cluster issuers should get synced from the host cluster to the virtual cluster."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CertManagerSyncToHost": {
       "properties": {
@@ -321,8 +319,8 @@
           "description": "Issuers defines if issuers should get synced from the virtual cluster to the host cluster."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CloudControllerManager": {
       "properties": {
@@ -331,8 +329,8 @@
           "description": "Enabled defines if the embedded cloud controller manager should be enabled. This defaults to true, but can be disabled if you want to use\nan external cloud controller manager such as AWS or GCP. The cloud controller manager is responsible for setting the node's ip addresses as well\nas the provider id for the node and other node metadata."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ClusterIssuersSyncConfig": {
       "properties": {
@@ -345,8 +343,8 @@
           "description": "Selector defines what cluster issuers should be imported."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ContainerdJoin": {
       "properties": {
@@ -363,8 +361,8 @@
           "description": "PauseImage is the image for the pause container."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ContainerdMirror": {
       "properties": {
@@ -402,8 +400,8 @@
           "description": "Hosts holds configuration for the containerd registry mirror hosts. See <https://github.com/containerd/containerd/blob/main/docs/hosts.md> for more details."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ContainerdMirrorHost": {
       "properties": {
@@ -434,8 +432,8 @@
           "description": "OverridePath is a boolean to override the path for the containerd registry mirror."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ContainerdRegistry": {
       "properties": {
@@ -444,22 +442,22 @@
           "description": "ConfigPath is the path to the containerd registry config."
         },
         "mirrors": {
+          "description": "Mirrors holds configuration for the containerd registry mirrors. E.g. myregistry.io:5000 or docker.io. See <https://github.com/containerd/containerd/blob/main/docs/hosts.md> for more details.",
+          "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/ContainerdMirror"
-          },
-          "type": "object",
-          "description": "Mirrors holds configuration for the containerd registry mirrors. E.g. myregistry.io:5000 or docker.io. See <https://github.com/containerd/containerd/blob/main/docs/hosts.md> for more details."
+          }
         },
         "auth": {
+          "description": "Auth holds configuration for the containerd registry auth. See <https://github.com/containerd/containerd/blob/main/docs/cri/registry.md#configure-registry-credentials> for more details.",
+          "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/ContainerdRegistryAuth"
-          },
-          "type": "object",
-          "description": "Auth holds configuration for the containerd registry auth. See <https://github.com/containerd/containerd/blob/main/docs/cri/registry.md#configure-registry-credentials> for more details."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ContainerdRegistryAuth": {
       "properties": {
@@ -480,8 +478,8 @@
           "description": "Auth is the auth config for the containerd registry."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlane": {
       "properties": {
@@ -535,8 +533,8 @@
           "description": "Advanced holds additional configuration for the vCluster control plane."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneAdvanced": {
       "properties": {
@@ -585,41 +583,41 @@
           "description": "PodDisruptionBudget limits how many pods of an application can be voluntarily disrupted at once\nto ensure availability during maintenance or scaling operations."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneGlobalMetadata": {
       "properties": {
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneHeadlessService": {
       "properties": {
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneHighAvailability": {
       "properties": {
@@ -640,8 +638,8 @@
           "description": "RetryPeriod is the time until a replica will retry to get a lease."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneIngress": {
       "properties": {
@@ -662,22 +660,22 @@
           "description": "Spec allows you to configure extra ingress options."
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlanePersistence": {
       "properties": {
@@ -721,8 +719,8 @@
           "description": "AddVolumeMounts defines extra volume mounts for the container"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneProbes": {
       "properties": {
@@ -739,8 +737,8 @@
           "description": "StartupProbe specifies if the startup probe for the container should be enabled"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneProxy": {
       "properties": {
@@ -760,8 +758,8 @@
           "description": "ExtraSANs are extra hostnames to sign the vCluster proxy certificate for."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneScheduling": {
       "properties": {
@@ -794,8 +792,8 @@
           "description": "TopologySpreadConstraints are the topology spread constraints for the pod."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneSecurity": {
       "properties": {
@@ -808,8 +806,8 @@
           "description": "ContainerSecurityContext specifies security context options on the container level."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneService": {
       "properties": {
@@ -830,22 +828,22 @@
           "description": "HTTPSNodePort is the node port where https is exposed. Defaults to 0."
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneServiceAccount": {
       "properties": {
@@ -865,22 +863,22 @@
           "description": "ImagePullSecrets defines extra image pull secrets for the service account."
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneStatefulSet": {
       "properties": {
@@ -913,18 +911,18 @@
           "description": "EnableServiceLinks for the StatefulSet pod"
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         },
         "pods": {
           "$ref": "#/$defs/LabelsAndAnnotations",
@@ -989,8 +987,8 @@
           "description": "HostAliases allows you to add custom entries to the /etc/hosts file of each Pod created."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ControlPlaneWorkloadServiceAccount": {
       "properties": {
@@ -1010,22 +1008,22 @@
           "description": "ImagePullSecrets defines extra image pull secrets for the workload service account."
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CoreDNS": {
       "properties": {
@@ -1063,8 +1061,8 @@
           "description": "PriorityClassName specifies the priority class name for the CoreDNS pods."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CoreDNSDeployment": {
       "properties": {
@@ -1077,11 +1075,11 @@
           "description": "Replicas is the amount of coredns pods to run."
         },
         "nodeSelector": {
+          "description": "NodeSelector is the node selector to use for coredns.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "NodeSelector is the node selector to use for coredns."
+          }
         },
         "affinity": {
           "type": "object",
@@ -1103,18 +1101,18 @@
           "description": "Pods is additional metadata for the coredns pods."
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         },
         "topologySpreadConstraints": {
           "items": true,
@@ -1122,8 +1120,8 @@
           "description": "TopologySpreadConstraints are the topology spread constraints for the CoreDNS pod."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CoreDNSService": {
       "properties": {
@@ -1132,22 +1130,22 @@
           "description": "Spec holds extra options for the coredns service"
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "CustomResourceProxy": {
       "properties": {
@@ -1164,8 +1162,8 @@
           "description": "AccessResources defines which resources should be accessible in the proxy."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Database": {
       "properties": {
@@ -1178,8 +1176,8 @@
           "description": "External defines that an external database should be used as the backend for the virtual cluster"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "DatabaseKine": {
       "properties": {
@@ -1215,8 +1213,8 @@
           "description": "ExtraArgs are additional arguments to pass to Kine."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Deletion": {
       "properties": {
@@ -1229,9 +1227,9 @@
           "description": "Auto holds automatic deletion configuration\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "Deletion holds configuration for automatic vCluster deletion.",
       "type": "object",
-      "description": "Deletion holds configuration for automatic vCluster deletion."
+      "additionalProperties": false
     },
     "DeletionAuto": {
       "properties": {
@@ -1240,9 +1238,9 @@
           "description": "AfterInactivity specifies after how long of inactivity the virtual cluster will be deleted.\nUses Go duration format (e.g., \"720h\" for 30 days).\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "DeletionAuto holds automatic deletion configuration",
       "type": "object",
-      "description": "DeletionAuto holds automatic deletion configuration"
+      "additionalProperties": false
     },
     "DenyRule": {
       "properties": {
@@ -1272,8 +1270,8 @@
           "description": "ExcludedUsers describe a list of users for which the checks will be skipped.\nImpersonation attempts on these users will still be subjected to the checks."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Deploy": {
       "properties": {
@@ -1306,8 +1304,8 @@
           "description": "VolumeSnapshotController holds dedicated CSI snapshot-controller configuration."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "DeployMetricsServer": {
       "properties": {
@@ -1316,8 +1314,8 @@
           "description": "Enabled defines if metrics server should be enabled."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Distro": {
       "properties": {
@@ -1326,8 +1324,8 @@
           "description": "K8S holds K8s relevant configuration."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "DistroContainerEnabled": {
       "properties": {
@@ -1350,8 +1348,8 @@
           "description": "ExtraArgs are additional arguments to pass to the distro binary."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "DistroK8s": {
       "properties": {
@@ -1399,8 +1397,8 @@
           "description": "Security options can be used for the distro init container"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "DynamicNodePool": {
       "properties": {
@@ -1423,18 +1421,18 @@
           "description": "Taints are the taints to apply to the nodes in this pool."
         },
         "nodeLabels": {
+          "description": "NodeLabels are the labels to apply to the nodes in this pool.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "NodeLabels are the labels to apply to the nodes in this pool."
+          }
         },
         "limits": {
+          "description": "Limits specify the maximum resources that can be provisioned by this node pool,\nmapping to the 'limits' field in Karpenter's NodePool API.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Limits specify the maximum resources that can be provisioned by this node pool,\nmapping to the 'limits' field in Karpenter's NodePool API."
+          }
         },
         "disruption": {
           "$ref": "#/$defs/DynamicNodePoolDisruption",
@@ -1453,11 +1451,11 @@
           "description": "Weight is the weight of this node pool."
         }
       },
-      "additionalProperties": false,
-      "type": "object",
       "required": [
         "name"
-      ]
+      ],
+      "type": "object",
+      "additionalProperties": false
     },
     "DynamicNodePoolDisruption": {
       "properties": {
@@ -1477,8 +1475,8 @@
           "description": "Budgets is a list of Budgets.\nIf there are multiple active budgets, Karpenter uses\nthe most restrictive value. If left undefined,\nthis will default to one budget with a value to 10%."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "DynamicNodePoolDisruptionBudget": {
       "properties": {
@@ -1495,8 +1493,8 @@
           "description": "Duration determines how long a Budget is active since each Schedule hit.\nOnly minutes and hours are accepted, as cron does not work in seconds.\nIf omitted, the budget is always active.\nThis is required if Schedule is set."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EnableAutoSwitch": {
       "properties": {
@@ -1512,8 +1510,8 @@
           "description": "Enabled defines if this option should be enabled."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EnableAutoSwitchWithPatches": {
       "properties": {
@@ -1536,8 +1534,8 @@
           "description": "Patches patch the resource according to the provided specification."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EnableAutoSwitchWithPatchesAndSelector": {
       "properties": {
@@ -1564,8 +1562,8 @@
           "description": "Selector defines the selector to use for the resource. If not set, all resources of that type will be synced."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EnableSwitch": {
       "properties": {
@@ -1574,8 +1572,8 @@
           "description": "Enabled defines if this option should be enabled."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EnableSwitchSelector": {
       "properties": {
@@ -1587,8 +1585,8 @@
           "description": "Enabled defines if this option should be enabled."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EnableSwitchWithPatches": {
       "properties": {
@@ -1604,8 +1602,8 @@
           "description": "Patches patch the resource according to the provided specification."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EnableSwitchWithPatchesAndSelector": {
       "properties": {
@@ -1625,8 +1623,8 @@
           "description": "Selector defines the selector to use for the resource. If not set, all resources of that type will be synced."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EnableSwitchWithResourcesMappings": {
       "properties": {
@@ -1646,8 +1644,8 @@
           "description": "Mappings for Namespace and Object"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Etcd": {
       "properties": {
@@ -1665,8 +1663,8 @@
           "description": "External defines to use a self-hosted external etcd that is not deployed by the helm chart"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EtcdDeploy": {
       "properties": {
@@ -1687,21 +1685,21 @@
           "description": "HeadlessService holds options for the external etcd headless service."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EtcdDeployHeadlessService": {
       "properties": {
         "annotations": {
+          "description": "Annotations are extra annotations for the external etcd headless service",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for the external etcd headless service"
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EtcdDeployService": {
       "properties": {
@@ -1710,15 +1708,15 @@
           "description": "Enabled defines if the etcd service should be deployed"
         },
         "annotations": {
+          "description": "Annotations are extra annotations for the external etcd service",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for the external etcd service"
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EtcdDeployStatefulSet": {
       "properties": {
@@ -1777,22 +1775,22 @@
           "description": "Persistence options for the etcd pods."
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EtcdEmbedded": {
       "properties": {
@@ -1817,8 +1815,8 @@
           "description": "ExtraArgs are additional arguments to pass to the embedded etcd."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EtcdExternal": {
       "properties": {
@@ -1835,8 +1833,8 @@
           "description": "TLS defines the tls configuration for the external etcd server"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "EtcdExternalTLS": {
       "properties": {
@@ -1853,9 +1851,9 @@
           "description": "KeyFile is the path to the key file"
         }
       },
-      "additionalProperties": false,
+      "description": "EtcdExternalTLS defines tls for external etcd server",
       "type": "object",
-      "description": "EtcdExternalTLS defines tls for external etcd server"
+      "additionalProperties": false
     },
     "Experimental": {
       "properties": {
@@ -1888,8 +1886,8 @@
           "description": "Docker allows you to configure Docker related settings when deploying a vCluster using Docker."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalDeploy": {
       "properties": {
@@ -1902,8 +1900,8 @@
           "description": "VCluster defines what manifests and charts to deploy into the vCluster"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalDeployHelm": {
       "properties": {
@@ -1928,8 +1926,8 @@
           "description": "Bundle allows to compress the Helm chart and specify this instead of an online chart"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalDeployHelmChart": {
       "properties": {
@@ -1952,8 +1950,8 @@
           "type": "string"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalDeployHelmRelease": {
       "properties": {
@@ -1966,8 +1964,8 @@
           "description": "Namespace of the release"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalDeployHost": {
       "properties": {
@@ -1980,8 +1978,8 @@
           "description": "ManifestsTemplate is a Kubernetes manifest template that will be rendered with vCluster values before applying it within the host cluster."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalDeployVCluster": {
       "properties": {
@@ -2001,8 +1999,8 @@
           "description": "Helm are Helm charts that should get deployed into the virtual cluster"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalDocker": {
       "properties": {
@@ -2062,8 +2060,8 @@
           "description": "Defines if vCluster should configure load balancer services inside the vCluster. This might require\nsudo access on the host cluster for docker desktop or rancher desktop on macos."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalDockerLoadBalancer": {
       "properties": {
@@ -2076,8 +2074,8 @@
           "description": "ForwardPorts defines if the load balancer ips should be made available locally\nvia port forwarding. This will be only done if necessary for example on macos when using docker desktop."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalDockerNode": {
       "properties": {
@@ -2118,8 +2116,8 @@
           "description": "Name defines the name of the node. If not specified, a random name will be generated."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExperimentalSyncSettings": {
       "properties": {
@@ -2136,8 +2134,8 @@
           "description": "VirtualMetricsBindAddress is the bind address for the virtual manager"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExportKubeConfig": {
       "properties": {
@@ -2169,9 +2167,9 @@
           "description": "AdditionalSecrets specifies the additional host cluster secrets in which vCluster will store the\ngenerated virtual cluster kubeconfigs."
         }
       },
-      "additionalProperties": false,
+      "description": "ExportKubeConfig describes how vCluster should export the vCluster kubeconfig.",
       "type": "object",
-      "description": "ExportKubeConfig describes how vCluster should export the vCluster kubeconfig."
+      "additionalProperties": false
     },
     "ExportKubeConfigAdditionalSecretReference": {
       "properties": {
@@ -2200,9 +2198,9 @@
           "description": "Namespace where vCluster stores the kubeconfig secret. If this is not equal to the namespace\nwhere you deployed vCluster, you need to make sure vCluster has access to this other namespace."
         }
       },
-      "additionalProperties": false,
+      "description": "ExportKubeConfigAdditionalSecretReference defines the additional host cluster secret in which vCluster stores the generated virtual cluster kubeconfigs.",
       "type": "object",
-      "description": "ExportKubeConfigAdditionalSecretReference defines the additional host cluster secret in which vCluster stores the generated virtual cluster kubeconfigs."
+      "additionalProperties": false
     },
     "ExportKubeConfigSecretReference": {
       "properties": {
@@ -2215,9 +2213,9 @@
           "description": "Namespace where vCluster should store the kubeconfig secret. If this is not equal to the namespace\nwhere you deployed vCluster, you need to make sure vCluster has access to this other namespace."
         }
       },
-      "additionalProperties": false,
+      "description": "Declare in which host cluster secret vCluster should store the generated virtual cluster kubeconfig.",
       "type": "object",
-      "description": "Declare in which host cluster secret vCluster should store the generated virtual cluster kubeconfig."
+      "additionalProperties": false
     },
     "ExportKubeConfigServiceAccount": {
       "properties": {
@@ -2234,8 +2232,8 @@
           "description": "ClusterRole to assign to the service account."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExternalDatabaseKine": {
       "properties": {
@@ -2275,8 +2273,8 @@
           "description": "Connector specifies a secret located in a connected vCluster Platform that contains database server connection information\nto be used by Platform to create a database and database user for the vCluster.\nand non-privileged user. A kine endpoint should be created using the database and user on Platform registration.\nThis is optional."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExternalEtcdHighAvailability": {
       "properties": {
@@ -2285,8 +2283,8 @@
           "description": "Replicas are the amount of pods to use."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExternalEtcdPersistence": {
       "properties": {
@@ -2316,8 +2314,8 @@
           "description": "AddVolumeMounts defines extra volume mounts for the container"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExternalEtcdPersistenceVolumeClaim": {
       "properties": {
@@ -2345,8 +2343,8 @@
           "description": "StorageClass is the persistent volume claim storage class."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExternalSecrets": {
       "properties": {
@@ -2367,9 +2365,9 @@
           "description": "Sync defines the syncing behavior for the integration"
         }
       },
-      "additionalProperties": false,
+      "description": "ExternalSecrets reuses a host external secret operator and makes certain CRDs from it available inside the vCluster",
       "type": "object",
-      "description": "ExternalSecrets reuses a host external secret operator and makes certain CRDs from it available inside the vCluster"
+      "additionalProperties": false
     },
     "ExternalSecretsSync": {
       "properties": {
@@ -2382,8 +2380,8 @@
           "description": "FromHost defines what resources are synced from the host cluster to the virtual cluster"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExternalSecretsSyncFromHostConfig": {
       "properties": {
@@ -2392,8 +2390,8 @@
           "description": "ClusterStores defines if cluster secrets stores should get synced from the host cluster to the virtual cluster."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ExternalSecretsSyncToHostConfig": {
       "properties": {
@@ -2406,21 +2404,21 @@
           "description": "Stores defines if secret stores should get synced from the virtual cluster to the host cluster and then bi-directionally."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "FromHostMappings": {
       "properties": {
         "byName": {
+          "description": "ByName is a map of host-object-namespace/host-object-name: virtual-object-namespace/virtual-object-name.\nThere are several wildcards supported:\n1. To match all objects in host namespace and sync them to different namespace in vCluster:\nbyName:\n  \"foo/*\": \"foo-in-virtual/*\"\n2. To match specific object in the host namespace and sync it to the same namespace with the same name:\nbyName:\n  \"foo/my-object\": \"foo/my-object\"\n3. To match specific object in the host namespace and sync it to the same namespace with different name:\nbyName:\n  \"foo/my-object\": \"foo/my-virtual-object\"\n4. To match all objects in the vCluster host namespace and sync them to a different namespace in vCluster:\nbyName:\n  \"\": \"my-virtual-namespace/*\"\n5. To match specific objects in the vCluster host namespace and sync them to a different namespace in vCluster:\nbyName:\n  \"/my-object\": \"my-virtual-namespace/my-object\"",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "ByName is a map of host-object-namespace/host-object-name: virtual-object-namespace/virtual-object-name.\nThere are several wildcards supported:\n1. To match all objects in host namespace and sync them to different namespace in vCluster:\nbyName:\n  \"foo/*\": \"foo-in-virtual/*\"\n2. To match specific object in the host namespace and sync it to the same namespace with the same name:\nbyName:\n  \"foo/my-object\": \"foo/my-object\"\n3. To match specific object in the host namespace and sync it to the same namespace with different name:\nbyName:\n  \"foo/my-object\": \"foo/my-virtual-object\"\n4. To match all objects in the vCluster host namespace and sync them to a different namespace in vCluster:\nbyName:\n  \"\": \"my-virtual-namespace/*\"\n5. To match specific objects in the vCluster host namespace and sync them to a different namespace in vCluster:\nbyName:\n  \"/my-object\": \"my-virtual-namespace/my-object\""
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "HostAlias": {
       "properties": {
@@ -2434,8 +2432,8 @@
           "type": "array"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "HostPathMapper": {
       "properties": {
@@ -2448,8 +2446,8 @@
           "description": "Central specifies if the central host path mapper will be used"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "HybridScheduling": {
       "properties": {
@@ -2465,8 +2463,8 @@
           "description": "HostSchedulers is a list of schedulers that are deployed on the host cluster."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "IPBlock": {
       "properties": {
@@ -2482,9 +2480,9 @@
           "description": "Except is a slice of CIDRs that should not be included. Items outside the cidr range will be rejected.\nValid examples are \"192.168.1.0/24\" or \"2001:db8::/64\".\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "IPBlock describes a particular CIDR (Ex.",
       "type": "object",
-      "description": "IPBlock describes a particular CIDR (Ex."
+      "additionalProperties": false
     },
     "Image": {
       "properties": {
@@ -2501,8 +2499,8 @@
           "description": "Tag is the tag of the container image, and is the default version."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ImagePullSecretName": {
       "properties": {
@@ -2511,8 +2509,8 @@
           "description": "Name of the image pull secret to use."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "IngressNginx": {
       "properties": {
@@ -2525,8 +2523,8 @@
           "description": "DefaultIngressClass defines if the deployed ingress class should be the default ingress class."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Integrations": {
       "properties": {
@@ -2555,9 +2553,9 @@
           "description": "Netris integration helps configuring netris networking for vCluster."
         }
       },
-      "additionalProperties": false,
+      "description": "Integrations holds config for vCluster integrations with other operators or tools running on the host cluster",
       "type": "object",
-      "description": "Integrations holds config for vCluster integrations with other operators or tools running on the host cluster"
+      "additionalProperties": false
     },
     "Istio": {
       "properties": {
@@ -2569,8 +2567,8 @@
           "$ref": "#/$defs/IstioSync"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "IstioSync": {
       "properties": {
@@ -2578,8 +2576,8 @@
           "$ref": "#/$defs/IstioSyncToHost"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "IstioSyncToHost": {
       "properties": {
@@ -2593,8 +2591,8 @@
           "$ref": "#/$defs/EnableSwitch"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "JoinConfiguration": {
       "properties": {
@@ -2639,8 +2637,8 @@
           "description": "NodeRegistration holds configuration for the node registration similar to the kubeadm node registration."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Konnectivity": {
       "properties": {
@@ -2653,8 +2651,8 @@
           "description": "Agent holds configuration for the konnectivity agent."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "KonnectivityAgent": {
       "properties": {
@@ -2675,11 +2673,11 @@
           "description": "ImagePullPolicy is the policy how to pull the image."
         },
         "nodeSelector": {
+          "description": "NodeSelector is the node selector for the konnectivity agent.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "NodeSelector is the node selector for the konnectivity agent."
+          }
         },
         "priorityClassName": {
           "type": "string",
@@ -2703,8 +2701,8 @@
           "description": "ExtraArgs are additional arguments to pass to the konnectivity agent."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "KonnectivityServer": {
       "properties": {
@@ -2720,8 +2718,8 @@
           "description": "ExtraArgs are additional arguments to pass to the konnectivity server."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "KubeProxy": {
       "properties": {
@@ -2738,11 +2736,11 @@
           "description": "ImagePullPolicy is the policy how to pull the image."
         },
         "nodeSelector": {
+          "description": "NodeSelector is the node selector for the kube-proxy.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "NodeSelector is the node selector for the kube-proxy."
+          }
         },
         "priorityClassName": {
           "type": "string",
@@ -2770,8 +2768,8 @@
           "description": "Config is the config for the kube-proxy that will be merged into the default kube-proxy config. More information can be found here:\n<https://kubernetes.io/docs/reference/config-api/kube-proxy-config.v1alpha1/#kubeproxy-config-k8s-io-v1alpha1-KubeProxyConfiguration>"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "KubeVip": {
       "properties": {
@@ -2788,8 +2786,8 @@
           "description": "Gateway is the gateway address in CIDR notation (e.g., 10.100.0.1/24).\nThis is used to configure policy-based routing for the VIP and must include the subnet prefix."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "KubeVirt": {
       "properties": {
@@ -2810,9 +2808,9 @@
           "description": "Sync holds configuration on what resources to sync"
         }
       },
-      "additionalProperties": false,
+      "description": "KubeVirt reuses a host kubevirt and makes certain CRDs from it available inside the vCluster",
       "type": "object",
-      "description": "KubeVirt reuses a host kubevirt and makes certain CRDs from it available inside the vCluster"
+      "additionalProperties": false
     },
     "KubeVirtSync": {
       "properties": {
@@ -2841,9 +2839,9 @@
           "description": "If VirtualMachinePools should get synced"
         }
       },
-      "additionalProperties": false,
+      "description": "KubeVirtSync are the crds that are supported by this integration",
       "type": "object",
-      "description": "KubeVirtSync are the crds that are supported by this integration"
+      "additionalProperties": false
     },
     "Kubelet": {
       "properties": {
@@ -2852,8 +2850,8 @@
           "description": "Config is the config for the kubelet that will be merged into the default kubelet config. More information can be found here:\n<https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/#kubelet-config-k8s-io-v1beta1-KubeletConfiguration>"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "KubeletExtraArg": {
       "properties": {
@@ -2866,9 +2864,9 @@
           "description": "Value is the value of the argument."
         }
       },
-      "additionalProperties": false,
+      "description": "KubeletExtraArg represents an argument with a name and a value.",
       "type": "object",
-      "description": "KubeletExtraArg represents an argument with a name and a value."
+      "additionalProperties": false
     },
     "KubeletJoinTaint": {
       "properties": {
@@ -2885,21 +2883,21 @@
           "description": "Required. The effect of the taint on pods\nthat do not tolerate the taint.\nValid effects are NoSchedule, PreferNoSchedule and NoExecute."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "LabelSelector": {
       "properties": {
         "labels": {
+          "description": "Labels defines what labels should be looked for",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels defines what labels should be looked for"
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "LabelSelectorRequirement": {
       "properties": {
@@ -2916,28 +2914,28 @@
           "type": "array"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "LabelsAndAnnotations": {
       "properties": {
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "LimitRange": {
       "properties": {
@@ -2969,22 +2967,22 @@
           "description": "Min are the min limits for the limit range"
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "LivenessProbe": {
       "properties": {
@@ -3009,9 +3007,9 @@
           "description": "Frequency (in seconds) to perform the probe"
         }
       },
-      "additionalProperties": false,
+      "description": "LivenessProbe defines the configuration for the liveness probe.",
       "type": "object",
-      "description": "LivenessProbe defines the configuration for the liveness probe."
+      "additionalProperties": false
     },
     "LocalPathProvisioner": {
       "properties": {
@@ -3032,8 +3030,8 @@
           "description": "NodePath is the path on the node where to create the persistent volume directories."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Logging": {
       "properties": {
@@ -3042,9 +3040,9 @@
           "description": "Encoding specifies the format of vCluster logs, it can either be json or console."
         }
       },
-      "additionalProperties": false,
+      "description": "Logging holds the log encoding details",
       "type": "object",
-      "description": "Logging holds the log encoding details"
+      "additionalProperties": false
     },
     "Metallb": {
       "properties": {
@@ -3065,8 +3063,8 @@
           "description": "IPAddressPool is the IP address pool to use for metallb."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "MetallbIPAddressPool": {
       "properties": {
@@ -3082,8 +3080,8 @@
           "description": "L2Advertisement defines if L2 advertisement should be enabled for the IP address pool."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "MetricsServer": {
       "properties": {
@@ -3104,9 +3102,9 @@
           "description": "Pods defines if metrics-server pods api should get proxied from host to virtual cluster."
         }
       },
-      "additionalProperties": false,
+      "description": "MetricsServer reuses the metrics server from the host cluster within the vCluster.",
       "type": "object",
-      "description": "MetricsServer reuses the metrics server from the host cluster within the vCluster."
+      "additionalProperties": false
     },
     "MutatingWebhook": {
       "properties": {
@@ -3162,8 +3160,8 @@
           "description": "MatchConditions is a list of conditions that must be met for a request to be sent to this\nwebhook. Match conditions filter requests that have already been matched by the rules,\nnamespaceSelector, and objectSelector. An empty list of matchConditions matches all requests.\nThere are a maximum of 64 match conditions allowed."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "MutatingWebhookConfiguration": {
       "properties": {
@@ -3187,8 +3185,8 @@
           "description": "Webhooks is a list of webhooks and the affected resources and operations."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "NetrisIntegration": {
       "properties": {
@@ -3205,9 +3203,9 @@
           "description": "KubeVip holds kube-vip configuration for netris\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "NetrisIntegration holds netris integration configuration.",
       "type": "object",
-      "description": "NetrisIntegration holds netris integration configuration."
+      "additionalProperties": false
     },
     "NetrisKubeVipConfig": {
       "properties": {
@@ -3224,9 +3222,9 @@
           "description": "IPRange specifies the IP range for kube-vip\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "NetrisKubeVipConfig holds kube-vip configuration for netris integration",
       "type": "object",
-      "description": "NetrisKubeVipConfig holds kube-vip configuration for netris integration"
+      "additionalProperties": false
     },
     "NetworkPolicy": {
       "properties": {
@@ -3235,18 +3233,18 @@
           "description": "Enabled defines if the network policy should be deployed by vCluster."
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         },
         "fallbackDns": {
           "type": "string",
@@ -3261,8 +3259,8 @@
           "description": "Workload network policy rules"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "NetworkPolicyControlPlane": {
       "properties": {
@@ -3281,8 +3279,8 @@
           "description": "Egress rules for the vCluster control plane."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "NetworkPolicyEgressRule": {
       "properties": {
@@ -3301,9 +3299,9 @@
           "description": "to is a list of destinations for outgoing traffic of pods selected for this rule.\nItems in this list are combined using a logical OR operation. If this field is\nempty or missing, this rule matches all destinations (traffic not restricted by\ndestination). If this field is present and contains at least one item, this rule\nallows traffic only if the traffic matches at least one item in the to list.\n+optional\n+listType=atomic"
         }
       },
-      "additionalProperties": false,
+      "description": "NetworkPolicyEgressRule describes a particular set of traffic that is allowed out of pods matched by a NetworkPolicySpec's podSelector.",
       "type": "object",
-      "description": "NetworkPolicyEgressRule describes a particular set of traffic that is allowed out of pods matched by a NetworkPolicySpec's podSelector."
+      "additionalProperties": false
     },
     "NetworkPolicyIngressRule": {
       "properties": {
@@ -3322,9 +3320,9 @@
           "description": "from is a list of sources which should be able to access the pods selected for this rule.\nItems in this list are combined using a logical OR operation. If this field is\nempty or missing, this rule matches all sources (traffic not restricted by\nsource). If this field is present and contains at least one item, this rule\nallows traffic only if the traffic matches at least one item in the from list.\n+optional\n+listType=atomic"
         }
       },
-      "additionalProperties": false,
+      "description": "NetworkPolicyIngressRule describes a particular set of traffic that is allowed to the pods matched by a NetworkPolicySpec's podSelector.",
       "type": "object",
-      "description": "NetworkPolicyIngressRule describes a particular set of traffic that is allowed to the pods matched by a NetworkPolicySpec's podSelector."
+      "additionalProperties": false
     },
     "NetworkPolicyPeer": {
       "properties": {
@@ -3341,9 +3339,9 @@
           "description": "ipBlock defines policy on a particular IPBlock. If this field is set then\nneither of the other fields can be.\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "NetworkPolicyPeer describes a peer to allow traffic to/from.",
       "type": "object",
-      "description": "NetworkPolicyPeer describes a peer to allow traffic to/from."
+      "additionalProperties": false
     },
     "NetworkPolicyPort": {
       "properties": {
@@ -3359,9 +3357,9 @@
           "description": "endPort indicates that the range of ports from port to endPort if set, inclusive,\nshould be allowed by the policy. This field cannot be defined if the port field\nis not defined or if the port field is defined as a named (string) port.\nThe endPort must be equal or greater than port.\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "NetworkPolicyPort describes a port to allow traffic on",
       "type": "object",
-      "description": "NetworkPolicyPort describes a port to allow traffic on"
+      "additionalProperties": false
     },
     "NetworkPolicyWorkload": {
       "properties": {
@@ -3384,8 +3382,8 @@
           "description": "Egress rules for the vCluster workloads."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "NetworkPolicyWorkloadPublicEgress": {
       "properties": {
@@ -3405,8 +3403,8 @@
           "description": "Except is a slice of CIDRs that should not be included. Items outside the cidr range will be rejected.\nValid examples are \"192.168.1.0/24\" or \"2001:db8::/64\".\n+optional"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "NetworkProxyKubelets": {
       "properties": {
@@ -3419,8 +3417,8 @@
           "description": "ByIP will create a separate service in the host cluster for every node that will point to virtual cluster and will be used to\nroute traffic."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Networking": {
       "properties": {
@@ -3449,8 +3447,8 @@
           "description": "Advanced holds advanced network options."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "NetworkingAdvanced": {
       "properties": {
@@ -3467,8 +3465,8 @@
           "description": "ProxyKubelets allows rewriting certain metrics and stats from the Kubelet to \"fake\" this for applications such as\nprometheus or other node exporters."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "NodeRegistration": {
       "properties": {
@@ -3502,8 +3500,8 @@
           "description": "ImagePullPolicy specifies the policy for image pulling during kubeadm \"init\" and \"join\" operations.\nThe value of this field must be one of \"Always\", \"IfNotPresent\" or \"Never\".\nIf this field is unset kubeadm will default it to \"IfNotPresent\", or pull the required images if not present on the host."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ObjectMeta": {
       "properties": {
@@ -3512,22 +3510,22 @@
           "description": "Name must be unique within a namespace. Is required when creating resources, although\nsome resources may allow a client to request the generation of an appropriate name\nautomatically. Name is primarily intended for creation idempotence and configuration\ndefinition."
         },
         "labels": {
+          "description": "Map of string keys and values that can be used to organize and categorize\n(scope and select) objects. May match selectors of replication controllers\nand services.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Map of string keys and values that can be used to organize and categorize\n(scope and select) objects. May match selectors of replication controllers\nand services."
+          }
         },
         "annotations": {
+          "description": "Annotations is an unstructured key value map stored with a resource that may be\nset by external tools to store and retrieve arbitrary metadata.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations is an unstructured key value map stored with a resource that may be\nset by external tools to store and retrieve arbitrary metadata."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Platform": {
       "properties": {
@@ -3540,9 +3538,9 @@
           "description": "Project specifies which platform project the vcluster should be imported to\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "Platform holds vCluster Platform specific configuration.",
       "type": "object",
-      "description": "Platform holds vCluster Platform specific configuration."
+      "additionalProperties": false
     },
     "PlatformAPIKey": {
       "properties": {
@@ -3559,9 +3557,9 @@
           "description": "CreateRBAC will automatically create the necessary RBAC roles and role bindings to allow vCluster to read the secret specified\nin the above namespace, if specified.\nThis defaults to true.\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "PlatformAPIKey defines where to find the platform access key.",
       "type": "object",
-      "description": "PlatformAPIKey defines where to find the platform access key."
+      "additionalProperties": false
     },
     "Plugin": {
       "properties": {
@@ -3643,8 +3641,8 @@
           "type": "boolean"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Plugins": {
       "properties": {
@@ -3696,8 +3694,8 @@
           "description": "VolumeMounts are extra volume mounts for the init container"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "PluginsExtraRules": {
       "properties": {
@@ -3709,8 +3707,8 @@
           "description": "ExtraRules are extra rbac permissions roles that will be added to role or cluster role"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "PluginsRBAC": {
       "properties": {
@@ -3723,8 +3721,8 @@
           "description": "ClusterRole holds extra virtual cluster cluster role permissions required for the plugin"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "PodDNSConfig": {
       "properties": {
@@ -3750,9 +3748,9 @@
           "description": "A list of DNS resolver options.\nThis will be merged with the base options generated from DNSPolicy.\nDuplicated entries will be removed. Resolution options given in Options\nwill override those that appear in the base DNSPolicy.\n+optional\n+listType=atomic"
         }
       },
-      "additionalProperties": false,
+      "description": "PodDNSConfig defines the DNS parameters of a pod in addition to those generated from DNSPolicy.",
       "type": "object",
-      "description": "PodDNSConfig defines the DNS parameters of a pod in addition to those generated from DNSPolicy."
+      "additionalProperties": false
     },
     "PodDNSConfigOption": {
       "properties": {
@@ -3765,9 +3763,9 @@
           "description": "+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "PodDNSConfigOption defines DNS resolver options of a pod.",
       "type": "object",
-      "description": "PodDNSConfigOption defines DNS resolver options of a pod."
+      "additionalProperties": false
     },
     "PodDisruptionBudget": {
       "properties": {
@@ -3786,8 +3784,8 @@
           "description": "UnhealthyPodEvictionPolicy defines the criteria when unhealthy pods should be considered for eviction.\nCurrently supported values are:\n* IfHealthyBudget - pods that are in the Running phase but not yet healthy are considered disrupted\n\tand may be evicted even if the PodDisruptionBudget criteria are not met.\n* AlwaysAllow - pods that are in the Running phase but not yet healthy are considered disrupted\n\tand can be evicted regardless of whether the criteria in a PDB is met."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Policies": {
       "properties": {
@@ -3813,8 +3811,8 @@
           "pro": true
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "PrivateNodes": {
       "properties": {
@@ -3846,9 +3844,9 @@
           "description": "VPN holds configuration for the private nodes vpn. This can be used to connect the private nodes to the control plane or\nconnect the private nodes to each other if they are not running in the same network. Platform connection is required for the vpn to work."
         }
       },
-      "additionalProperties": false,
+      "description": "PrivateNodes enables private nodes for vCluster.",
       "type": "object",
-      "description": "PrivateNodes enables private nodes for vCluster."
+      "additionalProperties": false
     },
     "PrivateNodesAutoNodes": {
       "properties": {
@@ -3857,11 +3855,11 @@
           "description": "Provider is the node provider of the nodes in this pool."
         },
         "properties": {
+          "description": "Properties are the node provider properties. This is a simple key value map and can contain things\nlike region, subscription, etc. that is then used by the node provider to create the nodes and node environment.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Properties are the node provider properties. This is a simple key value map and can contain things\nlike region, subscription, etc. that is then used by the node provider to create the nodes and node environment."
+          }
         },
         "static": {
           "items": {
@@ -3876,15 +3874,14 @@
           },
           "type": "array",
           "description": "Dynamic defines dynamic node pools. Dynamic node pools are scaled automatically based on the requirements within the cluster.\nKarpenter is used under the hood to handle the scheduling of the nodes."
-        },
-        "type": "object"
+        }
       },
-      "additionalProperties": false,
+      "description": "PrivateNodesAutoNodes defines auto nodes",
       "type": "object",
       "required": [
         "provider"
       ],
-      "description": "PrivateNodesAutoNodes defines auto nodes"
+      "additionalProperties": false
     },
     "PrivateNodesVPN": {
       "properties": {
@@ -3897,8 +3894,8 @@
           "description": "NodeToNode holds configuration for the node to node vpn. This can be used to connect the private nodes to each other if they are not running in the same network."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "PrivateNodesVPNNodeToNode": {
       "properties": {
@@ -3907,21 +3904,21 @@
           "description": "Enabled defines if the node to node vpn should be enabled."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Proxy": {
       "properties": {
         "customResources": {
+          "description": "CustomResources is a map of resource keys (format: \"kind.apiGroup/version\") to proxy configuration",
+          "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/CustomResourceProxy"
-          },
-          "type": "object",
-          "description": "CustomResources is a map of resource keys (format: \"kind.apiGroup/version\") to proxy configuration"
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "RBAC": {
       "properties": {
@@ -3938,8 +3935,8 @@
           "description": "EnableVolumeSnapshotRules enables all required volume snapshot rules in the Role and\nClusterRole."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "RBACClusterRole": {
       "properties": {
@@ -3969,8 +3966,8 @@
           "description": "OverwriteRules will overwrite the cluster role rules completely."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "RBACPolicyRule": {
       "properties": {
@@ -4010,8 +4007,8 @@
           "description": "NonResourceURLs is a set of partial urls that a user should have access to.  *s are allowed, but only as the full, final step in the path\nSince non-resource URLs are not namespaced, this field is only applicable for ClusterRoles referenced from a ClusterRoleBinding.\nRules can either apply to API resources (such as \"pods\" or \"secrets\") or non-resource URL paths (such as \"/api\"),  but not both."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "RBACRole": {
       "properties": {
@@ -4034,8 +4031,8 @@
           "description": "OverwriteRules will overwrite the role rules completely."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ReadinessProbe": {
       "properties": {
@@ -4056,9 +4053,9 @@
           "description": "Frequency (in seconds) to perform the probe"
         }
       },
-      "additionalProperties": false,
+      "description": "ReadinessProbe defines the configuration for the readiness probe.",
       "type": "object",
-      "description": "ReadinessProbe defines the configuration for the readiness probe."
+      "additionalProperties": false
     },
     "Registry": {
       "properties": {
@@ -4074,8 +4071,8 @@
           "description": "Config is the regular docker registry config. See <https://distribution.github.io/distribution/about/configuration/> for more details."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ReplicateServices": {
       "properties": {
@@ -4094,8 +4091,8 @@
           "description": "FromHost defines the services that should get synced from the host to the virtual cluster."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Requirement": {
       "properties": {
@@ -4119,12 +4116,12 @@
           "description": "Value is the value to use for comparison. This is mutually exclusive with values."
         }
       },
-      "additionalProperties": false,
+      "description": "KarpenterRequirement defines a scheduling requirement for a dynamic node pool.",
       "type": "object",
       "required": [
         "property"
       ],
-      "description": "KarpenterRequirement defines a scheduling requirement for a dynamic node pool."
+      "additionalProperties": false
     },
     "ResolveDNS": {
       "properties": {
@@ -4145,8 +4142,8 @@
           "description": "Target is the DNS target that should get mapped to"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ResolveDNSTarget": {
       "properties": {
@@ -4171,8 +4168,8 @@
           "description": "VClusterService format is hostNamespace/vClusterName/vClusterNamespace/vClusterService"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ResourceQuota": {
       "properties": {
@@ -4203,22 +4200,22 @@
           "description": "Scopes are the resource quota scopes"
         },
         "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are extra annotations for this resource."
+          }
         },
         "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are extra labels for this resource."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Resources": {
       "properties": {
@@ -4231,8 +4228,8 @@
           "description": "Requests are minimal resources that will be consumed by the container"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "RuleWithVerbs": {
       "properties": {
@@ -4269,8 +4266,8 @@
           "description": "Verb is the kube verb associated with the request for API requests, not the http verb. This includes things like list and watch.\nFor non-resource requests, this is the lowercase http verb.\nIf '*' is present, the length of the slice must be one."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SelectorConfig": {
       "properties": {
@@ -4278,8 +4275,8 @@
           "$ref": "#/$defs/StandardLabelSelector"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ServiceMapping": {
       "properties": {
@@ -4292,8 +4289,8 @@
           "description": "To is the target service that it should get synced to. Can be either in the form name or namespace/name."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ServiceMonitor": {
       "properties": {
@@ -4302,22 +4299,22 @@
           "description": "Enabled configures if Helm should create the service monitor."
         },
         "labels": {
+          "description": "Labels are the extra labels to add to the service monitor.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are the extra labels to add to the service monitor."
+          }
         },
         "annotations": {
+          "description": "Annotations are the extra annotations to add to the service monitor.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Annotations are the extra annotations to add to the service monitor."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "Sleep": {
       "properties": {
@@ -4326,9 +4323,9 @@
           "description": "Auto holds automatic sleep configuration"
         }
       },
-      "additionalProperties": false,
+      "description": "Sleep holds configuration for automatically putting the virtual cluster to sleep.",
       "type": "object",
-      "description": "Sleep holds configuration for automatically putting the virtual cluster to sleep."
+      "additionalProperties": false
     },
     "SleepAuto": {
       "properties": {
@@ -4353,9 +4350,9 @@
           "description": "Timezone specifies time zone used for scheduled sleep operations. Defaults to UTC.\nAccepts the same format as time.LoadLocation() in Go (https://pkg.go.dev/time#LoadLocation).\nThe value should be a location name corresponding to a file in the IANA Time Zone database, such as \"America/New_York\".\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SleepAuto holds configuration for automatic sleep and wakeup",
       "type": "object",
-      "description": "SleepAuto holds configuration for automatic sleep and wakeup"
+      "additionalProperties": false
     },
     "SleepAutoExclusion": {
       "properties": {
@@ -4363,9 +4360,9 @@
           "$ref": "#/$defs/LabelSelector"
         }
       },
-      "additionalProperties": false,
+      "description": "SleepAutoExclusion holds conifiguration for excluding workloads from sleeping by label(s)",
       "type": "object",
-      "description": "SleepAutoExclusion holds conifiguration for excluding workloads from sleeping by label(s)"
+      "additionalProperties": false
     },
     "SleepAutoWakeup": {
       "properties": {
@@ -4373,9 +4370,9 @@
           "type": "string"
         }
       },
-      "additionalProperties": false,
+      "description": "SleepAutoWakeup holds the cron schedule to wake workloads automatically",
       "type": "object",
-      "description": "SleepAutoWakeup holds the cron schedule to wake workloads automatically"
+      "additionalProperties": false
     },
     "SnapshotRetention": {
       "properties": {
@@ -4388,9 +4385,9 @@
           "description": "MaxSnapshots defines the number of snapshots that can be taken\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SnapshotRetention holds snapshot retention configuration",
       "type": "object",
-      "description": "SnapshotRetention holds snapshot retention configuration"
+      "additionalProperties": false
     },
     "SnapshotSecretCredential": {
       "properties": {
@@ -4403,9 +4400,9 @@
           "description": "SecretNamespace is the secret namespace with credential\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SnapshotSecretCredential holds secret reference for credentials",
       "type": "object",
-      "description": "SnapshotSecretCredential holds secret reference for credentials"
+      "additionalProperties": false
     },
     "SnapshotStorage": {
       "properties": {
@@ -4426,9 +4423,9 @@
           "description": "Container holds configuration for storing snapshots as local files inside a vCluster container\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SnapshotStorage holds snapshot storage configuration",
       "type": "object",
-      "description": "SnapshotStorage holds snapshot storage configuration"
+      "additionalProperties": false
     },
     "SnapshotStorageContainer": {
       "properties": {
@@ -4441,9 +4438,9 @@
           "description": "Volume specifies which volume needs to be mounted into the container to store the snapshot\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SnapshotStorageContainer holds container local storage configuration",
       "type": "object",
-      "description": "SnapshotStorageContainer holds container local storage configuration"
+      "additionalProperties": false
     },
     "SnapshotStorageContainerVolume": {
       "properties": {
@@ -4456,9 +4453,9 @@
           "description": "Path to the volume mount\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SnapshotStorageContainerVolume holds volume mount configuration",
       "type": "object",
-      "description": "SnapshotStorageContainerVolume holds volume mount configuration"
+      "additionalProperties": false
     },
     "SnapshotStorageOCI": {
       "properties": {
@@ -4479,9 +4476,9 @@
           "description": "Password to authenticate with the OCI registry\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SnapshotStorageOCI holds OCI registry storage configuration",
       "type": "object",
-      "description": "SnapshotStorageOCI holds OCI registry storage configuration"
+      "additionalProperties": false
     },
     "SnapshotStorageS3": {
       "properties": {
@@ -4494,9 +4491,9 @@
           "description": "Credential secret with the S3 Credentials, it should contain AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SnapshotStorageS3 holds S3 storage configuration",
       "type": "object",
-      "description": "SnapshotStorageS3 holds S3 storage configuration"
+      "additionalProperties": false
     },
     "SnapshotVolumes": {
       "properties": {
@@ -4505,9 +4502,9 @@
           "description": "Enabled specifies whether a snapshot should also include volumes in the snapshot\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SnapshotVolumes holds volume snapshot configuration",
       "type": "object",
-      "description": "SnapshotVolumes holds volume snapshot configuration"
+      "additionalProperties": false
     },
     "Snapshots": {
       "properties": {
@@ -4516,9 +4513,9 @@
           "description": "Auto holds automatic snapshot configuration\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "Snapshots holds configuration for automatic vCluster snapshots.",
       "type": "object",
-      "description": "Snapshots holds configuration for automatic vCluster snapshots."
+      "additionalProperties": false
     },
     "SnapshotsAuto": {
       "properties": {
@@ -4543,9 +4540,9 @@
           "description": "Volumes specifies configuration for volume snapshots\n+optional"
         }
       },
-      "additionalProperties": false,
+      "description": "SnapshotsAuto holds automatic snapshot scheduling and retention configuration",
       "type": "object",
-      "description": "SnapshotsAuto holds automatic snapshot scheduling and retention configuration"
+      "additionalProperties": false
     },
     "Standalone": {
       "properties": {
@@ -4566,8 +4563,8 @@
           "description": "JoinNode holds configuration for the standalone control plane node."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "StandaloneAutoNodes": {
       "properties": {
@@ -4587,8 +4584,8 @@
           "description": "NodeTypeSelector filters the types of nodes that can be provisioned by this pool.\nAll requirements must be met for a node type to be eligible."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "StandaloneJoinNode": {
       "properties": {
@@ -4637,16 +4634,16 @@
           "description": "NodeRegistration holds configuration for the node registration similar to the kubeadm node registration."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "StandardLabelSelector": {
       "properties": {
         "matchLabels": {
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object"
+          }
         },
         "matchExpressions": {
           "items": {
@@ -4655,8 +4652,8 @@
           "type": "array"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "StartupProbe": {
       "properties": {
@@ -4677,9 +4674,9 @@
           "description": "Frequency (in seconds) to perform the probe"
         }
       },
-      "additionalProperties": false,
+      "description": "StartupProbe defines the configuration for the startup probe.",
       "type": "object",
-      "description": "StartupProbe defines the configuration for the startup probe."
+      "additionalProperties": false
     },
     "StaticNodePool": {
       "properties": {
@@ -4702,11 +4699,11 @@
           "description": "Taints are the taints to apply to the nodes in this pool."
         },
         "nodeLabels": {
+          "description": "NodeLabels are the labels to apply to the nodes in this pool.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "NodeLabels are the labels to apply to the nodes in this pool."
+          }
         },
         "terminationGracePeriod": {
           "type": "string",
@@ -4717,12 +4714,12 @@
           "description": "Quantity is the number of desired nodes in this pool."
         }
       },
-      "additionalProperties": false,
-      "type": "object",
       "required": [
         "name",
         "quantity"
-      ]
+      ],
+      "type": "object",
+      "additionalProperties": false
     },
     "Sync": {
       "properties": {
@@ -4735,8 +4732,8 @@
           "description": "Configure what resources vCluster should sync from the host cluster to the virtual cluster."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncAllResource": {
       "properties": {
@@ -4756,8 +4753,8 @@
           "description": "Patches patch the resource according to the provided specification."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncFromHost": {
       "properties": {
@@ -4798,11 +4795,11 @@
           "description": "CSIStorageCapacities defines if csi storage capacities should get synced from the host cluster to the virtual cluster, but not back. If auto, is automatically enabled when the virtual scheduler is enabled."
         },
         "customResources": {
+          "description": "CustomResources defines what custom resources should get synced read-only to the virtual cluster from the host cluster. vCluster will automatically add any required RBAC to the vCluster cluster role.",
+          "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/SyncFromHostCustomResource"
-          },
-          "type": "object",
-          "description": "CustomResources defines what custom resources should get synced read-only to the virtual cluster from the host cluster. vCluster will automatically add any required RBAC to the vCluster cluster role."
+          }
         },
         "volumeSnapshotClasses": {
           "$ref": "#/$defs/EnableSwitchWithPatches",
@@ -4821,8 +4818,8 @@
           "description": "DeviceClasses defines if device classes in the host should get synced to the virtual cluster"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncFromHostCustomResource": {
       "properties": {
@@ -4846,12 +4843,12 @@
           "description": "Mappings for Namespace and Object"
         }
       },
-      "additionalProperties": false,
-      "type": "object",
       "required": [
         "enabled",
         "scope"
-      ]
+      ],
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncNodeSelector": {
       "properties": {
@@ -4860,15 +4857,15 @@
           "description": "All specifies if all nodes should get synced by vCluster from the host to the virtual cluster or only the ones where pods are assigned to."
         },
         "labels": {
+          "description": "Labels are the node labels used to sync nodes from host cluster to virtual cluster. This will also set the node selector when syncing a pod from virtual cluster to host cluster to the same value.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Labels are the node labels used to sync nodes from host cluster to virtual cluster. This will also set the node selector when syncing a pod from virtual cluster to host cluster to the same value."
+          }
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncNodes": {
       "properties": {
@@ -4896,8 +4893,8 @@
           "description": "Patches patch the resource according to the provided specification."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncPods": {
       "properties": {
@@ -4906,11 +4903,11 @@
           "description": "Enabled defines if pod syncing should be enabled."
         },
         "translateImage": {
+          "description": "TranslateImage maps an image to another image that should be used instead. For example this can be used to rewrite\na certain image that is used within the virtual cluster to be another image on the host cluster",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "TranslateImage maps an image to another image that should be used instead. For example this can be used to rewrite\na certain image that is used within the virtual cluster to be another image on the host cluster"
+          }
         },
         "enforceTolerations": {
           "items": {
@@ -4947,8 +4944,8 @@
           "description": "HybridScheduling is used to enable and configure hybrid scheduling for pods in the virtual cluster."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncRewriteHosts": {
       "properties": {
@@ -4961,8 +4958,8 @@
           "description": "InitContainer holds extra options for the init container used by vCluster to rewrite the FQDN for stateful set pods."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncRewriteHostsInitContainer": {
       "properties": {
@@ -4975,8 +4972,8 @@
           "description": "Resources are the resources that should be assigned to the init container for each stateful set init container."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncToHost": {
       "properties": {
@@ -5045,11 +5042,11 @@
           "description": "PriorityClasses defines if priority classes created within the virtual cluster should get synced to the host cluster."
         },
         "customResources": {
+          "description": "CustomResources defines what custom resources should get synced from the virtual cluster to the host cluster. vCluster will copy the definition automatically from host cluster to virtual cluster on startup.\nvCluster will also automatically add any required RBAC permissions to the vCluster role for this to work.",
+          "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/SyncToHostCustomResource"
-          },
-          "type": "object",
-          "description": "CustomResources defines what custom resources should get synced from the virtual cluster to the host cluster. vCluster will copy the definition automatically from host cluster to virtual cluster on startup.\nvCluster will also automatically add any required RBAC permissions to the vCluster role for this to work."
+          }
         },
         "namespaces": {
           "$ref": "#/$defs/SyncToHostNamespaces",
@@ -5064,8 +5061,8 @@
           "description": "ResourceClaimTemplates defines if resourceClaimTemplates created within the virtual cluster should get synced to the host cluster."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncToHostCustomResource": {
       "properties": {
@@ -5085,11 +5082,11 @@
           "description": "Patches patch the resource according to the provided specification."
         }
       },
-      "additionalProperties": false,
-      "type": "object",
       "required": [
         "enabled"
-      ]
+      ],
+      "type": "object",
+      "additionalProperties": false
     },
     "SyncToHostNamespaces": {
       "properties": {
@@ -5113,19 +5110,19 @@
           "description": "MappingsOnly defines if creation of namespaces not matched by mappings should be allowed."
         },
         "extraLabels": {
+          "description": "ExtraLabels are additional labels to add to the namespace in the host cluster.",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "ExtraLabels are additional labels to add to the namespace in the host cluster."
+          }
         }
       },
-      "additionalProperties": false,
+      "description": "SyncToHostNamespaces defines how namespaces should be synced from the virtual cluster to the host cluster.",
       "type": "object",
       "required": [
         "enabled"
       ],
-      "description": "SyncToHostNamespaces defines how namespaces should be synced from the virtual cluster to the host cluster."
+      "additionalProperties": false
     },
     "Telemetry": {
       "properties": {
@@ -5146,8 +5143,8 @@
           "type": "string"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "TranslatePatch": {
       "properties": {
@@ -5172,16 +5169,16 @@
           "description": "Labels treats the path value as a labels selector."
         }
       },
-      "additionalProperties": false,
-      "type": "object",
       "required": [
         "path"
-      ]
+      ],
+      "type": "object",
+      "additionalProperties": false
     },
     "TranslatePatchLabels": {
       "properties": {},
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "TranslatePatchReference": {
       "properties": {
@@ -5210,12 +5207,12 @@
           "description": "NamespacePath is the optional relative path to the reference namespace within the object. If omitted or not found, namespacePath equals to the\nmetadata.namespace path of the object."
         }
       },
-      "additionalProperties": false,
-      "type": "object",
       "required": [
         "apiVersion",
         "kind"
-      ]
+      ],
+      "type": "object",
+      "additionalProperties": false
     },
     "ValidatingWebhook": {
       "properties": {
@@ -5267,8 +5264,8 @@
           "description": "MatchConditions is a list of conditions that must be met for a request to be sent to this\nwebhook. Match conditions filter requests that have already been matched by the rules,\nnamespaceSelector, and objectSelector. An empty list of matchConditions matches all requests.\nThere are a maximum of 64 match conditions allowed."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ValidatingWebhookClientConfig": {
       "properties": {
@@ -5286,9 +5283,9 @@
           "description": "CABundle is a PEM encoded CA bundle which will be used to validate the webhook's server certificate.\nIf unspecified, system trust roots on the apiserver are used."
         }
       },
-      "additionalProperties": false,
+      "description": "ValidatingWebhookClientConfig contains the information to make a TLS connection with the webhook",
       "type": "object",
-      "description": "ValidatingWebhookClientConfig contains the information to make a TLS connection with the webhook"
+      "additionalProperties": false
     },
     "ValidatingWebhookConfiguration": {
       "properties": {
@@ -5312,8 +5309,8 @@
           "description": "Webhooks is a list of webhooks and the affected resources and operations."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "ValidatingWebhookServiceReference": {
       "properties": {
@@ -5334,8 +5331,8 @@
           "description": "If specified, the port on the service that hosting webhook.\nDefault to 443 for backward compatibility.\n`port` should be a valid port number (1-65535, inclusive)."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "VirtualClusterKubeConfig": {
       "properties": {
@@ -5360,8 +5357,8 @@
           "description": "RequestHeaderCACert is the request header ca cert path."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "VirtualClusterRef": {
       "properties": {
@@ -5377,12 +5374,12 @@
           "description": "Project is the project of the target virtual cluster. If empty, defaults to the same project as the source vCluster."
         }
       },
-      "additionalProperties": false,
+      "description": "VirtualClusterRef is a reference to a virtual cluster within the platform.",
       "type": "object",
       "required": [
         "name"
       ],
-      "description": "VirtualClusterRef is a reference to a virtual cluster within the platform."
+      "additionalProperties": false
     },
     "VolumeClaim": {
       "properties": {
@@ -5417,8 +5414,8 @@
           "description": "StorageClass is the persistent volume claim storage class."
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "VolumeMount": {
       "properties": {
@@ -5447,9 +5444,9 @@
           "description": "Expanded path within the volume from which the container's volume should be mounted.\nBehaves similarly to SubPath but environment variable references $(VAR_NAME) are expanded using the container's environment.\nDefaults to \"\" (volume's root).\nSubPathExpr and SubPath are mutually exclusive."
         }
       },
-      "additionalProperties": false,
+      "description": "VolumeMount describes a mounting of a Volume within a container.",
       "type": "object",
-      "description": "VolumeMount describes a mounting of a Volume within a container."
+      "additionalProperties": false
     },
     "VolumeSnapshotController": {
       "properties": {
@@ -5458,9 +5455,10 @@
           "description": "Enabled defines if the CSI volumes snapshot-controller should be enabled."
         }
       },
-      "additionalProperties": false,
+      "description": "VolumeSnapshotController defines CSI volumes snapshot-controller configuration.",
       "type": "object",
-      "description": "VolumeSnapshotController defines CSI volumes snapshot-controller configuration."
+      "additionalProperties": false
     }
-  }
+  },
+  "additionalProperties": false
 }

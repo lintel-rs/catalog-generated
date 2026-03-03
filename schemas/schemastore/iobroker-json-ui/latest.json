@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/iobroker-json-ui/latest.json",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/ioBroker/json-config/main/schemas/jsonConfig.json",
-    "sourceSha256": "cd3e29dd8eaf22bad5a5c4990cdca9311af045c3bcdf97061b267297fab1b5c7",
+    "sourceSha256": "82b217a36403560c1b6d9dd2a7c8db59a635449c49db029417423c47ffb0c2b6",
     "fileMatch": [
       "jsonConfig.json",
       "jsonCustom.json",
@@ -18,14 +18,14 @@
     "required": [
       "type"
     ],
-    "additionalProperties": false,
+    "$ref": "#/$defs/topLevelProperties",
     "properties": {
       "type": true,
       "$schema": true,
       "i18n": true,
       "items": true
     },
-    "$ref": "#/$defs/topLevelProperties"
+    "additionalProperties": false
   },
   "$defs": {
     "multilingual": {
@@ -33,17 +33,16 @@
       "required": [
         "en"
       ],
+      "additionalProperties": false,
       "patternProperties": {
         "en|de|ru|pt|nl|fr|it|es|pl|uk|zh-cn": {
           "type": "string"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "customFilter": {
       "type": "object",
       "description": "JSON schema for the ObjectBrowserCustomFilter interface from TypeScript.\n\nNote: ioBroker-specific enums (e.g., ObjectType, CommonType) are allowed here as strings or arrays of strings; typical values are mentioned in the description.",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "description": "Object type(s) in Object Browser, e.g., 'state', 'channel', 'device'. Can be a string or an array of strings.",
@@ -95,7 +94,6 @@
         "common": {
           "description": "Filter on common.* properties of the object (e.g., type, role, custom)",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "type": {
               "description": "Data type of the state, e.g., 'number', 'string', 'boolean', 'object', 'array', 'mixed'. Accepts string or array of strings.",
@@ -162,9 +160,11 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "i18n": {
       "description": "If translations will be provided via files, e.g. in admin/i18n/de/translations.json or provide the path to the i18n folder if it's custom or provide the translations inside this attribute as an object",
@@ -229,6 +229,7 @@
         "pattern",
         "port",
         "qrCode",
+        "qrCodeSendTo",
         "room",
         "select",
         "selectSendTo",
@@ -308,10 +309,10 @@
         "confirm": true,
         "doNotSave": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "staticLinkProps": {
@@ -463,10 +464,10 @@
         "maxLength": true,
         "doNotSave": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "tableItemBaseProps": {
@@ -554,10 +555,10 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "certificatesProps": {
@@ -592,10 +593,10 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "passwordProps": {
@@ -647,10 +648,10 @@
         "confirm": true,
         "maxLength": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "checkboxProps": {
@@ -685,10 +686,10 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "aliveProps": {
@@ -734,10 +735,10 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "qrCodeProps": {
@@ -745,7 +746,6 @@
         "type",
         "data"
       ],
-      "additionalProperties": false,
       "properties": {
         "data": {
           "description": "The data to be encoded in the QR Code",
@@ -801,6 +801,95 @@
         "noTranslation": true,
         "confirm": true
       },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "qrCodeSendToProps": {
+      "required": [
+        "type",
+        "command"
+      ],
+      "properties": {
+        "command": {
+          "description": "Command to be sent to the adapter instance. The response must be a string to be encoded in the QR code.",
+          "type": "string"
+        },
+        "alsoDependsOn": {
+          "$ref": "#/$defs/alsoDependsOnSendProp"
+        },
+        "jsonData": {
+          "description": "Data to be sent as parsable string, can contain special placeholder. E. g. '{\"subject1\": \"${data.subject}\", \"options1\": {\"host\": \"${data.host}\"}}'",
+          "type": "string"
+        },
+        "data": {
+          "description": "Data to be sent as JSON.",
+          "type": "object"
+        },
+        "sendFirstByClick": {
+          "description": "If true or a string/multilingual object, the QR code will not be loaded on mount but only after a click. If a string or multilingual object is provided, it will be used as the button text.",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/multilingual"
+            }
+          ]
+        },
+        "size": {
+          "description": "The size of the QR code",
+          "type": "number"
+        },
+        "fgColor": {
+          "description": "Foreground color",
+          "type": "string"
+        },
+        "bgColor": {
+          "description": "Background color",
+          "type": "string"
+        },
+        "level": {
+          "description": "QR code error correction level",
+          "enum": [
+            "L",
+            "M",
+            "Q",
+            "H"
+          ]
+        },
+        "label": true,
+        "type": true,
+        "defaultSendTo": true,
+        "allowSaveWithError": true,
+        "xs": true,
+        "sm": true,
+        "md": true,
+        "lg": true,
+        "xl": true,
+        "newLine": true,
+        "hidden": true,
+        "hideOnlyControl": true,
+        "disabled": true,
+        "helpLink": true,
+        "help": true,
+        "style": true,
+        "darkStyle": true,
+        "validator": true,
+        "validatorNoSaveOnError": true,
+        "validatorErrorText": true,
+        "noMultiEdit": true,
+        "tooltip": true,
+        "expertMode": true,
+        "default": true,
+        "defaultFunc": true,
+        "onChange": true,
+        "noTranslation": true,
+        "confirm": true
+      },
+      "additionalProperties": false,
       "type": "object"
     },
     "deviceManagerProps": {
@@ -834,10 +923,10 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "cronProps": {
@@ -879,10 +968,6 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
-      "required": [
-        "type"
-      ],
       "oneOf": [
         {
           "required": [
@@ -895,6 +980,10 @@
           ]
         }
       ],
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
       "type": "object"
     },
     "sendToProps": {
@@ -1004,11 +1093,11 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type",
         "command"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "stateProps": {
@@ -1175,6 +1264,11 @@
           "description": "The value in this case will be sent only when the \"Enter\" button is pressed. It can be combined with `showEnterButton`",
           "type": "boolean"
         },
+        "digits": {
+          "description": "Number of decimal places to display for numeric values in text/html mode",
+          "type": "number",
+          "minimum": 0
+        },
         "options": {
           "description": "Options for `select` in form `[\"value1\", \"value2\", ...]` or `[{\"value\": \"value\", \"label\": \"Value1\"}, \"value2\", ...]`. If not defiled, the `common.states` in the object must exist.",
           "type": "array",
@@ -1185,7 +1279,10 @@
               },
               {
                 "type": "object",
-                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "value"
+                ],
                 "properties": {
                   "label": {
                     "oneOf": [
@@ -1216,10 +1313,7 @@
                     "description": "Color of the option"
                   }
                 },
-                "required": [
-                  "label",
-                  "value"
-                ]
+                "additionalProperties": false
               }
             ]
           }
@@ -1244,11 +1338,11 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type",
         "oid"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "instanceProps": {
@@ -1313,11 +1407,11 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type",
         "adapter"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "objectIdProps": {
@@ -1422,10 +1516,10 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "oauth2Props": {
@@ -1465,11 +1559,11 @@
         "expertMode": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type",
         "identifier"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "fileSelectorProps": {
@@ -1547,8 +1641,8 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [],
+      "additionalProperties": false,
       "type": "object"
     },
     "timePickerProps": {
@@ -1578,12 +1672,6 @@
         "timeSteps": {
           "description": "Represent the available time steps for each view",
           "type": "object",
-          "additionalProperties": false,
-          "default": {
-            "hours": 1,
-            "minutes": 5,
-            "seconds": 5
-          },
           "properties": {
             "hours": {
               "type": "number"
@@ -1594,7 +1682,13 @@
             "seconds": {
               "type": "number"
             }
-          }
+          },
+          "default": {
+            "hours": 1,
+            "minutes": 5,
+            "seconds": 5
+          },
+          "additionalProperties": false
         },
         "returnFormat": {
           "description": "Use `fullDate` or `HH:mm:ss`. Defaults to full date for backward compatibility reasons.",
@@ -1624,10 +1718,10 @@
         "expertMode": true,
         "noTranslation": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "interfaceProps": {
@@ -1669,10 +1763,10 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "coordinatesProps": {
@@ -1725,10 +1819,10 @@
         "noTranslation": true,
         "confirm": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "jsonEditorProps": {
@@ -1778,10 +1872,10 @@
         "expertMode": true,
         "noTranslation": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "yamlEditorProps": {
@@ -1827,10 +1921,10 @@
         "expertMode": true,
         "noTranslation": true
       },
-      "additionalProperties": false,
       "required": [
         "type"
       ],
+      "additionalProperties": false,
       "type": "object"
     },
     "doNotSaveProp": {
@@ -1919,11 +2013,11 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type",
                     "system"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -2003,11 +2097,11 @@
                 "confirm": true,
                 "maxLength": true
               },
-              "additionalProperties": false,
               "required": [
                 "type",
                 "command"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -2084,11 +2178,11 @@
                 "onChange": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type",
                 "command"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -2165,11 +2259,11 @@
                 "onChange": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type",
                 "command"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -2217,6 +2311,20 @@
                   "description": "Data to be sent as JSON.",
                   "type": "object"
                 },
+                "sendFirstByClick": {
+                  "description": "If true or a string/multilingual object, the image will not be loaded on mount but only after a click. If a string or multilingual object is provided, it will be used as the button text.",
+                  "oneOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/multilingual"
+                    }
+                  ]
+                },
                 "noTranslation": true,
                 "label": true,
                 "type": true,
@@ -2246,11 +2354,11 @@
                 "onChange": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type",
                 "command"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -2315,12 +2423,12 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type",
                     "size",
                     "text"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -2373,10 +2481,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -2441,10 +2549,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -2544,10 +2652,10 @@
                 "noTranslation": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -2618,10 +2726,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -2690,10 +2798,6 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
-                  "required": [
-                    "type"
-                  ],
                   "oneOf": [
                     {
                       "required": [
@@ -2706,6 +2810,10 @@
                       ]
                     }
                   ],
+                  "required": [
+                    "type"
+                  ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -2797,10 +2905,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -2885,10 +2993,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -2961,10 +3069,10 @@
                 "onChange": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -3076,11 +3184,11 @@
                     "noTranslation": true,
                     "confirm": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type",
                     "command"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -3148,10 +3256,10 @@
                 "noTranslation": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -3206,11 +3314,11 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type",
                     "filename"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -3278,10 +3386,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -3357,10 +3465,10 @@
                 "noTranslation": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -3445,10 +3553,10 @@
                 "confirm": true,
                 "doNotSave": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -3506,7 +3614,10 @@
                           },
                           {
                             "type": "object",
-                            "additionalProperties": false,
+                            "required": [
+                              "label",
+                              "value"
+                            ],
                             "properties": {
                               "label": {
                                 "description": "Label of the option",
@@ -3539,10 +3650,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "label",
-                              "value"
-                            ]
+                            "additionalProperties": false
                           }
                         ]
                       }
@@ -3581,11 +3689,11 @@
                     "noTranslation": true,
                     "confirm": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type",
                     "options"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -3649,10 +3757,6 @@
                 "noTranslation": true,
                 "confirm": true
               },
-              "additionalProperties": false,
-              "required": [
-                "type"
-              ],
               "oneOf": [
                 {
                   "required": [
@@ -3665,6 +3769,10 @@
                   ]
                 }
               ],
+              "required": [
+                "type"
+              ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -3763,10 +3871,10 @@
                 "maxLength": true,
                 "doNotSave": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -3800,7 +3908,6 @@
                       "label",
                       "value"
                     ],
-                    "additionalProperties": false,
                     "properties": {
                       "label": {
                         "description": "Label"
@@ -3819,7 +3926,8 @@
                       "color": {
                         "type": "string"
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   }
                 },
                 "multiple": {
@@ -3859,10 +3967,10 @@
                 "noTranslation": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -3921,11 +4029,11 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type",
                     "pattern"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -4018,12 +4126,12 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type",
                     "id",
                     "val"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -4101,11 +4209,118 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type",
                     "data"
                   ],
+                  "additionalProperties": false,
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "qrCodeSendTo"
+                }
+              },
+              "type": "object"
+            },
+            "then": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/tableItemBaseProps"
+                },
+                {
+                  "properties": {
+                    "command": {
+                      "description": "Command to be sent to the adapter instance. The response must be a string to be encoded in the QR code.",
+                      "type": "string"
+                    },
+                    "alsoDependsOn": {
+                      "$ref": "#/$defs/alsoDependsOnSendProp"
+                    },
+                    "jsonData": {
+                      "description": "Data to be sent as parsable string, can contain special placeholder. E. g. '{\"subject1\": \"${data.subject}\", \"options1\": {\"host\": \"${data.host}\"}}'",
+                      "type": "string"
+                    },
+                    "data": {
+                      "description": "Data to be sent as JSON.",
+                      "type": "object"
+                    },
+                    "sendFirstByClick": {
+                      "description": "If true or a string/multilingual object, the QR code will not be loaded on mount but only after a click.",
+                      "oneOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "$ref": "#/$defs/multilingual"
+                        }
+                      ]
+                    },
+                    "size": {
+                      "description": "The size of the QR code",
+                      "type": "number"
+                    },
+                    "fgColor": {
+                      "description": "Foreground color",
+                      "type": "string"
+                    },
+                    "bgColor": {
+                      "description": "Background color",
+                      "type": "string"
+                    },
+                    "level": {
+                      "description": "QR code error correction level",
+                      "enum": [
+                        "L",
+                        "M",
+                        "Q",
+                        "H"
+                      ]
+                    },
+                    "attr": true,
+                    "label": true,
+                    "type": true,
+                    "defaultSendTo": true,
+                    "allowSaveWithError": true,
+                    "xs": true,
+                    "sm": true,
+                    "md": true,
+                    "lg": true,
+                    "xl": true,
+                    "newLine": true,
+                    "hidden": true,
+                    "hideOnlyControl": true,
+                    "disabled": true,
+                    "helpLink": true,
+                    "help": true,
+                    "style": true,
+                    "darkStyle": true,
+                    "validator": true,
+                    "validatorNoSaveOnError": true,
+                    "validatorErrorText": true,
+                    "noMultiEdit": true,
+                    "tooltip": true,
+                    "expertMode": true,
+                    "default": true,
+                    "defaultFunc": true,
+                    "onChange": true,
+                    "noTranslation": true,
+                    "confirm": true,
+                    "width": true
+                  },
+                  "required": [
+                    "type",
+                    "command"
+                  ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -4162,10 +4377,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -4222,10 +4437,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -4282,10 +4497,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -4353,10 +4568,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -4418,11 +4633,11 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type",
                     "certType"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -4458,18 +4673,6 @@
               "type": "object"
             },
             "then": {
-              "additionalProperties": false,
-              "required": [
-                "type"
-              ],
-              "allOf": [
-                {
-                  "$ref": "#/$defs/tableItemBaseProps"
-                },
-                {
-                  "$ref": "#/$defs/staticLinkProps"
-                }
-              ],
               "properties": {
                 "href": true,
                 "text": true,
@@ -4510,6 +4713,18 @@
                 "noTranslation": true,
                 "confirm": true
               },
+              "required": [
+                "type"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/$defs/tableItemBaseProps"
+                },
+                {
+                  "$ref": "#/$defs/staticLinkProps"
+                }
+              ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -4573,10 +4788,6 @@
                 "noTranslation": true,
                 "confirm": true
               },
-              "additionalProperties": false,
-              "required": [
-                "type"
-              ],
               "oneOf": [
                 {
                   "required": [
@@ -4589,6 +4800,10 @@
                   ]
                 }
               ],
+              "required": [
+                "type"
+              ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -4721,12 +4936,12 @@
                   ]
                 }
               },
-              "additionalProperties": false,
               "required": [
                 "type",
                 "label",
                 "data"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -4811,11 +5026,11 @@
                 "noTranslation": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type",
                 "adapter"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -4873,10 +5088,10 @@
                     "confirm": true,
                     "width": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -4936,10 +5151,10 @@
                     "noTranslation": true,
                     "confirm": true
                   },
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]
@@ -5062,10 +5277,10 @@
                 "noTranslation": true,
                 "confirm": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -5248,10 +5463,10 @@
                 "confirm": true,
                 "width": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -5296,12 +5511,6 @@
                 "timeSteps": {
                   "description": "Represent the available time steps for each view",
                   "type": "object",
-                  "additionalProperties": false,
-                  "default": {
-                    "hours": 1,
-                    "minutes": 5,
-                    "seconds": 5
-                  },
                   "properties": {
                     "hours": {
                       "type": "number"
@@ -5312,7 +5521,13 @@
                     "seconds": {
                       "type": "number"
                     }
-                  }
+                  },
+                  "default": {
+                    "hours": 1,
+                    "minutes": 5,
+                    "seconds": 5
+                  },
+                  "additionalProperties": false
                 },
                 "returnFormat": {
                   "description": "Use `fullDate` or `HH:mm:ss`. Defaults to full date for backward compatibility reasons.",
@@ -5350,10 +5565,10 @@
                 "confirm": true,
                 "width": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           },
@@ -5422,10 +5637,10 @@
                 "confirm": true,
                 "width": true
               },
-              "additionalProperties": false,
               "required": [
                 "type"
               ],
+              "additionalProperties": false,
               "type": "object"
             }
           }
@@ -5543,7 +5758,6 @@
           },
           "onChange": {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "calculateFunc": {
                 "description": "JS function: that calculates value",
@@ -5556,7 +5770,8 @@
               "alsoDependsOn": {
                 "$ref": "#/$defs/alsoDependsOnSendProp"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "doNotSave": {
             "$ref": "#/$defs/doNotSaveProp"
@@ -5569,7 +5784,6 @@
               },
               {
                 "type": "object",
-                "additionalProperties": false,
                 "properties": {
                   "func": {
                     "description": "JS function: that calculates value",
@@ -5578,7 +5792,8 @@
                   "alsoDependsOn": {
                     "$ref": "#/$defs/alsoDependsOnSendProp"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             ]
           },
@@ -5589,7 +5804,6 @@
           "confirm": {
             "description": "Confirm dialog",
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "condition": {
                 "description": "JS function: true show confirm dialog",
@@ -5655,7 +5869,8 @@
                   "type": "string"
                 }
               }
-            }
+            },
+            "additionalProperties": false
           },
           "noMultiEdit": {
             "description": "(only custom) if this flag set to true, this field will not be shown if user selected more than one object for edit",
@@ -5741,11 +5956,11 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "system"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -5813,11 +6028,11 @@
                       "confirm": true,
                       "maxLength": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "command"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -5884,11 +6099,11 @@
                       "onChange": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "command"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -5955,11 +6170,11 @@
                       "onChange": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "command"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -5989,6 +6204,20 @@
                         "description": "Data to be sent as JSON.",
                         "type": "object"
                       },
+                      "sendFirstByClick": {
+                        "description": "If true or a string/multilingual object, the image will not be loaded on mount but only after a click. If a string or multilingual object is provided, it will be used as the button text.",
+                        "oneOf": [
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "$ref": "#/$defs/multilingual"
+                          }
+                        ]
+                      },
                       "label": true,
                       "type": true,
                       "xs": true,
@@ -6015,11 +6244,11 @@
                       "onChange": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "command"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6092,10 +6321,10 @@
                       "onChange": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6155,11 +6384,11 @@
                       "onChange": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "command"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6217,12 +6446,12 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "size",
                       "text"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6266,10 +6495,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6325,10 +6554,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6392,10 +6621,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6455,10 +6684,6 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
-                    "required": [
-                      "type"
-                    ],
                     "oneOf": [
                       {
                         "required": [
@@ -6471,6 +6696,10 @@
                         ]
                       }
                     ],
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6553,10 +6782,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6646,11 +6875,11 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "filename"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6720,10 +6949,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6824,7 +7053,10 @@
                             },
                             {
                               "type": "object",
-                              "additionalProperties": false,
+                              "required": [
+                                "label",
+                                "value"
+                              ],
                               "properties": {
                                 "label": {
                                   "oneOf": [
@@ -6854,10 +7086,7 @@
                                   "type": "string"
                                 }
                               },
-                              "required": [
-                                "label",
-                                "value"
-                              ]
+                              "additionalProperties": false
                             }
                           ]
                         }
@@ -6891,11 +7120,11 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "options"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -6910,6 +7139,19 @@
                   },
                   "then": {
                     "$ref": "#/$defs/qrCodeProps"
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "type": {
+                        "const": "qrCodeSendTo"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "then": {
+                    "$ref": "#/$defs/qrCodeSendToProps"
                   }
                 },
                 {
@@ -6971,7 +7213,6 @@
                             "label",
                             "value"
                           ],
-                          "additionalProperties": false,
                           "properties": {
                             "label": {
                               "description": "Label"
@@ -6990,7 +7231,8 @@
                             "color": {
                               "type": "string"
                             }
-                          }
+                          },
+                          "additionalProperties": false
                         }
                       },
                       "multiple": {
@@ -7030,10 +7272,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7192,11 +7434,11 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "pattern"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7280,12 +7522,12 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "id",
                       "val"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7333,10 +7575,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7384,10 +7626,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7435,10 +7677,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7497,10 +7739,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7553,11 +7795,11 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "certType"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7637,10 +7879,6 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
-                    "required": [
-                      "type"
-                    ],
                     "oneOf": [
                       {
                         "required": [
@@ -7653,6 +7891,10 @@
                         ]
                       }
                     ],
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7729,11 +7971,11 @@
                       "style": true,
                       "expertMode": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "text"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7856,12 +8098,12 @@
                         ]
                       }
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type",
                       "label",
                       "data"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7925,10 +8167,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -7976,10 +8218,10 @@
                       "noTranslation": true,
                       "confirm": true
                     },
-                    "additionalProperties": false,
                     "required": [
                       "type"
                     ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 },
@@ -8416,7 +8658,6 @@
                 },
                 "onChange": {
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "calculateFunc": {
                       "description": "JS function: that calculates value",
@@ -8429,7 +8670,8 @@
                     "alsoDependsOn": {
                       "$ref": "#/$defs/alsoDependsOnSendProp"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "doNotSave": {
                   "$ref": "#/$defs/doNotSaveProp"
@@ -8442,7 +8684,6 @@
                     },
                     {
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "func": {
                           "description": "JS function: that calculates value",
@@ -8451,7 +8692,8 @@
                         "alsoDependsOn": {
                           "$ref": "#/$defs/alsoDependsOnSendProp"
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     }
                   ]
                 },
@@ -8462,7 +8704,6 @@
                 "confirm": {
                   "description": "Confirm dialog",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "condition": {
                       "description": "JS function: true show confirm dialog",
@@ -8528,7 +8769,8 @@
                         "type": "string"
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "noMultiEdit": {
                   "description": "(only custom) if this flag set to true, this field will not be shown if user selected more than one object for edit",
@@ -8567,15 +8809,6 @@
     "required": [
       "type"
     ],
-    "additionalProperties": false,
-    "properties": {
-      "type": true,
-      "$schema": true,
-      "i18n": true,
-      "items": true,
-      "iconPosition": true,
-      "tabsStyle": true
-    },
     "allOf": [
       {
         "$ref": "#/$defs/topLevelProperties"
@@ -8592,6 +8825,15 @@
         },
         "type": "object"
       }
-    ]
+    ],
+    "properties": {
+      "type": true,
+      "$schema": true,
+      "i18n": true,
+      "items": true,
+      "iconPosition": true,
+      "tabsStyle": true
+    },
+    "additionalProperties": false
   }
 }

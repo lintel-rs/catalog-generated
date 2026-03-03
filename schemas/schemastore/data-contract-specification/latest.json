@@ -95,12 +95,12 @@
           "additionalProperties": true
         }
       },
-      "additionalProperties": true,
+      "description": "Metadata and life cycle information about the data contract.",
       "required": [
         "title",
         "version"
       ],
-      "description": "Metadata and life cycle information about the data contract."
+      "additionalProperties": true
     },
     "servers": {
       "type": "object",
@@ -683,16 +683,6 @@
                 "config": {
                   "type": "object",
                   "description": "Additional metadata for field configuration.",
-                  "additionalProperties": {
-                    "type": [
-                      "string",
-                      "number",
-                      "boolean",
-                      "object",
-                      "array",
-                      "null"
-                    ]
-                  },
                   "properties": {
                     "avroType": {
                       "type": "string",
@@ -726,6 +716,16 @@
                       "type": "string",
                       "description": "Specify the physical column type that is used in an AWS Glue Data Catalog table."
                     }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "object",
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -755,6 +755,12 @@
           "config": {
             "type": "object",
             "description": "Additional metadata for model configuration.",
+            "properties": {
+              "avroNamespace": {
+                "type": "string",
+                "description": "The namespace to use when importing and exporting the data model from / to Apache Avro."
+              }
+            },
             "additionalProperties": {
               "type": [
                 "string",
@@ -764,29 +770,151 @@
                 "array",
                 "null"
               ]
-            },
-            "properties": {
-              "avroNamespace": {
-                "type": "string",
-                "description": "The namespace to use when importing and exporting the data model from / to Apache Avro."
-              }
             }
           }
         }
       }
     },
-    "tags": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "description": "Tags to facilitate searching and filtering.",
-        "examples": [
-          "databricks",
-          "pii",
-          "sensitive"
-        ]
+    "definitions": {
+      "description": "Clear and concise explanations of syntax, semantic, and classification of business objects in a given domain.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z0-9/_-]+$"
       },
-      "description": "Tags to facilitate searching and filtering."
+      "additionalProperties": {
+        "type": "object",
+        "title": "Definition",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "The domain in which this definition is valid.",
+            "default": "global",
+            "deprecationMessage": "This field is deprecated. Encode the domain into the ID using slashes."
+          },
+          "name": {
+            "type": "string",
+            "description": "The technical name of this definition.",
+            "deprecationMessage": "This field is deprecated. Encode the name into the ID using slashes."
+          },
+          "title": {
+            "type": "string",
+            "description": "The business name of this definition."
+          },
+          "description": {
+            "type": "string",
+            "description": "Clear and concise explanations related to the domain."
+          },
+          "type": {
+            "$ref": "#/$defs/FieldType"
+          },
+          "fields": {
+            "description": "The nested fields (e.g. columns) of the object, record, or struct.",
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/properties/models/additionalProperties/properties/fields/additionalProperties"
+            }
+          },
+          "items": {
+            "$ref": "#/properties/models/additionalProperties/properties/fields/additionalProperties"
+          },
+          "keys": {
+            "$ref": "#/properties/models/additionalProperties/properties/fields/additionalProperties"
+          },
+          "values": {
+            "$ref": "#/properties/models/additionalProperties/properties/fields/additionalProperties"
+          },
+          "minLength": {
+            "type": "integer",
+            "description": "A value must be greater than or equal to this value. Applies only to string types."
+          },
+          "maxLength": {
+            "type": "integer",
+            "description": "A value must be less than or equal to this value. Applies only to string types."
+          },
+          "format": {
+            "type": "string",
+            "description": "Specific format requirements for the value (e.g., 'email', 'uri', 'uuid')."
+          },
+          "precision": {
+            "type": "integer",
+            "examples": [
+              38
+            ],
+            "description": "The maximum number of digits in a number. Only applies to numeric values. Defaults to 38."
+          },
+          "scale": {
+            "type": "integer",
+            "examples": [
+              0
+            ],
+            "description": "The maximum number of decimal places in a number. Only applies to numeric values. Defaults to 0."
+          },
+          "pattern": {
+            "type": "string",
+            "description": "A regular expression pattern the value must match. Applies only to string types."
+          },
+          "minimum": {
+            "type": "number",
+            "description": "A value of a number must greater than, or equal to, the value of this. Only evaluated if the value is not null. Only applies to numeric values."
+          },
+          "exclusiveMinimum": {
+            "type": "number",
+            "description": "A value of a number must greater than the value of this. Only evaluated if the value is not null. Only applies to numeric values."
+          },
+          "maximum": {
+            "type": "number",
+            "description": "A value of a number must less than, or equal to, the value of this. Only evaluated if the value is not null. Only applies to numeric values."
+          },
+          "exclusiveMaximum": {
+            "type": "number",
+            "description": "A value of a number must less than the value of this. Only evaluated if the value is not null. Only applies to numeric values."
+          },
+          "example": {
+            "type": "string",
+            "description": "An example value.",
+            "deprecationMessage": "Use the examples field instead."
+          },
+          "examples": {
+            "type": "array",
+            "description": "Example value."
+          },
+          "pii": {
+            "type": "boolean",
+            "description": "Indicates if the field contains Personal Identifiable Information (PII)."
+          },
+          "classification": {
+            "type": "string",
+            "description": "The data class defining the sensitivity level for this field."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Custom metadata to provide additional context."
+          },
+          "links": {
+            "type": "object",
+            "description": "Links to external resources.",
+            "minProperties": 1,
+            "propertyNames": {
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "title": "Link",
+              "description": "A URL to an external resource.",
+              "format": "uri",
+              "examples": [
+                "https://example.com"
+              ]
+            }
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
     },
     "servicelevels": {
       "type": "object",
@@ -985,146 +1113,18 @@
         ]
       }
     },
-    "$defs": {
-      "description": "Clear and concise explanations of syntax, semantic, and classification of business objects in a given domain.",
-      "type": "object",
-      "propertyNames": {
-        "pattern": "^[a-zA-Z0-9/_-]+$"
-      },
-      "additionalProperties": {
-        "type": "object",
-        "title": "Definition",
-        "properties": {
-          "domain": {
-            "type": "string",
-            "description": "The domain in which this definition is valid.",
-            "default": "global",
-            "deprecationMessage": "This field is deprecated. Encode the domain into the ID using slashes."
-          },
-          "name": {
-            "type": "string",
-            "description": "The technical name of this definition.",
-            "deprecationMessage": "This field is deprecated. Encode the name into the ID using slashes."
-          },
-          "title": {
-            "type": "string",
-            "description": "The business name of this definition."
-          },
-          "description": {
-            "type": "string",
-            "description": "Clear and concise explanations related to the domain."
-          },
-          "type": {
-            "$ref": "#/$defs/FieldType"
-          },
-          "fields": {
-            "description": "The nested fields (e.g. columns) of the object, record, or struct.",
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/properties/models/additionalProperties/properties/fields/additionalProperties"
-            }
-          },
-          "items": {
-            "$ref": "#/properties/models/additionalProperties/properties/fields/additionalProperties"
-          },
-          "keys": {
-            "$ref": "#/properties/models/additionalProperties/properties/fields/additionalProperties"
-          },
-          "values": {
-            "$ref": "#/properties/models/additionalProperties/properties/fields/additionalProperties"
-          },
-          "minLength": {
-            "type": "integer",
-            "description": "A value must be greater than or equal to this value. Applies only to string types."
-          },
-          "maxLength": {
-            "type": "integer",
-            "description": "A value must be less than or equal to this value. Applies only to string types."
-          },
-          "format": {
-            "type": "string",
-            "description": "Specific format requirements for the value (e.g., 'email', 'uri', 'uuid')."
-          },
-          "precision": {
-            "type": "integer",
-            "examples": [
-              38
-            ],
-            "description": "The maximum number of digits in a number. Only applies to numeric values. Defaults to 38."
-          },
-          "scale": {
-            "type": "integer",
-            "examples": [
-              0
-            ],
-            "description": "The maximum number of decimal places in a number. Only applies to numeric values. Defaults to 0."
-          },
-          "pattern": {
-            "type": "string",
-            "description": "A regular expression pattern the value must match. Applies only to string types."
-          },
-          "minimum": {
-            "type": "number",
-            "description": "A value of a number must greater than, or equal to, the value of this. Only evaluated if the value is not null. Only applies to numeric values."
-          },
-          "exclusiveMinimum": {
-            "type": "number",
-            "description": "A value of a number must greater than the value of this. Only evaluated if the value is not null. Only applies to numeric values."
-          },
-          "maximum": {
-            "type": "number",
-            "description": "A value of a number must less than, or equal to, the value of this. Only evaluated if the value is not null. Only applies to numeric values."
-          },
-          "exclusiveMaximum": {
-            "type": "number",
-            "description": "A value of a number must less than the value of this. Only evaluated if the value is not null. Only applies to numeric values."
-          },
-          "example": {
-            "type": "string",
-            "description": "An example value.",
-            "deprecationMessage": "Use the examples field instead."
-          },
-          "examples": {
-            "type": "array",
-            "description": "Example value."
-          },
-          "pii": {
-            "type": "boolean",
-            "description": "Indicates if the field contains Personal Identifiable Information (PII)."
-          },
-          "classification": {
-            "type": "string",
-            "description": "The data class defining the sensitivity level for this field."
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Custom metadata to provide additional context."
-          },
-          "links": {
-            "type": "object",
-            "description": "Links to external resources.",
-            "minProperties": 1,
-            "propertyNames": {
-              "pattern": "^[a-zA-Z0-9_-]+$"
-            },
-            "additionalProperties": {
-              "type": "string",
-              "title": "Link",
-              "description": "A URL to an external resource.",
-              "format": "uri",
-              "examples": [
-                "https://example.com"
-              ]
-            }
-          }
-        },
-        "required": [
-          "type"
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "Tags to facilitate searching and filtering.",
+        "examples": [
+          "databricks",
+          "pii",
+          "sensitive"
         ]
-      }
+      },
+      "description": "Tags to facilitate searching and filtering."
     }
   },
   "required": [
@@ -1224,10 +1224,10 @@
           }
         }
       },
-      "additionalProperties": true,
       "required": [
         "type"
-      ]
+      ],
+      "additionalProperties": true
     },
     "BigQueryServer": {
       "type": "object",
@@ -1369,12 +1369,12 @@
           ]
         }
       },
-      "additionalProperties": true,
       "required": [
         "account",
         "database",
         "schema"
-      ]
+      ],
+      "additionalProperties": true
     },
     "AzureServer": {
       "type": "object",
@@ -2078,12 +2078,12 @@
                 }
               }
             },
-            "additionalProperties": true,
             "required": [
               "namespace",
               "name",
               "field"
-            ]
+            ],
+            "additionalProperties": true
           }
         },
         "transformationDescription": {
@@ -2097,10 +2097,10 @@
           "deprecated": true
         }
       },
-      "additionalProperties": true,
       "required": [
         "inputFields"
-      ]
+      ],
+      "additionalProperties": true
     }
   }
 }

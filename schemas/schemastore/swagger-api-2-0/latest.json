@@ -5,7 +5,6 @@
   "x-lintel": {
     "source": "https://spec.openapis.org/oas/2.0/schema/2017-08-27",
     "sourceSha256": "b36871c8016292c5e66dd3b203e69aeff98bfef97e0b3c67c1909036095586a5",
-    "invalid": true,
     "fileMatch": [
       "swagger.json"
     ],
@@ -57,8 +56,8 @@
     "paths": {
       "$ref": "#/$defs/paths"
     },
-    "externalDocs": {
-      "$ref": "#/$defs/externalDocs"
+    "definitions": {
+      "$ref": "#/$defs/definitions"
     },
     "parameters": {
       "$ref": "#/$defs/parameterDefinitions"
@@ -79,10 +78,16 @@
       },
       "uniqueItems": true
     },
-    "$defs": {
-      "$ref": "#/$defs/definitions"
+    "externalDocs": {
+      "$ref": "#/$defs/externalDocs"
     }
   },
+  "patternProperties": {
+    "^x-": {
+      "$ref": "#/$defs/vendorExtension"
+    }
+  },
+  "id": "http://swagger.io/v2/schema.json#",
   "$defs": {
     "info": {
       "type": "object",
@@ -91,12 +96,6 @@
         "version",
         "title"
       ],
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-": {
-          "$ref": "#/$defs/vendorExtension"
-        }
-      },
       "properties": {
         "title": {
           "type": "string",
@@ -119,6 +118,12 @@
         },
         "license": {
           "$ref": "#/$defs/license"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {
+          "$ref": "#/$defs/vendorExtension"
         }
       }
     },
@@ -174,6 +179,7 @@
     "paths": {
       "type": "object",
       "description": "Relative paths to the individual endpoints. They must be relative to the 'basePath'.",
+      "additionalProperties": false,
       "patternProperties": {
         "^x-": {
           "$ref": "#/$defs/vendorExtension"
@@ -181,34 +187,28 @@
         "^/": {
           "$ref": "#/$defs/pathItem"
         }
-      },
-      "additionalProperties": false
+      }
     },
-    "jsonReference": {
+    "definitions": {
       "type": "object",
-      "required": [
-        "$ref"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "$ref": {
-          "type": "string"
-        }
+      "description": "One or more JSON objects describing the schemas being consumed and produced by the API.",
+      "additionalProperties": {
+        "$ref": "#/$defs/schema"
       }
     },
     "parameterDefinitions": {
       "type": "object",
+      "description": "One or more JSON representations for parameters",
       "additionalProperties": {
         "$ref": "#/$defs/parameter"
-      },
-      "description": "One or more JSON representations for parameters"
+      }
     },
     "responseDefinitions": {
       "type": "object",
+      "description": "One or more JSON representations for responses",
       "additionalProperties": {
         "$ref": "#/$defs/response"
-      },
-      "description": "One or more JSON representations for responses"
+      }
     },
     "externalDocs": {
       "type": "object",
@@ -245,12 +245,6 @@
       "required": [
         "responses"
       ],
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-": {
-          "$ref": "#/$defs/vendorExtension"
-        }
-      },
       "properties": {
         "tags": {
           "type": "array",
@@ -306,16 +300,16 @@
         "security": {
           "$ref": "#/$defs/security"
         }
-      }
-    },
-    "pathItem": {
-      "type": "object",
+      },
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
           "$ref": "#/$defs/vendorExtension"
         }
-      },
+      }
+    },
+    "pathItem": {
+      "type": "object",
       "properties": {
         "$ref": {
           "type": "string"
@@ -344,21 +338,18 @@
         "parameters": {
           "$ref": "#/$defs/parametersList"
         }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {
+          "$ref": "#/$defs/vendorExtension"
+        }
       }
     },
     "responses": {
       "type": "object",
       "description": "Response objects names can either be any valid HTTP status code or 'default'.",
       "minProperties": 1,
-      "additionalProperties": false,
-      "patternProperties": {
-        "^([0-9]{3})$|^(default)$": {
-          "$ref": "#/$defs/responseValue"
-        },
-        "^x-": {
-          "$ref": "#/$defs/vendorExtension"
-        }
-      },
       "not": {
         "type": "object",
         "additionalProperties": false,
@@ -366,6 +357,15 @@
           "^x-": {
             "$ref": "#/$defs/vendorExtension"
           }
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^([0-9]{3})$|^(default)$": {
+          "$ref": "#/$defs/responseValue"
+        },
+        "^x-": {
+          "$ref": "#/$defs/vendorExtension"
         }
       }
     },
@@ -495,8 +495,8 @@
     },
     "vendorExtension": {
       "description": "Any property starting with x- is valid.",
-      "additionalProperties": true,
-      "additionalItems": true
+      "additionalItems": true,
+      "additionalProperties": true
     },
     "bodyParameter": {
       "type": "object",
@@ -505,11 +505,7 @@
         "in",
         "schema"
       ],
-      "patternProperties": {
-        "^x-": {
-          "$ref": "#/$defs/vendorExtension"
-        }
-      },
+      "additionalProperties": false,
       "properties": {
         "description": {
           "type": "string",
@@ -535,15 +531,13 @@
           "$ref": "#/$defs/schema"
         }
       },
-      "additionalProperties": false
-    },
-    "headerParameterSubSchema": {
-      "additionalProperties": false,
       "patternProperties": {
         "^x-": {
           "$ref": "#/$defs/vendorExtension"
         }
-      },
+      }
+    },
+    "headerParameterSubSchema": {
       "properties": {
         "required": {
           "type": "boolean",
@@ -624,15 +618,15 @@
           "$ref": "#/$defs/multipleOf"
         }
       },
-      "type": "object"
-    },
-    "queryParameterSubSchema": {
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
           "$ref": "#/$defs/vendorExtension"
         }
       },
+      "type": "object"
+    },
+    "queryParameterSubSchema": {
       "properties": {
         "required": {
           "type": "boolean",
@@ -718,15 +712,15 @@
           "$ref": "#/$defs/multipleOf"
         }
       },
-      "type": "object"
-    },
-    "formDataParameterSubSchema": {
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
           "$ref": "#/$defs/vendorExtension"
         }
       },
+      "type": "object"
+    },
+    "formDataParameterSubSchema": {
       "properties": {
         "required": {
           "type": "boolean",
@@ -813,18 +807,15 @@
           "$ref": "#/$defs/multipleOf"
         }
       },
-      "type": "object"
-    },
-    "pathParameterSubSchema": {
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
           "$ref": "#/$defs/vendorExtension"
         }
       },
-      "required": [
-        "required"
-      ],
+      "type": "object"
+    },
+    "pathParameterSubSchema": {
       "properties": {
         "required": {
           "type": "boolean",
@@ -907,6 +898,15 @@
           "$ref": "#/$defs/multipleOf"
         }
       },
+      "additionalProperties": false,
+      "required": [
+        "required"
+      ],
+      "patternProperties": {
+        "^x-": {
+          "$ref": "#/$defs/vendorExtension"
+        }
+      },
       "type": "object"
     },
     "nonBodyParameter": {
@@ -944,11 +944,7 @@
     "schema": {
       "type": "object",
       "description": "A deterministic version of a JSON Schema object.",
-      "patternProperties": {
-        "^x-": {
-          "$ref": "#/$defs/vendorExtension"
-        }
-      },
+      "additionalProperties": false,
       "properties": {
         "$ref": {
           "type": "string"
@@ -1048,10 +1044,10 @@
         },
         "properties": {
           "type": "object",
+          "default": {},
           "additionalProperties": {
             "$ref": "#/$defs/schema"
-          },
-          "default": {}
+          }
         },
         "discriminator": {
           "type": "string"
@@ -1068,16 +1064,16 @@
         },
         "example": {}
       },
-      "additionalProperties": false
-    },
-    "fileSchema": {
-      "type": "object",
-      "description": "A deterministic version of a JSON Schema object.",
       "patternProperties": {
         "^x-": {
           "$ref": "#/$defs/vendorExtension"
         }
-      },
+      }
+    },
+    "fileSchema": {
+      "type": "object",
+      "description": "A deterministic version of a JSON Schema object.",
+      "additionalProperties": false,
       "required": [
         "type"
       ],
@@ -1112,7 +1108,11 @@
         },
         "example": {}
       },
-      "additionalProperties": false
+      "patternProperties": {
+        "^x-": {
+          "$ref": "#/$defs/vendorExtension"
+        }
+      }
     },
     "primitivesItems": {
       "type": "object",
@@ -1600,21 +1600,20 @@
     "enum": {
       "$ref": "https://catalog.lintel.tools/schemas/schemastore/swagger-api-2-0/_shared/latest--schema.json#/properties/enum"
     },
-    "$defs": {
+    "jsonReference": {
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/schema"
+      "required": [
+        "$ref"
+      ],
+      "properties": {
+        "$ref": {
+          "type": "string"
+        }
       },
-      "description": "One or more JSON objects describing the schemas being consumed and produced by the API."
+      "additionalProperties": false
     }
   },
-  "id": "http://swagger.io/v2/schema.json#",
   "additionalProperties": false,
-  "patternProperties": {
-    "^x-": {
-      "$ref": "#/$defs/vendorExtension"
-    }
-  },
   "required": [
     "swagger",
     "info",

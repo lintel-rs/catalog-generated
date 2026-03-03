@@ -6,7 +6,6 @@
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/airbytehq/airbyte/refs/heads/master/airbyte-ci/connectors/metadata_service/lib/metadata_service/models/generated/ConnectorMetadataDefinitionV0.json",
     "sourceSha256": "f50af2b09456c9ffe56387af2c566b2682ba7ed12a6cfed534a69895a2a48598",
-    "invalid": true,
     "fileMatch": [
       "**/source-*/metadata.yaml",
       "**/destination-*/metadata.yaml"
@@ -34,7 +33,6 @@
         "connectorSubtype",
         "releaseStage"
       ],
-      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string"
@@ -52,12 +50,12 @@
           "title": "ConnectorBuildOptions",
           "description": "metadata specific to the build process.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "baseImage": {
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "connectorTestSuitesOptions": {
           "type": "array",
@@ -70,7 +68,6 @@
             "required": [
               "suite"
             ],
-            "additionalProperties": false,
             "properties": {
               "suite": {
                 "description": "Name of the configured test suite",
@@ -95,7 +92,6 @@
                     "name",
                     "secretStore"
                   ],
-                  "additionalProperties": false,
                   "properties": {
                     "name": {
                       "type": "string",
@@ -111,7 +107,6 @@
                       "title": "SecretStore",
                       "description": "An object describing a secret store metadata",
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "alias": {
                           "type": "string",
@@ -124,9 +119,11 @@
                             "GSM"
                           ]
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               },
               "testConnections": {
@@ -142,7 +139,6 @@
                     "name",
                     "id"
                   ],
-                  "additionalProperties": false,
                   "properties": {
                     "name": {
                       "type": "string",
@@ -152,10 +148,12 @@
                       "type": "string",
                       "description": "The connection ID"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "additionalProperties": false
           }
         },
         "connectorType": {
@@ -193,7 +191,6 @@
               "title",
               "url"
             ],
-            "additionalProperties": false,
             "properties": {
               "title": {
                 "type": "string",
@@ -228,7 +225,8 @@
                 "description": "Whether the URL requires authentication to access",
                 "default": false
               }
-            }
+            },
+            "additionalProperties": false
           }
         },
         "githubIssueLabel": {
@@ -301,7 +299,6 @@
           "anyOf": [
             {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "oss": {
                   "anyOf": [
@@ -311,10 +308,6 @@
                       "title": "RegistryOverrides",
                       "description": "describes the overrides per registry of a connector",
                       "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "enabled"
-                      ],
                       "properties": {
                         "enabled": {
                           "type": "boolean",
@@ -357,7 +350,11 @@
                         "resourceRequirements": {
                           "$ref": "#/properties/data/properties/resourceRequirements"
                         }
-                      }
+                      },
+                      "required": [
+                        "enabled"
+                      ],
+                      "additionalProperties": false
                     }
                   ]
                 },
@@ -368,7 +365,8 @@
                     }
                   ]
                 }
-              }
+              },
+              "additionalProperties": false
             }
           ]
         },
@@ -378,7 +376,6 @@
           "title": "AllowedHosts",
           "description": "A connector's allowed hosts.  If present, the platform will limit communication to only hosts which are listed in `AllowedHosts.hosts`.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "hosts": {
               "type": "array",
@@ -387,7 +384,8 @@
                 "type": "string"
               }
             }
-          }
+          },
+          "additionalProperties": true
         },
         "releases": {
           "$schema": "http://json-schema.org/draft-07/schema",
@@ -395,7 +393,6 @@
           "title": "ConnectorReleases",
           "description": "Contains information about different types of releases for a connector.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "rolloutConfiguration": {
               "$schema": "http://json-schema.org/draft-07/schema",
@@ -403,7 +400,6 @@
               "title": "RolloutConfiguration",
               "description": "configuration for the rollout of a connector",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "enableProgressiveRollout": {
                   "type": "boolean",
@@ -430,7 +426,8 @@
                   "default": 10,
                   "description": "The number of minutes to wait before advancing the rollout percentage."
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "breakingChanges": {
               "$schema": "http://json-schema.org/draft-07/schema",
@@ -438,22 +435,10 @@
               "title": "ConnectorBreakingChanges",
               "description": "Each entry denotes a breaking change in a specific version of a connector that requires user action to upgrade.",
               "type": "object",
-              "additionalProperties": false,
-              "minProperties": 1,
-              "patternProperties": {
-                "^\\d+\\.\\d+\\.\\d+$": {
-                  "$ref": "#/properties/data/properties/releases/properties/breakingChanges/definitions/VersionBreakingChange"
-                }
-              },
               "$defs": {
                 "VersionBreakingChange": {
                   "description": "Contains information about a breaking change, including the deadline to upgrade and a message detailing the change.",
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "upgradeDeadline",
-                    "message"
-                  ],
                   "properties": {
                     "upgradeDeadline": {
                       "description": "The deadline by which to upgrade before the breaking change takes effect.",
@@ -482,28 +467,28 @@
                       "type": "array",
                       "minItems": 1,
                       "items": {
-                        "$ref": "#/properties/data/properties/releases/properties/breakingChanges/definitions/BreakingChangeScope"
+                        "$ref": "#/properties/data/properties/releases/properties/breakingChanges/$defs/BreakingChangeScope"
                       }
                     }
-                  }
+                  },
+                  "required": [
+                    "upgradeDeadline",
+                    "message"
+                  ],
+                  "additionalProperties": false
                 },
                 "BreakingChangeScope": {
                   "description": "A scope that can be used to limit the impact of a breaking change.",
                   "type": "object",
                   "oneOf": [
                     {
-                      "$ref": "#/properties/data/properties/releases/properties/breakingChanges/definitions/StreamBreakingChangeScope"
+                      "$ref": "#/properties/data/properties/releases/properties/breakingChanges/$defs/StreamBreakingChangeScope"
                     }
                   ]
                 },
                 "StreamBreakingChangeScope": {
                   "description": "A scope that can be used to limit the impact of a breaking change to specific streams.",
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "scopeType",
-                    "impactedScopes"
-                  ],
                   "properties": {
                     "scopeType": {
                       "type": "string",
@@ -517,7 +502,19 @@
                         "type": "string"
                       }
                     }
-                  }
+                  },
+                  "required": [
+                    "scopeType",
+                    "impactedScopes"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "minProperties": 1,
+              "additionalProperties": false,
+              "patternProperties": {
+                "^\\d+\\.\\d+\\.\\d+$": {
+                  "$ref": "#/properties/data/properties/releases/properties/breakingChanges/$defs/VersionBreakingChange"
                 }
               }
             },
@@ -526,7 +523,8 @@
               "type": "string",
               "format": "uri"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "normalizationConfig": {
           "$schema": "http://json-schema.org/draft-07/schema",
@@ -539,7 +537,6 @@
             "normalizationTag",
             "normalizationIntegrationType"
           ],
-          "additionalProperties": true,
           "properties": {
             "normalizationRepository": {
               "type": "string",
@@ -553,7 +550,8 @@
               "type": "string",
               "description": "a field indicating the type of integration dialect to use for normalization."
             }
-          }
+          },
+          "additionalProperties": true
         },
         "suggestedStreams": {
           "$schema": "http://json-schema.org/draft-07/schema",
@@ -561,7 +559,6 @@
           "title": "SuggestedStreams",
           "description": "A source's suggested streams.  These will be suggested by default for new connections using this source.  Otherwise, all streams will be selected.  This is useful for when your source has a lot of streams, but the average user will only want a subset of them synced.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "streams": {
               "type": "array",
@@ -570,7 +567,8 @@
                 "type": "string"
               }
             }
-          }
+          },
+          "additionalProperties": true
         },
         "resourceRequirements": {
           "$schema": "http://json-schema.org/draft-07/schema",
@@ -578,28 +576,10 @@
           "title": "ActorDefinitionResourceRequirements",
           "description": "actor definition specific resource requirements",
           "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "default": {
-              "description": "if set, these are the requirements that should be set for ALL jobs run for this actor definition.",
-              "$ref": "#/properties/data/properties/resourceRequirements/definitions/JobTypeResourceLimit/properties/resourceRequirements"
-            },
-            "jobSpecific": {
-              "type": "array",
-              "items": {
-                "$ref": "#/properties/data/properties/resourceRequirements/definitions/JobTypeResourceLimit"
-              }
-            }
-          },
           "$defs": {
             "JobTypeResourceLimit": {
               "description": "sets resource requirements for a specific job type for an actor definition. these values override the default, if both are set.",
               "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "jobType",
-                "resourceRequirements"
-              ],
               "properties": {
                 "jobType": {
                   "$schema": "http://json-schema.org/draft-07/schema",
@@ -623,7 +603,6 @@
                   "title": "ResourceRequirements",
                   "description": "generic configuration for pod source requirements",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "cpu_request": {
                       "type": "string"
@@ -637,11 +616,30 @@
                     "memory_limit": {
                       "type": "string"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
+              },
+              "required": [
+                "jobType",
+                "resourceRequirements"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "properties": {
+            "default": {
+              "description": "if set, these are the requirements that should be set for ALL jobs run for this actor definition.",
+              "$ref": "#/properties/data/properties/resourceRequirements/$defs/JobTypeResourceLimit/properties/resourceRequirements"
+            },
+            "jobSpecific": {
+              "type": "array",
+              "items": {
+                "$ref": "#/properties/data/properties/resourceRequirements/$defs/JobTypeResourceLimit"
               }
             }
-          }
+          },
+          "additionalProperties": false
         },
         "ab_internal": {
           "$schema": "http://json-schema.org/draft-07/schema",
@@ -649,7 +647,6 @@
           "title": "AirbyteInternal",
           "description": "Fields for internal use only",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "sl": {
               "type": "integer",
@@ -681,7 +678,8 @@
               "default": true,
               "description": "When false, version increment checks will be skipped for this connector"
             }
-          }
+          },
+          "additionalProperties": true
         },
         "remoteRegistries": {
           "$schema": "http://json-schema.org/draft-07/schema",
@@ -689,22 +687,11 @@
           "title": "RemoteRegistries",
           "description": "describes how the connector is published to remote registries",
           "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "pypi": {
-              "$ref": "#/properties/data/properties/remoteRegistries/definitions/PyPi"
-            }
-          },
           "$defs": {
             "PyPi": {
               "title": "PyPi",
               "description": "describes the PyPi publishing options",
               "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "enabled",
-                "packageName"
-              ],
               "properties": {
                 "enabled": {
                   "type": "boolean"
@@ -713,9 +700,20 @@
                   "type": "string",
                   "description": "The name of the package on PyPi."
                 }
-              }
+              },
+              "required": [
+                "enabled",
+                "packageName"
+              ],
+              "additionalProperties": false
             }
-          }
+          },
+          "properties": {
+            "pypi": {
+              "$ref": "#/properties/data/properties/remoteRegistries/$defs/PyPi"
+            }
+          },
+          "additionalProperties": false
         },
         "supportsRefreshes": {
           "type": "boolean",
@@ -734,7 +732,6 @@
               "title": "GitInfo",
               "description": "Information about the author of the last commit that modified this file. DO NOT DEFINE THIS FIELD MANUALLY. It will be overwritten by the CI.",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "commit_sha": {
                   "type": "string",
@@ -753,7 +750,8 @@
                   "type": "string",
                   "description": "The git commit author email of the last commit that modified this file."
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "source_file_info": {
               "$schema": "http://json-schema.org/draft-07/schema",
@@ -860,7 +858,6 @@
           "required": [
             "dataChannel"
           ],
-          "additionalProperties": false,
           "properties": {
             "dataChannel": {
               "type": "object",
@@ -869,7 +866,6 @@
                 "supportedSerialization",
                 "supportedTransport"
               ],
-              "additionalProperties": false,
               "properties": {
                 "version": {
                   "type": "string"
@@ -894,11 +890,14 @@
                     ]
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "required": [

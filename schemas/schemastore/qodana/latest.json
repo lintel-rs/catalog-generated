@@ -6,7 +6,6 @@
   "x-lintel": {
     "source": "https://www.schemastore.org/qodana-1.0.json",
     "sourceSha256": "92138007a03eb96c68d255195a08f1036a978a3d548aeaa903d33783dcd1f428",
-    "invalid": true,
     "fileMatch": [
       "qodana.yaml",
       "qodana.yml"
@@ -212,12 +211,13 @@
       "description": "Show license problems like other inspections",
       "type": "boolean",
       "default": false
-    },
-    "type": "object"
+    }
   },
   "required": [
     "version"
   ],
+  "additionalProperties": true,
+  "$comment": "https://www.jetbrains.com/help/qodana/qodana-yaml.html",
   "$defs": {
     "profile": {
       "description": "A profile is some template set of checks to run with Qodana analysis",
@@ -298,7 +298,6 @@
     "script": {
       "description": "The default running scenario",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "The name of the script",
@@ -315,7 +314,8 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "additionalProperties": false
     },
     "licenseRule": {
       "description": "A license rule to apply for license compatibility checks in Qodana",
@@ -351,18 +351,22 @@
     "dependencyIgnore": {
       "description": "A dependency to ignore for license checks in Qodana",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "The name of a dependency to ignore",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "dependencyOverride": {
       "description": "A dependency metadata to override for license checks in Qodana",
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "licenses"
+      ],
       "properties": {
         "name": {
           "description": "The dependency name",
@@ -385,16 +389,16 @@
           }
         }
       },
-      "required": [
-        "name",
-        "version",
-        "licenses"
-      ]
+      "additionalProperties": false
     },
     "customDependency": {
       "description": "A dependency to add to license checks to Qodana",
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "licenses"
+      ],
       "properties": {
         "name": {
           "description": "The dependency name",
@@ -417,11 +421,7 @@
           }
         }
       },
-      "required": [
-        "name",
-        "version",
-        "licenses"
-      ]
+      "additionalProperties": false
     },
     "license": {
       "description": "A license to apply for license compatibility checks in Qodana",
@@ -641,7 +641,5 @@
         }
       }
     }
-  },
-  "$comment": "https://www.jetbrains.com/help/qodana/qodana-yaml.html",
-  "additionalProperties": true
+  }
 }

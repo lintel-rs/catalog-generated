@@ -56,7 +56,6 @@
     "vcs": {
       "type": "object",
       "markdownDescription": "Record the version control system details for the [source tree](https://packaging.python.org/en/latest/specifications/source-distribution-format/#source-distribution-format-source-tree) it contains.",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
@@ -79,12 +78,12 @@
         "subdirectory": {
           "$ref": "#/$defs/subdirectory"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "directory": {
       "type": "object",
       "markdownDescription": "Record the local directory details for the [source tree](https://packaging.python.org/en/latest/specifications/source-distribution-format/#source-distribution-format-source-tree) it contains.",
-      "additionalProperties": false,
       "properties": {
         "path": {
           "type": "string",
@@ -98,12 +97,11 @@
         "subdirectory": {
           "$ref": "#/$defs/subdirectory"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "archive": {
       "type": "object",
-      "additionalProperties": false,
-      "markdownDescription": "A direct reference to an archive file to install from (this can include wheels and sdists, as well as other archive formats containing a source tree).",
       "properties": {
         "url": {
           "$ref": "#/$defs/url"
@@ -123,12 +121,12 @@
         "subdirectory": {
           "$ref": "#/$defs/subdirectory"
         }
-      }
+      },
+      "markdownDescription": "A direct reference to an archive file to install from (this can include wheels and sdists, as well as other archive formats containing a source tree).",
+      "additionalProperties": false
     },
     "sdist": {
       "type": "object",
-      "additionalProperties": false,
-      "markdownDescription": "Details of a [source distribution file name](https://packaging.python.org/en/latest/specifications/source-distribution-format/#source-distribution-format-sdist) for the package.",
       "properties": {
         "name": {
           "type": "string",
@@ -149,14 +147,15 @@
         "hashes": {
           "$ref": "#/$defs/hashes"
         }
-      }
+      },
+      "markdownDescription": "Details of a [source distribution file name](https://packaging.python.org/en/latest/specifications/source-distribution-format/#source-distribution-format-sdist) for the package.",
+      "additionalProperties": false
     },
     "wheels": {
       "type": "array",
       "markdownDescription": "For recording the wheel files as specified by [Binary distribution format](https://packaging.python.org/en/latest/specifications/binary-distribution-format/#binary-distribution-format) for the package.",
       "items": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "name": {
             "type": "string",
@@ -177,16 +176,11 @@
           "hashes": {
             "$ref": "#/$defs/hashes"
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "1.0": {
-      "additionalProperties": false,
-      "required": [
-        "lock-version",
-        "created-by",
-        "packages"
-      ],
       "properties": {
         "lock-version": {
           "type": "string",
@@ -243,7 +237,72 @@
           "markdownDescription": "An array containing all packages that may be installed.",
           "items": {
             "type": "object",
-            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "markdownDescription": "The name of the package, [normalized](https://packaging.python.org/en/latest/specifications/name-normalization/#name-normalization)."
+              },
+              "version": {
+                "type": "string",
+                "description": "The version of the package."
+              },
+              "marker": {
+                "type": "string",
+                "markdownDescription": "The [environment marker](https://packaging.python.org/en/latest/specifications/dependency-specifiers/#dependency-specifiers-environment-markers) which specify when the package should be installed."
+              },
+              "requires-python": {
+                "type": "string",
+                "markdownDescription": "Holds the [version specifiers](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers) for Python version compatibility for the package."
+              },
+              "dependencies": {
+                "type": "array",
+                "markdownDescription": "Records the other entries in `[[packages]]` which are direct dependencies of this package.",
+                "items": {
+                  "type": "object",
+                  "markdownDescription": "A table which contains the minimum information required to tell which other package entry it corresponds to where doing a key-by-key comparison would find the appropriate package with no ambiguity (e.g. if there are two entries for the `spam` package, then you can include the version number like `{name = \"spam\", version = \"1.0.0\"}`, or by source like `{name = \"spam\", vcs = { url = \"...\"}`).",
+                  "additionalProperties": true
+                }
+              },
+              "vcs": {
+                "$ref": "#/$defs/vcs"
+              },
+              "directory": {
+                "$ref": "#/$defs/directory"
+              },
+              "archive": {
+                "$ref": "#/$defs/archive"
+              },
+              "index": {
+                "type": "string",
+                "markdownDescription": "The base URL for the package index from [simple repository API](https://packaging.python.org/en/latest/specifications/simple-repository-api/#simple-repository-api) where the sdist and/or wheels were found (e.g. `https://pypi.org/simple/`)."
+              },
+              "sdist": {
+                "$ref": "#/$defs/sdist"
+              },
+              "wheels": {
+                "$ref": "#/$defs/wheels"
+              },
+              "attestation-identities": {
+                "type": "array",
+                "markdownDescription": "A recording of the attestations for any file recorded for this package.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "markdownDescription": "The unique identity of the Trusted Publisher."
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "tool": {
+                "$ref": "#/$defs/tool"
+              }
+            },
             "required": [
               "name"
             ],
@@ -315,78 +374,19 @@
                 }
               }
             ],
-            "properties": {
-              "name": {
-                "type": "string",
-                "markdownDescription": "The name of the package, [normalized](https://packaging.python.org/en/latest/specifications/name-normalization/#name-normalization)."
-              },
-              "version": {
-                "type": "string",
-                "description": "The version of the package."
-              },
-              "marker": {
-                "type": "string",
-                "markdownDescription": "The [environment marker](https://packaging.python.org/en/latest/specifications/dependency-specifiers/#dependency-specifiers-environment-markers) which specify when the package should be installed."
-              },
-              "requires-python": {
-                "type": "string",
-                "markdownDescription": "Holds the [version specifiers](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers) for Python version compatibility for the package."
-              },
-              "dependencies": {
-                "type": "array",
-                "markdownDescription": "Records the other entries in `[[packages]]` which are direct dependencies of this package.",
-                "items": {
-                  "type": "object",
-                  "markdownDescription": "A table which contains the minimum information required to tell which other package entry it corresponds to where doing a key-by-key comparison would find the appropriate package with no ambiguity (e.g. if there are two entries for the `spam` package, then you can include the version number like `{name = \"spam\", version = \"1.0.0\"}`, or by source like `{name = \"spam\", vcs = { url = \"...\"}`).",
-                  "additionalProperties": true
-                }
-              },
-              "vcs": {
-                "$ref": "#/$defs/vcs"
-              },
-              "directory": {
-                "$ref": "#/$defs/directory"
-              },
-              "archive": {
-                "$ref": "#/$defs/archive"
-              },
-              "index": {
-                "type": "string",
-                "markdownDescription": "The base URL for the package index from [simple repository API](https://packaging.python.org/en/latest/specifications/simple-repository-api/#simple-repository-api) where the sdist and/or wheels were found (e.g. `https://pypi.org/simple/`)."
-              },
-              "sdist": {
-                "$ref": "#/$defs/sdist"
-              },
-              "wheels": {
-                "$ref": "#/$defs/wheels"
-              },
-              "attestation-identities": {
-                "type": "array",
-                "markdownDescription": "A recording of the attestations for any file recorded for this package.",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "kind"
-                  ],
-                  "properties": {
-                    "kind": {
-                      "type": "string",
-                      "markdownDescription": "The unique identity of the Trusted Publisher."
-                    }
-                  }
-                }
-              },
-              "tool": {
-                "$ref": "#/$defs/tool"
-              }
-            }
+            "additionalProperties": false
           }
         },
         "tool": {
           "$ref": "#/$defs/tool"
         }
       },
+      "required": [
+        "lock-version",
+        "created-by",
+        "packages"
+      ],
+      "additionalProperties": false,
       "type": "object"
     }
   }

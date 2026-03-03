@@ -41,34 +41,8 @@
       ]
     },
     "cobol": {
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "dataDivision": {
-          "additionalProperties": false,
-          "type": "object",
-          "properties": {
-            "enableIndentation": {
-              "type": "boolean",
-              "description": "Enable indentation of record descriptions\nIf false, startOfAreaA and indentLength are not allowed",
-              "default": true
-            },
-            "indentation": {
-              "type": "object",
-              "description": "Indentation objects based on enableIndentation",
-              "$ref": "#/$defs/dataDivIndent"
-            },
-            "alignPictureClauses": {
-              "type": "boolean",
-              "description": "Align PICTURE Clauses",
-              "default": true
-            },
-            "alignValueClauses": {
-              "type": "boolean",
-              "description": "Align VALUE Clauses",
-              "default": true
-            }
-          },
           "anyOf": [
             {
               "properties": {
@@ -93,23 +67,33 @@
               },
               "type": "object"
             }
-          ]
-        },
-        "procedureDivision": {
-          "additionalProperties": false,
+          ],
           "type": "object",
           "properties": {
             "enableIndentation": {
               "type": "boolean",
-              "description": "Enable indentation of procedure divisions",
+              "description": "Enable indentation of record descriptions\nIf false, startOfAreaA and indentLength are not allowed",
               "default": true
             },
             "indentation": {
               "type": "object",
               "description": "Indentation objects based on enableIndentation",
-              "$ref": "#/$defs/procDivIndent"
+              "$ref": "#/$defs/dataDivIndent"
+            },
+            "alignPictureClauses": {
+              "type": "boolean",
+              "description": "Align PICTURE Clauses",
+              "default": true
+            },
+            "alignValueClauses": {
+              "type": "boolean",
+              "description": "Align VALUE Clauses",
+              "default": true
             }
           },
+          "additionalProperties": false
+        },
+        "procedureDivision": {
           "anyOf": [
             {
               "properties": {
@@ -134,7 +118,21 @@
               },
               "type": "object"
             }
-          ]
+          ],
+          "type": "object",
+          "properties": {
+            "enableIndentation": {
+              "type": "boolean",
+              "description": "Enable indentation of procedure divisions",
+              "default": true
+            },
+            "indentation": {
+              "type": "object",
+              "description": "Indentation objects based on enableIndentation",
+              "$ref": "#/$defs/procDivIndent"
+            }
+          },
+          "additionalProperties": false
         },
         "reservedWordCase": {
           "type": "string",
@@ -198,11 +196,11 @@
             "indentPastAreaB"
           ]
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "copybook": {
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "codeCase": {
           "type": "string",
@@ -216,11 +214,12 @@
           "default": "upper",
           "$ref": "#/$defs/copybookCapitalizationOptions"
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "dataDivIndent": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "startOfAreaA": {
           "type": "integer",
@@ -236,11 +235,34 @@
           "minimum": 0,
           "maximum": 10
         }
-      }
+      },
+      "additionalProperties": false
     },
     "procDivIndent": {
       "type": "object",
-      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "indentForAllBlocks": {
+              "type": "number"
+            },
+            "blocks": {
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object"
+        },
+        {
+          "properties": {
+            "indentForAllBlocks": false,
+            "blocks": {
+              "$ref": "#/$defs/blockIndent"
+            }
+          },
+          "type": "object"
+        }
+      ],
       "properties": {
         "startOfAreaA": {
           "type": "integer",
@@ -281,33 +303,10 @@
           "$ref": "#/$defs/blockIndent"
         }
       },
-      "anyOf": [
-        {
-          "properties": {
-            "indentForAllBlocks": {
-              "type": "number"
-            },
-            "blocks": {
-              "type": "object",
-              "additionalProperties": false
-            }
-          },
-          "type": "object"
-        },
-        {
-          "properties": {
-            "indentForAllBlocks": false,
-            "blocks": {
-              "$ref": "#/$defs/blockIndent"
-            }
-          },
-          "type": "object"
-        }
-      ]
+      "additionalProperties": false
     },
     "blockIndent": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "indentAtEndBlock": {
           "type": "integer",
@@ -426,7 +425,8 @@
           "minimum": 0,
           "maximum": 10
         }
-      }
+      },
+      "additionalProperties": false
     }
   }
 }

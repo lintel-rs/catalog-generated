@@ -6,7 +6,6 @@
   "x-lintel": {
     "source": "https://www.schemastore.org/bamboo-spec.json",
     "sourceSha256": "03808ea111ee9ccda6ac0b3895ef97af090f74670e06330d8af5bb83fce3edf8",
-    "invalid": true,
     "fileMatch": [
       "**/bamboo-specs/*.yaml",
       "**/bamboo-specs/*.yml"
@@ -314,9 +313,6 @@
       "$ref": "#/$defs/dependencies"
     }
   },
-  "additionalProperties": {
-    "$ref": "#/$defs/job"
-  },
   "$defs": {
     "deployment": {
       "type": "object",
@@ -434,7 +430,7 @@
         "artifacts": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/job/definitions/artifact"
+            "$ref": "#/$defs/job/$defs/artifact"
           }
         },
         "artifact-subscriptions": {
@@ -505,7 +501,6 @@
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "file": {
                       "type": "string"
@@ -523,7 +518,8 @@
                         "type": "object"
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               ]
             },
@@ -649,11 +645,11 @@
             {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/permission/definitions/permission"
+                "$ref": "#/$defs/permission/$defs/permission"
               }
             },
             {
-              "$ref": "#/$defs/permission/definitions/permission"
+              "$ref": "#/$defs/permission/$defs/permission"
             }
           ]
         },
@@ -755,7 +751,6 @@
       "title": "Stage",
       "description": "Stages group jobs to individual steps within a plan's build process.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "manual": {
           "description": "Will await for execution by user",
@@ -771,7 +766,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "task": {
       "description": "A task is a small unit of work, such as source code checkout, or running a script.",
@@ -783,7 +779,7 @@
         "artifacts": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/job/definitions/artifact"
+            "$ref": "#/$defs/job/$defs/artifact"
           }
         },
         "triggers": {
@@ -792,7 +788,7 @@
             "type": "object",
             "patternProperties": {
               "(build|stage|environment)-success": {
-                "$ref": "#/$defs/task/definitions/trigger"
+                "$ref": "#/$defs/task/$defs/trigger"
               }
             }
           }
@@ -845,16 +841,16 @@
       "items": {
         "anyOf": [
           {
-            "$ref": "#/$defs/triggers/definitions/polling"
+            "$ref": "#/$defs/triggers/$defs/polling"
           },
           {
-            "$ref": "#/$defs/triggers/definitions/cron"
+            "$ref": "#/$defs/triggers/$defs/cron"
           },
           {
-            "$ref": "#/$defs/triggers/definitions/remote"
+            "$ref": "#/$defs/triggers/$defs/remote"
           },
           {
-            "$ref": "#/$defs/triggers/definitions/tag"
+            "$ref": "#/$defs/triggers/$defs/tag"
           },
           {
             "type": "string"
@@ -864,7 +860,6 @@
       "$defs": {
         "polling": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "polling": {
               "anyOf": [
@@ -873,7 +868,6 @@
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "period": {
                       "type": "integer"
@@ -917,15 +911,16 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "remote": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "remote": {
               "anyOf": [
@@ -942,12 +937,12 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "cron": {
           "type": "object",
           "description": "Execute deployment by schedule.",
-          "additionalProperties": false,
           "properties": {
             "cron": {
               "oneOf": [
@@ -964,11 +959,11 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "tag": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "tag": {
               "type": "object",
@@ -1004,7 +999,8 @@
                 }
               }
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -1229,7 +1225,7 @@
           "maxProperties": 1,
           "properties": {
             "script": {
-              "$ref": "#/$defs/job/definitions/task"
+              "$ref": "#/$defs/job/$defs/task"
             },
             "maven": {
               "$ref": "#/$defs/mavenTask"
@@ -1241,7 +1237,6 @@
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "file": {
                       "type": "string"
@@ -1259,7 +1254,8 @@
                         "type": "object"
                       }
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               ]
             },
@@ -1276,10 +1272,10 @@
               "$ref": "#/$defs/vcsCommitTask"
             },
             "test-parser": {
-              "$ref": "#/$defs/job/definitions/task/properties/test-parser"
+              "$ref": "#/$defs/job/$defs/task/properties/test-parser"
             },
             "checkout": {
-              "$ref": "#/$defs/job/definitions/task/properties/checkout"
+              "$ref": "#/$defs/job/$defs/task/properties/checkout"
             },
             "clean": {
               "type": "object"
@@ -1316,9 +1312,12 @@
           "$ref": "#/$defs/script"
         },
         {
-          "$ref": "#/$defs/job/definitions/task"
+          "$ref": "#/$defs/job/$defs/task"
         }
       ]
     }
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/job"
   }
 }

@@ -5,13 +5,12 @@
   "description": "Haystack Pipeline YAML file describing the nodes of the pipelines. For more info read the docs at: <https://haystack.deepset.ai/components/pipelines#yaml-file-definitions>",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/deepset-ai/haystack-json-schema/main/json-schema/haystack-pipeline-1.10.0.schema.json",
-    "sourceSha256": "254a239fcbda1c0f7ae8bce23c9c3d9ce3e805de41765174ccbc71ce15a7838d",
-    "invalid": true
+    "sourceSha256": "254a239fcbda1c0f7ae8bce23c9c3d9ce3e805de41765174ccbc71ce15a7838d"
   },
   "type": "object",
   "properties": {
     "components": {
-      "additionalProperties": true,
+      "type": "array",
       "description": "Component nodes and their configurations, to later be used in the pipelines section. Define here all the building blocks for the pipelines.",
       "items": {
         "anyOf": [
@@ -199,7 +198,7 @@
         "name"
       ],
       "title": "Components",
-      "type": "array"
+      "additionalProperties": true
     },
     "extras": {
       "description": "To be specified only if contains special pipelines (for example, if this is a Ray pipeline)",
@@ -212,7 +211,7 @@
     "pipelines": {
       "description": "Multiple pipelines can be defined using the components from the same YAML file.",
       "items": {
-        "additionalProperties": false,
+        "type": "object",
         "properties": {
           "additionalProperties": false,
           "name": {
@@ -221,10 +220,10 @@
             "type": "string"
           },
           "nodes": {
-            "additionalProperties": false,
+            "type": "array",
             "description": "Nodes to be used by this particular pipeline",
             "items": {
-              "additionalProperties": false,
+              "type": "object",
               "properties": {
                 "inputs": {
                   "description": "Input parameters for this node.",
@@ -240,7 +239,7 @@
                   "type": "string"
                 },
                 "serve_deployment_kwargs": {
-                  "additionalProperties": true,
+                  "type": "object",
                   "description": "Arguments to be passed to the Ray Serve `deployment()` method (only for Ray pipelines)",
                   "properties": {
                     "init_args": {
@@ -265,32 +264,30 @@
                     "router_prefix": {
                       "type": "string"
                     },
-                    "user_config": {
-                      "type": {}
-                    },
+                    "user_config": {},
                     "version": {
                       "type": "string"
                     }
                   },
                   "title": "serve_deployment_kwargs",
-                  "type": "object"
+                  "additionalProperties": true
                 }
               },
               "required": [
                 "name",
                 "inputs"
               ],
-              "type": "object"
+              "additionalProperties": false
             },
             "required": [
               "name",
               "nodes"
             ],
             "title": "Nodes",
-            "type": "array"
+            "additionalProperties": false
           }
         },
-        "type": "object"
+        "additionalProperties": false
       },
       "title": "Pipelines",
       "type": "array"
@@ -302,9 +299,15 @@
       "type": "string"
     }
   },
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "components",
+    "pipelines"
+  ],
   "$defs": {
     "AnswerToSpeechComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -312,7 +315,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "audio_params": {
@@ -384,7 +387,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "AnswerToSpeech",
@@ -397,10 +400,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "AzureConverterComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -408,7 +411,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "add_page_number": {
@@ -483,7 +486,7 @@
             "credential_key"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "AzureConverter",
@@ -496,10 +499,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "BM25RetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -507,7 +510,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "all_terms_must_match": {
@@ -545,7 +548,7 @@
             "document_store"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "BM25Retriever",
@@ -558,10 +561,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "CrawlerComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -569,7 +572,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "crawler_depth": {
@@ -671,7 +674,7 @@
             "output_dir"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "Crawler",
@@ -684,10 +687,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DeepsetCloudDocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -695,7 +698,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "api_endpoint": {
@@ -756,7 +759,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "DeepsetCloudDocumentStore",
@@ -769,10 +772,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DensePassageRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -780,7 +783,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -919,7 +922,7 @@
             "document_store"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "DensePassageRetriever",
@@ -932,10 +935,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "Docs2AnswersComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -943,7 +946,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "progress_bar": {
@@ -953,7 +956,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "Docs2Answers",
@@ -966,10 +969,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DocumentToSpeechComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -977,7 +980,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "audio_params": {
@@ -1023,7 +1026,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "DocumentToSpeech",
@@ -1036,10 +1039,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DocxToTextConverterComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -1047,7 +1050,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "id_hash_keys": {
@@ -1090,7 +1093,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "DocxToTextConverter",
@@ -1103,10 +1106,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "ElasticsearchDocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -1114,7 +1117,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "analyzer": {
@@ -1348,7 +1351,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "ElasticsearchDocumentStore",
@@ -1361,10 +1364,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "ElasticsearchFilterOnlyRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -1372,7 +1375,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "all_terms_must_match": {
@@ -1405,7 +1408,7 @@
             "document_store"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "ElasticsearchFilterOnlyRetriever",
@@ -1418,10 +1421,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "ElasticsearchRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -1429,7 +1432,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "all_terms_must_match": {
@@ -1462,7 +1465,7 @@
             "document_store"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "ElasticsearchRetriever",
@@ -1475,10 +1478,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "EmbeddingRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -1486,7 +1489,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "api_key": {
@@ -1619,7 +1622,7 @@
             "embedding_model"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "EmbeddingRetriever",
@@ -1632,10 +1635,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "EntityExtractorComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -1643,7 +1646,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "add_prefix_space": {
@@ -1769,7 +1772,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "EntityExtractor",
@@ -1782,10 +1785,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "EvalAnswersComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -1793,7 +1796,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "debug": {
@@ -1817,7 +1820,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "EvalAnswers",
@@ -1830,10 +1833,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "EvalDocumentsComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -1841,7 +1844,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "debug": {
@@ -1861,7 +1864,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "EvalDocuments",
@@ -1874,10 +1877,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "FAISSDocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -1885,7 +1888,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "duplicate_documents": {
@@ -1999,7 +2002,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "FAISSDocumentStore",
@@ -2012,10 +2015,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "FARMReaderComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2023,7 +2026,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -2128,9 +2131,7 @@
               "type": "boolean"
             },
             "proxies": {
-              "additionalProperties": {
-                "type": "string"
-              },
+              "title": "Proxies",
               "anyOf": [
                 {
                   "type": "object"
@@ -2139,7 +2140,9 @@
                   "type": "null"
                 }
               ],
-              "title": "Proxies"
+              "additionalProperties": {
+                "type": "string"
+              }
             },
             "return_no_answer": {
               "default": false,
@@ -2190,7 +2193,7 @@
             "model_name_or_path"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "FARMReader",
@@ -2203,10 +2206,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "FileTypeClassifierComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2214,7 +2217,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "supported_types": {
@@ -2233,7 +2236,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "FileTypeClassifier",
@@ -2246,10 +2249,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "FilterRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2257,7 +2260,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "all_terms_must_match": {
@@ -2295,7 +2298,7 @@
             "document_store"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "FilterRetriever",
@@ -2308,10 +2311,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "GraphDBKnowledgeGraphComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2319,7 +2322,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "host": {
@@ -2360,7 +2363,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "GraphDBKnowledgeGraph",
@@ -2373,10 +2376,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "ImageToTextConverterComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2384,7 +2387,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "id_hash_keys": {
@@ -2425,7 +2428,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "ImageToTextConverter",
@@ -2438,10 +2441,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "InMemoryDocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2449,7 +2452,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "devices": {
@@ -2532,7 +2535,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "InMemoryDocumentStore",
@@ -2545,10 +2548,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "InMemoryKnowledgeGraphComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2556,7 +2559,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "index": {
@@ -2566,7 +2569,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "InMemoryKnowledgeGraph",
@@ -2579,10 +2582,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "JoinAnswersComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2590,7 +2593,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "join_mode": {
@@ -2630,7 +2633,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "JoinAnswers",
@@ -2643,10 +2646,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "JoinDocumentsComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2654,7 +2657,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "join_mode": {
@@ -2694,7 +2697,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "JoinDocuments",
@@ -2707,10 +2710,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "MarkdownConverterComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2718,7 +2721,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "id_hash_keys": {
@@ -2761,7 +2764,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "MarkdownConverter",
@@ -2774,10 +2777,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "Milvus2DocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2785,7 +2788,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "connection_pool": {
@@ -2912,7 +2915,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "Milvus2DocumentStore",
@@ -2925,10 +2928,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "MultiModalRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -2936,7 +2939,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -2966,6 +2969,8 @@
               "title": "Devices"
             },
             "document_embedding_models": {
+              "type": "object",
+              "title": "Document Embedding Models",
               "additionalProperties": {
                 "anyOf": [
                   {
@@ -2976,21 +2981,19 @@
                     "type": "string"
                   }
                 ]
-              },
-              "title": "Document Embedding Models",
-              "type": "object"
+              }
             },
             "document_feature_extractors_params": {
-              "additionalProperties": {
-                "type": "object"
-              },
+              "type": "object",
               "default": {
                 "text": {
                   "max_length": 256
                 }
               },
               "title": "Document Feature Extractors Params",
-              "type": "object"
+              "additionalProperties": {
+                "type": "object"
+              }
             },
             "document_store": {
               "title": "Document Store",
@@ -3071,7 +3074,7 @@
             "document_embedding_models"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "MultiModalRetriever",
@@ -3084,10 +3087,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "MultihopEmbeddingRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -3095,7 +3098,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -3216,7 +3219,7 @@
             "embedding_model"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "MultihopEmbeddingRetriever",
@@ -3229,10 +3232,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "OpenAIAnswerGeneratorComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -3240,7 +3243,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "api_key": {
@@ -3322,7 +3325,7 @@
             "api_key"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "OpenAIAnswerGenerator",
@@ -3335,10 +3338,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "OpenDistroElasticsearchDocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -3346,7 +3349,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "analyzer": {
@@ -3580,7 +3583,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "OpenDistroElasticsearchDocumentStore",
@@ -3593,10 +3596,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "OpenSearchDocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -3604,7 +3607,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "analyzer": {
@@ -3843,7 +3846,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "OpenSearchDocumentStore",
@@ -3856,10 +3859,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "PDFToTextConverterComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -3867,7 +3870,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "encoding": {
@@ -3922,7 +3925,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "PDFToTextConverter",
@@ -3935,10 +3938,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "PDFToTextOCRConverterComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -3946,7 +3949,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "id_hash_keys": {
@@ -3987,7 +3990,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "PDFToTextOCRConverter",
@@ -4000,10 +4003,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "ParsrConverterComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4011,7 +4014,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "add_page_number": {
@@ -4097,7 +4100,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "ParsrConverter",
@@ -4110,10 +4113,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "PineconeDocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4121,7 +4124,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "api_key": {
@@ -4212,7 +4215,7 @@
             "api_key"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "PineconeDocumentStore",
@@ -4225,10 +4228,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "PreProcessorComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4236,7 +4239,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "add_page_number": {
@@ -4333,7 +4336,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "PreProcessor",
@@ -4346,10 +4349,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "PseudoLabelGeneratorComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4357,7 +4360,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -4408,10 +4411,10 @@
                 },
                 {
                   "items": {
+                    "type": "object",
                     "additionalProperties": {
                       "type": "string"
-                    },
-                    "type": "object"
+                    }
                   },
                   "type": "array"
                 }
@@ -4452,7 +4455,7 @@
             "retriever"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "PseudoLabelGenerator",
@@ -4465,10 +4468,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "QuestionGeneratorComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4476,7 +4479,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -4597,7 +4600,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "QuestionGenerator",
@@ -4610,10 +4613,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "RAGeneratorComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4621,7 +4624,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "devices": {
@@ -4740,7 +4743,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "RAGenerator",
@@ -4753,10 +4756,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "RCIReaderComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4764,7 +4767,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "column_model_name_or_path": {
@@ -4852,7 +4855,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "RCIReader",
@@ -4865,10 +4868,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "RouteDocumentsComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4876,7 +4879,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "metadata_values": {
@@ -4900,7 +4903,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "RouteDocuments",
@@ -4913,10 +4916,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "SQLDocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4924,7 +4927,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "check_same_thread": {
@@ -4958,7 +4961,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "SQLDocumentStore",
@@ -4971,10 +4974,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "SentenceTransformersRankerComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -4982,7 +4985,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -5073,7 +5076,7 @@
             "model_name_or_path"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "SentenceTransformersRanker",
@@ -5086,10 +5089,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "Seq2SeqGeneratorComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5097,7 +5100,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "devices": {
@@ -5186,7 +5189,7 @@
             "model_name_or_path"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "Seq2SeqGenerator",
@@ -5199,10 +5202,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "SklearnQueryClassifierComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5210,7 +5213,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -5251,7 +5254,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "SklearnQueryClassifier",
@@ -5264,10 +5267,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TableReaderComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5275,7 +5278,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "devices": {
@@ -5367,7 +5370,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TableReader",
@@ -5380,10 +5383,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TableTextRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5391,7 +5394,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -5560,7 +5563,7 @@
             "document_store"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TableTextRetriever",
@@ -5573,10 +5576,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "Text2SparqlRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5584,7 +5587,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "knowledge_graph": {
@@ -5630,7 +5633,7 @@
             "knowledge_graph"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "Text2SparqlRetriever",
@@ -5643,10 +5646,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TextConverterComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5654,7 +5657,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "id_hash_keys": {
@@ -5697,7 +5700,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TextConverter",
@@ -5710,10 +5713,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TfidfRetrieverComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5721,7 +5724,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "auto_fit": {
@@ -5742,7 +5745,7 @@
             "document_store"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TfidfRetriever",
@@ -5755,10 +5758,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TikaConverterComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5766,7 +5769,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "id_hash_keys": {
@@ -5809,7 +5812,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TikaConverter",
@@ -5822,10 +5825,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TransformersDocumentClassifierComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5833,7 +5836,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -5950,7 +5953,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TransformersDocumentClassifier",
@@ -5963,10 +5966,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TransformersQueryClassifierComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -5974,7 +5977,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -6080,7 +6083,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TransformersQueryClassifier",
@@ -6093,10 +6096,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TransformersReaderComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -6104,7 +6107,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -6211,7 +6214,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TransformersReader",
@@ -6224,10 +6227,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TransformersSummarizerComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -6235,7 +6238,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "batch_size": {
@@ -6342,7 +6345,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TransformersSummarizer",
@@ -6355,10 +6358,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "TransformersTranslatorComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -6366,7 +6369,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "clean_up_tokenization_spaces": {
@@ -6457,7 +6460,7 @@
             "model_name_or_path"
           ],
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "TransformersTranslator",
@@ -6470,10 +6473,10 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "WeaviateDocumentStoreComponent": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "name": {
           "description": "Custom name for the component. Helpful for visualization and debugging.",
@@ -6481,7 +6484,7 @@
           "type": "string"
         },
         "params": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Each parameter can reference other components defined in the same YAML file.",
           "properties": {
             "content_field": {
@@ -6599,7 +6602,7 @@
             }
           },
           "title": "Parameters",
-          "type": "object"
+          "additionalProperties": false
         },
         "type": {
           "const": "WeaviateDocumentStore",
@@ -6612,15 +6615,9 @@
         "type",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     }
   },
-  "required": [
-    "version",
-    "components",
-    "pipelines"
-  ],
-  "additionalProperties": false,
   "oneOf": [
     {
       "not": {

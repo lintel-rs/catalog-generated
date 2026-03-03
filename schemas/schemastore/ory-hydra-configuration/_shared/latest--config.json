@@ -3,15 +3,13 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/ory-hydra-configuration/_shared/latest--config.json",
   "title": "ORY Hydra Configuration",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/ory/hydra/v1.10.6/spec/config.json",
-    "sourceSha256": "4f79fdbed758df0159e7ff3b0059015811543346cd9536833df84e692718d6b8"
+    "source": "https://raw.githubusercontent.com/ory/hydra/v1.10.2/spec/config.json",
+    "sourceSha256": "fafeaa68ae280721fe0b47323e872b7d76857473709fce5ba51b6679ac042d65"
   },
   "type": "object",
   "properties": {
     "log": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Configures the logger",
       "properties": {
         "level": {
           "type": "string",
@@ -42,17 +40,15 @@
           ],
           "default": "text"
         }
-      }
+      },
+      "description": "Configures the logger",
+      "additionalProperties": false
     },
     "serve": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Controls the configuration for the http(s) daemon(s).",
       "properties": {
         "public": {
           "type": "object",
-          "additionalProperties": false,
-          "description": "Controls the public daemon serving public API endpoints like /oauth2/auth, /oauth2/token, /.well-known/jwks.json",
           "properties": {
             "port": {
               "default": 4444,
@@ -79,24 +75,25 @@
             },
             "access_log": {
               "type": "object",
-              "additionalProperties": false,
-              "description": "Access Log configuration for public server.",
               "properties": {
                 "disable_for_health": {
                   "type": "boolean",
                   "description": "Disable access log for health endpoints.",
                   "default": false
                 }
-              }
+              },
+              "description": "Access Log configuration for public server.",
+              "additionalProperties": false
             },
             "tls": {
               "$ref": "#/$defs/tls_config"
             }
-          }
+          },
+          "description": "Controls the public daemon serving public API endpoints like /oauth2/auth, /oauth2/token, /.well-known/jwks.json",
+          "additionalProperties": false
         },
         "admin": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "port": {
               "default": 4445,
@@ -123,15 +120,15 @@
             },
             "access_log": {
               "type": "object",
-              "additionalProperties": false,
-              "description": "Access Log configuration for admin server.",
               "properties": {
                 "disable_for_health": {
                   "type": "boolean",
                   "description": "Disable access log for health endpoints.",
                   "default": false
                 }
-              }
+              },
+              "description": "Access Log configuration for admin server.",
+              "additionalProperties": false
             },
             "tls": {
               "allOf": [
@@ -150,14 +147,14 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "tls": {
           "$ref": "#/$defs/tls_config"
         },
         "cookies": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "same_site_mode": {
               "type": "string",
@@ -177,9 +174,12 @@
                 true
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "description": "Controls the configuration for the http(s) daemon(s).",
+      "additionalProperties": false
     },
     "dsn": {
       "type": "string",
@@ -187,13 +187,9 @@
     },
     "webfinger": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Configures ./well-known/ settings.",
       "properties": {
         "jwks": {
           "type": "object",
-          "additionalProperties": false,
-          "description": "Configures the /.well-known/jwks.json endpoint.",
           "properties": {
             "broadcast_keys": {
               "type": "array",
@@ -208,12 +204,12 @@
                 "hydra.jwt.access-token"
               ]
             }
-          }
+          },
+          "description": "Configures the /.well-known/jwks.json endpoint.",
+          "additionalProperties": false
         },
         "oidc_discovery": {
           "type": "object",
-          "additionalProperties": false,
-          "description": "Configures OpenID Connect Discovery (/.well-known/openid-configuration).",
           "properties": {
             "jwks_url": {
               "type": "string",
@@ -282,18 +278,30 @@
                 "https://example.org/my-custom-userinfo-endpoint"
               ]
             }
-          }
+          },
+          "description": "Configures OpenID Connect Discovery (/.well-known/openid-configuration).",
+          "additionalProperties": false
         }
-      }
+      },
+      "description": "Configures ./well-known/ settings.",
+      "additionalProperties": false
     },
     "oidc": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Configures OpenID Connect features.",
       "properties": {
         "subject_identifiers": {
           "type": "object",
-          "additionalProperties": false,
+          "examples": [
+            {
+              "supported_types": [
+                "public",
+                "pairwise"
+              ],
+              "pairwise": {
+                "salt": "some-random-salt"
+              }
+            }
+          ],
           "description": "Configures the Subject Identifier algorithm. For more information please head over to the documentation: <https://www.ory.sh/docs/hydra/advanced#subject-identifier-algorithms>",
           "properties": {
             "supported_types": {
@@ -309,16 +317,16 @@
             },
             "pairwise": {
               "type": "object",
-              "additionalProperties": false,
+              "required": [
+                "salt"
+              ],
               "description": "Configures the pairwise algorithm.",
               "properties": {
                 "salt": {
                   "type": "string"
                 }
               },
-              "required": [
-                "salt"
-              ]
+              "additionalProperties": false
             }
           },
           "if": {
@@ -336,22 +344,10 @@
               "pairwise"
             ]
           },
-          "examples": [
-            {
-              "supported_types": [
-                "public",
-                "pairwise"
-              ],
-              "pairwise": {
-                "salt": "some-random-salt"
-              }
-            }
-          ]
+          "additionalProperties": false
         },
         "dynamic_client_registration": {
           "type": "object",
-          "additionalProperties": false,
-          "description": "Configures OpenID Connect Dynamic Client Registration (exposed as admin endpoints /clients/...).",
           "properties": {
             "default_scope": {
               "type": "array",
@@ -367,17 +363,19 @@
                 ]
               ]
             }
-          }
+          },
+          "description": "Configures OpenID Connect Dynamic Client Registration (exposed as admin endpoints /clients/...).",
+          "additionalProperties": false
         }
-      }
+      },
+      "description": "Configures OpenID Connect features.",
+      "additionalProperties": false
     },
     "urls": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "self": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "issuer": {
               "type": "string",
@@ -395,7 +393,8 @@
                 "https://localhost:4444/"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "login": {
           "type": "string",
@@ -437,11 +436,11 @@
             "https://my-example.app/logout-successful"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "strategies": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "scope": {
           "type": "string",
@@ -462,12 +461,11 @@
           ],
           "default": "opaque"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ttl": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Configures time to live.",
       "properties": {
         "login_consent_request": {
           "description": "Configures how long a user login and consent flow may take.",
@@ -520,11 +518,12 @@
             }
           ]
         }
-      }
+      },
+      "description": "Configures time to live.",
+      "additionalProperties": false
     },
     "oauth2": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "expose_internal_errors": {
           "type": "boolean",
@@ -561,29 +560,11 @@
             true
           ]
         },
-        "allowed_top_level_claims": {
-          "type": "array",
-          "description": "A list of custom claims which are allowed to be added top level to the Access Token. They cannot override reserved claims.",
-          "items": {
-            "type": "string"
-          },
-          "examples": [
-            [
-              "username",
-              "email",
-              "user_uuid"
-            ]
-          ]
-        },
         "hashers": {
           "type": "object",
-          "additionalProperties": false,
-          "description": "Configures hashing algorithms. Supports only BCrypt at the moment.",
           "properties": {
             "bcrypt": {
               "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the BCrypt hashing algorithm used for hashing Client Secrets.",
               "properties": {
                 "cost": {
                   "type": "integer",
@@ -592,13 +573,16 @@
                   "minimum": 4,
                   "maximum": 31
                 }
-              }
+              },
+              "description": "Configures the BCrypt hashing algorithm used for hashing Client Secrets.",
+              "additionalProperties": false
             }
-          }
+          },
+          "description": "Configures hashing algorithms. Supports only BCrypt at the moment.",
+          "additionalProperties": false
         },
         "pkce": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "enforced": {
               "type": "boolean",
@@ -614,11 +598,11 @@
                 true
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "client_credentials": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "default_grant_allowed_scope": {
               "type": "boolean",
@@ -627,14 +611,14 @@
                 false
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "secrets": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "The secrets section configures secrets used for encryption and signing of several systems. All secrets can be rotated, for more information on this topic go to: <https://www.ory.sh/docs/hydra/advanced#rotation-of-hmac-token-signing-and-database-and-cookie-encryption-keys>",
       "properties": {
         "system": {
           "description": "The system secret must be at least 16 characters long. If none is provided, one will be generated. They key is used to encrypt sensitive data using AES-GCM (256 bit) and validate HMAC signatures. The first item in the list is used for signing and encryption. The whole list is used for verifying signatures and decryption.",
@@ -666,7 +650,9 @@
             ]
           ]
         }
-      }
+      },
+      "description": "The secrets section configures secrets used for encryption and signing of several systems. All secrets can be rotated, for more information on this topic go to: <https://www.ory.sh/docs/hydra/advanced#rotation-of-hmac-token-signing-and-database-and-cookie-encryption-keys>",
+      "additionalProperties": false
     },
     "profiling": {
       "type": "string",
@@ -681,18 +667,15 @@
     },
     "tracing": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "ORY Hydra supports distributed tracing.",
       "properties": {
         "provider": {
           "type": "string",
-          "description": "Set this to the tracing backend you wish to use. Supports Jaeger, Zipkin DataDog, Elastic APM and Instana. If omitted or empty, tracing will be disabled. Use environment variables to configure DataDog (see <https://docs.datadoghq.com/tracing/setup/go/#configuration)>.",
+          "description": "Set this to the tracing backend you wish to use. Supports Jaeger, Zipkin and DataDog. If omitted or empty, tracing will be disabled. Use environment variables to configure DataDog (see <https://docs.datadoghq.com/tracing/setup/go/#configuration)>.",
           "enum": [
             "jaeger",
             "zipkin",
             "datadog",
-            "elastic-apm",
-            "instana"
+            "elastic-apm"
           ],
           "examples": [
             "jaeger"
@@ -707,12 +690,9 @@
         },
         "providers": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "jaeger": {
               "type": "object",
-              "additionalProperties": false,
-              "description": "Configures the jaeger tracing backend.",
               "properties": {
                 "local_agent_address": {
                   "type": "string",
@@ -821,11 +801,17 @@
                     }
                   ]
                 }
-              }
+              },
+              "description": "Configures the jaeger tracing backend.",
+              "additionalProperties": false
             },
             "zipkin": {
               "type": "object",
-              "additionalProperties": false,
+              "examples": [
+                {
+                  "server_url": "http://localhost:9411/api/v2/spans"
+                }
+              ],
               "description": "Configures the zipkin tracing backend.",
               "properties": {
                 "server_url": {
@@ -834,19 +820,22 @@
                   "format": "uri"
                 }
               },
-              "examples": [
-                {
-                  "server_url": "http://localhost:9411/api/v2/spans"
-                }
-              ]
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "description": "ORY Hydra supports distributed tracing.",
+      "additionalProperties": false
     },
     "sqa": {
       "type": "object",
-      "additionalProperties": true,
+      "examples": [
+        {
+          "opt_out": true
+        }
+      ],
       "description": "Software Quality Assurance telemetry configuration section",
       "properties": {
         "opt_out": {
@@ -858,11 +847,7 @@
           ]
         }
       },
-      "examples": [
-        {
-          "opt_out": true
-        }
-      ]
+      "additionalProperties": true
     },
     "version": {
       "type": "string",
@@ -872,13 +857,9 @@
     },
     "cgroups": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "ORY Hydra can respect Linux container CPU quota",
       "properties": {
         "v1": {
           "type": "object",
-          "additionalProperties": false,
-          "description": "Configures parameters using cgroups v1 hierarchy",
           "properties": {
             "auto_max_procs_enabled": {
               "type": "boolean",
@@ -888,9 +869,13 @@
                 true
               ]
             }
-          }
+          },
+          "description": "Configures parameters using cgroups v1 hierarchy",
+          "additionalProperties": false
         }
-      }
+      },
+      "description": "ORY Hydra can respect Linux container CPU quota",
+      "additionalProperties": false
     }
   },
   "$defs": {
@@ -915,8 +900,6 @@
     },
     "socket": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Sets the permissions of the unix socket",
       "properties": {
         "owner": {
           "type": "string",
@@ -935,12 +918,12 @@
           "minimum": 0,
           "maximum": 511
         }
-      }
+      },
+      "description": "Sets the permissions of the unix socket",
+      "additionalProperties": false
     },
     "cors": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Configures Cross Origin Resource Sharing for public endpoints.",
       "properties": {
         "enabled": {
           "type": "boolean",
@@ -1046,7 +1029,9 @@
           "description": "Adds additional log output to debug server side CORS issues.",
           "default": false
         }
-      }
+      },
+      "description": "Configures Cross Origin Resource Sharing for public endpoints.",
+      "additionalProperties": false
     },
     "cidr": {
       "description": "CIDR address range.",
@@ -1076,10 +1061,10 @@
               ]
             }
           },
-          "additionalProperties": false,
           "required": [
             "path"
           ],
+          "additionalProperties": false,
           "type": "object"
         },
         {
@@ -1094,10 +1079,10 @@
               ]
             }
           },
-          "additionalProperties": false,
           "required": [
             "base64"
           ],
+          "additionalProperties": false,
           "type": "object"
         }
       ]
@@ -1122,7 +1107,7 @@
           ]
         },
         "cert": {
-          "description": "Configures the public certificate (pem encoded).",
+          "description": "Configures the private key (pem encoded).",
           "allOf": [
             {
               "$ref": "#/$defs/pem_file"

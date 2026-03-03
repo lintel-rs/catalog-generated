@@ -37,9 +37,6 @@
       "$ref": "#/$defs/includesList"
     }
   },
-  "patternProperties": {
-    "^\\.": {}
-  },
   "additionalProperties": false,
   "$defs": {
     "containers": {
@@ -51,7 +48,26 @@
     },
     "container": {
       "type": "object",
-      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "image"
+          ],
+          "not": {
+            "required": [
+              "build_args",
+              "dockerfile",
+              "build_target",
+              "build_ssh"
+            ]
+          }
+        },
+        {
+          "required": [
+            "build_directory"
+          ]
+        }
+      ],
       "properties": {
         "image": {
           "type": "string",
@@ -186,26 +202,7 @@
           }
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "image"
-          ],
-          "not": {
-            "required": [
-              "build_args",
-              "dockerfile",
-              "build_target",
-              "build_ssh"
-            ]
-          }
-        },
-        {
-          "required": [
-            "build_directory"
-          ]
-        }
-      ]
+      "additionalProperties": false
     },
     "tasks": {
       "type": "object",
@@ -217,7 +214,24 @@
     "task": {
       "type": "object",
       "description": "Definition of a single task",
-      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "run"
+          ]
+        },
+        {
+          "required": [
+            "prerequisites"
+          ],
+          "not": {
+            "required": [
+              "dependencies",
+              "run"
+            ]
+          }
+        }
+      ],
       "properties": {
         "run": {
           "$ref": "#/$defs/taskRunOptions"
@@ -252,29 +266,14 @@
           }
         }
       },
-      "anyOf": [
-        {
-          "required": [
-            "run"
-          ]
-        },
-        {
-          "required": [
-            "prerequisites"
-          ],
-          "not": {
-            "required": [
-              "dependencies",
-              "run"
-            ]
-          }
-        }
-      ]
+      "additionalProperties": false
     },
     "taskRunOptions": {
       "type": "object",
       "description": "Specifies what to do when this task starts",
-      "additionalProperties": false,
+      "required": [
+        "container"
+      ],
       "properties": {
         "container": {
           "type": "string",
@@ -305,13 +304,10 @@
           "minLength": 1
         }
       },
-      "required": [
-        "container"
-      ]
+      "additionalProperties": false
     },
     "taskContainerCustomisation": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "environment": {
           "description": "List of environment variables to pass to the container, in addition to those defined on the container itself",
@@ -326,7 +322,8 @@
           "description": "Working directory to start the container in",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "containerDependencyList": {
       "type": "array",
@@ -364,7 +361,9 @@
       "items": {
         "minLength": 1,
         "type": "object",
-        "additionalProperties": false,
+        "required": [
+          "id"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -379,9 +378,7 @@
             }
           }
         },
-        "required": [
-          "id"
-        ]
+        "additionalProperties": false
       }
     },
     "buildSecretsList": {
@@ -402,7 +399,9 @@
     },
     "environmentSecret": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "environment"
+      ],
       "properties": {
         "environment": {
           "type": "string",
@@ -410,13 +409,13 @@
           "minLength": 1
         }
       },
-      "required": [
-        "environment"
-      ]
+      "additionalProperties": false
     },
     "fileSecret": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "path"
+      ],
       "properties": {
         "path": {
           "type": "string",
@@ -424,9 +423,7 @@
           "minLength": 1
         }
       },
-      "required": [
-        "path"
-      ]
+      "additionalProperties": false
     },
     "portMappingList": {
       "type": "array",
@@ -438,7 +435,10 @@
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "local",
+              "container"
+            ],
             "properties": {
               "local": {
                 "type": "integer",
@@ -456,14 +456,14 @@
                 "minLength": 1
               }
             },
-            "required": [
-              "local",
-              "container"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "local",
+              "container"
+            ],
             "properties": {
               "local": {
                 "type": "string",
@@ -481,10 +481,7 @@
                 "minLength": 1
               }
             },
-            "required": [
-              "local",
-              "container"
-            ]
+            "additionalProperties": false
           }
         ]
       }
@@ -499,7 +496,10 @@
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "local",
+              "container"
+            ],
             "properties": {
               "type": {
                 "type": "string",
@@ -530,14 +530,15 @@
                 ]
               }
             },
-            "required": [
-              "local",
-              "container"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "type",
+              "name",
+              "container"
+            ],
             "properties": {
               "type": {
                 "type": "string",
@@ -568,15 +569,14 @@
                 ]
               }
             },
-            "required": [
-              "type",
-              "name",
-              "container"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "type",
+              "container"
+            ],
             "properties": {
               "type": {
                 "type": "string",
@@ -595,17 +595,13 @@
                 "description": "Docker tmpfs mount options to use when creating mount"
               }
             },
-            "required": [
-              "type",
-              "container"
-            ]
+            "additionalProperties": false
           }
         ]
       }
     },
     "healthCheckOptions": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "retries": {
           "type": "integer",
@@ -632,13 +628,16 @@
           "description": "The command to run to check the health of the container. If this command exits with code 0, the container is considered healthy.",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "runAsCurrentUserOptions": {
       "oneOf": [
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "enabled"
+          ],
           "properties": {
             "enabled": {
               "type": "boolean",
@@ -648,13 +647,14 @@
               ]
             }
           },
-          "required": [
-            "enabled"
-          ]
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "enabled",
+            "home_directory"
+          ],
           "properties": {
             "enabled": {
               "type": "boolean",
@@ -669,10 +669,7 @@
               "minLength": 1
             }
           },
-          "required": [
-            "enabled",
-            "home_directory"
-          ]
+          "additionalProperties": false
         }
       ]
     },
@@ -731,7 +728,9 @@
       "type": "array",
       "items": {
         "type": "object",
-        "additionalProperties": false,
+        "required": [
+          "command"
+        ],
         "properties": {
           "command": {
             "type": "string",
@@ -744,9 +743,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "command"
-        ]
+        "additionalProperties": false
       }
     },
     "configVariablesList": {
@@ -759,7 +756,6 @@
     "configVariable": {
       "type": "object",
       "description": "Definition of a single config variable",
-      "additionalProperties": false,
       "properties": {
         "description": {
           "type": "string",
@@ -771,7 +767,8 @@
           "description": "Default value of the variable if one is not provided elsewhere",
           "minLength": 1
         }
-      }
+      },
+      "additionalProperties": false
     },
     "includesList": {
       "type": "array",
@@ -802,11 +799,11 @@
               "minLength": 1
             }
           },
-          "additionalProperties": false,
           "required": [
             "type",
             "path"
-          ]
+          ],
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -833,14 +830,17 @@
               "minLength": 1
             }
           },
-          "additionalProperties": false,
           "required": [
             "type",
             "repo",
             "ref"
-          ]
+          ],
+          "additionalProperties": false
         }
       ]
     }
+  },
+  "patternProperties": {
+    "^\\.": {}
   }
 }

@@ -66,7 +66,6 @@
       "required": [
         "target"
       ],
-      "additionalProperties": false,
       "properties": {
         "target": {
           "$ref": "#/$defs/Ratio",
@@ -77,7 +76,8 @@
           "default": "30d",
           "description": "Measurement window"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "LatencySLO": {
       "type": "object",
@@ -85,7 +85,33 @@
       "required": [
         "target"
       ],
-      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "p50"
+          ]
+        },
+        {
+          "required": [
+            "p90"
+          ]
+        },
+        {
+          "required": [
+            "p95"
+          ]
+        },
+        {
+          "required": [
+            "p99"
+          ]
+        },
+        {
+          "required": [
+            "p999"
+          ]
+        }
+      ],
       "properties": {
         "p50": {
           "$ref": "#/$defs/Duration",
@@ -117,33 +143,7 @@
           "description": "Measurement window"
         }
       },
-      "anyOf": [
-        {
-          "required": [
-            "p50"
-          ]
-        },
-        {
-          "required": [
-            "p90"
-          ]
-        },
-        {
-          "required": [
-            "p95"
-          ]
-        },
-        {
-          "required": [
-            "p99"
-          ]
-        },
-        {
-          "required": [
-            "p999"
-          ]
-        }
-      ]
+      "additionalProperties": false
     },
     "ErrorRateSLO": {
       "type": "object",
@@ -151,7 +151,6 @@
       "required": [
         "target"
       ],
-      "additionalProperties": false,
       "properties": {
         "target": {
           "$ref": "#/$defs/Ratio",
@@ -162,7 +161,8 @@
           "default": "30d",
           "description": "Measurement window"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ThroughputSLO": {
       "type": "object",
@@ -171,7 +171,6 @@
         "target",
         "unit"
       ],
-      "additionalProperties": false,
       "properties": {
         "target": {
           "type": "number",
@@ -192,7 +191,8 @@
           "default": "1h",
           "description": "Measurement window"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ProcessingTimeSLO": {
       "type": "object",
@@ -200,7 +200,28 @@
       "required": [
         "target"
       ],
-      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "p50"
+          ]
+        },
+        {
+          "required": [
+            "p90"
+          ]
+        },
+        {
+          "required": [
+            "p95"
+          ]
+        },
+        {
+          "required": [
+            "p99"
+          ]
+        }
+      ],
       "properties": {
         "p50": {
           "$ref": "#/$defs/Duration",
@@ -228,6 +249,58 @@
           "description": "Measurement window"
         }
       },
+      "additionalProperties": false
+    },
+    "LagSLO": {
+      "type": "object",
+      "description": "Lag SLO - consumer lag for stream services",
+      "required": [
+        "max_seconds",
+        "target"
+      ],
+      "properties": {
+        "max_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Maximum acceptable lag in seconds"
+        },
+        "target": {
+          "$ref": "#/$defs/Ratio",
+          "description": "Ratio of time within lag threshold"
+        },
+        "window": {
+          "$ref": "#/$defs/Duration",
+          "default": "7d",
+          "description": "Measurement window"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SuccessRateSLO": {
+      "type": "object",
+      "description": "Success rate SLO - measures proportion of successful operations",
+      "required": [
+        "target"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/Ratio",
+          "description": "Target success ratio (e.g., 0.995 for 99.5%)"
+        },
+        "window": {
+          "$ref": "#/$defs/Duration",
+          "default": "7d",
+          "description": "Measurement window"
+        }
+      },
+      "additionalProperties": false
+    },
+    "DurationSLO": {
+      "type": "object",
+      "description": "Duration SLO - job execution time for batch services",
+      "required": [
+        "target"
+      ],
       "anyOf": [
         {
           "required": [
@@ -249,59 +322,7 @@
             "p99"
           ]
         }
-      ]
-    },
-    "LagSLO": {
-      "type": "object",
-      "description": "Lag SLO - consumer lag for stream services",
-      "required": [
-        "max_seconds",
-        "target"
       ],
-      "additionalProperties": false,
-      "properties": {
-        "max_seconds": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Maximum acceptable lag in seconds"
-        },
-        "target": {
-          "$ref": "#/$defs/Ratio",
-          "description": "Ratio of time within lag threshold"
-        },
-        "window": {
-          "$ref": "#/$defs/Duration",
-          "default": "7d",
-          "description": "Measurement window"
-        }
-      }
-    },
-    "SuccessRateSLO": {
-      "type": "object",
-      "description": "Success rate SLO - measures proportion of successful operations",
-      "required": [
-        "target"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "target": {
-          "$ref": "#/$defs/Ratio",
-          "description": "Target success ratio (e.g., 0.995 for 99.5%)"
-        },
-        "window": {
-          "$ref": "#/$defs/Duration",
-          "default": "7d",
-          "description": "Measurement window"
-        }
-      }
-    },
-    "DurationSLO": {
-      "type": "object",
-      "description": "Duration SLO - job execution time for batch services",
-      "required": [
-        "target"
-      ],
-      "additionalProperties": false,
       "properties": {
         "p50": {
           "$ref": "#/$defs/Duration",
@@ -329,6 +350,52 @@
           "description": "Measurement window"
         }
       },
+      "additionalProperties": false
+    },
+    "ScheduleAdherenceSLO": {
+      "type": "object",
+      "description": "Schedule adherence SLO - measures timeliness of batch job starts",
+      "required": [
+        "max_delay"
+      ],
+      "properties": {
+        "max_delay": {
+          "$ref": "#/$defs/Duration",
+          "description": "Maximum acceptable delay from scheduled start time"
+        },
+        "window": {
+          "$ref": "#/$defs/Duration",
+          "default": "7d",
+          "description": "Measurement window"
+        }
+      },
+      "additionalProperties": false
+    },
+    "DataFreshnessSLO": {
+      "type": "object",
+      "description": "Data freshness SLO - measures staleness of batch output data",
+      "required": [
+        "max_age"
+      ],
+      "properties": {
+        "max_age": {
+          "$ref": "#/$defs/Duration",
+          "description": "Maximum acceptable age of output data"
+        },
+        "window": {
+          "$ref": "#/$defs/Duration",
+          "default": "7d",
+          "description": "Measurement window"
+        }
+      },
+      "additionalProperties": false
+    },
+    "QueryLatencySLO": {
+      "type": "object",
+      "description": "Query latency SLO - response time for database services",
+      "required": [
+        "target"
+      ],
       "anyOf": [
         {
           "required": [
@@ -349,54 +416,13 @@
           "required": [
             "p99"
           ]
-        }
-      ]
-    },
-    "ScheduleAdherenceSLO": {
-      "type": "object",
-      "description": "Schedule adherence SLO - measures timeliness of batch job starts",
-      "required": [
-        "max_delay"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "max_delay": {
-          "$ref": "#/$defs/Duration",
-          "description": "Maximum acceptable delay from scheduled start time"
         },
-        "window": {
-          "$ref": "#/$defs/Duration",
-          "default": "7d",
-          "description": "Measurement window"
+        {
+          "required": [
+            "p999"
+          ]
         }
-      }
-    },
-    "DataFreshnessSLO": {
-      "type": "object",
-      "description": "Data freshness SLO - measures staleness of batch output data",
-      "required": [
-        "max_age"
       ],
-      "additionalProperties": false,
-      "properties": {
-        "max_age": {
-          "$ref": "#/$defs/Duration",
-          "description": "Maximum acceptable age of output data"
-        },
-        "window": {
-          "$ref": "#/$defs/Duration",
-          "default": "7d",
-          "description": "Measurement window"
-        }
-      }
-    },
-    "QueryLatencySLO": {
-      "type": "object",
-      "description": "Query latency SLO - response time for database services",
-      "required": [
-        "target"
-      ],
-      "additionalProperties": false,
       "properties": {
         "p50": {
           "$ref": "#/$defs/Duration",
@@ -428,33 +454,7 @@
           "description": "Measurement window"
         }
       },
-      "anyOf": [
-        {
-          "required": [
-            "p50"
-          ]
-        },
-        {
-          "required": [
-            "p90"
-          ]
-        },
-        {
-          "required": [
-            "p95"
-          ]
-        },
-        {
-          "required": [
-            "p99"
-          ]
-        },
-        {
-          "required": [
-            "p999"
-          ]
-        }
-      ]
+      "additionalProperties": false
     },
     "ReplicationLagSLO": {
       "type": "object",
@@ -462,7 +462,6 @@
       "required": [
         "max_lag"
       ],
-      "additionalProperties": false,
       "properties": {
         "max_lag": {
           "type": "string",
@@ -474,7 +473,8 @@
           "default": "30d",
           "description": "Measurement window"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ConnectionAvailabilitySLO": {
       "type": "object",
@@ -482,7 +482,6 @@
       "required": [
         "target"
       ],
-      "additionalProperties": false,
       "properties": {
         "target": {
           "$ref": "#/$defs/Ratio",
@@ -493,7 +492,8 @@
           "default": "30d",
           "description": "Measurement window"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ReversalRateSLO": {
       "type": "object",
@@ -502,7 +502,6 @@
         "target",
         "window"
       ],
-      "additionalProperties": false,
       "properties": {
         "target": {
           "$ref": "#/$defs/Ratio",
@@ -517,7 +516,8 @@
           "default": "24h",
           "description": "Time to wait for reversals after a decision"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "HighConfidenceFailureSLO": {
       "type": "object",
@@ -526,7 +526,6 @@
         "target",
         "window"
       ],
-      "additionalProperties": false,
       "properties": {
         "target": {
           "$ref": "#/$defs/Ratio",
@@ -541,7 +540,8 @@
           "default": 0.9,
           "description": "What counts as high confidence"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "CalibrationSLO": {
       "type": "object",
@@ -550,7 +550,6 @@
         "target",
         "window"
       ],
-      "additionalProperties": false,
       "properties": {
         "target": {
           "$ref": "#/$defs/Ratio",
@@ -560,12 +559,22 @@
           "$ref": "#/$defs/Duration",
           "description": "SLO evaluation window"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "FeedbackLatencySLO": {
       "type": "object",
       "description": "Feedback latency SLO - measures time until decision quality is known\n<https://github.com/rsionnach/opensrm#judgment-slos>",
-      "additionalProperties": false,
+      "properties": {
+        "p50": {
+          "$ref": "#/$defs/Duration",
+          "description": "Target for median feedback latency"
+        },
+        "p90": {
+          "$ref": "#/$defs/Duration",
+          "description": "Target for 90th percentile feedback latency"
+        }
+      },
       "anyOf": [
         {
           "required": [
@@ -578,21 +587,11 @@
           ]
         }
       ],
-      "properties": {
-        "p50": {
-          "$ref": "#/$defs/Duration",
-          "description": "Target for median feedback latency"
-        },
-        "p90": {
-          "$ref": "#/$defs/Duration",
-          "description": "Target for 90th percentile feedback latency"
-        }
-      }
+      "additionalProperties": false
     },
     "JudgmentSLOs": {
       "type": "object",
       "description": "Judgment SLOs for AI gate services - measure decision quality\n<https://github.com/rsionnach/opensrm#judgment-slos>",
-      "additionalProperties": false,
       "properties": {
         "reversal_rate": {
           "$ref": "#/$defs/ReversalRateSLO"
@@ -606,12 +605,12 @@
         "feedback_latency": {
           "$ref": "#/$defs/FeedbackLatencySLO"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "SLOs": {
       "type": "object",
       "description": "Service Level Objectives",
-      "additionalProperties": false,
       "properties": {
         "availability": {
           "$ref": "#/$defs/AvailabilitySLO"
@@ -659,13 +658,13 @@
             "required": [
               "path"
             ],
-            "additionalProperties": false,
             "properties": {
               "path": {
                 "type": "string",
                 "description": "Path to OpenSLO file"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "description": "References to external OpenSLO files"
         },
@@ -677,7 +676,6 @@
               "name",
               "target"
             ],
-            "additionalProperties": false,
             "properties": {
               "name": {
                 "type": "string",
@@ -695,19 +693,20 @@
                 "type": "string",
                 "description": "Human-readable description"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "description": "Custom SLO types"
         },
         "judgment": {
           "$ref": "#/$defs/JudgmentSLOs"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContractLatency": {
       "type": "object",
       "description": "Latency guarantees in a contract",
-      "additionalProperties": false,
       "properties": {
         "p50": {
           "$ref": "#/$defs/Duration",
@@ -721,12 +720,12 @@
           "$ref": "#/$defs/Duration",
           "description": "Promised 99.9th percentile latency"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContractThroughput": {
       "type": "object",
       "description": "Throughput guarantees in a contract",
-      "additionalProperties": false,
       "properties": {
         "max_rps": {
           "type": "integer",
@@ -738,12 +737,12 @@
           "minimum": 1,
           "description": "Maximum burst capacity"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ContractJudgment": {
       "type": "object",
       "description": "Judgment guarantees in a contract for AI gate services",
-      "additionalProperties": false,
       "properties": {
         "max_reversal_rate": {
           "$ref": "#/$defs/Ratio",
@@ -757,12 +756,12 @@
           "$ref": "#/$defs/Duration",
           "description": "Maximum promised feedback latency"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Contract": {
       "type": "object",
       "description": "Reliability guarantees promised to dependents\n<https://github.com/rsionnach/opensrm#contracts>",
-      "additionalProperties": false,
       "properties": {
         "availability": {
           "$ref": "#/$defs/Ratio",
@@ -777,7 +776,8 @@
         "judgment": {
           "$ref": "#/$defs/ContractJudgment"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Dependency": {
       "type": "object",
@@ -785,7 +785,6 @@
       "required": [
         "service"
       ],
-      "additionalProperties": false,
       "properties": {
         "service": {
           "type": "string",
@@ -810,7 +809,6 @@
         "expects": {
           "type": "object",
           "description": "Expected guarantees from dependency",
-          "additionalProperties": false,
           "properties": {
             "availability": {
               "$ref": "#/$defs/Ratio",
@@ -818,22 +816,24 @@
             },
             "latency": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "p99": {
                   "$ref": "#/$defs/Duration",
                   "description": "Expected 99th percentile latency"
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         },
         "manifest": {
           "type": "string",
           "format": "uri",
           "description": "URL to dependency's SRM manifest"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Ownership": {
       "type": "object",
@@ -841,7 +841,6 @@
       "required": [
         "team"
       ],
-      "additionalProperties": false,
       "properties": {
         "team": {
           "type": "string",
@@ -863,7 +862,6 @@
         "pagerduty": {
           "type": "object",
           "description": "PagerDuty integration",
-          "additionalProperties": false,
           "properties": {
             "service_id": {
               "type": "string",
@@ -873,7 +871,8 @@
               "type": "string",
               "description": "PagerDuty escalation policy ID"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "runbook": {
           "type": "string",
@@ -889,7 +888,8 @@
           "type": "boolean",
           "description": "Whether on-call rotation is required"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Instrumentation": {
       "type": "object",
@@ -897,7 +897,6 @@
       "required": [
         "events"
       ],
-      "additionalProperties": false,
       "properties": {
         "events": {
           "type": "object",
@@ -906,7 +905,6 @@
             "decision",
             "reversal"
           ],
-          "additionalProperties": false,
           "properties": {
             "decision": {
               "type": "string",
@@ -920,12 +918,12 @@
               "type": "string",
               "description": "Event name emitted when ground truth is known"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "attributes": {
           "type": "object",
           "description": "Attribute name mappings",
-          "additionalProperties": false,
           "properties": {
             "decision_id": {
               "type": "string",
@@ -942,19 +940,19 @@
               "default": "decision",
               "description": "Field name for decision value"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Observability": {
       "type": "object",
       "description": "Observability requirements",
-      "additionalProperties": false,
       "properties": {
         "metrics": {
           "type": "object",
           "description": "Metric requirements",
-          "additionalProperties": false,
           "properties": {
             "required": {
               "type": "array",
@@ -965,7 +963,6 @@
             },
             "labels": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "required": {
                   "type": "array",
@@ -974,7 +971,8 @@
                   },
                   "description": "Labels that must be present"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "convention": {
               "type": "string",
@@ -985,12 +983,12 @@
               "default": "opentelemetry",
               "description": "Metric naming convention"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "dashboards": {
           "type": "object",
           "description": "Dashboard requirements",
-          "additionalProperties": false,
           "properties": {
             "required": {
               "type": "boolean",
@@ -1004,18 +1002,18 @@
               },
               "description": "URLs to service dashboards"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "alerts": {
           "type": "object",
           "description": "Alert requirements",
-          "additionalProperties": false,
           "properties": {
             "required": {
               "type": "boolean",
               "description": "Whether alerts must be configured"
             },
-            "$defs": {
+            "definitions": {
               "type": "array",
               "items": {
                 "type": "object",
@@ -1023,7 +1021,6 @@
                   "name",
                   "severity"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "name": {
                     "type": "string",
@@ -1042,15 +1039,16 @@
                     "type": "string",
                     "description": "Human-readable threshold description"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
-          }
+          },
+          "additionalProperties": false
         },
         "tracing": {
           "type": "object",
           "description": "Distributed tracing requirements",
-          "additionalProperties": false,
           "properties": {
             "required": {
               "type": "boolean",
@@ -1062,14 +1060,15 @@
               "maximum": 1,
               "description": "Expected sampling rate (0.0 - 1.0)"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Deployment": {
       "type": "object",
       "description": "Deployment requirements",
-      "additionalProperties": false,
       "properties": {
         "environments": {
           "type": "array",
@@ -1085,7 +1084,6 @@
           "properties": {
             "error_budget": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "enabled": {
                   "type": "boolean"
@@ -1093,11 +1091,11 @@
                 "threshold": {
                   "type": "number"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "slo_compliance": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "enabled": {
                   "type": "boolean"
@@ -1107,11 +1105,11 @@
                   "minimum": 0,
                   "maximum": 1
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "recent_incidents": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "enabled": {
                   "type": "boolean"
@@ -1127,7 +1125,8 @@
                   "type": "integer",
                   "minimum": 0
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "patternProperties": {
@@ -1140,7 +1139,6 @@
         "rollback": {
           "type": "object",
           "description": "Rollback configuration",
-          "additionalProperties": false,
           "properties": {
             "automatic": {
               "type": "boolean",
@@ -1148,7 +1146,6 @@
             },
             "criteria": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "error_rate_increase": {
                   "type": "string",
@@ -1158,11 +1155,14 @@
                   "type": "string",
                   "description": "Latency increase threshold"
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Metadata": {
       "type": "object",
@@ -1172,7 +1172,6 @@
         "team",
         "tier"
       ],
-      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -1197,19 +1196,20 @@
         },
         "labels": {
           "type": "object",
+          "description": "Key-value pairs for filtering/grouping",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "Key-value pairs for filtering/grouping"
+          }
         },
         "annotations": {
           "type": "object",
+          "description": "Arbitrary metadata (not used for selection)",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "Arbitrary metadata (not used for selection)"
+          }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "TemplateMetadata": {
       "type": "object",
@@ -1217,7 +1217,6 @@
       "required": [
         "name"
       ],
-      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -1228,12 +1227,12 @@
           "type": "string",
           "description": "Human-readable description"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Spec": {
       "type": "object",
       "description": "Reliability requirements",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "$ref": "#/$defs/ServiceType"
@@ -1247,8 +1246,12 @@
         "instrumentation": {
           "$ref": "#/$defs/Instrumentation"
         },
-        "deployment": {
-          "$ref": "#/$defs/Deployment"
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          },
+          "description": "Upstream dependencies"
         },
         "ownership": {
           "$ref": "#/$defs/Ownership"
@@ -1256,19 +1259,15 @@
         "observability": {
           "$ref": "#/$defs/Observability"
         },
-        "dependentSchemas": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/Dependency"
-          },
-          "description": "Upstream dependencies"
+        "deployment": {
+          "$ref": "#/$defs/Deployment"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "TemplateSpec": {
       "type": "object",
       "description": "Partial spec for template inheritance",
-      "additionalProperties": false,
       "properties": {
         "type": {
           "$ref": "#/$defs/ServiceType"
@@ -1282,7 +1281,8 @@
         "instrumentation": {
           "$ref": "#/$defs/Instrumentation"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ServiceReliabilityManifest": {
       "type": "object",
@@ -1293,7 +1293,6 @@
         "metadata",
         "spec"
       ],
-      "additionalProperties": false,
       "properties": {
         "apiVersion": {
           "type": "string",
@@ -1311,7 +1310,8 @@
         "spec": {
           "$ref": "#/$defs/Spec"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Template": {
       "type": "object",
@@ -1322,7 +1322,6 @@
         "metadata",
         "spec"
       ],
-      "additionalProperties": false,
       "properties": {
         "apiVersion": {
           "type": "string",
@@ -1340,7 +1339,8 @@
         "spec": {
           "$ref": "#/$defs/TemplateSpec"
         }
-      }
+      },
+      "additionalProperties": false
     }
   }
 }

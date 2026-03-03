@@ -21,14 +21,14 @@
   "type": "object",
   "properties": {
     "$schema": {
-      "$ref": "#/$defs/common/full_url"
+      "$ref": "#/$defs/full_url"
     },
     "name": {
-      "$ref": "#/$defs/common/name"
+      "$ref": "#/$defs/name"
     },
     "includes": {
       "items": {
-        "$ref": "#/$defs/common/text"
+        "$ref": "#/$defs/text"
       },
       "title": "Includes",
       "type": "array",
@@ -39,19 +39,19 @@
       "items": {
         "anyOf": [
           {
-            "$ref": "#/$defs/variables/constant"
+            "$ref": "#/$defs/constant"
           },
           {
-            "$ref": "#/$defs/variables/file"
+            "$ref": "#/$defs/file"
           },
           {
-            "$ref": "#/$defs/variables/counter"
+            "$ref": "#/$defs/counter"
           },
           {
-            "$ref": "#/$defs/variables/random_number"
+            "$ref": "#/$defs/random_number"
           },
           {
-            "$ref": "#/$defs/variables/javascript"
+            "$ref": "#/$defs/javascript"
           }
         ]
       },
@@ -79,7 +79,7 @@
     },
     "populations": {
       "items": {
-        "$ref": "#/$defs/populations/population"
+        "$ref": "#/$defs/population"
       },
       "title": "Populations",
       "type": "array",
@@ -95,7 +95,7 @@
     },
     "user_paths": {
       "items": {
-        "$ref": "#/$defs/user_paths/user_path"
+        "$ref": "#/$defs/user_path"
       },
       "title": "User_paths",
       "type": "array",
@@ -106,396 +106,14 @@
     "name",
     "because neoload files can be partial"
   ],
+  "additionalProperties": false,
   "$defs": {
-    "common": {
-      "text": {
-        "pattern": ".*",
-        "title": "Text",
-        "type": "string"
-      },
-      "positive_number": {
-        "minimum": 0,
-        "title": "Positive Number",
-        "type": "integer"
-      },
-      "duration": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/common/time"
-          },
-          {
-            "$ref": "#/$defs/common/iterations"
-          }
-        ],
-        "title": "Duration"
-      },
-      "stop_after_options": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/common/time"
-          },
-          {
-            "type": "string",
-            "enum": [
-              "current_iteration"
-            ]
-          }
-        ],
-        "title": "variation_policy.stop_after values"
-      },
-      "start_after_options": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/common/time"
-          },
-          {
-            "$ref": "#/$defs/common/text"
-          }
-        ],
-        "title": "Start after"
-      },
-      "time": {
-        "pattern": "^((\\d{1,2}[hms]{1}){1,3})+$",
-        "title": "Time",
-        "type": "string"
-      },
-      "iterations": {
-        "pattern": "^(\\d+ iterations)$",
-        "title": "Iterations",
-        "type": "string"
-      },
-      "name": {
-        "title": "Name",
-        "type": "string",
-        "pattern": "^.*$"
-      },
-      "full_url": {
-        "title": "Url",
-        "type": "string",
-        "pattern": "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
-      },
-      "var_change_policy": {
-        "type": "string",
-        "default": "each_iteration",
-        "enum": [
-          "each_use",
-          "each_request",
-          "each_page",
-          "each_iteration",
-          "each_user"
-        ]
-      },
-      "var_scope": {
-        "type": "string",
-        "default": "global",
-        "enum": [
-          "local",
-          "global",
-          "unique"
-        ]
-      },
-      "var_order": {
-        "type": "string",
-        "default": "global",
-        "enum": [
-          "sequential",
-          "random",
-          "any"
-        ]
-      },
-      "var_out_of_value": {
-        "type": "string",
-        "default": "global",
-        "enum": [
-          "cycle",
-          "stop_test",
-          "no_value_code"
-        ]
-      }
-    },
-    "variables": {
-      "generic": {
-        "properties": {
-          "name": {
-            "$ref": "#/$defs/common/name"
-          },
-          "descrption": {
-            "$ref": "#/$defs/common/text"
-          },
-          "change_policy": {
-            "$ref": "#/$defs/common/var_change_policy"
-          }
-        },
-        "type": "object",
-        "xrequired": [
-          "name"
-        ]
-      },
-      "constant": {
-        "x-d7nosupport-additionalProperties": false,
-        "title": "Constant",
-        "type": "object",
-        "xrequired": [
-          "value"
-        ],
-        "allOf": [
-          {
-            "$ref": "#/$defs/variables/generic"
-          },
-          {
-            "properties": {
-              "value": {
-                "$ref": "#/$defs/common/text"
-              }
-            },
-            "type": "object"
-          }
-        ]
-      },
-      "file": {
-        "x-d7nosupport-additionalProperties": false,
-        "title": "File",
-        "type": "object",
-        "xrequired": [
-          "path"
-        ],
-        "allOf": [
-          {
-            "$ref": "#/$defs/variables/generic"
-          },
-          {
-            "properties": {
-              "column_names": {
-                "type": "array",
-                "prefixItems": [
-                  {
-                    "type": "string"
-                  }
-                ]
-              },
-              "is_first_line_column_names": {
-                "type": "boolean",
-                "default": false
-              },
-              "start_from_line": {
-                "type": "integer",
-                "default": 1
-              },
-              "delimiter": {
-                "$ref": "#/$defs/common/text",
-                "default": ","
-              },
-              "path": {
-                "$ref": "#/$defs/common/text"
-              },
-              "scope": {
-                "$ref": "#/$defs/common/var_scope"
-              },
-              "order": {
-                "$ref": "#/$defs/common/var_order"
-              },
-              "out_of_value": {
-                "$ref": "#/$defs/common/var_out_of_value"
-              }
-            },
-            "type": "object"
-          }
-        ]
-      },
-      "counter": {
-        "x-d7nosupport-additionalProperties": false,
-        "title": "Counter",
-        "type": "object",
-        "xrequired": [
-          "start",
-          "end",
-          "increment"
-        ],
-        "allOf": [
-          {
-            "$ref": "#/$defs/variables/generic"
-          },
-          {
-            "properties": {
-              "start": {
-                "type": "number"
-              },
-              "end": {
-                "type": "number"
-              },
-              "increment": {
-                "type": "number"
-              },
-              "scope": {
-                "$ref": "#/$defs/common/var_scope"
-              },
-              "out_of_value": {
-                "$ref": "#/$defs/common/var_out_of_value"
-              }
-            },
-            "type": "object"
-          }
-        ]
-      },
-      "random_number": {
-        "x-d7nosupport-additionalProperties": false,
-        "title": "Random Number",
-        "type": "object",
-        "xrequired": [
-          "min",
-          "max"
-        ],
-        "allOf": [
-          {
-            "$ref": "#/$defs/variables/generic"
-          },
-          {
-            "properties": {
-              "min": {
-                "type": "number"
-              },
-              "max": {
-                "type": "number"
-              },
-              "predictable": {
-                "type": "boolean"
-              }
-            },
-            "type": "object"
-          }
-        ]
-      },
-      "javascript": {
-        "x-d7nosupport-additionalProperties": false,
-        "title": "Javascript",
-        "type": "object",
-        "xrequired": [
-          "script"
-        ],
-        "allOf": [
-          {
-            "$ref": "#/$defs/variables/generic"
-          },
-          {
-            "properties": {
-              "script": {
-                "$ref": "#/$defs/common/text"
-              }
-            },
-            "type": "object"
-          }
-        ]
-      }
-    },
-    "server": {
-      "properties": {
-        "name": {
-          "$ref": "#/$defs/common/text"
-        },
-        "host": {
-          "$ref": "#/$defs/common/text"
-        },
-        "scheme": {
-          "enum": [
-            "http",
-            "https"
-          ],
-          "type": "string"
-        },
-        "port": {
-          "type": "integer"
-        },
-        "basic_authentication": {
-          "$ref": "#/$defs/authentication/basic"
-        },
-        "ntlm_authentication": {
-          "$ref": "#/$defs/authentication/ntlm"
-        },
-        "negotiate_authentication": {
-          "$ref": "#/$defs/authentication/basic"
-        }
-      },
-      "title": "Server",
-      "type": "object",
-      "xrequired": [
-        "name",
-        "host"
-      ],
-      "additionalProperties": false
-    },
-    "authentication": {
-      "auth-generic": {
-        "properties": {
-          "login": {
-            "$ref": "#/$defs/common/text"
-          },
-          "password": {
-            "$ref": "#/$defs/common/text"
-          }
-        },
-        "type": "object",
-        "xrequired": [
-          "login",
-          "password"
-        ]
-      },
-      "auth-generic-domain": {
-        "allOf": [
-          {
-            "$ref": "#/$defs/authentication/auth-generic"
-          },
-          {
-            "properties": {
-              "domain": {
-                "$ref": "#/$defs/common/text"
-              }
-            },
-            "type": "object"
-          }
-        ],
-        "type": "object"
-      },
-      "basic": {
-        "allOf": [
-          {
-            "$ref": "#/$defs/authentication/auth-generic"
-          },
-          {
-            "properties": {
-              "realm": {
-                "$ref": "#/$defs/common/text"
-              }
-            },
-            "type": "object"
-          }
-        ],
-        "title": "Basic Authentication",
-        "type": "object"
-      },
-      "ntlm": {
-        "allOf": [
-          {
-            "$ref": "#/$defs/authentication/auth-generic-domain"
-          }
-        ],
-        "title": "NTLM Authentication",
-        "type": "object"
-      },
-      "negotiate": {
-        "allOf": [
-          {
-            "$ref": "#/$defs/authentication/auth-generic-domain"
-          }
-        ],
-        "title": "Negotiate Authentication",
-        "type": "object"
-      }
-    },
     "sla": {
       "threshold": {
-        "pattern": "^(.*?)\\s(warn\\s(>=|==|<=|>|<))(?=\\s)(.*?)per\\s(test|interval)$",
+        "$id": "#/definitions/sla/threshold",
         "title": "Threshold",
-        "type": "string"
+        "type": "string",
+        "pattern": "^(.*?)\\s(warn\\s(>=|==|<=|>|<))(?=\\s)(.*?)per\\s(test|interval)$"
       },
       "title": "SLA Profile",
       "type": "object",
@@ -505,10 +123,10 @@
       ],
       "properties": {
         "name": {
-          "$ref": "#/$defs/common/text"
+          "$ref": "#/$defs/text"
         },
         "description": {
-          "$ref": "#/$defs/common/text"
+          "$ref": "#/$defs/text"
         },
         "thresholds": {
           "items": {
@@ -521,174 +139,28 @@
         }
       }
     },
-    "populations": {
-      "population": {
-        "properties": {
-          "name": {
-            "$ref": "#/$defs/common/text"
-          },
-          "description": {
-            "$ref": "#/$defs/common/text"
-          },
-          "xcomments": {
-            "value": "why do we need the substructure 'name' to denote a string list?"
-          },
-          "user_paths": {
-            "type": "array",
-            "minItems": 1,
-            "additionalProperties": false,
-            "additionalItems": false,
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "$ref": "#/$defs/common/text"
-                }
-              }
-            }
-          }
-        },
-        "title": "Population",
-        "type": "object"
-      },
-      "constant_load": {
-        "properties": {
-          "duration": {
-            "$ref": "#/$defs/common/duration"
-          },
-          "start_after": {
-            "$ref": "#/$defs/common/start_after_options"
-          },
-          "stop_after": {
-            "$ref": "#/$defs/common/stop_after_options"
-          },
-          "users": {
-            "type": "integer",
-            "default": 1
-          },
-          "rampup": {
-            "$ref": "#/$defs/common/time"
-          }
-        },
-        "title": "Constant Load",
-        "type": "object",
-        "required": [
-          "users"
-        ]
-      },
-      "rampup_load": {
-        "additionalProperties": false,
-        "title": "Ramp-up Load",
-        "type": "object",
-        "required": [
-          "min_users",
-          "increment_users",
-          "increment_every"
-        ],
-        "properties": {
-          "duration": {
-            "$ref": "#/$defs/common/duration"
-          },
-          "start_after": {
-            "$ref": "#/$defs/common/start_after_options"
-          },
-          "stop_after": {
-            "$ref": "#/$defs/common/stop_after_options"
-          },
-          "min_users": {
-            "$ref": "#/$defs/common/positive_number"
-          },
-          "max_users": {
-            "$ref": "#/$defs/common/positive_number"
-          },
-          "increment_users": {
-            "type": "integer",
-            "default": 1
-          },
-          "increment_every": {
-            "$ref": "#/$defs/common/duration"
-          },
-          "increment_rampup": {
-            "$ref": "#/$defs/common/time"
-          }
-        }
-      },
-      "peaks_load": {
-        "additionalProperties": false,
-        "title": "Peaks Load",
-        "type": "object",
-        "required": [
-          "minimum",
-          "maximum",
-          "start"
-        ],
-        "properties": {
-          "minimum": {
-            "$ref": "#/$defs/populations/peaks_phase"
-          },
-          "maximum": {
-            "$ref": "#/$defs/populations/peaks_phase"
-          },
-          "start": {
-            "type": "string",
-            "enum": [
-              "minimum",
-              "maximum"
-            ]
-          },
-          "duration": {
-            "$ref": "#/$defs/common/duration"
-          },
-          "start_after": {
-            "$ref": "#/$defs/common/start_after_options"
-          },
-          "step_rampup": {
-            "$ref": "#/$defs/common/text"
-          },
-          "stop_after": {
-            "$ref": "#/$defs/common/stop_after_options"
-          }
-        }
-      },
-      "peaks_phase": {
-        "properties": {
-          "users": {
-            "$ref": "#/$defs/common/positive_number"
-          },
-          "duration": {
-            "$ref": "#/$defs/common/duration"
-          }
-        },
-        "title": "Peak Phase",
-        "type": "object",
-        "required": [
-          "users",
-          "duration"
-        ]
-      }
-    },
     "scenario": {
       "properties": {
         "name": {
-          "$ref": "#/$defs/common/text"
+          "$ref": "#/$defs/text"
         },
         "description": {
-          "$ref": "#/$defs/common/text"
+          "$ref": "#/$defs/text"
         },
         "populations": {
           "items": {
             "properties": {
               "name": {
-                "$ref": "#/$defs/common/text"
+                "$ref": "#/$defs/text"
               },
               "constant_load": {
-                "$ref": "#/$defs/populations/constant_load"
+                "$ref": "#/$defs/constant_load"
               },
               "rampup_load": {
-                "$ref": "#/$defs/populations/rampup_load"
+                "$ref": "#/$defs/rampup_load"
               },
               "peaks_load": {
-                "$ref": "#/$defs/populations/peaks_load"
+                "$ref": "#/$defs/peaks_load"
               }
             },
             "type": "object",
@@ -706,44 +178,618 @@
       "title": "Scenario",
       "type": "object"
     },
-    "user_paths": {
-      "user_path": {
-        "properties": {
-          "name": {
-            "$ref": "#/$defs/common/text"
-          },
-          "description": {
-            "$ref": "#/$defs/common/text"
-          },
-          "user_session": {
-            "type": "string",
-            "enum": [
-              "reset_on",
-              "reset_off",
-              "reset_auto"
-            ]
-          },
-          "init": {
-            "$ref": "#/$defs/user_paths/container"
-          },
-          "actions": {
-            "$ref": "#/$defs/user_paths/container"
-          },
-          "end": {
-            "$ref": "#/$defs/user_paths/container"
-          }
+    "server": {
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/text"
         },
-        "title": "User Path",
+        "host": {
+          "$ref": "#/$defs/text"
+        },
+        "scheme": {
+          "enum": [
+            "http",
+            "https"
+          ],
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "basic_authentication": {
+          "$ref": "#/$defs/basic"
+        },
+        "ntlm_authentication": {
+          "$ref": "#/$defs/ntlm"
+        },
+        "negotiate_authentication": {
+          "$ref": "#/$defs/basic"
+        }
+      },
+      "title": "Server",
+      "type": "object",
+      "xrequired": [
+        "name",
+        "host"
+      ],
+      "additionalProperties": false
+    },
+    "text": {
+      "pattern": ".*",
+      "title": "Text",
+      "type": "string"
+    },
+    "positive_number": {
+      "minimum": 0,
+      "title": "Positive Number",
+      "type": "integer"
+    },
+    "duration": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/common/time"
+        },
+        {
+          "$ref": "#/$defs/common/iterations"
+        }
+      ],
+      "title": "Duration"
+    },
+    "stop_after_options": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/common/time"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "current_iteration"
+          ]
+        }
+      ],
+      "title": "variation_policy.stop_after values"
+    },
+    "start_after_options": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/common/time"
+        },
+        {
+          "$ref": "#/$defs/common/text"
+        }
+      ],
+      "title": "Start after"
+    },
+    "time": {
+      "pattern": "^((\\d{1,2}[hms]{1}){1,3})+$",
+      "title": "Time",
+      "type": "string"
+    },
+    "iterations": {
+      "pattern": "^(\\d+ iterations)$",
+      "title": "Iterations",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string",
+      "pattern": "^.*$"
+    },
+    "full_url": {
+      "title": "Url",
+      "type": "string",
+      "pattern": "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
+    },
+    "var_change_policy": {
+      "type": "string",
+      "default": "each_iteration",
+      "enum": [
+        "each_use",
+        "each_request",
+        "each_page",
+        "each_iteration",
+        "each_user"
+      ]
+    },
+    "var_scope": {
+      "type": "string",
+      "default": "global",
+      "enum": [
+        "local",
+        "global",
+        "unique"
+      ]
+    },
+    "var_order": {
+      "type": "string",
+      "default": "global",
+      "enum": [
+        "sequential",
+        "random",
+        "any"
+      ]
+    },
+    "var_out_of_value": {
+      "type": "string",
+      "default": "global",
+      "enum": [
+        "cycle",
+        "stop_test",
+        "no_value_code"
+      ]
+    },
+    "generic": {
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/common/name"
+        },
+        "descrption": {
+          "$ref": "#/$defs/common/text"
+        },
+        "change_policy": {
+          "$ref": "#/$defs/common/var_change_policy"
+        }
+      },
+      "type": "object",
+      "xrequired": [
+        "name"
+      ]
+    },
+    "constant": {
+      "x-d7nosupport-additionalProperties": false,
+      "title": "Constant",
+      "type": "object",
+      "xrequired": [
+        "value"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/variables/generic"
+        },
+        {
+          "properties": {
+            "value": {
+              "$ref": "#/$defs/common/text"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "file": {
+      "x-d7nosupport-additionalProperties": false,
+      "title": "File",
+      "type": "object",
+      "xrequired": [
+        "path"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/variables/generic"
+        },
+        {
+          "properties": {
+            "column_names": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "is_first_line_column_names": {
+              "type": "boolean",
+              "default": false
+            },
+            "start_from_line": {
+              "type": "integer",
+              "default": 1
+            },
+            "delimiter": {
+              "$ref": "#/$defs/common/text",
+              "default": ","
+            },
+            "path": {
+              "$ref": "#/$defs/common/text"
+            },
+            "scope": {
+              "$ref": "#/$defs/common/var_scope"
+            },
+            "order": {
+              "$ref": "#/$defs/common/var_order"
+            },
+            "out_of_value": {
+              "$ref": "#/$defs/common/var_out_of_value"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "counter": {
+      "x-d7nosupport-additionalProperties": false,
+      "title": "Counter",
+      "type": "object",
+      "xrequired": [
+        "start",
+        "end",
+        "increment"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/variables/generic"
+        },
+        {
+          "properties": {
+            "start": {
+              "type": "number"
+            },
+            "end": {
+              "type": "number"
+            },
+            "increment": {
+              "type": "number"
+            },
+            "scope": {
+              "$ref": "#/$defs/common/var_scope"
+            },
+            "out_of_value": {
+              "$ref": "#/$defs/common/var_out_of_value"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "random_number": {
+      "x-d7nosupport-additionalProperties": false,
+      "title": "Random Number",
+      "type": "object",
+      "xrequired": [
+        "min",
+        "max"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/variables/generic"
+        },
+        {
+          "properties": {
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "predictable": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "javascript": {
+      "x-d7nosupport-additionalProperties": false,
+      "title": "Javascript",
+      "type": "object",
+      "xrequired": [
+        "script"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/variables/generic"
+        },
+        {
+          "properties": {
+            "script": {
+              "$ref": "#/$defs/common/text"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "auth-generic": {
+      "properties": {
+        "login": {
+          "$ref": "#/$defs/common/text"
+        },
+        "password": {
+          "$ref": "#/$defs/common/text"
+        }
+      },
+      "type": "object",
+      "xrequired": [
+        "login",
+        "password"
+      ]
+    },
+    "auth-generic-domain": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/authentication/auth-generic"
+        },
+        {
+          "properties": {
+            "domain": {
+              "$ref": "#/$defs/common/text"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "type": "object"
+    },
+    "basic": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/authentication/auth-generic"
+        },
+        {
+          "properties": {
+            "realm": {
+              "$ref": "#/$defs/common/text"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "title": "Basic Authentication",
+      "type": "object"
+    },
+    "ntlm": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/authentication/auth-generic-domain"
+        }
+      ],
+      "title": "NTLM Authentication",
+      "type": "object"
+    },
+    "negotiate": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/authentication/auth-generic-domain"
+        }
+      ],
+      "title": "Negotiate Authentication",
+      "type": "object"
+    },
+    "population": {
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/common/text"
+        },
+        "description": {
+          "$ref": "#/$defs/common/text"
+        },
+        "xcomments": {
+          "value": "why do we need the substructure 'name' to denote a string list?"
+        },
+        "user_paths": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/common/text"
+              }
+            }
+          },
+          "additionalItems": false,
+          "additionalProperties": false
+        }
+      },
+      "title": "Population",
+      "type": "object"
+    },
+    "constant_load": {
+      "properties": {
+        "duration": {
+          "$ref": "#/$defs/common/duration"
+        },
+        "start_after": {
+          "$ref": "#/$defs/common/start_after_options"
+        },
+        "stop_after": {
+          "$ref": "#/$defs/common/stop_after_options"
+        },
+        "users": {
+          "type": "integer",
+          "default": 1
+        },
+        "rampup": {
+          "$ref": "#/$defs/common/time"
+        }
+      },
+      "title": "Constant Load",
+      "type": "object",
+      "required": [
+        "users"
+      ]
+    },
+    "rampup_load": {
+      "properties": {
+        "duration": {
+          "$ref": "#/$defs/common/duration"
+        },
+        "start_after": {
+          "$ref": "#/$defs/common/start_after_options"
+        },
+        "stop_after": {
+          "$ref": "#/$defs/common/stop_after_options"
+        },
+        "min_users": {
+          "$ref": "#/$defs/common/positive_number"
+        },
+        "max_users": {
+          "$ref": "#/$defs/common/positive_number"
+        },
+        "increment_users": {
+          "type": "integer",
+          "default": 1
+        },
+        "increment_every": {
+          "$ref": "#/$defs/common/duration"
+        },
+        "increment_rampup": {
+          "$ref": "#/$defs/common/time"
+        }
+      },
+      "title": "Ramp-up Load",
+      "type": "object",
+      "required": [
+        "min_users",
+        "increment_users",
+        "increment_every"
+      ],
+      "additionalProperties": false
+    },
+    "peaks_load": {
+      "properties": {
+        "minimum": {
+          "$ref": "#/$defs/populations/peaks_phase"
+        },
+        "maximum": {
+          "$ref": "#/$defs/populations/peaks_phase"
+        },
+        "start": {
+          "type": "string",
+          "enum": [
+            "minimum",
+            "maximum"
+          ]
+        },
+        "duration": {
+          "$ref": "#/$defs/common/duration"
+        },
+        "start_after": {
+          "$ref": "#/$defs/common/start_after_options"
+        },
+        "step_rampup": {
+          "$ref": "#/$defs/common/text"
+        },
+        "stop_after": {
+          "$ref": "#/$defs/common/stop_after_options"
+        }
+      },
+      "title": "Peaks Load",
+      "type": "object",
+      "required": [
+        "minimum",
+        "maximum",
+        "start"
+      ],
+      "additionalProperties": false
+    },
+    "peaks_phase": {
+      "properties": {
+        "users": {
+          "$ref": "#/$defs/common/positive_number"
+        },
+        "duration": {
+          "$ref": "#/$defs/common/duration"
+        }
+      },
+      "title": "Peak Phase",
+      "type": "object",
+      "required": [
+        "users",
+        "duration"
+      ]
+    },
+    "user_path": {
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/common/text"
+        },
+        "description": {
+          "$ref": "#/$defs/common/text"
+        },
+        "user_session": {
+          "type": "string",
+          "enum": [
+            "reset_on",
+            "reset_off",
+            "reset_auto"
+          ]
+        },
+        "init": {
+          "$ref": "#/$defs/user_paths/container"
+        },
+        "actions": {
+          "$ref": "#/$defs/user_paths/container"
+        },
+        "end": {
+          "$ref": "#/$defs/user_paths/container"
+        }
+      },
+      "title": "User Path",
+      "type": "object",
+      "required": [
+        "name",
+        "actions"
+      ]
+    },
+    "container": {
+      "properties": {
+        "sla_profile": {
+          "type": "string"
+        },
+        "steps": {
+          "title": "Steps",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "transaction": {
+                "$ref": "#/$defs/user_paths/actions/transaction"
+              },
+              "request": {
+                "$ref": "#/$defs/user_paths/actions/request"
+              },
+              "delay": {
+                "$ref": "#/$defs/user_paths/actions/delay"
+              },
+              "think_time": {
+                "$ref": "#/$defs/user_paths/actions/think_time"
+              },
+              "javascript": {
+                "$ref": "#/$defs/user_paths/actions/javascript"
+              },
+              "if": {
+                "$ref": "#/$defs/user_paths/actions/if"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "title": "Containers",
+      "type": "object",
+      "required": [
+        "steps"
+      ]
+    },
+    "actions": {
+      "transaction": {
+        "$id": "#/definitions/user_paths/actions/transaction",
+        "name": "transaction",
+        "title": "Action: Transaction",
         "type": "object",
         "required": [
           "name",
-          "actions"
-        ]
-      },
-      "container": {
+          "steps"
+        ],
         "properties": {
-          "sla_profile": {
-            "type": "string"
+          "name": {
+            "$ref": "#/definitions/common/text"
+          },
+          "description": {
+            "$ref": "#/definitions/common/text"
           },
           "steps": {
             "title": "Steps",
@@ -753,268 +799,218 @@
               "type": "object",
               "properties": {
                 "transaction": {
-                  "$ref": "#/$defs/user_paths/actions/transaction"
+                  "$ref": "#/definitions/user_paths/actions/transaction"
                 },
                 "request": {
-                  "$ref": "#/$defs/user_paths/actions/request"
+                  "$ref": "#/definitions/user_paths/actions/request"
                 },
                 "delay": {
-                  "$ref": "#/$defs/user_paths/actions/delay"
+                  "$ref": "#/definitions/user_paths/actions/delay"
                 },
                 "think_time": {
-                  "$ref": "#/$defs/user_paths/actions/think_time"
+                  "$ref": "#/definitions/user_paths/actions/think_time"
                 },
                 "javascript": {
-                  "$ref": "#/$defs/user_paths/actions/javascript"
+                  "$ref": "#/definitions/user_paths/actions/javascript"
                 },
                 "if": {
-                  "$ref": "#/$defs/user_paths/actions/if"
+                  "$ref": "#/definitions/user_paths/actions/if"
                 }
               },
               "additionalProperties": false
             }
           }
         },
-        "title": "Containers",
+        "additionalProperties": false
+      },
+      "request": {
+        "$id": "#/definitions/user_paths/actions/request",
+        "title": "Action: HTTP/s Request",
         "type": "object",
         "required": [
-          "steps"
-        ]
-      },
-      "actions": {
-        "transaction": {
-          "additionalProperties": false,
-          "name": "transaction",
-          "title": "Action: Transaction",
-          "type": "object",
-          "required": [
-            "name",
-            "steps"
-          ],
-          "properties": {
-            "name": {
-              "$ref": "#/$defs/common/text"
-            },
-            "description": {
-              "$ref": "#/$defs/common/text"
-            },
-            "steps": {
-              "title": "Steps",
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "object",
-                "properties": {
-                  "transaction": {
-                    "$ref": "#/$defs/user_paths/actions/transaction"
-                  },
-                  "request": {
-                    "$ref": "#/$defs/user_paths/actions/request"
-                  },
-                  "delay": {
-                    "$ref": "#/$defs/user_paths/actions/delay"
-                  },
-                  "think_time": {
-                    "$ref": "#/$defs/user_paths/actions/think_time"
-                  },
-                  "javascript": {
-                    "$ref": "#/$defs/user_paths/actions/javascript"
-                  },
-                  "if": {
-                    "$ref": "#/$defs/user_paths/actions/if"
-                  }
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "$ref": "#/definitions/common/text"
+          },
+          "server": {
+            "$ref": "#/definitions/common/text"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "GET",
+              "POST",
+              "HEAD",
+              "PUT",
+              "DELETE",
+              "OPTIONS",
+              "TRACE"
+            ]
+          },
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
                 },
-                "additionalProperties": false
-              }
-            }
-          }
-        },
-        "request": {
-          "properties": {
-            "url": {
-              "$ref": "#/$defs/common/text"
-            },
-            "server": {
-              "$ref": "#/$defs/common/text"
-            },
-            "method": {
-              "type": "string",
-              "enum": [
-                "GET",
-                "POST",
-                "HEAD",
-                "PUT",
-                "DELETE",
-                "OPTIONS",
-                "TRACE"
-              ]
-            },
-            "headers": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "value": {
-                    "type": "string"
-                  }
+                "value": {
+                  "type": "string"
                 }
               }
-            },
-            "sla_profile": {
-              "$ref": "#/$defs/common/text"
-            },
-            "body": {
-              "$ref": "#/$defs/common/text"
-            },
-            "extractors": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/user_paths/extractor"
-              }
             }
           },
-          "title": "Action: HTTP/s Request",
-          "type": "object",
-          "required": [
-            "url"
-          ]
-        },
-        "delay": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/common/text"
-            }
-          ],
-          "title": "Action: Delay",
-          "type": "string"
-        },
-        "think_time": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/common/text"
-            }
-          ],
-          "title": "Action: Think Time",
-          "type": "string"
-        },
-        "javascript": {
-          "properties": {
-            "name": {
-              "$ref": "#/$defs/common/text"
-            },
-            "description": {
-              "$ref": "#/$defs/common/text"
-            },
-            "script": {
-              "$ref": "#/$defs/common/text"
-            }
+          "sla_profile": {
+            "$ref": "#/definitions/common/text"
           },
-          "title": "Action: Javascript",
-          "type": "object",
-          "xrequired": [
-            "name",
-            "script"
-          ]
-        },
-        "if": {
-          "properties": {
-            "name": {
-              "$ref": "#/$defs/common/text"
-            },
-            "description": {
-              "$ref": "#/$defs/common/text"
-            },
-            "conditions": {
-              "type": "array",
-              "xcomments": "like GWBSR said: 'aint gonna do it', at least not this commit",
-              "items": {
-                "$ref": "#/$defs/common/text"
-              }
-            },
-            "match": {
-              "type": "string",
-              "enum": [
-                "any",
-                "all"
-              ],
-              "default": "any"
-            },
-            "then": {
-              "$ref": "#/$defs/user_paths/container"
-            },
-            "else": {
-              "$ref": "#/$defs/user_paths/container"
-            }
+          "body": {
+            "$ref": "#/definitions/common/text"
           },
-          "title": "Action: If",
-          "type": "object",
-          "xrequired": [
-            "conditions",
-            "then"
-          ]
+          "extractors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/user_paths/extractor"
+            }
+          }
         }
       },
-      "extractor": {
+      "delay": {
+        "$id": "#/definitions/user_paths/actions/delay",
+        "title": "Action: Delay",
+        "type": "string",
+        "allOf": [
+          {
+            "$ref": "#/definitions/common/text"
+          }
+        ]
+      },
+      "think_time": {
+        "$id": "#/definitions/user_paths/actions/think_time",
+        "title": "Action: Think Time",
+        "type": "string",
+        "allOf": [
+          {
+            "$ref": "#/definitions/common/text"
+          }
+        ]
+      },
+      "javascript": {
+        "$id": "#/definitions/user_paths/actions/javascript",
+        "title": "Action: Javascript",
         "type": "object",
         "xrequired": [
-          "name"
+          "name",
+          "script"
         ],
+        "properties": {
+          "name": {
+            "$ref": "#/definitions/common/text"
+          },
+          "description": {
+            "$ref": "#/definitions/common/text"
+          },
+          "script": {
+            "$ref": "#/definitions/common/text"
+          }
+        }
+      },
+      "if": {
         "properties": {
           "name": {
             "$ref": "#/$defs/common/text"
           },
-          "from": {
-            "type": "string",
-            "default": "body",
-            "enum": [
-              "header",
-              "body",
-              "both"
-            ]
-          },
-          "xpath": {
+          "description": {
             "$ref": "#/$defs/common/text"
           },
-          "jsonpath": {
-            "$ref": "#/$defs/common/text"
+          "conditions": {
+            "type": "array",
+            "xcomments": "like GWBSR said: 'aint gonna do it', at least not this commit",
+            "items": {
+              "$ref": "#/$defs/common/text"
+            }
           },
-          "regexp": {
-            "$ref": "#/$defs/common/text"
-          },
-          "match_number": {
-            "type": "integer",
-            "default": 1
-          },
-          "template": {
-            "$ref": "#/$defs/common/text"
-          },
-          "decode": {
+          "match": {
             "type": "string",
             "enum": [
-              "html",
-              "url"
-            ]
+              "any",
+              "all"
+            ],
+            "default": "any"
           },
-          "extract_once": {
-            "type": "boolean",
-            "default": false
+          "then": {
+            "$ref": "#/$defs/user_paths/container"
           },
-          "default": {
-            "type": "string",
-            "default": ""
-          },
-          "throw_assertion_error": {
-            "type": "boolean",
-            "default": true
+          "else": {
+            "$ref": "#/$defs/user_paths/container"
           }
+        },
+        "title": "Action: If",
+        "type": "object",
+        "xrequired": [
+          "conditions",
+          "then"
+        ]
+      }
+    },
+    "extractor": {
+      "type": "object",
+      "xrequired": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/common/text"
+        },
+        "from": {
+          "type": "string",
+          "default": "body",
+          "enum": [
+            "header",
+            "body",
+            "both"
+          ]
+        },
+        "xpath": {
+          "$ref": "#/$defs/common/text"
+        },
+        "jsonpath": {
+          "$ref": "#/$defs/common/text"
+        },
+        "regexp": {
+          "$ref": "#/$defs/common/text"
+        },
+        "match_number": {
+          "type": "integer",
+          "default": 1
+        },
+        "template": {
+          "$ref": "#/$defs/common/text"
+        },
+        "decode": {
+          "type": "string",
+          "enum": [
+            "html",
+            "url"
+          ]
+        },
+        "extract_once": {
+          "type": "boolean",
+          "default": false
+        },
+        "default": {
+          "type": "string",
+          "default": ""
+        },
+        "throw_assertion_error": {
+          "type": "boolean",
+          "default": true
         }
       }
     }
   },
-  "additionalProperties": false,
   "fileMatch": [
     "*.nl.yaml",
     "*.neoload.yaml",

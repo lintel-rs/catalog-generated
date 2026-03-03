@@ -5,7 +5,6 @@
   "x-lintel": {
     "source": "https://www.schemastore.org/bxci.schema-1.0.1.json",
     "sourceSha256": "fd0c9c2e514d0a7b9a322c74e2d0464c458fccc6663b4e36a107ac7c10620e3c",
-    "invalid": true,
     "fileMatch": [
       "**/bxci.yaml",
       "**/bxci.yml"
@@ -72,10 +71,10 @@
               "additionalProperties": false
             }
           },
-          "additionalProperties": false,
           "required": [
             "docker"
-          ]
+          ],
+          "additionalProperties": false
         },
         "branch": {
           "type": "object",
@@ -375,7 +374,10 @@
     },
     "outputHelmUpdates": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "file",
+        "properties"
+      ],
       "properties": {
         "file": {
           "type": "string",
@@ -387,35 +389,12 @@
           "items": {
             "$ref": "#/$defs/outputHelmUpdatesProperties"
           }
-        },
-        "type": "object"
+        }
       },
-      "required": [
-        "file",
-        "properties"
-      ]
+      "additionalProperties": false
     },
     "outputHelmUpdatesProperties": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "key": {
-          "type": "string",
-          "description": "Yaml property (full path) to be updated"
-        },
-        "env": {
-          "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
-          "description": "Environment variable whose value will be used to update the property"
-        },
-        "value": {
-          "type": "string",
-          "description": "Value to update the given property"
-        }
-      },
-      "required": [
-        "key"
-      ],
       "oneOf": [
         {
           "required": [
@@ -437,12 +416,35 @@
             ]
           }
         }
-      ]
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Yaml property (full path) to be updated"
+        },
+        "env": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+          "description": "Environment variable whose value will be used to update the property"
+        },
+        "value": {
+          "type": "string",
+          "description": "Value to update the given property"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "additionalProperties": false
     },
     "outputHelmPublish": {
       "type": "object",
       "description": "Allows to publish the Helm chart",
-      "additionalProperties": false,
+      "required": [
+        "branch",
+        "credentials",
+        "repository"
+      ],
       "properties": {
         "branch": {
           "$ref": "#/$defs/branchPattern",
@@ -458,11 +460,7 @@
           "description": "Jenkins credentials Id for this repository for uploading the chart"
         }
       },
-      "required": [
-        "branch",
-        "credentials",
-        "repository"
-      ]
+      "additionalProperties": false
     }
   }
 }

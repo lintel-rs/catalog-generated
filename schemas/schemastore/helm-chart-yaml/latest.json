@@ -66,12 +66,133 @@
         "format": "uri"
       }
     },
+    "dependencies": {
+      "type": "array",
+      "description": "In Helm, one chart may depend on any number of other charts. These dependencies can be dynamically linked using the dependencies field in Chart.yaml or brought in to the charts/ directory and managed manually.\nThe charts required by the current chart are defined as a list in the dependencies field.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the chart",
+            "type": "string"
+          },
+          "version": {
+            "description": "The version of the chart",
+            "type": "string"
+          },
+          "repository": {
+            "description": "The repository URL or alias",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "string",
+                "pattern": "^@"
+              }
+            ]
+          },
+          "condition": {
+            "description": "A yaml path that resolves to a boolean, used for enabling/disabling charts",
+            "type": "string"
+          },
+          "tags": {
+            "description": "Tags can be used to group charts for enabling/disabling together",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "import-values": {
+            "description": "ImportValues holds the mapping of source values to parent key to be imported. Each item can be a string or pair of child/parent sublist items.",
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "parent": {
+                      "description": "The destination path in the parent chart's values",
+                      "type": "string"
+                    },
+                    "child": {
+                      "description": "The source key of the values to be imported",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "parent",
+                    "child"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "alias": {
+            "description": "Alias to be used for the chart. Useful when you have to add the same chart multiple times",
+            "type": "string"
+          },
+          "depends-on": {
+            "description": "A list of subcharts (by name or alias) that need to be ready before this subchart can be installed. Only available when apiVersion is v3.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "maintainers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The maintainers name",
+            "type": "string"
+          },
+          "email": {
+            "description": "The maintainers email",
+            "type": "string",
+            "format": "email"
+          },
+          "url": {
+            "description": "A URL for the maintainer",
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "icon": {
+      "description": "A URL to an SVG or PNG image to be used as an icon",
+      "type": "string",
+      "format": "uri"
+    },
+    "appVersion": {
+      "description": "Note that the appVersion field is not related to the version field. It is a way of specifying the version of the application. For example, the drupal chart may have an appVersion: \"8.2.1\", indicating that the version of Drupal included in the chart (by default) is 8.2.1. This field is informational, and has no impact on chart version calculations. Wrapping the version in quotes is highly recommended. It forces the YAML parser to treat the version number as a string. Leaving it unquoted can lead to parsing issues in some cases. For example, YAML interprets 1.0 as a floating point value, and a git commit SHA like 1234e10 as scientific notation.",
+      "type": "string"
+    },
+    "deprecated": {
+      "description": "When managing charts in a Chart Repository, it is sometimes necessary to deprecate a chart. The optional deprecated field in Chart.yaml can be used to mark a chart as deprecated. If the latest version of a chart in the repository is marked as deprecated, then the chart as a whole is considered to be deprecated. The chart name can be later reused by publishing a newer version that is not marked as deprecated.",
+      "type": "boolean"
+    },
     "annotations": {
       "description": "A list of annotations keyed by name",
       "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      },
       "properties": {
         "helm.sh/depends-on/subcharts": {
           "description": "A JSON array of subchart names (by name or alias) that must be fully deployed and in a ready state before the current chart resources can be installed.",
@@ -144,130 +265,9 @@
           "description": "This annotation can be used to provide some information about the key used to sign a given chart version. This information will be displayed on the Artifact Hub UI, making it easier for users to get the information they need to verify the integrity and origin of your chart. The url field indicates where users can find the public key and it is mandatory when a sign key entry is provided.",
           "type": "string"
         }
-      }
-    },
-    "maintainers": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "description": "The maintainers name",
-            "type": "string"
-          },
-          "email": {
-            "description": "The maintainers email",
-            "type": "string",
-            "format": "email"
-          },
-          "url": {
-            "description": "A URL for the maintainer",
-            "type": "string",
-            "format": "uri"
-          }
-        }
-      }
-    },
-    "icon": {
-      "description": "A URL to an SVG or PNG image to be used as an icon",
-      "type": "string",
-      "format": "uri"
-    },
-    "appVersion": {
-      "description": "Note that the appVersion field is not related to the version field. It is a way of specifying the version of the application. For example, the drupal chart may have an appVersion: \"8.2.1\", indicating that the version of Drupal included in the chart (by default) is 8.2.1. This field is informational, and has no impact on chart version calculations. Wrapping the version in quotes is highly recommended. It forces the YAML parser to treat the version number as a string. Leaving it unquoted can lead to parsing issues in some cases. For example, YAML interprets 1.0 as a floating point value, and a git commit SHA like 1234e10 as scientific notation.",
-      "type": "string"
-    },
-    "deprecated": {
-      "description": "When managing charts in a Chart Repository, it is sometimes necessary to deprecate a chart. The optional deprecated field in Chart.yaml can be used to mark a chart as deprecated. If the latest version of a chart in the repository is marked as deprecated, then the chart as a whole is considered to be deprecated. The chart name can be later reused by publishing a newer version that is not marked as deprecated.",
-      "type": "boolean"
-    },
-    "dependentSchemas": {
-      "type": "array",
-      "description": "In Helm, one chart may depend on any number of other charts. These dependencies can be dynamically linked using the dependencies field in Chart.yaml or brought in to the charts/ directory and managed manually.\nThe charts required by the current chart are defined as a list in the dependencies field.",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "description": "The name of the chart",
-            "type": "string"
-          },
-          "version": {
-            "description": "The version of the chart",
-            "type": "string"
-          },
-          "repository": {
-            "description": "The repository URL or alias",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uri"
-              },
-              {
-                "type": "string",
-                "pattern": "^@"
-              }
-            ]
-          },
-          "condition": {
-            "description": "A yaml path that resolves to a boolean, used for enabling/disabling charts",
-            "type": "string"
-          },
-          "tags": {
-            "description": "Tags can be used to group charts for enabling/disabling together",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "import-values": {
-            "description": "ImportValues holds the mapping of source values to parent key to be imported. Each item can be a string or pair of child/parent sublist items.",
-            "type": "array",
-            "items": {
-              "oneOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "parent",
-                    "child"
-                  ],
-                  "properties": {
-                    "parent": {
-                      "description": "The destination path in the parent chart's values",
-                      "type": "string"
-                    },
-                    "child": {
-                      "description": "The source key of the values to be imported",
-                      "type": "string"
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "alias": {
-            "description": "Alias to be used for the chart. Useful when you have to add the same chart multiple times",
-            "type": "string"
-          },
-          "depends-on": {
-            "description": "A list of subcharts (by name or alias) that need to be ready before this subchart can be installed. Only available when apiVersion is v3.",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
+      },
+      "additionalProperties": {
+        "type": "string"
       }
     }
   },
@@ -279,6 +279,7 @@
     },
     "type": "object"
   },
+  "additionalProperties": false,
   "else": {
     "properties": {
       "dependencies": {
@@ -293,7 +294,6 @@
     },
     "type": "object"
   },
-  "additionalProperties": false,
   "then": {},
   "required": [
     "apiVersion",

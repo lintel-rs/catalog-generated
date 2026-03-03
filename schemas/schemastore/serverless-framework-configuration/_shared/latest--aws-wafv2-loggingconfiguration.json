@@ -5,8 +5,7 @@
   "description": "A WAFv2 Logging Configuration Resource Provider. Source:- <https://github.com/advaj/aws-cloudformation-resource-providers-wafv2.git>",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-wafv2-loggingconfiguration.json",
-    "sourceSha256": "900079bae79e69049e72afe465a4f9985b36d506bc6eaa57f50bb3256c3d2505",
-    "invalid": true
+    "sourceSha256": "900079bae79e69049e72afe465a4f9985b36d506bc6eaa57f50bb3256c3d2505"
   },
   "type": "object",
   "properties": {
@@ -39,7 +38,10 @@
     "LoggingFilter": {
       "description": "Filtering that specifies which web requests are kept in the logs and which are dropped. You can filter on the rule action and on the web request labels that were applied by matching rules during web ACL evaluation.",
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "DefaultBehavior",
+        "Filters"
+      ],
       "properties": {
         "DefaultBehavior": {
           "oneOf": [
@@ -65,10 +67,7 @@
           }
         }
       },
-      "required": [
-        "DefaultBehavior",
-        "Filters"
-      ]
+      "additionalProperties": false
     }
   },
   "typeName": "AWS::WAFv2::LoggingConfiguration",
@@ -76,6 +75,10 @@
     "/properties/ResourceArn"
   ],
   "sourceUrl": "https://github.com/advaj/aws-cloudformation-resource-providers-wafv2.git",
+  "additionalProperties": false,
+  "readOnlyProperties": [
+    "/properties/ManagedByFirewallManager"
+  ],
   "$defs": {
     "Filter": {
       "type": "object",
@@ -119,22 +122,24 @@
           "description": "Logic to apply to the filtering conditions. You can specify that, in order to satisfy the filter, a log must match all conditions or must match at least one condition."
         }
       },
-      "additionalProperties": false,
+      "title": "AWSWAFv2LoggingConfigurationFilterDefinition",
       "required": [
         "Behavior",
         "Conditions",
         "Requirement"
       ],
-      "title": "AWSWAFv2LoggingConfigurationFilterDefinition"
+      "additionalProperties": false
     },
     "Condition": {
       "type": "object",
-      "additionalProperties": false,
+      "title": "AWSWAFv2LoggingConfigurationConditionDefinition",
       "properties": {
         "ActionCondition": {
           "description": "A single action condition.",
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "Action"
+          ],
           "properties": {
             "Action": {
               "oneOf": [
@@ -156,14 +161,14 @@
               "description": "Logic to apply to the filtering conditions. You can specify that, in order to satisfy the filter, a log must match all conditions or must match at least one condition."
             }
           },
-          "required": [
-            "Action"
-          ]
+          "additionalProperties": false
         },
         "LabelNameCondition": {
           "description": "A single label name condition.",
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "LabelName"
+          ],
           "properties": {
             "LabelName": {
               "oneOf": [
@@ -177,22 +182,23 @@
               "description": "The label name that a log record must contain in order to meet the condition. This must be a fully qualified label name. Fully qualified labels have a prefix, optional namespaces, and label name. The prefix identifies the rule group or web ACL context of the rule that added the label. "
             }
           },
-          "required": [
-            "LabelName"
-          ]
+          "additionalProperties": false
         }
       },
-      "title": "AWSWAFv2LoggingConfigurationConditionDefinition"
+      "additionalProperties": false
     },
     "FieldToMatch": {
       "description": "A key-value pair to associate with a resource.",
       "type": "object",
-      "additionalProperties": false,
+      "title": "AWSWAFv2LoggingConfigurationFieldToMatchDefinition",
       "properties": {
         "JsonBody": {
           "type": "object",
           "description": "Inspect the request body as JSON. The request body immediately follows the request headers. This is the part of a request that contains any additional data that you want to send to your web server as the HTTP request body, such as data from a form. ",
-          "additionalProperties": false,
+          "required": [
+            "MatchPattern",
+            "MatchScope"
+          ],
           "properties": {
             "InvalidFallbackBehavior": {
               "oneOf": [
@@ -213,7 +219,6 @@
             "MatchPattern": {
               "description": "The patterns to look for in the JSON body. AWS WAF inspects the results of these pattern matches against the rule inspection criteria. ",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "All": {
                   "description": "Match all of the elements. See also MatchScope in JsonBody. You must specify either this setting or the IncludedPaths setting, but not both.",
@@ -228,7 +233,8 @@
                     "pattern": "^[\\/]+([^~]*(~[01])*)*{1,512}$"
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "MatchScope": {
               "oneOf": [
@@ -247,10 +253,7 @@
               "description": "The parts of the JSON to match against using the MatchPattern. If you specify All, AWS WAF matches against keys and values. "
             }
           },
-          "required": [
-            "MatchPattern",
-            "MatchScope"
-          ]
+          "additionalProperties": false
         },
         "Method": {
           "description": "Inspect the HTTP method. The method indicates the type of operation that the request is asking the origin to perform. ",
@@ -263,7 +266,9 @@
         "SingleHeader": {
           "description": "Inspect a single header. Provide the name of the header to inspect, for example, User-Agent or Referer. This setting isn't case sensitive.",
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "Name"
+          ],
           "properties": {
             "Name": {
               "oneOf": [
@@ -277,22 +282,16 @@
               "description": "The name of the query header to inspect."
             }
           },
-          "required": [
-            "Name"
-          ]
+          "additionalProperties": false
         },
         "UriPath": {
           "type": "object",
           "description": "Inspect the request URI path. This is the part of a web request that identifies a resource, for example, /images/daily-ad.jpg. "
         }
       },
-      "title": "AWSWAFv2LoggingConfigurationFieldToMatchDefinition"
+      "additionalProperties": false
     }
   },
-  "readOnlyProperties": [
-    "/properties/ManagedByFirewallManager"
-  ],
-  "additionalProperties": false,
   "required": [
     "ResourceArn",
     "LogDestinationConfigs"

@@ -53,7 +53,7 @@
   },
   "$defs": {
     "argClause": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "A command-line argument definition for the task.",
       "properties": {
         "type": {
@@ -74,14 +74,14 @@
           "type": "array"
         }
       },
-      "type": "object"
+      "additionalProperties": false
     },
     "argsClause": {
+      "type": "object",
+      "description": "The set of command-line arguments that must be provided to the task.",
       "additionalProperties": {
         "$ref": "#/$defs/argClause"
-      },
-      "description": "The set of command-line arguments that must be provided to the task.",
-      "type": "object"
+      }
     },
     "commandClause": {
       "description": "The command or commands to execute using the global interpreter.",
@@ -104,7 +104,7 @@
           "type": "string"
         },
         {
-          "additionalProperties": false,
+          "type": "object",
           "properties": {
             "dir": {
               "title": "dir",
@@ -130,7 +130,7 @@
           "required": [
             "exec"
           ],
-          "type": "object"
+          "additionalProperties": false
         }
       ]
     },
@@ -156,7 +156,7 @@
           "$ref": "#/$defs/value"
         },
         {
-          "additionalProperties": false,
+          "type": "object",
           "oneOf": [
             {
               "required": [
@@ -184,7 +184,7 @@
               "title": "when"
             }
           },
-          "type": "object"
+          "additionalProperties": false
         }
       ]
     },
@@ -195,7 +195,7 @@
           "type": "string"
         },
         {
-          "additionalProperties": false,
+          "type": "object",
           "properties": {
             "path": {
               "description": "The path to an environment file relative to the configuration file.\n",
@@ -210,7 +210,7 @@
           "required": [
             "path"
           ],
-          "type": "object"
+          "additionalProperties": false
         }
       ]
     },
@@ -229,7 +229,7 @@
       ]
     },
     "option": {
-      "additionalProperties": false,
+      "type": "object",
       "allOf": [
         {
           "not": {
@@ -324,14 +324,14 @@
           "type": "array"
         }
       },
-      "type": "object"
+      "additionalProperties": false
     },
     "optionsClause": {
+      "type": "object",
+      "description": "The set of command-line options that may be provided to the task.",
       "additionalProperties": {
         "$ref": "#/$defs/option"
-      },
-      "description": "The set of command-line options that may be provided to the task.",
-      "type": "object"
+      }
     },
     "runClause": {
       "anyOf": [
@@ -353,7 +353,7 @@
           "$ref": "#/$defs/commandClause"
         },
         {
-          "additionalProperties": false,
+          "type": "object",
           "oneOf": [
             {
               "required": [
@@ -389,19 +389,19 @@
               "title": "run when"
             }
           },
-          "type": "object"
+          "additionalProperties": false
         }
       ]
     },
     "setEnvironmentClause": {
+      "type": "object",
+      "description": "The environment variables to either set or unset.",
       "additionalProperties": {
         "type": [
           "string",
           "null"
         ]
-      },
-      "description": "The environment variables to either set or unset.",
-      "type": "object"
+      }
     },
     "stringOrArray": {
       "oneOf": [
@@ -423,7 +423,7 @@
           "type": "string"
         },
         {
-          "additionalProperties": false,
+          "type": "object",
           "properties": {
             "args": {
               "description": "The argument values to pass to the sub-task.",
@@ -439,18 +439,18 @@
               "type": "string"
             },
             "options": {
-              "additionalProperties": {
-                "$ref": "#/$defs/value"
-              },
+              "type": "object",
               "description": "The option values to pass to the sub-task.",
               "title": "sub-task options",
-              "type": "object"
+              "additionalProperties": {
+                "$ref": "#/$defs/value"
+              }
             }
           },
           "required": [
             "name"
           ],
-          "type": "object"
+          "additionalProperties": false
         }
       ]
     },
@@ -466,7 +466,7 @@
       ]
     },
     "taskInclude": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "include": {
           "description": "The relative file path to the yaml task definition.\n",
@@ -477,10 +477,10 @@
       "required": [
         "include"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "taskItem": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "args": {
           "$ref": "#/$defs/argsClause",
@@ -535,14 +535,14 @@
       "required": [
         "run"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "tasksClause": {
+      "type": "object",
+      "description": "The list of defined tasks available.",
       "additionalProperties": {
         "$ref": "#/$defs/taskClause"
-      },
-      "description": "The list of defined tasks available.",
-      "type": "object"
+      }
     },
     "type": {
       "description": "The type of the value.\n",
@@ -605,7 +605,7 @@
           "$ref": "#/$defs/value"
         },
         {
-          "additionalProperties": false,
+          "type": "object",
           "minProperties": 1,
           "properties": {
             "command": {
@@ -614,20 +614,20 @@
               "title": "when command"
             },
             "environment": {
-              "additionalProperties": {
-                "$ref": "#/$defs/stringOrArray"
-              },
+              "type": "object",
               "description": "A set of environment variable values to check.\nThe when clause will be considered a success if any environment variable matches any of the provided values.\n",
               "title": "when environment",
-              "type": "object"
+              "additionalProperties": {
+                "$ref": "#/$defs/stringOrArray"
+              }
             },
             "equal": {
-              "additionalProperties": {
-                "$ref": "#/$defs/valueList"
-              },
+              "type": "object",
               "description": "A set of arg or option values to check.\nThe when clause will be considered a success if any arg or option matches any of the provided values.\n",
               "title": "when equal",
-              "type": "object"
+              "additionalProperties": {
+                "$ref": "#/$defs/valueList"
+              }
             },
             "exists": {
               "$ref": "#/$defs/stringOrArray",
@@ -635,12 +635,12 @@
               "title": "when exists"
             },
             "not-equal": {
-              "additionalProperties": {
-                "$ref": "#/$defs/valueList"
-              },
+              "type": "object",
               "description": "A set of arg or option values to check negatively.\nThe when clause will be considered a success if any of the arg or option values do not match any of the provided values.\n",
               "title": "when not equal",
-              "type": "object"
+              "additionalProperties": {
+                "$ref": "#/$defs/valueList"
+              }
             },
             "not-exists": {
               "$ref": "#/$defs/stringOrArray",
@@ -653,7 +653,7 @@
               "title": "when os"
             }
           },
-          "type": "object"
+          "additionalProperties": false
         }
       ]
     }

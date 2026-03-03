@@ -44,9 +44,6 @@
       "additionalProperties": false
     }
   ],
-  "unevaluatedProperties": false,
-  "allowComments": true,
-  "allowTrailingCommas": false,
   "$defs": {
     "devContainerCommon": {
       "type": "object",
@@ -97,6 +94,7 @@
         "secrets": {
           "type": "object",
           "description": "Recommended secrets for this dev container. Recommendations are provided as environment variable keys with optional metadata.",
+          "additionalProperties": false,
           "patternProperties": {
             "^[a-zA-Z_][a-zA-Z0-9_]*$": {
               "type": "object",
@@ -115,8 +113,7 @@
               "additionalProperties": false
             },
             "additionalProperties": false
-          },
-          "additionalProperties": false
+          }
         },
         "forwardPorts": {
           "type": "array",
@@ -137,6 +134,18 @@
         },
         "portsAttributes": {
           "type": "object",
+          "additionalProperties": false,
+          "markdownDescription": "Set default properties that are applied when a specific port number is forwarded. For example:\n\n```\n\"3000\": {\n  \"label\": \"Application\"\n},\n\"40000-55000\": {\n  \"onAutoForward\": \"ignore\"\n},\n\".+\\\\/server.js\": {\n \"onAutoForward\": \"openPreview\"\n}\n```",
+          "defaultSnippets": [
+            {
+              "body": {
+                "${1:3000}": {
+                  "label": "${2:Application}",
+                  "onAutoForward": "notify"
+                }
+              }
+            }
+          ],
           "patternProperties": {
             "(^\\d+(-\\d+)?$)|(.+)": {
               "type": "object",
@@ -192,19 +201,7 @@
                 "onAutoForward": "notify"
               }
             }
-          },
-          "markdownDescription": "Set default properties that are applied when a specific port number is forwarded. For example:\n\n```\n\"3000\": {\n  \"label\": \"Application\"\n},\n\"40000-55000\": {\n  \"onAutoForward\": \"ignore\"\n},\n\".+\\\\/server.js\": {\n \"onAutoForward\": \"openPreview\"\n}\n```",
-          "defaultSnippets": [
-            {
-              "body": {
-                "${1:3000}": {
-                  "label": "${2:Application}",
-                  "onAutoForward": "notify"
-                }
-              }
-            }
-          ],
-          "additionalProperties": false
+          }
         },
         "otherPortsAttributes": {
           "type": "object",
@@ -268,10 +265,10 @@
         },
         "containerEnv": {
           "type": "object",
+          "description": "Container environment variables.",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "Container environment variables."
+          }
         },
         "containerUser": {
           "type": "string",
@@ -321,13 +318,13 @@
         },
         "remoteEnv": {
           "type": "object",
+          "description": "Remote environment variables to set for processes spawned in the container including lifecycle scripts and any remote editor/IDE server process.",
           "additionalProperties": {
             "type": [
               "string",
               "null"
             ]
-          },
-          "description": "Remote environment variables to set for processes spawned in the container including lifecycle scripts and any remote editor/IDE server process."
+          }
         },
         "remoteUser": {
           "type": "string",
@@ -661,12 +658,12 @@
         },
         "args": {
           "type": "object",
+          "description": "Build arguments.",
           "additionalProperties": {
             "type": [
               "string"
             ]
-          },
-          "description": "Build arguments."
+          }
         },
         "cacheFrom": {
           "type": [
@@ -772,5 +769,8 @@
       ],
       "additionalProperties": false
     }
-  }
+  },
+  "allowComments": true,
+  "allowTrailingCommas": false,
+  "unevaluatedProperties": false
 }

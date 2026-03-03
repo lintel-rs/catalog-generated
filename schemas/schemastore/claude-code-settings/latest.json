@@ -89,7 +89,6 @@
     "attribution": {
       "type": "object",
       "description": "Customize attribution for git commits and pull requests. See <https://code.claude.com/docs/en/settings#attribution-settings>",
-      "additionalProperties": false,
       "properties": {
         "commit": {
           "type": "string",
@@ -99,7 +98,8 @@
           "type": "string",
           "description": "Attribution for pull request descriptions. Empty string hides pull request attribution"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "includeCoAuthoredBy": {
       "type": "boolean",
@@ -181,8 +181,6 @@
           "uniqueItems": true
         }
       },
-      "additionalProperties": false,
-      "description": "Tool usage permissions configuration.\nSee <https://code.claude.com/docs/en/permissions> and <https://code.claude.com/docs/en/settings#permission-settings>\nSee <https://code.claude.com/docs/en/settings#tools-available-to-claude> for full list of tools available to Claude.",
       "examples": [
         {
           "allow": [
@@ -199,7 +197,9 @@
           ],
           "defaultMode": "default"
         }
-      ]
+      ],
+      "description": "Tool usage permissions configuration.\nSee <https://code.claude.com/docs/en/permissions> and <https://code.claude.com/docs/en/settings#permission-settings>\nSee <https://code.claude.com/docs/en/settings#tools-available-to-claude> for full list of tools available to Claude.",
+      "additionalProperties": false
     },
     "language": {
       "type": "string",
@@ -380,24 +380,6 @@
     },
     "hooks": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Custom commands to run before/after tool executions. See <https://code.claude.com/docs/en/hooks>",
-      "examples": [
-        {
-          "PostToolUse": [
-            {
-              "matcher": "Edit|Write",
-              "hooks": [
-                {
-                  "type": "command",
-                  "command": "prettier --write",
-                  "timeout": 5
-                }
-              ]
-            }
-          ]
-        }
-      ],
       "properties": {
         "PreToolUse": {
           "type": "array",
@@ -525,7 +507,25 @@
             "$ref": "#/$defs/hookMatcher"
           }
         }
-      }
+      },
+      "description": "Custom commands to run before/after tool executions. See <https://code.claude.com/docs/en/hooks>",
+      "examples": [
+        {
+          "PostToolUse": [
+            {
+              "matcher": "Edit|Write",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "prettier --write",
+                  "timeout": 5
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "additionalProperties": false
     },
     "disableAllHooks": {
       "type": "boolean",
@@ -560,14 +560,14 @@
         "type",
         "command"
       ],
-      "additionalProperties": false,
-      "description": "Custom status line display configuration. See <https://code.claude.com/docs/en/statusline>",
       "examples": [
         {
           "type": "command",
           "command": "~/.claude/statusline.sh"
         }
-      ]
+      ],
+      "description": "Custom status line display configuration. See <https://code.claude.com/docs/en/statusline>",
+      "additionalProperties": false
     },
     "fileSuggestion": {
       "type": "object",
@@ -586,17 +586,18 @@
         "type",
         "command"
       ],
-      "additionalProperties": false,
-      "description": "Configure a custom script for @ file autocomplete. See <https://code.claude.com/docs/en/settings#file-suggestion-settings>",
       "examples": [
         {
           "type": "command",
           "command": "~/.claude/file-suggestion.sh"
         }
-      ]
+      ],
+      "description": "Configure a custom script for @ file autocomplete. See <https://code.claude.com/docs/en/settings#file-suggestion-settings>",
+      "additionalProperties": false
     },
     "enabledPlugins": {
       "type": "object",
+      "description": "Enabled plugins using plugin-id@marketplace-id format. Example: { \"formatter@anthropic-tools\": true }. See <https://code.claude.com/docs/en/plugins>",
       "additionalProperties": {
         "anyOf": [
           {
@@ -612,11 +613,11 @@
             "not": {}
           }
         ]
-      },
-      "description": "Enabled plugins using plugin-id@marketplace-id format. Example: { \"formatter@anthropic-tools\": true }. See <https://code.claude.com/docs/en/plugins>"
+      }
     },
     "extraKnownMarketplaces": {
       "type": "object",
+      "description": "Additional marketplaces to make available for this repository. Typically used in repository .claude/settings.json to ensure team members have required plugin sources. See <https://code.claude.com/docs/en/plugin-marketplaces>",
       "additionalProperties": {
         "type": "object",
         "properties": {
@@ -785,8 +786,7 @@
           "source"
         ],
         "additionalProperties": false
-      },
-      "description": "Additional marketplaces to make available for this repository. Typically used in repository .claude/settings.json to ensure team members have required plugin sources. See <https://code.claude.com/docs/en/plugin-marketplaces>"
+      }
     },
     "strictKnownMarketplaces": {
       "type": "array",
@@ -881,10 +881,10 @@
               },
               "headers": {
                 "type": "object",
+                "description": "HTTP headers for authenticated access",
                 "additionalProperties": {
                   "type": "string"
-                },
-                "description": "HTTP headers for authenticated access"
+                }
               }
             },
             "required": [
@@ -1071,14 +1071,14 @@
         },
         "ignoreViolations": {
           "type": "object",
+          "description": "Map of command patterns to filesystem paths to ignore violations for. Use \"*\" to match all commands",
           "additionalProperties": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "description": "List of filesystem paths to ignore sandbox violations for when this command pattern matches"
-          },
-          "description": "Map of command patterns to filesystem paths to ignore violations for. Use \"*\" to match all commands"
+          }
         },
         "excludedCommands": {
           "type": "array",
@@ -1233,11 +1233,13 @@
     },
     "pluginConfigs": {
       "type": "object",
+      "description": "Per-plugin configuration including MCP server user configs, keyed by plugin ID (plugin@marketplace format). See <https://code.claude.com/docs/en/plugins>",
       "additionalProperties": {
         "type": "object",
         "properties": {
           "mcpServers": {
             "type": "object",
+            "description": "User configuration values for MCP servers keyed by server name",
             "additionalProperties": {
               "type": "object",
               "additionalProperties": {
@@ -1259,13 +1261,11 @@
                   }
                 ]
               }
-            },
-            "description": "User configuration values for MCP servers keyed by server name"
+            }
           }
         },
         "additionalProperties": false
-      },
-      "description": "Per-plugin configuration including MCP server user configs, keyed by plugin ID (plugin@marketplace format). See <https://code.claude.com/docs/en/plugins>"
+      }
     },
     "allowManagedMcpServersOnly": {
       "type": "boolean",
@@ -1278,7 +1278,10 @@
         "anyOf": [
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "source",
+              "url"
+            ],
             "properties": {
               "source": {
                 "type": "string",
@@ -1292,20 +1295,20 @@
               },
               "headers": {
                 "type": "object",
+                "description": "Custom HTTP headers (e.g., for authentication)",
                 "additionalProperties": {
                   "type": "string"
-                },
-                "description": "Custom HTTP headers (e.g., for authentication)"
+                }
               }
             },
-            "required": [
-              "source",
-              "url"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "source",
+              "repo"
+            ],
             "properties": {
               "source": {
                 "type": "string",
@@ -1325,14 +1328,14 @@
                 "description": "Path to marketplace.json within repo"
               }
             },
-            "required": [
-              "source",
-              "repo"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "source",
+              "url"
+            ],
             "properties": {
               "source": {
                 "type": "string",
@@ -1353,14 +1356,14 @@
                 "description": "Path to marketplace.json within repo"
               }
             },
-            "required": [
-              "source",
-              "url"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "source",
+              "package"
+            ],
             "properties": {
               "source": {
                 "type": "string",
@@ -1372,14 +1375,14 @@
                 "description": "NPM package containing marketplace.json"
               }
             },
-            "required": [
-              "source",
-              "package"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "source",
+              "path"
+            ],
             "properties": {
               "source": {
                 "type": "string",
@@ -1391,14 +1394,14 @@
                 "description": "Local file path to marketplace.json"
               }
             },
-            "required": [
-              "source",
-              "path"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "source",
+              "path"
+            ],
             "properties": {
               "source": {
                 "type": "string",
@@ -1410,14 +1413,14 @@
                 "description": "Local directory containing .claude-plugin/marketplace.json"
               }
             },
-            "required": [
-              "source",
-              "path"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "source",
+              "hostPattern"
+            ],
             "properties": {
               "source": {
                 "type": "string",
@@ -1429,17 +1432,14 @@
                 "description": "Regex pattern to match the host/domain extracted from any marketplace source type"
               }
             },
-            "required": [
-              "source",
-              "hostPattern"
-            ]
+            "additionalProperties": false
           }
         ]
       }
     }
   },
-  "additionalProperties": true,
   "allowTrailingCommas": true,
+  "additionalProperties": true,
   "$defs": {
     "permissionRule": {
       "type": "string",
@@ -1471,11 +1471,6 @@
         {
           "type": "object",
           "description": "Bash command hook",
-          "additionalProperties": false,
-          "required": [
-            "type",
-            "command"
-          ],
           "properties": {
             "type": {
               "type": "string",
@@ -1500,16 +1495,16 @@
               "type": "string",
               "description": "Custom spinner message displayed while the hook runs"
             }
-          }
+          },
+          "required": [
+            "type",
+            "command"
+          ],
+          "additionalProperties": false
         },
         {
           "type": "object",
           "description": "LLM prompt hook. See <https://code.claude.com/docs/en/hooks#prompt-based-hooks>",
-          "additionalProperties": false,
-          "required": [
-            "type",
-            "prompt"
-          ],
           "properties": {
             "type": {
               "type": "string",
@@ -1534,16 +1529,16 @@
               "type": "string",
               "description": "Custom spinner message displayed while the hook runs"
             }
-          }
-        },
-        {
-          "type": "object",
-          "description": "Agent hook with multi-turn tool access for verification. See <https://code.claude.com/docs/en/hooks#agent-based-hooks>",
-          "additionalProperties": false,
+          },
           "required": [
             "type",
             "prompt"
           ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Agent hook with multi-turn tool access for verification. See <https://code.claude.com/docs/en/hooks#agent-based-hooks>",
           "properties": {
             "type": {
               "type": "string",
@@ -1568,16 +1563,16 @@
               "type": "string",
               "description": "Custom spinner message displayed while the hook runs"
             }
-          }
+          },
+          "required": [
+            "type",
+            "prompt"
+          ],
+          "additionalProperties": false
         },
         {
           "type": "object",
           "description": "HTTP webhook hook. POST JSON to a URL and receive JSON response. See <https://code.claude.com/docs/en/hooks#http-hooks>",
-          "additionalProperties": false,
-          "required": [
-            "type",
-            "url"
-          ],
           "properties": {
             "type": {
               "type": "string",
@@ -1591,10 +1586,10 @@
             },
             "headers": {
               "type": "object",
+              "description": "Custom HTTP headers (e.g., Authorization: Bearer token). Values support $VAR_NAME or ${VAR_NAME} interpolation.",
               "additionalProperties": {
                 "type": "string"
-              },
-              "description": "Custom HTTP headers (e.g., Authorization: Bearer token). Values support $VAR_NAME or ${VAR_NAME} interpolation."
+              }
             },
             "allowedEnvVars": {
               "type": "array",
@@ -1613,17 +1608,18 @@
               "type": "string",
               "description": "Custom spinner message displayed while the hook runs"
             }
-          }
+          },
+          "required": [
+            "type",
+            "url"
+          ],
+          "additionalProperties": false
         }
       ]
     },
     "hookMatcher": {
       "type": "object",
       "description": "Hook matcher configuration with multiple hooks",
-      "additionalProperties": false,
-      "required": [
-        "hooks"
-      ],
       "properties": {
         "matcher": {
           "type": "string",
@@ -1636,7 +1632,11 @@
             "$ref": "#/$defs/hookCommand"
           }
         }
-      }
+      },
+      "required": [
+        "hooks"
+      ],
+      "additionalProperties": false
     }
   }
 }

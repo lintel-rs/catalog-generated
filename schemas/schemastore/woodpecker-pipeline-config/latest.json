@@ -5,7 +5,7 @@
   "description": "Schema of a Woodpecker pipeline file. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax>",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/woodpecker-ci/woodpecker/main/pipeline/frontend/yaml/linter/schema/schema.json",
-    "sourceSha256": "b5c947cb4f37e276224d7a6acb80ba61af8fe5e88d075d65dbc3c9fea5eec904",
+    "sourceSha256": "36545f84276d0ee7924e798bdcf98a6299d27633cfcefd00444f67e489ac9036",
     "fileMatch": [
       "**/.woodpecker/**.yml",
       "**/.woodpecker.yml",
@@ -58,16 +58,13 @@
     },
     "runs_on": {
       "type": "array",
+      "description": "Deprecated: use `when.status` instead. Read more: <https://woodpecker-ci.org/docs/usage/workflows#flow-control>",
       "minLength": 1,
       "items": {
         "type": "string"
       }
     }
   },
-  "additionalProperties": false,
-  "required": [
-    "steps"
-  ],
   "$defs": {
     "string_or_string_slice": {
       "oneOf": [
@@ -88,7 +85,6 @@
       "oneOf": [
         {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "git": {
               "type": "object",
@@ -101,7 +97,8 @@
                 }
               }
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "array",
@@ -154,10 +151,10 @@
       "oneOf": [
         {
           "type": "object",
+          "minProperties": 1,
           "additionalProperties": {
             "$ref": "#/$defs/step"
-          },
-          "minProperties": 1
+          }
         },
         {
           "type": "array",
@@ -185,7 +182,6 @@
     },
     "workflow_when_condition": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "repo": {
           "description": "Execute a step only on a specific repository. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#repo>",
@@ -207,6 +203,29 @@
         "cron": {
           "description": "filter cron by title. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#cron>",
           "$ref": "#/$defs/constraint_list"
+        },
+        "status": {
+          "description": "Read more: <https://woodpecker-ci.org/docs/usage/workflows#flow-control>",
+          "oneOf": [
+            {
+              "type": "array",
+              "minLength": 1,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "success",
+                  "failure"
+                ]
+              }
+            },
+            {
+              "type": "string",
+              "enum": [
+                "success",
+                "failure"
+              ]
+            }
+          ]
         },
         "platform": {
           "description": "Execute a step only on a specific platform. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#platform>",
@@ -258,7 +277,8 @@
           "description": "Execute a step only if the expression evaluates to true. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#evaluate>",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "step": {
       "description": "A step of your workflow executes either arbitrary commands or uses a plugin. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#steps>",
@@ -274,37 +294,6 @@
     "commands_step": {
       "description": "Every step of your pipeline executes arbitrary commands inside a specified docker container. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#steps>",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "image"
-      ],
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "detach": {
-                "const": true
-              }
-            },
-            "type": "object"
-          },
-          "then": {},
-          "else": {
-            "anyOf": [
-              {
-                "required": [
-                  "commands"
-                ]
-              },
-              {
-                "required": [
-                  "entrypoint"
-                ]
-              }
-            ]
-          }
-        }
-      ],
       "properties": {
         "name": {
           "description": "The name of the step. Can be used if using the array style steps list.",
@@ -366,15 +355,42 @@
           "description": "Change DNS lookup domain for step. Only allowed if 'Trusted Network' option is enabled in repo settings by an admin. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#dns>",
           "$ref": "#/$defs/string_or_string_slice"
         }
-      }
+      },
+      "required": [
+        "image"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "detach": {
+                "const": true
+              }
+            },
+            "type": "object"
+          },
+          "then": {},
+          "else": {
+            "anyOf": [
+              {
+                "required": [
+                  "commands"
+                ]
+              },
+              {
+                "required": [
+                  "entrypoint"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false
     },
     "plugin_step": {
       "description": "Plugins let you execute predefined functions in a more secure context. Read more: <https://woodpecker-ci.org/docs/usage/plugins/overview>",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "image"
-      ],
       "properties": {
         "name": {
           "description": "The name of the step. Can be used if using the array style steps list.",
@@ -421,7 +437,11 @@
         "backend_options": {
           "$ref": "#/$defs/step_backend_options"
         }
-      }
+      },
+      "required": [
+        "image"
+      ],
+      "additionalProperties": false
     },
     "step_when": {
       "description": "Steps can be skipped based on conditions. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#when---conditional-execution>",
@@ -440,7 +460,6 @@
     },
     "step_when_condition": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "repo": {
           "description": "Execute a step only on a specific repository. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#repo>",
@@ -546,7 +565,8 @@
           "description": "Execute a step only if the expression evaluates to true. Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#evaluate>",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "event_enum": {
       "enum": [
@@ -589,7 +609,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "include": {
               "oneOf": [
@@ -619,7 +638,8 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -827,7 +847,6 @@
     "step_kubernetes_secret": {
       "description": "A reference to a native Kubernetes secret",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "The name of the secret. Can be used if using the array style secrets list.",
@@ -840,30 +859,31 @@
         "target": {
           "$ref": "#/$defs/step_kubernetes_secret_target"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "step_kubernetes_secret_target": {
       "description": "A target which a native Kubernetes secret maps to.",
       "oneOf": [
         {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "env": {
               "description": "The name of the environment variable which secret maps to.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "file": {
               "description": "The filename (path) which secret maps to.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -893,10 +913,10 @@
       "oneOf": [
         {
           "type": "object",
+          "minProperties": 1,
           "additionalProperties": {
             "$ref": "#/$defs/service"
-          },
-          "minProperties": 1
+          }
         },
         {
           "type": "array",
@@ -910,11 +930,6 @@
     "service": {
       "description": "Read more: <https://woodpecker-ci.org/docs/usage/services>",
       "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "required": [
-        "image"
-      ],
       "properties": {
         "name": {
           "description": "The name of the service. Can be used if using the array style services list",
@@ -974,7 +989,12 @@
           },
           "minLength": 1
         }
-      }
+      },
+      "minProperties": 1,
+      "required": [
+        "image"
+      ],
+      "additionalProperties": false
     },
     "workspace": {
       "description": "Read more: <https://woodpecker-ci.org/docs/usage/workflow-syntax#workspace>",
@@ -1016,5 +1036,9 @@
         ]
       }
     }
-  }
+  },
+  "required": [
+    "steps"
+  ],
+  "additionalProperties": false
 }

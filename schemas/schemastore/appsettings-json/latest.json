@@ -5,7 +5,6 @@
   "x-lintel": {
     "source": "https://www.schemastore.org/appsettings.json",
     "sourceSha256": "4b0c62c67a9ede75ae2b157a2f678ef909359db608e768a8614ae18fefd21469",
-    "invalid": true,
     "fileMatch": [
       "appsettings.json",
       "appsettings.*.json"
@@ -27,32 +26,6 @@
     },
     "ConnectionStrings": {
       "$ref": "#/$defs/connectionStrings"
-    }
-  },
-  "patternProperties": {
-    "^WebOptimizer$": {
-      "$ref": "#/$defs/webOptimizer"
-    },
-    "^webOptimizer$": {
-      "$ref": "#/$defs/webOptimizer"
-    },
-    "^weboptimizer$": {
-      "$ref": "#/$defs/webOptimizer"
-    },
-    "^(cdn|Cdn)$": {
-      "$ref": "#/$defs/cdn"
-    },
-    "^(pwa|PWA|Pwa)$": {
-      "$ref": "#/$defs/pwa"
-    },
-    "^(ElmahIo|Elmahio|elmahIo|elmahio)$": {
-      "$ref": "#/$defs/ElmahIo"
-    },
-    "^(nlog|Nlog|NLog)$": {
-      "$ref": "#/$defs/NLog"
-    },
-    "^(Serilog|serilog)$": {
-      "$ref": "#/$defs/Serilog"
     }
   },
   "$defs": {
@@ -817,26 +790,26 @@
           "description": "Using section contains list of assemblies in which configuration methods. Can be required depending of the project type: See: <https://github.com/serilog/serilog-settings-configuration#using-section-and-auto-discovery-of-configuration-assemblies>",
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/Serilog/definitions/AssemblyReference"
+            "$ref": "#/$defs/Serilog/$defs/AssemblyReference"
           }
         },
         "LevelSwitches": {
           "type": "object",
+          "additionalProperties": false,
           "patternProperties": {
             "^(?<SerilogLevelSwitcherName>\\${0,1}[A-Za-z]+[A-Za-z0-9]*)$": {
-              "$ref": "#/$defs/Serilog/definitions/SerilogLogEventLevel"
+              "$ref": "#/$defs/Serilog/$defs/SerilogLogEventLevel"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "FilterSwitches": {
           "type": "object",
+          "additionalProperties": false,
           "patternProperties": {
             "^(?<SerilogLevelSwitcherName>\\${0,1}[A-Za-z]+[A-Za-z0-9]*)$": {
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "MinimumLevel": {
           "type": [
@@ -847,10 +820,10 @@
           "description": "Minimum LogLevel Threshold. (Support dynamic reload if the underlying IConfigurationProvider supports it)",
           "oneOf": [
             {
-              "$ref": "#/$defs/Serilog/definitions/SerilogLogEventLevel"
+              "$ref": "#/$defs/Serilog/$defs/SerilogLogEventLevel"
             },
             {
-              "$ref": "#/$defs/Serilog/definitions/DetailedMinimumLevel"
+              "$ref": "#/$defs/Serilog/$defs/DetailedMinimumLevel"
             }
           ]
         },
@@ -865,7 +838,7 @@
         "Enrich": {
           "allOf": [
             {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReference"
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReference"
             }
           ],
           "title": "Log events Enriches",
@@ -874,7 +847,7 @@
         "Destructure": {
           "allOf": [
             {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReference"
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReference"
             }
           ],
           "title": "Log events Destructure",
@@ -883,7 +856,7 @@
         "Filter": {
           "allOf": [
             {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReference"
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReference"
             }
           ],
           "title": "Log events filters",
@@ -892,7 +865,7 @@
         "WriteTo": {
           "allOf": [
             {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReference"
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReference"
             }
           ],
           "title": "Configuration for log destination",
@@ -901,54 +874,7 @@
         "AuditTo": {
           "allOf": [
             {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReference"
-            }
-          ],
-          "title": "Configuration for log destination for auditing",
-          "description": "This section configures sinks for auditing, instead of regular (safe) logging. Obs: When auditing is used, exceptions from sinks and any intermediate filters propagate back to the caller."
-        }
-      },
-      "patternProperties": {
-        "^Enrich:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReferenceItem"
-            }
-          ],
-          "title": "Log events Enriches",
-          "description": "This section defines Enriches that will be applied to log events."
-        },
-        "^Destructure:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReferenceItem"
-            }
-          ],
-          "title": "Log events Destructure",
-          "description": "This section defines Destructure."
-        },
-        "^Filter:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReferenceItem"
-            }
-          ],
-          "title": "Log events filters",
-          "description": "This section defines filters that will be applied to log events."
-        },
-        "^WriteTo:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReferenceItem"
-            }
-          ],
-          "title": "Configuration for log destination",
-          "description": "This section configures the sinks that log events will be emitted to."
-        },
-        "^AuditTo:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/Serilog/definitions/MethodCallReferenceItem"
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReference"
             }
           ],
           "title": "Configuration for log destination for auditing",
@@ -983,10 +909,10 @@
           "description": "A Serilog Log Level or a reference to a Log Level Switch name on `LevelSwitches` configuration.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Serilog/definitions/SerilogLogEventLevel"
+              "$ref": "#/$defs/Serilog/$defs/SerilogLogEventLevel"
             },
             {
-              "$ref": "#/$defs/Serilog/definitions/LoggingLevelSwitch"
+              "$ref": "#/$defs/Serilog/$defs/LoggingLevelSwitch"
             }
           ]
         },
@@ -996,17 +922,17 @@
           "description": "Detailed Log level threshold object. Allowing set log levels be overridden per logging source.",
           "properties": {
             "Default": {
-              "$ref": "#/$defs/Serilog/definitions/SerilogLogLevelThreshold"
+              "$ref": "#/$defs/Serilog/$defs/SerilogLogLevelThreshold"
             },
             "ControlledBy": {
-              "$ref": "#/$defs/Serilog/definitions/LoggingLevelSwitch"
+              "$ref": "#/$defs/Serilog/$defs/LoggingLevelSwitch"
             },
             "Override": {
               "type": "object",
               "title": "Logging Source Log level object.",
               "description": "Set the Log level threshold or LevelSwitcher reference per Logging Source.",
               "additionalProperties": {
-                "$ref": "#/$defs/Serilog/definitions/SerilogLogLevelThreshold"
+                "$ref": "#/$defs/Serilog/$defs/SerilogLogLevelThreshold"
               }
             }
           },
@@ -1023,20 +949,20 @@
           "type": "object",
           "properties": {
             "Name": {
-              "$ref": "#/$defs/Serilog/definitions/CSharpMethodName"
+              "$ref": "#/$defs/Serilog/$defs/CSharpMethodName"
             },
             "Args": {
               "type": "object",
+              "additionalProperties": false,
               "patternProperties": {
                 "^(?<CSharpMethodArgumentName>[a-zA-Z_]\\w*)$": {}
-              },
-              "additionalProperties": false
+              }
             }
           },
-          "additionalProperties": false,
           "required": [
             "Name"
-          ]
+          ],
+          "additionalProperties": false
         },
         "MethodCallReferenceItem": {
           "type": [
@@ -1046,10 +972,10 @@
           ],
           "oneOf": [
             {
-              "$ref": "#/$defs/Serilog/definitions/CSharpMethodName"
+              "$ref": "#/$defs/Serilog/$defs/CSharpMethodName"
             },
             {
-              "$ref": "#/$defs/Serilog/definitions/ComplexMethodCallReference"
+              "$ref": "#/$defs/Serilog/$defs/ComplexMethodCallReference"
             }
           ]
         },
@@ -1064,10 +990,10 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/Serilog/definitions/MethodCallReferenceItem"
+            "$ref": "#/$defs/Serilog/$defs/MethodCallReferenceItem"
           },
           "additionalProperties": {
-            "$ref": "#/$defs/Serilog/definitions/MethodCallReferenceItem"
+            "$ref": "#/$defs/Serilog/$defs/MethodCallReferenceItem"
           }
         },
         "CSharpMethodName": {
@@ -1098,7 +1024,80 @@
           "minLength": 1,
           "pattern": "^(?<SerilogLevelSwitcherName>\\${0,1}[A-Za-z]+[A-Za-z0-9]*)$"
         }
+      },
+      "patternProperties": {
+        "^Enrich:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReferenceItem"
+            }
+          ],
+          "title": "Log events Enriches",
+          "description": "This section defines Enriches that will be applied to log events."
+        },
+        "^Destructure:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReferenceItem"
+            }
+          ],
+          "title": "Log events Destructure",
+          "description": "This section defines Destructure."
+        },
+        "^Filter:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReferenceItem"
+            }
+          ],
+          "title": "Log events filters",
+          "description": "This section defines filters that will be applied to log events."
+        },
+        "^WriteTo:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReferenceItem"
+            }
+          ],
+          "title": "Configuration for log destination",
+          "description": "This section configures the sinks that log events will be emitted to."
+        },
+        "^AuditTo:((?<EnvironmentVariableName>[a-zA-Z_]\\w*)|(?<ArrayIndex>\\d*))$": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Serilog/$defs/MethodCallReferenceItem"
+            }
+          ],
+          "title": "Configuration for log destination for auditing",
+          "description": "This section configures sinks for auditing, instead of regular (safe) logging. Obs: When auditing is used, exceptions from sinks and any intermediate filters propagate back to the caller."
+        }
       }
+    }
+  },
+  "patternProperties": {
+    "^WebOptimizer$": {
+      "$ref": "#/$defs/webOptimizer"
+    },
+    "^webOptimizer$": {
+      "$ref": "#/$defs/webOptimizer"
+    },
+    "^weboptimizer$": {
+      "$ref": "#/$defs/webOptimizer"
+    },
+    "^(cdn|Cdn)$": {
+      "$ref": "#/$defs/cdn"
+    },
+    "^(pwa|PWA|Pwa)$": {
+      "$ref": "#/$defs/pwa"
+    },
+    "^(ElmahIo|Elmahio|elmahIo|elmahio)$": {
+      "$ref": "#/$defs/ElmahIo"
+    },
+    "^(nlog|Nlog|NLog)$": {
+      "$ref": "#/$defs/NLog"
+    },
+    "^(Serilog|serilog)$": {
+      "$ref": "#/$defs/Serilog"
     }
   }
 }

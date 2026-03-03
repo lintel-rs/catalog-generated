@@ -4,7 +4,6 @@
   "x-lintel": {
     "source": "https://github.com/usnistgov/OSCAL/releases/download/v1.0.5/oscal_poam_schema.json",
     "sourceSha256": "e3e54b28f0e436dbea2c1cc89af2f80765869e37e87f1668765cd20214858f8a",
-    "invalid": true,
     "fileMatch": [
       "oscal*poam.json"
     ],
@@ -18,12 +17,15 @@
       "$ref": "#assembly_oscal-poam_plan-of-action-and-milestones"
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "oscal-poam-oscal-poam:plan-of-action-and-milestones": {
       "title": "Plan of Action and Milestones (POA&M)",
       "description": "A plan of action and milestones which identifies initial and residual risks, deviations, and disposition, such as those required by FedRAMP.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "metadata",
+        "poam-items"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -68,17 +70,11 @@
           "$ref": "#assembly_oscal-metadata_back-matter"
         }
       },
-      "required": [
-        "uuid",
-        "metadata",
-        "poam-items"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-poam:local-definitions": {
       "title": "Local Definitions",
       "description": "Allows components, and inventory-items to be defined within the POA&M for circumstances where no OSCAL-based SSP exists, or is not delivered with the POA&M.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "components": {
           "type": "array",
@@ -97,12 +93,17 @@
         "remarks": {
           "$ref": "#field_oscal-metadata_remarks"
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-poam-oscal-poam:poam-item": {
       "title": "POA&M Item",
       "description": "Describes an individual POA&M item.",
-      "additionalProperties": false,
+      "required": [
+        "title",
+        "description"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -200,15 +201,17 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "title",
-        "description"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:metadata": {
       "title": "Publication metadata",
       "description": "Provides information about the publication and availability of the containing document.",
-      "additionalProperties": false,
+      "required": [
+        "title",
+        "last-modified",
+        "version",
+        "oscal-version"
+      ],
       "type": "object",
       "properties": {
         "title": {
@@ -288,17 +291,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "title",
-        "last-modified",
-        "version",
-        "oscal-version"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:revision": {
       "title": "Revision History Entry",
       "description": "An entry in a sequential list of revisions to the containing document in reverse chronological order (i.e., most recent previous revision first).",
-      "additionalProperties": false,
+      "required": [
+        "version"
+      ],
       "type": "object",
       "properties": {
         "title": {
@@ -336,14 +336,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "version"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:location": {
       "title": "Location",
       "description": "A location, with associated metadata that can be referenced.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "address"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -400,10 +401,7 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "address"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:location-uuid": {
       "title": "Location Reference",
@@ -413,7 +411,10 @@
     "oscal-poam-oscal-metadata:party": {
       "title": "Party (organization or person)",
       "description": "A responsible entity which is either a person or an organization.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "type"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -534,10 +535,7 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "type"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:party-uuid": {
       "title": "Party Reference",
@@ -547,7 +545,10 @@
     "oscal-poam-oscal-metadata:role": {
       "title": "Role",
       "description": "Defines a function assumed or expected to be assumed by a party in a specific situation.",
-      "additionalProperties": false,
+      "required": [
+        "id",
+        "title"
+      ],
       "type": "object",
       "properties": {
         "id": {
@@ -588,10 +589,7 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "id",
-        "title"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:role-id": {
       "title": "Role Identifier Reference",
@@ -601,8 +599,6 @@
     "oscal-poam-oscal-metadata:back-matter": {
       "title": "Back matter",
       "description": "A collection of resources, which may be included directly or by reference.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "resources": {
           "type": "array",
@@ -737,12 +733,17 @@
             "additionalProperties": false
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:property": {
       "title": "Property",
       "description": "An attribute, characteristic, or quality of the containing object expressed as a namespace qualified name/value pair. The value of a property is a simple scalar value, which may be expressed as a list of values.",
-      "additionalProperties": false,
+      "required": [
+        "name",
+        "value"
+      ],
       "type": "object",
       "properties": {
         "name": {
@@ -783,15 +784,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "name",
-        "value"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:link": {
       "title": "Link",
       "description": "A reference to a local or remote resource",
-      "additionalProperties": false,
+      "required": [
+        "href"
+      ],
       "type": "object",
       "properties": {
         "href": {
@@ -824,14 +824,15 @@
           "type": "string"
         }
       },
-      "required": [
-        "href"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:responsible-party": {
       "title": "Responsible Party",
       "description": "A reference to a set of organizations or persons that have responsibility for performing a referenced role in the context of the containing object.",
-      "additionalProperties": false,
+      "required": [
+        "role-id",
+        "party-uuids"
+      ],
       "type": "object",
       "properties": {
         "role-id": {
@@ -864,15 +865,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "role-id",
-        "party-uuids"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:responsible-role": {
       "title": "Responsible Role",
       "description": "A reference to one or more roles with responsibility for performing a function relative to the containing object.",
-      "additionalProperties": false,
+      "required": [
+        "role-id"
+      ],
       "type": "object",
       "properties": {
         "role-id": {
@@ -905,14 +905,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "role-id"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:hash": {
       "title": "Hash",
       "description": "A representation of a cryptographic digest generated over a resource using a specified hash algorithm.",
-      "additionalProperties": false,
+      "required": [
+        "value",
+        "algorithm"
+      ],
       "type": "object",
       "properties": {
         "algorithm": {
@@ -940,10 +941,7 @@
           "$ref": "#/$defs/StringDatatype"
         }
       },
-      "required": [
-        "value",
-        "algorithm"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:remarks": {
       "title": "Remarks",
@@ -978,7 +976,9 @@
     "oscal-poam-oscal-metadata:telephone-number": {
       "title": "Telephone Number",
       "description": "Contact number by telephone.",
-      "additionalProperties": false,
+      "required": [
+        "number"
+      ],
       "type": "object",
       "properties": {
         "type": {
@@ -1001,15 +1001,11 @@
           "$ref": "#/$defs/StringDatatype"
         }
       },
-      "required": [
-        "number"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:address": {
       "title": "Address",
       "description": "A postal address for the location.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "type": {
           "title": "Address Type",
@@ -1053,7 +1049,9 @@
           "description": "The ISO 3166-1 alpha-2 country code for the mailing address.",
           "$ref": "#/$defs/StringDatatype"
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-poam-oscal-metadata:addr-line": {
       "title": "Address line",
@@ -1063,7 +1061,9 @@
     "oscal-poam-oscal-metadata:document-id": {
       "title": "Document Identifier",
       "description": "A document identifier qualified by an identifier scheme. A document identifier provides a globally unique identifier with a cross-instance scope that is used for a group of documents that are to be treated as different versions of the same document. If this element does not appear, or if the value of this element is empty, the value of \"document-id\" is equal to the value of the \"uuid\" flag of the top-level root element.",
-      "additionalProperties": false,
+      "required": [
+        "identifier"
+      ],
       "type": "object",
       "properties": {
         "scheme": {
@@ -1084,14 +1084,18 @@
           "$ref": "#/$defs/StringDatatype"
         }
       },
-      "required": [
-        "identifier"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-implementation-common:system-component": {
       "title": "Component",
       "description": "A defined component that can be part of an implemented system.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "type",
+        "title",
+        "description",
+        "status"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -1204,18 +1208,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "type",
-        "title",
-        "description",
-        "status"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-implementation-common:protocol": {
       "title": "Service Protocol Information",
       "description": "Information about the protocol used to provide a service.",
-      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -1241,15 +1241,11 @@
           }
         }
       },
-      "required": [
-        "name"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-implementation-common:port-range": {
       "title": "Port Range",
       "description": "Where applicable this is the IPv4 port range on which the service operates.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "start": {
           "title": "Start",
@@ -1276,12 +1272,16 @@
             }
           ]
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-poam-oscal-implementation-common:implementation-status": {
       "title": "Implementation Status",
       "description": "Indicates the degree to which the a given control is implemented.",
-      "additionalProperties": false,
+      "required": [
+        "state"
+      ],
       "type": "object",
       "properties": {
         "state": {
@@ -1306,14 +1306,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "state"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-implementation-common:system-user": {
       "title": "System User",
       "description": "A type of user that interacts with the system based on an associated role.",
-      "additionalProperties": false,
+      "required": [
+        "uuid"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -1368,14 +1368,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-implementation-common:authorized-privilege": {
       "title": "Privilege",
       "description": "Identifies a specific system privilege held by the user, along with an associated description and/or rationale for the privilege.",
-      "additionalProperties": false,
+      "required": [
+        "title",
+        "functions-performed"
+      ],
       "type": "object",
       "properties": {
         "title": {
@@ -1396,10 +1397,7 @@
           }
         }
       },
-      "required": [
-        "title",
-        "functions-performed"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-implementation-common:function-performed": {
       "title": "Functions Performed",
@@ -1409,7 +1407,10 @@
     "oscal-poam-oscal-implementation-common:inventory-item": {
       "title": "Inventory Item",
       "description": "A single managed inventory item within the system.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "description"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -1491,15 +1492,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "description"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-implementation-common:set-parameter": {
       "title": "Set Parameter Value",
       "description": "Identifies the parameter that will be set by the enclosed value.",
-      "additionalProperties": false,
+      "required": [
+        "param-id",
+        "values"
+      ],
       "type": "object",
       "properties": {
         "param-id": {
@@ -1520,15 +1521,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "param-id",
-        "values"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-implementation-common:system-id": {
       "title": "System Identification",
       "description": "A human-oriented, globally unique identifier with cross-instance scope that can be used to reference this system identification property elsewhere in this or other OSCAL instances. When referencing an externally defined system identification, the system identification must be used in the context of the external / imported OSCAL instance (e.g., uri-reference). This string should be assigned per-subject, which means it should be consistently used to identify the same system across revisions of the document.",
-      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
       "type": "object",
       "properties": {
         "identifier-type": {
@@ -1552,14 +1552,14 @@
           "$ref": "#/$defs/StringDatatype"
         }
       },
-      "required": [
-        "id"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-catalog-common:part": {
       "title": "Part",
       "description": "A partition of a control's definition or a child of another part.",
-      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
       "type": "object",
       "properties": {
         "id": {
@@ -1614,14 +1614,14 @@
           }
         }
       },
-      "required": [
-        "name"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-catalog-common:parameter": {
       "title": "Parameter",
       "description": "Parameters provide a mechanism for the dynamic assignment of value(s) in a control.",
-      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
       "type": "object",
       "properties": {
         "id": {
@@ -1691,15 +1691,11 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "id"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-catalog-common:parameter-constraint": {
       "title": "Constraint",
       "description": "A formal or informal expression of a constraint or test",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "description": {
           "title": "Constraint Description",
@@ -1729,12 +1725,16 @@
             "additionalProperties": false
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-poam-oscal-catalog-common:parameter-guideline": {
       "title": "Guideline",
       "description": "A prose statement that provides a recommendation for the use of a parameter.",
-      "additionalProperties": false,
+      "required": [
+        "prose"
+      ],
       "type": "object",
       "properties": {
         "prose": {
@@ -1743,9 +1743,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "prose"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-catalog-common:parameter-value": {
       "title": "Parameter Value",
@@ -1755,8 +1753,6 @@
     "oscal-poam-oscal-catalog-common:parameter-selection": {
       "title": "Selection",
       "description": "Presenting a choice among alternatives",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "how-many": {
           "title": "Parameter Cardinality",
@@ -1782,18 +1778,22 @@
             "type": "string"
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-poam-oscal-catalog-common:include-all": {
       "title": "Include All",
       "description": "Include all controls from the imported catalog or profile resources.",
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:import-ssp": {
       "title": "Import System Security Plan",
       "description": "Used by the assessment plan and POA&M to import information about the system.",
-      "additionalProperties": false,
+      "required": [
+        "href"
+      ],
       "type": "object",
       "properties": {
         "href": {
@@ -1805,14 +1805,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "href"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:local-objective": {
       "title": "Assessment-Specific Control Objective",
       "description": "A local definition of a control objective for this assessment. Uses catalog syntax for control objective and assessment actions.",
-      "additionalProperties": false,
+      "required": [
+        "control-id",
+        "parts"
+      ],
       "type": "object",
       "properties": {
         "control-id": {
@@ -1850,15 +1851,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "control-id",
-        "parts"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:assessment-method": {
       "title": "Assessment Method",
       "description": "A local definition of a control objective. Uses catalog syntax for control objective and assessment activities.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "part"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -1892,15 +1893,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "part"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:activity": {
       "title": "Activity",
       "description": "Identifies an assessment or related process that can be performed. In the assessment plan, this is an intended activity which may be associated with an assessment task. In the assessment results, this an activity that was actually performed as part of an assessment.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "description"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -2004,15 +2005,16 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "description"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:task": {
       "title": "Task",
       "description": "Represents a scheduled event or milestone, which may be associated with a series of assessment actions.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "type",
+        "title"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -2141,8 +2143,28 @@
           },
           "additionalProperties": false
         },
-        "remarks": {
-          "$ref": "#field_oscal-metadata_remarks"
+        "dependencies": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "title": "Task Dependency",
+            "description": "Used to indicate that a task is dependent on another task.",
+            "type": "object",
+            "properties": {
+              "task-uuid": {
+                "title": "Task Universally Unique Identifier Reference",
+                "description": "A machine-oriented identifier reference to a unique task.",
+                "$ref": "#/$defs/UUIDDatatype"
+              },
+              "remarks": {
+                "$ref": "#field_oscal-metadata_remarks"
+              }
+            },
+            "required": [
+              "task-uuid"
+            ],
+            "additionalProperties": false
+          }
         },
         "tasks": {
           "type": "array",
@@ -2217,40 +2239,18 @@
             "$ref": "#assembly_oscal-metadata_responsible-role"
           }
         },
-        "dependentSchemas": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "title": "Task Dependency",
-            "description": "Used to indicate that a task is dependent on another task.",
-            "type": "object",
-            "properties": {
-              "task-uuid": {
-                "title": "Task Universally Unique Identifier Reference",
-                "description": "A machine-oriented identifier reference to a unique task.",
-                "$ref": "#/$defs/UUIDDatatype"
-              },
-              "remarks": {
-                "$ref": "#field_oscal-metadata_remarks"
-              }
-            },
-            "required": [
-              "task-uuid"
-            ],
-            "additionalProperties": false
-          }
+        "remarks": {
+          "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "type",
-        "title"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:reviewed-controls": {
       "title": "Reviewed Controls and Control Objectives",
       "description": "Identifies the controls being assessed and their control objectives.",
-      "additionalProperties": false,
+      "required": [
+        "control-selections"
+      ],
       "type": "object",
       "properties": {
         "description": {
@@ -2378,14 +2378,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "control-selections"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:select-control-by-id": {
       "title": "Select Control",
       "description": "Used to select a control for inclusion/exclusion based on one or more control identifiers. A set of statement identifiers can be used to target the inclusion/exclusion to only specific control statements providing more granularity over the specific statements that are within the asessment scope.",
-      "additionalProperties": false,
+      "required": [
+        "control-id"
+      ],
       "type": "object",
       "properties": {
         "control-id": {
@@ -2403,14 +2403,14 @@
           }
         }
       },
-      "required": [
-        "control-id"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:select-objective-by-id": {
       "title": "Select Objective",
       "description": "Used to select a control objective for inclusion/exclusion based on the control objective's identifier.",
-      "additionalProperties": false,
+      "required": [
+        "objective-id"
+      ],
       "type": "object",
       "properties": {
         "objective-id": {
@@ -2419,14 +2419,15 @@
           "$ref": "#/$defs/TokenDatatype"
         }
       },
-      "required": [
-        "objective-id"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:assessment-subject-placeholder": {
       "title": "Assessment Subject Placeholder",
       "description": "Used when the assessment subjects will be determined as part of one or more other assessment activities. These assessment subjects will be recorded in the assessment results in the assessment log.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "sources"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -2477,15 +2478,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "sources"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:assessment-subject": {
       "title": "Subject of Assessment",
       "description": "Identifies system elements being assessed, such as components, inventory items, and locations. In the assessment plan, this identifies a planned assessment subject. In the assessment results this is an actual assessment subject, and reflects any changes from the plan. exactly what will be the focus of this assessment. Any subjects not identified in this way are out-of-scope.",
-      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
       "type": "object",
       "properties": {
         "type": {
@@ -2546,14 +2546,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "type"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:select-subject-by-id": {
       "title": "Select Assessment Subject",
       "description": "Identifies a set of assessment subjects to include/exclude by UUID.",
-      "additionalProperties": false,
+      "required": [
+        "subject-uuid",
+        "type"
+      ],
       "type": "object",
       "properties": {
         "subject-uuid": {
@@ -2598,15 +2599,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "subject-uuid",
-        "type"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:subject-reference": {
       "title": "Identifies the Subject",
       "description": "A human-oriented identifier reference to a resource. Use type to indicate whether the identified resource is a component, inventory item, location, user, or something else.",
-      "additionalProperties": false,
+      "required": [
+        "subject-uuid",
+        "type"
+      ],
       "type": "object",
       "properties": {
         "subject-uuid": {
@@ -2656,15 +2657,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "subject-uuid",
-        "type"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:assessment-assets": {
       "title": "Assessment Assets",
       "description": "Identifies the assets used to perform this assessment, such as the assessment team, scanning tools, and assumptions.",
-      "additionalProperties": false,
+      "required": [
+        "assessment-platforms"
+      ],
       "type": "object",
       "properties": {
         "components": {
@@ -2761,14 +2761,16 @@
           }
         }
       },
-      "required": [
-        "assessment-platforms"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:finding-target": {
       "title": "Objective Status",
       "description": "Captures an assessor's conclusions regarding the degree to which an objective is satisfied.",
-      "additionalProperties": false,
+      "required": [
+        "type",
+        "target-id",
+        "status"
+      ],
       "type": "object",
       "properties": {
         "type": {
@@ -2867,16 +2869,17 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "type",
-        "target-id",
-        "status"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:observation": {
       "title": "Observation",
       "description": "Describes an individual observation.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "description",
+        "methods",
+        "collected"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -3021,17 +3024,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "description",
-        "methods",
-        "collected"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:origin": {
       "title": "Origin",
       "description": "Identifies the source of the finding, such as a tool, interviewed person, or activity.",
-      "additionalProperties": false,
+      "required": [
+        "actors"
+      ],
       "type": "object",
       "properties": {
         "actors": {
@@ -3049,14 +3049,15 @@
           }
         }
       },
-      "required": [
-        "actors"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:origin-actor": {
       "title": "Originating Actor",
       "description": "The actor that produces an observation, a finding, or a risk. One or more actor type can be used to specify a person that is using a tool.",
-      "additionalProperties": false,
+      "required": [
+        "type",
+        "actor-uuid"
+      ],
       "type": "object",
       "properties": {
         "type": {
@@ -3100,15 +3101,14 @@
           }
         }
       },
-      "required": [
-        "type",
-        "actor-uuid"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:related-task": {
       "title": "Task Reference",
       "description": "Identifies an individual task for which the containing object is a consequence of.",
-      "additionalProperties": false,
+      "required": [
+        "task-uuid"
+      ],
       "type": "object",
       "properties": {
         "task-uuid": {
@@ -3172,14 +3172,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "task-uuid"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:threat-id": {
       "title": "Threat ID",
       "description": "A pointer, by ID, to an externally-defined threat.",
-      "additionalProperties": false,
+      "required": [
+        "id",
+        "system"
+      ],
       "type": "object",
       "properties": {
         "system": {
@@ -3206,15 +3207,18 @@
           "$ref": "#/$defs/URIDatatype"
         }
       },
-      "required": [
-        "id",
-        "system"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:risk": {
       "title": "Identified Risk",
       "description": "An identified risk.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "title",
+        "description",
+        "statement",
+        "status"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -3483,18 +3487,14 @@
           }
         }
       },
-      "required": [
-        "uuid",
-        "title",
-        "description",
-        "statement",
-        "status"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:logged-by": {
       "title": "Logged By",
       "description": "Used to indicate who created a log entry in what role.",
-      "additionalProperties": false,
+      "required": [
+        "party-uuid"
+      ],
       "type": "object",
       "properties": {
         "party-uuid": {
@@ -3508,9 +3508,7 @@
           "$ref": "#/$defs/TokenDatatype"
         }
       },
-      "required": [
-        "party-uuid"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:risk-status": {
       "title": "Risk Status",
@@ -3534,7 +3532,10 @@
     "oscal-poam-oscal-assessment-common:characterization": {
       "title": "Characterization",
       "description": "A collection of descriptive data about the containing object from a specific origin.",
-      "additionalProperties": false,
+      "required": [
+        "origin",
+        "facets"
+      ],
       "type": "object",
       "properties": {
         "props": {
@@ -3620,15 +3621,17 @@
           }
         }
       },
-      "required": [
-        "origin",
-        "facets"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:response": {
       "title": "Risk Response",
       "description": "Describes either recommended or an actual plan for addressing the risk.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "lifecycle",
+        "title",
+        "description"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -3749,17 +3752,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "lifecycle",
-        "title",
-        "description"
-      ]
+      "additionalProperties": false
     },
     "oscal-poam-oscal-assessment-common:assessment-part": {
       "title": "Assessment Part",
       "description": "A partition of an assessment plan or results or a child of another part.",
-      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -3825,9 +3825,7 @@
           }
         }
       },
-      "required": [
-        "name"
-      ]
+      "additionalProperties": false
     },
     "Base64Datatype": {
       "type": "string",
@@ -3899,6 +3897,7 @@
       "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[45][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
     }
   },
+  "additionalProperties": false,
   "$comment": "OSCAL Plan of Action and Milestones (POA&M) Model: JSON Schema",
   "required": [
     "plan-of-action-and-milestones"

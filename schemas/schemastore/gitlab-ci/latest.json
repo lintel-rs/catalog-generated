@@ -201,9 +201,6 @@
       }
     }
   },
-  "additionalProperties": {
-    "$ref": "#/$defs/job"
-  },
   "$defs": {
     "artifacts": {
       "type": [
@@ -211,7 +208,6 @@
         "null"
       ],
       "markdownDescription": "Used to specify a list of files and directories that should be attached to the job if it succeeds. Artifacts are sent to GitLab where they can be downloaded. [Learn More](https://docs.gitlab.com/ci/yaml/#artifacts).",
-      "additionalProperties": false,
       "properties": {
         "paths": {
           "type": "array",
@@ -271,7 +267,6 @@
         "reports": {
           "type": "object",
           "markdownDescription": "Reports will be uploaded as artifacts, and often displayed in the GitLab UI, such as in merge requests. [Learn More](https://docs.gitlab.com/ci/yaml/#artifactsreports).",
-          "additionalProperties": false,
           "properties": {
             "accessibility": {
               "type": "string",
@@ -387,9 +382,11 @@
               "$ref": "#/$defs/string_file_list",
               "description": "Path to file or list of files with Repository X-Ray report(s)."
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "string_file_list": {
       "oneOf": [
@@ -704,7 +701,9 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "local"
+          ],
           "properties": {
             "local": {
               "description": "Relative path from local repository root (`/`) to the `yaml`/`yml` file template. The file must be on the same branch, and does not work across git submodules.",
@@ -719,13 +718,14 @@
               "$ref": "#/$defs/inputs"
             }
           },
-          "required": [
-            "local"
-          ]
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "project",
+            "file"
+          ],
           "properties": {
             "project": {
               "description": "Path to the project, e.g. `group/project`, or `group/sub-group/project` [Learn more](https://docs.gitlab.com/ci/yaml/#includeproject).",
@@ -760,14 +760,13 @@
               "$ref": "#/$defs/inputs"
             }
           },
-          "required": [
-            "project",
-            "file"
-          ]
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "template"
+          ],
           "properties": {
             "template": {
               "description": "Use a `.gitlab-ci.yml` template as a base, e.g. `Nodejs.gitlab-ci.yml`.",
@@ -782,13 +781,13 @@
               "$ref": "#/$defs/inputs"
             }
           },
-          "required": [
-            "template"
-          ]
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "component"
+          ],
           "properties": {
             "component": {
               "description": "Local path to component directory or full path to external component directory.",
@@ -802,13 +801,13 @@
               "$ref": "#/$defs/inputs"
             }
           },
-          "required": [
-            "component"
-          ]
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "remote"
+          ],
           "properties": {
             "remote": {
               "description": "URL to a `yaml`/`yml` template file using HTTP/HTTPS.",
@@ -828,9 +827,7 @@
               "$ref": "#/$defs/inputs"
             }
           },
-          "required": [
-            "remote"
-          ]
+          "additionalProperties": false
         }
       ]
     },
@@ -851,7 +848,9 @@
         {
           "type": "object",
           "description": "Specifies the docker image to use for the job or globally for all jobs. Job configuration takes precedence over global setting. Requires a certain kind of GitLab runner executor.",
-          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
           "properties": {
             "name": {
               "type": "string",
@@ -866,7 +865,6 @@
             "docker": {
               "type": "object",
               "markdownDescription": "Options to pass to Runners Docker Executor. [Learn More](https://docs.gitlab.com/ci/yaml/#imagedocker)",
-              "additionalProperties": false,
               "properties": {
                 "platform": {
                   "type": "string",
@@ -879,12 +877,12 @@
                   "maxLength": 255,
                   "description": "Username or UID to use for the container."
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "kubernetes": {
               "type": "object",
               "markdownDescription": "Options to pass to Runners Kubernetes Executor. [Learn More](https://docs.gitlab.com/ci/yaml/#imagekubernetes)",
-              "additionalProperties": false,
               "properties": {
                 "user": {
                   "type": [
@@ -895,7 +893,8 @@
                   "maxLength": 255,
                   "description": "Username or UID to use for the container. It also supports the UID:GID format."
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "pull_policy": {
               "markdownDescription": "Specifies how to pull the image in Runner. It can be one of `always`, `never` or `if-not-present`. The default value is `always`. [Learn more](https://docs.gitlab.com/ci/yaml/#imagepull_policy).",
@@ -925,9 +924,7 @@
               ]
             }
           },
-          "required": [
-            "name"
-          ]
+          "additionalProperties": false
         }
       ],
       "markdownDescription": "Specifies the docker image to use for the job or globally for all jobs. Job configuration takes precedence over global setting. Requires a certain kind of GitLab runner executor. [Learn More](https://docs.gitlab.com/ci/yaml/#image)."
@@ -945,7 +942,9 @@
           {
             "type": "object",
             "description": "",
-            "additionalProperties": false,
+            "required": [
+              "name"
+            ],
             "properties": {
               "name": {
                 "type": "string",
@@ -963,7 +962,6 @@
               "docker": {
                 "type": "object",
                 "markdownDescription": "Options to pass to Runners Docker Executor. [Learn More](https://docs.gitlab.com/ci/yaml/#servicesdocker)",
-                "additionalProperties": false,
                 "properties": {
                   "platform": {
                     "type": "string",
@@ -976,12 +974,12 @@
                     "maxLength": 255,
                     "description": "Username or UID to use for the container."
                   }
-                }
+                },
+                "additionalProperties": false
               },
               "kubernetes": {
                 "type": "object",
                 "markdownDescription": "Options to pass to Runners Kubernetes Executor. [Learn More](https://docs.gitlab.com/ci/yaml/#imagekubernetes)",
-                "additionalProperties": false,
                 "properties": {
                   "user": {
                     "type": [
@@ -992,7 +990,8 @@
                     "maxLength": 255,
                     "description": "Username or UID to use for the container. It also supports the UID:GID format."
                   }
-                }
+                },
+                "additionalProperties": false
               },
               "pull_policy": {
                 "markdownDescription": "Specifies how to pull the image in Runner. It can be one of `always`, `never` or `if-not-present`. The default value is `always`. [Learn more](https://docs.gitlab.com/ci/yaml/#servicespull_policy).",
@@ -1035,9 +1034,7 @@
                 "markdownDescription": "Additional environment variables that are passed exclusively to the service. Service variables cannot reference themselves. [Learn More](https://docs.gitlab.com/ci/services/#available-settings-for-services)"
               }
             },
-            "required": [
-              "name"
-            ]
+            "additionalProperties": false
           }
         ]
       }
@@ -1264,12 +1261,12 @@
               ]
             }
           ],
-          "additionalProperties": false,
           "dependentRequired": {
             "gcp_secret_manager": [
               "token"
             ]
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -1345,7 +1342,6 @@
         "anyOf": [
           {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "if": {
                 "$ref": "#/$defs/if"
@@ -1374,7 +1370,8 @@
               "interruptible": {
                 "$ref": "#/$defs/interruptible"
               }
-            }
+            },
+            "additionalProperties": false
           },
           {
             "type": "string",
@@ -1400,7 +1397,6 @@
         "anyOf": [
           {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "if": {
                 "$ref": "#/$defs/if"
@@ -1426,7 +1422,8 @@
                   }
                 ]
               }
-            }
+            },
+            "additionalProperties": false
           },
           {
             "type": "string",
@@ -1451,7 +1448,6 @@
     "workflowAutoCancel": {
       "type": "object",
       "description": "Define the rules for when pipeline should be automatically cancelled.",
-      "additionalProperties": false,
       "properties": {
         "on_job_failure": {
           "markdownDescription": "Define which jobs to stop after a job fails.",
@@ -1471,7 +1467,8 @@
             "none"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "globalVariables": {
       "markdownDescription": "Defines default variables for all jobs. Job level property overrides global variables. [Learn More](https://docs.gitlab.com/ci/yaml/#variables).",
@@ -1569,10 +1566,6 @@
       "anyOf": [
         {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "paths"
-          ],
           "properties": {
             "paths": {
               "type": "array",
@@ -1585,7 +1578,11 @@
               "type": "string",
               "description": "Ref for comparing changes."
             }
-          }
+          },
+          "required": [
+            "paths"
+          ],
+          "additionalProperties": false
         },
         {
           "type": "array",
@@ -1606,10 +1603,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "paths"
-          ],
           "properties": {
             "paths": {
               "type": "array",
@@ -1622,15 +1615,14 @@
               "type": "string",
               "description": "Path of the project to search in."
             }
-          }
+          },
+          "required": [
+            "paths"
+          ],
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "paths",
-            "project"
-          ],
           "properties": {
             "paths": {
               "type": "array",
@@ -1647,7 +1639,12 @@
               "type": "string",
               "description": "Ref of the project to search in."
             }
-          }
+          },
+          "required": [
+            "paths",
+            "project"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1671,7 +1668,9 @@
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "job"
+            ],
             "properties": {
               "job": {
                 "type": "string",
@@ -1687,9 +1686,7 @@
                 "description": "Whether the job needs to be present in the pipeline to run ahead of the current job."
               }
             },
-            "required": [
-              "job"
-            ]
+            "additionalProperties": false
           }
         ]
       }
@@ -1705,23 +1702,19 @@
         {
           "description": "Exit code that are not considered failure. The job fails for any other exit code.",
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "exit_codes"
-          ],
           "properties": {
             "exit_codes": {
               "type": "integer"
             }
-          }
+          },
+          "required": [
+            "exit_codes"
+          ],
+          "additionalProperties": false
         },
         {
           "description": "You can list which exit codes are not considered failures. The job fails for any other exit code.",
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "exit_codes"
-          ],
           "properties": {
             "exit_codes": {
               "type": "array",
@@ -1731,7 +1724,11 @@
                 "type": "integer"
               }
             }
-          }
+          },
+          "required": [
+            "exit_codes"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1765,10 +1762,10 @@
               "maxItems": 200
             }
           },
-          "additionalProperties": false,
           "required": [
             "matrix"
-          ]
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1795,10 +1792,10 @@
               "maxItems": 200
             }
           },
-          "additionalProperties": false,
           "required": [
             "matrix"
-          ]
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1991,7 +1988,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "refs": {
               "$ref": "#/$defs/filter_refs"
@@ -2016,7 +2012,8 @@
                 "type": "string"
               }
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -2028,7 +2025,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "max": {
               "$ref": "#/$defs/retry_max"
@@ -2065,7 +2061,8 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -2140,6 +2137,7 @@
     "inputs": {
       "markdownDescription": "Used to pass input values to included templates, components, downstream pipelines, or child pipelines. [Learn More](https://docs.gitlab.com/ci/inputs/).",
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z0-9_-]+$": {
           "description": "Input parameter value that matches parameter names defined in spec:inputs of the included configuration.",
@@ -2189,8 +2187,7 @@
             }
           ]
         }
-      },
-      "additionalProperties": false
+      }
     },
     "job": {
       "allOf": [
@@ -2201,7 +2198,34 @@
     },
     "job_template": {
       "type": "object",
-      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "when": {
+              "enum": [
+                "delayed"
+              ]
+            }
+          },
+          "required": [
+            "when",
+            "start_in"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "when": {
+              "not": {
+                "enum": [
+                  "delayed"
+                ]
+              }
+            }
+          },
+          "type": "object"
+        }
+      ],
       "properties": {
         "image": {
           "$ref": "#/$defs/image"
@@ -2292,7 +2316,9 @@
               },
               {
                 "type": "object",
-                "additionalProperties": false,
+                "required": [
+                  "job"
+                ],
                 "properties": {
                   "job": {
                     "type": "string"
@@ -2307,13 +2333,14 @@
                     "$ref": "#/$defs/parallel_matrix"
                   }
                 },
-                "required": [
-                  "job"
-                ]
+                "additionalProperties": false
               },
               {
                 "type": "object",
-                "additionalProperties": false,
+                "required": [
+                  "job",
+                  "pipeline"
+                ],
                 "properties": {
                   "pipeline": {
                     "type": "string"
@@ -2328,14 +2355,15 @@
                     "$ref": "#/$defs/parallel_matrix"
                   }
                 },
-                "required": [
-                  "job",
-                  "pipeline"
-                ]
+                "additionalProperties": false
               },
               {
                 "type": "object",
-                "additionalProperties": false,
+                "required": [
+                  "job",
+                  "project",
+                  "ref"
+                ],
                 "properties": {
                   "job": {
                     "type": "string"
@@ -2353,11 +2381,7 @@
                     "$ref": "#/$defs/parallel_matrix"
                   }
                 },
-                "required": [
-                  "job",
-                  "project",
-                  "ref"
-                ]
+                "additionalProperties": false
               },
               {
                 "$ref": "#/$defs/!reference"
@@ -2406,7 +2430,9 @@
             },
             {
               "type": "object",
-              "additionalProperties": false,
+              "required": [
+                "name"
+              ],
               "properties": {
                 "name": {
                   "type": "string",
@@ -2488,16 +2514,17 @@
                   "description": "Explicitly specifies the tier of the deployment environment if non-standard environment name is used."
                 }
               },
-              "required": [
-                "name"
-              ]
+              "additionalProperties": false
             }
           ]
         },
         "release": {
           "type": "object",
           "description": "Indicates that the job creates a Release.",
-          "additionalProperties": false,
+          "required": [
+            "tag_name",
+            "description"
+          ],
           "properties": {
             "tag_name": {
               "type": "string",
@@ -2536,14 +2563,19 @@
             },
             "assets": {
               "type": "object",
-              "additionalProperties": false,
+              "required": [
+                "links"
+              ],
               "properties": {
                 "links": {
                   "type": "array",
                   "description": "Include asset links in the release.",
                   "items": {
                     "type": "object",
-                    "additionalProperties": false,
+                    "required": [
+                      "name",
+                      "url"
+                    ],
                     "properties": {
                       "name": {
                         "type": "string",
@@ -2570,23 +2602,15 @@
                         ]
                       }
                     },
-                    "required": [
-                      "name",
-                      "url"
-                    ]
+                    "additionalProperties": false
                   },
                   "minItems": 1
                 }
               },
-              "required": [
-                "links"
-              ]
+              "additionalProperties": false
             }
           },
-          "required": [
-            "tag_name",
-            "description"
-          ]
+          "additionalProperties": false
         },
         "coverage": {
           "type": "string",
@@ -2613,7 +2637,11 @@
             {
               "type": "object",
               "markdownDescription": "Trigger a multi-project pipeline. [Learn More](https://docs.gitlab.com/ci/pipelines/downstream_pipelines/#multi-project-pipelines).",
-              "additionalProperties": false,
+              "dependentRequired": {
+                "branch": [
+                  "project"
+                ]
+              },
               "properties": {
                 "project": {
                   "description": "Path to the project, e.g. `group/project`, or `group/sub-group/project`.",
@@ -2638,7 +2666,6 @@
                 "forward": {
                   "description": "Specify what to forward to the downstream pipeline.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "yaml_variables": {
                       "type": "boolean",
@@ -2650,22 +2677,18 @@
                       "description": "Variables added for manual pipeline runs and scheduled pipelines are passed to downstream pipelines.",
                       "default": false
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               },
               "required": [
                 "project"
               ],
-              "dependentRequired": {
-                "branch": [
-                  "project"
-                ]
-              }
+              "additionalProperties": false
             },
             {
               "type": "object",
               "description": "Trigger a child pipeline. [Learn More](https://docs.gitlab.com/ci/pipelines/downstream_pipelines/#parent-child-pipelines).",
-              "additionalProperties": false,
               "properties": {
                 "include": {
                   "oneOf": [
@@ -2683,7 +2706,9 @@
                         "oneOf": [
                           {
                             "type": "object",
-                            "additionalProperties": false,
+                            "required": [
+                              "local"
+                            ],
                             "properties": {
                               "local": {
                                 "description": "Relative path from local repository root (`/`) to the local YAML file to define the pipeline configuration.",
@@ -2695,13 +2720,13 @@
                                 "$ref": "#/$defs/inputs"
                               }
                             },
-                            "required": [
-                              "local"
-                            ]
+                            "additionalProperties": false
                           },
                           {
                             "type": "object",
-                            "additionalProperties": false,
+                            "required": [
+                              "template"
+                            ],
                             "properties": {
                               "template": {
                                 "description": "Name of the template YAML file to use in the pipeline configuration.",
@@ -2713,13 +2738,14 @@
                                 "$ref": "#/$defs/inputs"
                               }
                             },
-                            "required": [
-                              "template"
-                            ]
+                            "additionalProperties": false
                           },
                           {
                             "type": "object",
-                            "additionalProperties": false,
+                            "required": [
+                              "artifact",
+                              "job"
+                            ],
                             "properties": {
                               "artifact": {
                                 "description": "Relative path to the generated YAML file which is extracted from the artifacts and used as the configuration for triggering the child pipeline.",
@@ -2735,14 +2761,14 @@
                                 "$ref": "#/$defs/inputs"
                               }
                             },
-                            "required": [
-                              "artifact",
-                              "job"
-                            ]
+                            "additionalProperties": false
                           },
                           {
                             "type": "object",
-                            "additionalProperties": false,
+                            "required": [
+                              "project",
+                              "file"
+                            ],
                             "properties": {
                               "project": {
                                 "description": "Path to another private project under the same GitLab instance, like `group/project` or `group/sub-group/project`.",
@@ -2764,14 +2790,13 @@
                                 "$ref": "#/$defs/inputs"
                               }
                             },
-                            "required": [
-                              "project",
-                              "file"
-                            ]
+                            "additionalProperties": false
                           },
                           {
                             "type": "object",
-                            "additionalProperties": false,
+                            "required": [
+                              "component"
+                            ],
                             "properties": {
                               "component": {
                                 "description": "Local path to component directory or full path to external component directory.",
@@ -2782,13 +2807,13 @@
                                 "$ref": "#/$defs/inputs"
                               }
                             },
-                            "required": [
-                              "component"
-                            ]
+                            "additionalProperties": false
                           },
                           {
                             "type": "object",
-                            "additionalProperties": false,
+                            "required": [
+                              "remote"
+                            ],
                             "properties": {
                               "remote": {
                                 "description": "URL to a `yaml`/`yml` template file using HTTP/HTTPS.",
@@ -2800,9 +2825,7 @@
                                 "$ref": "#/$defs/inputs"
                               }
                             },
-                            "required": [
-                              "remote"
-                            ]
+                            "additionalProperties": false
                           }
                         ]
                       }
@@ -2820,7 +2843,6 @@
                 "forward": {
                   "description": "Specify what to forward to the downstream pipeline.",
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
                     "yaml_variables": {
                       "type": "boolean",
@@ -2832,9 +2854,11 @@
                       "description": "Variables added for manual pipeline runs and scheduled pipelines are passed to downstream pipelines.",
                       "default": false
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
-              }
+              },
+              "additionalProperties": false
             },
             {
               "markdownDescription": "Path to the project, e.g. `group/project`, or `group/sub-group/project`. [Learn More](https://docs.gitlab.com/ci/yaml/#trigger).",
@@ -2898,7 +2922,6 @@
           "oneOf": [
             {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "path_prefix": {
                   "type": "string",
@@ -2912,7 +2935,8 @@
                   "type": "string",
                   "markdownDescription": "A path to a directory that contains the files to be published with Pages."
                 }
-              }
+              },
+              "additionalProperties": false
             },
             {
               "type": "boolean",
@@ -2922,34 +2946,7 @@
           ]
         }
       },
-      "oneOf": [
-        {
-          "properties": {
-            "when": {
-              "enum": [
-                "delayed"
-              ]
-            }
-          },
-          "required": [
-            "when",
-            "start_in"
-          ],
-          "type": "object"
-        },
-        {
-          "properties": {
-            "when": {
-              "not": {
-                "enum": [
-                  "delayed"
-                ]
-              }
-            }
-          },
-          "type": "object"
-        }
-      ]
+      "additionalProperties": false
     },
     "tags": {
       "type": "array",
@@ -2988,7 +2985,23 @@
         {
           "description": "Run a referenced function.",
           "type": "object",
-          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "$ref": "#/$defs/stepName"
+            },
+            "env": {
+              "$ref": "#/$defs/stepNamedStrings"
+            },
+            "inputs": {
+              "$ref": "#/$defs/stepNamedValues"
+            },
+            "step": {
+              "$ref": "#/$defs/stepFuncReference"
+            },
+            "func": {
+              "$ref": "#/$defs/stepFuncReference"
+            }
+          },
           "required": [
             "name"
           ],
@@ -3014,32 +3027,11 @@
               }
             }
           ],
-          "properties": {
-            "name": {
-              "$ref": "#/$defs/stepName"
-            },
-            "env": {
-              "$ref": "#/$defs/stepNamedStrings"
-            },
-            "inputs": {
-              "$ref": "#/$defs/stepNamedValues"
-            },
-            "step": {
-              "$ref": "#/$defs/stepFuncReference"
-            },
-            "func": {
-              "$ref": "#/$defs/stepFuncReference"
-            }
-          }
+          "additionalProperties": false
         },
         {
           "description": "Run a script.",
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "name",
-            "script"
-          ],
           "properties": {
             "name": {
               "$ref": "#/$defs/stepName"
@@ -3051,7 +3043,12 @@
               "type": "string",
               "minLength": 1
             }
-          }
+          },
+          "required": [
+            "name",
+            "script"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -3061,15 +3058,16 @@
     },
     "stepNamedStrings": {
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z_][a-zA-Z0-9_]*$": {
           "type": "string"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "stepNamedValues": {
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z_][a-zA-Z0-9_]*$": {
           "type": [
@@ -3081,24 +3079,14 @@
             "object"
           ]
         }
-      },
-      "additionalProperties": false
+      }
     },
     "stepGitReference": {
       "type": "object",
       "description": "GitReference is a reference to a function in a Git repository.",
-      "additionalProperties": false,
-      "required": [
-        "git"
-      ],
       "properties": {
         "git": {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "url",
-            "rev"
-          ],
           "properties": {
             "url": {
               "type": "string"
@@ -3112,26 +3100,25 @@
             "file": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "url",
+            "rev"
+          ],
+          "additionalProperties": false
         }
-      }
+      },
+      "required": [
+        "git"
+      ],
+      "additionalProperties": false
     },
     "stepOciReference": {
       "type": "object",
       "description": "OCIReference is a reference to a function hosted in an OCI repository.",
-      "additionalProperties": false,
-      "required": [
-        "oci"
-      ],
       "properties": {
         "oci": {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "registry",
-            "repository",
-            "tag"
-          ],
           "properties": {
             "registry": {
               "type": "string",
@@ -3171,9 +3158,19 @@
                 "func.yml"
               ]
             }
-          }
+          },
+          "required": [
+            "registry",
+            "repository",
+            "tag"
+          ],
+          "additionalProperties": false
         }
-      }
+      },
+      "required": [
+        "oci"
+      ],
+      "additionalProperties": false
     },
     "stepFuncReference": {
       "oneOf": [
@@ -3189,7 +3186,6 @@
       ]
     }
   },
-  "markdownDescription": "GitLab has a built-in solution for doing CI called GitLab CI. It is configured by supplying a file called `.gitlab-ci.yml`, which will list all the jobs that are going to run for the project. A full list of all options can be found [here](https://docs.gitlab.com/ci/yaml/). [Learn More](https://docs.gitlab.com/ci/).",
   "patternProperties": {
     "^[.]": {
       "description": "Hidden keys.",
@@ -3202,5 +3198,9 @@
         }
       ]
     }
+  },
+  "markdownDescription": "GitLab has a built-in solution for doing CI called GitLab CI. It is configured by supplying a file called `.gitlab-ci.yml`, which will list all the jobs that are going to run for the project. A full list of all options can be found [here](https://docs.gitlab.com/ci/yaml/). [Learn More](https://docs.gitlab.com/ci/).",
+  "additionalProperties": {
+    "$ref": "#/$defs/job"
   }
 }

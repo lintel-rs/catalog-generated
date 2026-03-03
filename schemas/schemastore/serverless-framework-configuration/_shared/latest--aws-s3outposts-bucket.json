@@ -5,8 +5,7 @@
   "description": "Resource Type Definition for AWS::S3Outposts::Bucket. Source:- <https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-s3outposts.git>",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-s3outposts-bucket.json",
-    "sourceSha256": "0c4c82a8e5727ec59bf7a74d1ecf4f2b382b113f1c88b7b0bac09875a9874975",
-    "invalid": true
+    "sourceSha256": "0c4c82a8e5727ec59bf7a74d1ecf4f2b382b113f1c88b7b0bac09875a9874975"
   },
   "type": "object",
   "properties": {
@@ -56,10 +55,15 @@
     "OutpostId"
   ],
   "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-s3outposts.git",
+  "additionalProperties": false,
+  "primaryIdentifier": [
+    "/properties/Arn"
+  ],
+  "taggable": true,
   "$defs": {
     "Tag": {
       "type": "object",
-      "additionalProperties": false,
+      "title": "AWSS3OutpostsBucketTagDefinition",
       "properties": {
         "Key": {
           "oneOf": [
@@ -92,11 +96,11 @@
         "Key",
         "Value"
       ],
-      "title": "AWSS3OutpostsBucketTagDefinition"
+      "additionalProperties": false
     },
     "LifecycleConfiguration": {
       "type": "object",
-      "additionalProperties": false,
+      "title": "AWSS3OutpostsBucketLifecycleConfigurationDefinition",
       "properties": {
         "Rules": {
           "description": "A list of lifecycle rules for individual objects in an Amazon S3Outposts bucket.",
@@ -111,12 +115,12 @@
       "required": [
         "Rules"
       ],
-      "title": "AWSS3OutpostsBucketLifecycleConfigurationDefinition"
+      "additionalProperties": false
     },
     "Rule": {
       "description": "Specifies lifecycle rules for an Amazon S3Outposts bucket. You must specify at least one of the following: AbortIncompleteMultipartUpload, ExpirationDate, ExpirationInDays.",
       "type": "object",
-      "additionalProperties": false,
+      "title": "AWSS3OutpostsBucketRuleDefinition",
       "properties": {
         "Status": {
           "oneOf": [
@@ -160,21 +164,6 @@
         "Filter": {
           "description": "The container for the filter of the lifecycle rule.",
           "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "Prefix": {
-              "description": "Object key prefix that identifies one or more objects to which this rule applies.",
-              "$ref": "#/$defs/FilterPrefix"
-            },
-            "Tag": {
-              "description": "Specifies a tag used to identify a subset of objects for an Amazon S3Outposts bucket.",
-              "$ref": "#/$defs/FilterTag"
-            },
-            "AndOperator": {
-              "description": "The container for the AND condition for the lifecycle rule. A combination of Prefix and 1 or more Tags OR a minimum of 2 or more tags.",
-              "$ref": "#/$defs/FilterAndOperator"
-            }
-          },
           "oneOf": [
             {
               "required": [
@@ -191,7 +180,22 @@
                 "AndOperator"
               ]
             }
-          ]
+          ],
+          "properties": {
+            "Prefix": {
+              "description": "Object key prefix that identifies one or more objects to which this rule applies.",
+              "$ref": "#/$defs/FilterPrefix"
+            },
+            "Tag": {
+              "description": "Specifies a tag used to identify a subset of objects for an Amazon S3Outposts bucket.",
+              "$ref": "#/$defs/FilterTag"
+            },
+            "AndOperator": {
+              "description": "The container for the AND condition for the lifecycle rule. A combination of Prefix and 1 or more Tags OR a minimum of 2 or more tags.",
+              "$ref": "#/$defs/FilterAndOperator"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "anyOf": [
@@ -214,7 +218,7 @@
           ]
         }
       ],
-      "title": "AWSS3OutpostsBucketRuleDefinition"
+      "additionalProperties": false
     },
     "iso8601UTC": {
       "oneOf": [
@@ -232,7 +236,7 @@
     "AbortIncompleteMultipartUpload": {
       "description": "Specifies the days since the initiation of an incomplete multipart upload that Amazon S3Outposts will wait before permanently removing all parts of the upload.",
       "type": "object",
-      "additionalProperties": false,
+      "title": "AWSS3OutpostsBucketAbortIncompleteMultipartUploadDefinition",
       "properties": {
         "DaysAfterInitiation": {
           "description": "Specifies the number of days after which Amazon S3Outposts aborts an incomplete multipart upload.",
@@ -243,7 +247,7 @@
       "required": [
         "DaysAfterInitiation"
       ],
-      "title": "AWSS3OutpostsBucketAbortIncompleteMultipartUploadDefinition"
+      "additionalProperties": false
     },
     "FilterPrefix": {
       "oneOf": [
@@ -260,7 +264,7 @@
     "FilterTag": {
       "description": "Tag used to identify a subset of objects for an Amazon S3Outposts bucket.",
       "type": "object",
-      "additionalProperties": false,
+      "title": "AWSS3OutpostsBucketFilterTagDefinition",
       "properties": {
         "Key": {
           "oneOf": [
@@ -293,16 +297,12 @@
         "Key",
         "Value"
       ],
-      "title": "AWSS3OutpostsBucketFilterTagDefinition"
+      "additionalProperties": false
     },
     "FilterAndOperator": {
       "oneOf": [
         {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "Tags"
-          ],
           "properties": {
             "Prefix": {
               "description": "Prefix identifies one or more objects to which the rule applies.",
@@ -318,17 +318,16 @@
                 "$ref": "#/$defs/FilterTag"
               }
             }
-          }
+          },
+          "required": [
+            "Tags"
+          ],
+          "additionalProperties": false
         }
       ],
       "title": "AWSS3OutpostsBucketFilterAndOperatorDefinition"
     }
   },
-  "primaryIdentifier": [
-    "/properties/Arn"
-  ],
-  "taggable": true,
-  "additionalProperties": false,
   "createOnlyProperties": [
     "/properties/BucketName",
     "/properties/OutpostId"

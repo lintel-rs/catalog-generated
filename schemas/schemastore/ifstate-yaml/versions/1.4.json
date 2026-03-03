@@ -19,7 +19,6 @@
     "options": {
       "description": "global configuration settings",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "sysctl": {
           "type": "object",
@@ -34,12 +33,12 @@
             }
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ignore": {
       "description": "ignore patterns to skip interface, ip address or routing objects",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "ipaddr_builtin": {
           "$ref": "#/$defs/ignore-ipaddr"
@@ -70,7 +69,8 @@
         "rules": {
           "$ref": "#/$defs/ignore-rules"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "interfaces": {
       "description": "list of interface settings (link settings and ip addresses)",
@@ -80,7 +80,6 @@
         "required": [
           "name"
         ],
-        "additionalProperties": false,
         "properties": {
           "name": {
             "description": "name of the interface",
@@ -151,7 +150,6 @@
                 "required": [
                   "kind"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -185,6 +183,7 @@
                     "$ref": "#/$defs/iface-link_ifalias"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -192,7 +191,6 @@
                 "required": [
                   "kind"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -217,6 +215,7 @@
                     "$ref": "#/$defs/iface-link_ifalias"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -225,7 +224,6 @@
                   "kind",
                   "peer"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -254,6 +252,7 @@
                     "$ref": "#/$defs/iface-link_ifalias"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -263,7 +262,6 @@
                   "link",
                   "vlan_id"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -299,6 +297,7 @@
                     "description": "specifies the VLAN identifier to use"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -308,7 +307,6 @@
                   "vxlan_id",
                   "vxlan_link"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -344,6 +342,7 @@
                     "$ref": "#/$defs/iface-link_tun-dev"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -353,7 +352,6 @@
                   "ipip_remote",
                   "ipip_local"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -384,6 +382,7 @@
                     "$ref": "#/$defs/iface-link_tun-local4"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -393,7 +392,6 @@
                   "sit_remote",
                   "sit_local"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -424,6 +422,7 @@
                     "$ref": "#/$defs/iface-link_tun-local4"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -433,7 +432,6 @@
                   "gre_remote",
                   "gre_local"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -468,6 +466,7 @@
                     "$ref": "#/$defs/iface-link_tun-dev"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -477,7 +476,6 @@
                   "ip6gre_remote",
                   "ip6gre_local"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -512,6 +510,7 @@
                     "$ref": "#/$defs/iface-link_tun-dev"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -520,7 +519,32 @@
                   "kind",
                   "geneve_id"
                 ],
-                "additionalProperties": false,
+                "oneOf": [
+                  {
+                    "description": "tunnel over IPv4",
+                    "required": [
+                      "geneve_remote"
+                    ],
+                    "properties": {
+                      "geneve_remote": {
+                        "$ref": "#/$defs/iface-link_tun-remote4"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "description": "tunnel over IPv6",
+                    "required": [
+                      "geneve_remote6"
+                    ],
+                    "properties": {
+                      "geneve_remote6": {
+                        "$ref": "#/$defs/iface-link_tun-remote6"
+                      }
+                    },
+                    "type": "object"
+                  }
+                ],
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -553,32 +577,7 @@
                     "description": "specifies the VNI to use"
                   }
                 },
-                "oneOf": [
-                  {
-                    "description": "tunnel over IPv4",
-                    "required": [
-                      "geneve_remote"
-                    ],
-                    "properties": {
-                      "geneve_remote": {
-                        "$ref": "#/$defs/iface-link_tun-remote4"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  {
-                    "description": "tunnel over IPv6",
-                    "required": [
-                      "geneve_remote6"
-                    ],
-                    "properties": {
-                      "geneve_remote6": {
-                        "$ref": "#/$defs/iface-link_tun-remote6"
-                      }
-                    },
-                    "type": "object"
-                  }
-                ],
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -586,7 +585,6 @@
                 "required": [
                   "kind"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -611,6 +609,7 @@
                     "$ref": "#/$defs/iface-link_ifalias"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               },
               {
@@ -619,7 +618,6 @@
                   "kind",
                   "xfrm_link"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -657,6 +655,7 @@
                     "description": "lookup key to match xfrm policies"
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               }
             ]
@@ -668,12 +667,9 @@
           "ethtool": {
             "description": "network driver and hardware settings via [ethtool(8)](https://man7.org/linux/man-pages/man8/ethtool.8.html)",
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "pause": {
                 "type": "object",
-                "additionalProperties": false,
-                "description": "pause parameters",
                 "properties": {
                   "autoneg": {
                     "description": "enable pause autonegotiation",
@@ -687,12 +683,12 @@
                     "description": "enable Tx pause",
                     "$ref": "#/$defs/iface-ethtool_onoff"
                   }
-                }
+                },
+                "description": "pause parameters",
+                "additionalProperties": false
               },
               "coalesce": {
                 "type": "object",
-                "additionalProperties": false,
-                "description": "interrupt coalescing",
                 "properties": {
                   "adaptive-rx": {
                     "$ref": "#/$defs/iface-ethtool_onoff"
@@ -760,12 +756,12 @@
                   "sample-interval": {
                     "type": "integer"
                   }
-                }
+                },
+                "description": "interrupt coalescing",
+                "additionalProperties": false
               },
               "ring": {
                 "type": "object",
-                "additionalProperties": false,
-                "description": "rx/tx ring parameters",
                 "properties": {
                   "rx": {
                     "description": "number of ring entries for the Rx ring",
@@ -783,12 +779,12 @@
                     "description": "number of ring entries for the Tx ring",
                     "type": "integer"
                   }
-                }
+                },
+                "description": "rx/tx ring parameters",
+                "additionalProperties": false
               },
               "features": {
                 "type": "object",
-                "additionalProperties": false,
-                "description": "offload parameters and other features",
                 "properties": {
                   "rx": {
                     "description": "enable RX checksumming",
@@ -838,12 +834,12 @@
                     "description": "enable receive hashing offload",
                     "$ref": "#/$defs/iface-ethtool_onoff"
                   }
-                }
+                },
+                "description": "offload parameters and other features",
+                "additionalProperties": false
               },
               "change": {
                 "type": "object",
-                "additionalProperties": false,
-                "description": "device settings",
                 "properties": {
                   "speed": {
                     "description": "speed in Mbps",
@@ -951,12 +947,12 @@
                       }
                     ]
                   }
-                }
+                },
+                "description": "device settings",
+                "additionalProperties": false
               },
               "channels": {
                 "type": "object",
-                "additionalProperties": false,
-                "description": "number of channels",
                 "properties": {
                   "rx": {
                     "description": "number of channels with only receive queues",
@@ -974,12 +970,12 @@
                     "description": "number of multi-purpose channels",
                     "type": "integer"
                   }
-                }
+                },
+                "description": "number of channels",
+                "additionalProperties": false
               },
               "eee": {
                 "type": "object",
-                "additionalProperties": false,
-                "description": "Energy-Efficient Ethernet (according to the IEEE 802.3az specifications)",
                 "properties": {
                   "eee": {
                     "description": "enable EEE support",
@@ -997,12 +993,12 @@
                     "description": "amount of idle time prior asserting Tx LPI (in microseconds)",
                     "type": "integer"
                   }
-                }
+                },
+                "description": "Energy-Efficient Ethernet (according to the IEEE 802.3az specifications)",
+                "additionalProperties": false
               },
               "phy-tunable": {
                 "type": "object",
-                "additionalProperties": false,
-                "description": "PHY tunable parameters",
                 "properties": {
                   "downshift": {
                     "description": "enable downshift",
@@ -1097,7 +1093,9 @@
                       }
                     ]
                   }
-                }
+                },
+                "description": "PHY tunable parameters",
+                "additionalProperties": false
               },
               "priv-flags": {
                 "type": "object",
@@ -1105,8 +1103,6 @@
               },
               "fec": {
                 "type": "object",
-                "additionalProperties": false,
-                "description": "Forward Error Correction",
                 "properties": {
                   "encoding": {
                     "description": "FEC encoding",
@@ -1131,14 +1127,16 @@
                       ]
                     }
                   }
-                }
+                },
+                "description": "Forward Error Correction",
+                "additionalProperties": false
               }
-            }
+            },
+            "additionalProperties": false
           },
           "tc": {
             "description": "settings for traffic control",
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "ingress": {
                 "description": "enable the ingress qdisc for policing and shaping in ingress",
@@ -1171,7 +1169,6 @@
                   "oneOf": [
                     {
                       "description": "[basic](https://man7.org/linux/man-pages/man8/tc-basic.8.html) - basic traffic control filter",
-                      "additionalProperties": false,
                       "properties": {
                         "kind": {
                           "type": "string",
@@ -1193,6 +1190,7 @@
                           "type": "object"
                         }
                       },
+                      "additionalProperties": false,
                       "type": "object"
                     },
                     {
@@ -1348,11 +1346,6 @@
                     },
                     {
                       "description": "[fw](https://man7.org/linux/man-pages/man8/tc-fw.8.html) - fwmark traffic control filter",
-                      "additionalProperties": false,
-                      "required": [
-                        "kind",
-                        "handle"
-                      ],
                       "properties": {
                         "kind": {
                           "type": "string",
@@ -1375,11 +1368,15 @@
                           "minimum": 0
                         }
                       },
+                      "required": [
+                        "kind",
+                        "handle"
+                      ],
+                      "additionalProperties": false,
                       "type": "object"
                     },
                     {
                       "description": "[matchall](https://man7.org/linux/man-pages/man8/tc-matchall.8.html) - traffic control filter that matches every packet",
-                      "additionalProperties": false,
                       "properties": {
                         "kind": {
                           "type": "string",
@@ -1412,20 +1409,18 @@
                           "maximum": 4294967295
                         }
                       },
+                      "additionalProperties": false,
                       "type": "object"
                     }
                   ]
                 }
               }
-            }
+            },
+            "additionalProperties": false
           },
           "wireguard": {
             "description": "settings for WireGuard interfaces",
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "private_key"
-            ],
             "properties": {
               "private_key": {
                 "description": "local private key (consider to use the `!include` tag to read the key from file)",
@@ -1448,10 +1443,6 @@
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "public_key"
-                  ],
                   "properties": {
                     "public_key": {
                       "description": "the peer's public key",
@@ -1479,17 +1470,25 @@
                         "format": "ipv4,ipv6"
                       }
                     }
-                  }
+                  },
+                  "required": [
+                    "public_key"
+                  ],
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "required": [
+              "private_key"
+            ],
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "routing": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "routes": {
           "type": "array",
@@ -1498,7 +1497,6 @@
             "required": [
               "to"
             ],
-            "additionalProperties": false,
             "properties": {
               "type": {
                 "description": "the type of this route",
@@ -1581,7 +1579,8 @@
                 "maximum": 4294967295,
                 "default": 0
               }
-            }
+            },
+            "additionalProperties": false
           }
         },
         "rules": {
@@ -1607,7 +1606,6 @@
                 "priority"
               ]
             },
-            "additionalProperties": false,
             "properties": {
               "action": {
                 "type": [
@@ -1674,12 +1672,18 @@
                 ],
                 "description": "select the ip protocol to match"
               }
-            }
+            },
+            "additionalProperties": false
           }
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
+  "required": [
+    "interfaces"
+  ],
   "$defs": {
     "ignore-ipaddr": {
       "description": "list of ip address prefixes to be ignored",
@@ -1714,7 +1718,6 @@
       "type": "array",
       "items": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "dev": {
             "type": [
@@ -1754,7 +1757,8 @@
           "via": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "ignore-rules": {
@@ -1762,7 +1766,6 @@
       "type": "array",
       "items": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "action": {
             "type": [
@@ -1829,7 +1832,8 @@
             ],
             "description": "select the ip protocol to match"
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "iface-link_address": {
@@ -1896,7 +1900,6 @@
     "iface-sysctl": {
       "type": "object",
       "description": "configures [per interface sysctl settings](https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt)",
-      "additionalProperties": false,
       "properties": {
         "ipv4": {
           "type": "object",
@@ -2003,7 +2006,6 @@
         "ipv6": {
           "type": "object",
           "description": "settings in `/proc/sys/net/ipv6/*/conf/`",
-          "additionalProperties": false,
           "properties": {
             "accept_dad": {
               "type": "integer"
@@ -2159,9 +2161,11 @@
             "use_tempaddr": {
               "type": "integer"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "iface-ethtool_onoff": {
       "type": [
@@ -2422,7 +2426,6 @@
           "required": [
             "kind"
           ],
-          "additionalProperties": false,
           "properties": {
             "kind": {
               "type": "string",
@@ -2437,6 +2440,7 @@
               "description": "queue size in bytes or packets"
             }
           },
+          "additionalProperties": false,
           "type": "object"
         },
         {
@@ -2556,12 +2560,6 @@
         "oneOf": [
           {
             "description": "[mirred](https://man7.org/linux/man-pages/man8/tc-mirred.8.html) - mirror/redirect action",
-            "additionalProperties": false,
-            "required": [
-              "direction",
-              "action",
-              "dev"
-            ],
             "properties": {
               "kind": {
                 "type": "string",
@@ -2596,14 +2594,16 @@
                 "maximum": 4294967295
               }
             },
+            "required": [
+              "direction",
+              "action",
+              "dev"
+            ],
+            "additionalProperties": false,
             "type": "object"
           }
         ]
       }
     }
-  },
-  "required": [
-    "interfaces"
-  ],
-  "additionalProperties": false
+  }
 }

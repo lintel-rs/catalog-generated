@@ -81,7 +81,6 @@
         "maxProperties": 1,
         "additionalProperties": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "always": {
               "description": "Run fixed number of concurrent users.",
@@ -163,14 +162,14 @@
               "description": "Does not execute anything. Useful for orchestrating phases or adding pauses.",
               "$ref": "#/$defs/phase"
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
     "staircase": {
       "desription": "Shortcut for alternating increasingRate and constantRate phases",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "initialRampUpDuration": {
           "description": "Duration of the first ramp-up.",
@@ -200,7 +199,8 @@
           "description": "Maximum number of users (active sessions) executing concurrently.",
           "$ref": "#/$defs/positiveInteger"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "usersPerSec": {
       "description": "Single-phase shortcut: Rate for new users",
@@ -227,6 +227,7 @@
     "name",
     "http"
   ],
+  "additionalProperties": false,
   "$defs": {
     "agent": {
       "oneOf": [
@@ -254,7 +255,6 @@
     "ergonomics": {
       "description": "Adjust scenario to implement common functionality out-of-the-box.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "repeatCookies": {
           "description": "Store cookies in session and resend them on future requests. Default is true.",
@@ -281,15 +281,12 @@
             "ALWAYS"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "http": {
       "description": "HTTP connection pool configuration.",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "host"
-      ],
       "properties": {
         "protocol": {
           "enum": [
@@ -339,8 +336,6 @@
         "keyManager": {
           "description": "TLS key manager for setting up client certificates.",
           "type": "object",
-          "additionalProperties": false,
-          "required": [],
           "properties": {
             "storeType": {
               "type": "string"
@@ -360,7 +355,9 @@
             "keyFile": {
               "type": "string"
             }
-          }
+          },
+          "required": [],
+          "additionalProperties": false
         },
         "maxHttp2Streams": {
           "description": "Maximum number of concurrent HTTP 2.0 streams on single TCP connection. Default is 100.",
@@ -374,12 +371,6 @@
             },
             {
               "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "core",
-                "max",
-                "buffer"
-              ],
               "properties": {
                 "core": {
                   "$ref": "#/$defs/positiveInteger"
@@ -393,7 +384,13 @@
                 "keepAliveTime": {
                   "type": "integer"
                 }
-              }
+              },
+              "required": [
+                "core",
+                "max",
+                "buffer"
+              ],
+              "additionalProperties": false
             }
           ]
         },
@@ -412,8 +409,6 @@
         "trustManager": {
           "description": "TLS trust manager for setting up server certificates.",
           "type": "object",
-          "additionalProperties": false,
-          "required": [],
           "properties": {
             "storeType": {
               "type": "string"
@@ -427,13 +422,19 @@
             "certFile": {
               "type": "string"
             }
-          }
+          },
+          "required": [],
+          "additionalProperties": false
         },
         "useHttpCache": {
           "description": "Make use of HTTP cache on client-side. If multiple authorities are involved, disable the HTTP cache for all of them to achieve the desired outcomes. The default is true except for wrk/wrk2 wrappers where it is set to false.\n",
           "type": "boolean"
         }
-      }
+      },
+      "required": [
+        "host"
+      ],
+      "additionalProperties": false
     },
     "incrementableInteger": {
       "oneOf": [
@@ -442,11 +443,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "base",
-            "increment"
-          ],
           "properties": {
             "base": {
               "$ref": "#/$defs/positiveInteger"
@@ -454,7 +450,12 @@
             "increment": {
               "type": "integer"
             }
-          }
+          },
+          "required": [
+            "base",
+            "increment"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -465,11 +466,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "base",
-            "increment"
-          ],
           "properties": {
             "base": {
               "$ref": "#/$defs/positiveNumber"
@@ -477,7 +473,12 @@
             "increment": {
               "type": "number"
             }
-          }
+          },
+          "required": [
+            "base",
+            "increment"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -559,7 +560,6 @@
     },
     "fork": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "weight": {
           "type": "number"
@@ -567,7 +567,8 @@
         "scenario": {
           "$ref": "#/$defs/scenario"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "phaseReferenceList": {
       "oneOf": [
@@ -591,7 +592,9 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "phase"
+          ],
           "properties": {
             "phase": {
               "type": "string"
@@ -607,9 +610,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "phase"
-          ]
+          "additionalProperties": false
         }
       ]
     },
@@ -651,7 +652,6 @@
         {
           "description": "Actions that a single user will execute.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "initialSequences": {
               "description": "Sequences scheduled for execution with a new session",
@@ -680,7 +680,8 @@
                 "$ref": "#/$defs/sequence"
               }
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "description": "Automatically chained sequences.",
@@ -710,8 +711,6 @@
       "oneOf": [
         {
           "type": "object",
-          "additionalProperties": false,
-          "$comment": "Steps are inserted here through Generator",
           "properties": {
             "addItem": {
               "$ref": "#/$defs/io.hyperfoil.core.steps.collections.AddItemAction$Builder"
@@ -1027,7 +1026,9 @@
                 }
               ]
             }
-          }
+          },
+          "$comment": "Steps are inserted here through Generator",
+          "additionalProperties": false
         },
         {
           "enum": [
@@ -1058,12 +1059,11 @@
     },
     "io.hyperfoil.api.config.ListBuilder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.api.config.SLABuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "blockedRatio": {
           "type": "number"
@@ -1118,23 +1118,21 @@
         "window": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.api.config.SLABuilder$LimitsBuilder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.api.config.SLABuilder$ListBuilder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.api.processor.Processor$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "maxProperties": 1,
       "properties": {
         "addItem": {
           "$ref": "#/$defs/io.hyperfoil.core.steps.collections.AddItemAction$Builder"
@@ -1384,24 +1382,24 @@
             }
           ]
         }
-      }
+      },
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false
     },
     "io.hyperfoil.api.processor.RawBytesHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "maxProperties": 1,
       "properties": {
         "transferSizeRecorder": {
           "$ref": "#/$defs/io.hyperfoil.core.handlers.TransferSizeRecorder$Builder"
         }
-      }
+      },
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false
     },
     "io.hyperfoil.api.processor.Transformer$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "maxProperties": 1,
       "properties": {
         "actions": {
           "$ref": "#/$defs/io.hyperfoil.core.generators.ActionsTransformer$Builder"
@@ -1416,13 +1414,13 @@
             }
           ]
         }
-      }
+      },
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false
     },
     "io.hyperfoil.api.session.Action$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "maxProperties": 1,
       "properties": {
         "addItem": {
           "$ref": "#/$defs/io.hyperfoil.core.steps.collections.AddItemAction$Builder"
@@ -1587,16 +1585,18 @@
             }
           ]
         }
-      }
+      },
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.AllConditions$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.BoolCondition$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -1604,11 +1604,11 @@
         "value": {
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.Condition$TypesBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "allConditions": {
           "oneOf": [
@@ -1681,11 +1681,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.IntCondition$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "equalTo": {
           "oneOf": [
@@ -1783,11 +1783,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.IntCondition$ProvidedVarBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "equalTo": {
           "oneOf": [
@@ -1879,11 +1879,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.IntSourceBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -1891,16 +1891,16 @@
         "value": {
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.IntSourceBuilder$ListBuilder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.ObjectSourceBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -1908,11 +1908,11 @@
         "value": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.StringCondition$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "caseSensitive": {
           "type": "boolean"
@@ -1962,11 +1962,11 @@
         "value": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.StringConditionBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "caseSensitive": {
           "type": "boolean"
@@ -2010,11 +2010,11 @@
         "value": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.builders.StringConditionBuilder$LengthBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "equalTo": {
           "oneOf": [
@@ -2106,11 +2106,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.ActionsTransformer$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "actions": {
           "oneOf": [
@@ -2140,11 +2140,11 @@
         "var": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.IntValueProviderBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -2152,20 +2152,20 @@
         "value": {
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.Pattern$TransformerBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "pattern": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.RandomCsvRowStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "columns": {
           "oneOf": [
@@ -2214,16 +2214,16 @@
         "skipComments": {
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.RandomCsvRowStep$Builder$ColumnsBuilder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.RandomFileStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "filenameVar": {
           "type": "string"
@@ -2276,11 +2276,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.RandomIntStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "max": {
           "oneOf": [
@@ -2315,11 +2315,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.RandomItemStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "file": {
           "type": "string"
@@ -2375,20 +2375,20 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.RandomUUIDStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.StringGeneratorImplBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -2399,11 +2399,11 @@
         "value": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.TemplateStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "pattern": {
           "type": "string"
@@ -2411,16 +2411,16 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.generators.WeightedGenerator$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.ArrayRecorder$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "format": {
           "enum": [
@@ -2438,16 +2438,16 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.CloseConnectionHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.CollectionRecorder$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "format": {
           "enum": [
@@ -2459,11 +2459,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.ConditionalAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "actions": {
           "oneOf": [
@@ -2551,11 +2551,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.ConditionalProcessor$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "allConditions": {
           "oneOf": [
@@ -2643,20 +2643,20 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.CountRecorder$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.GzipInflatorProcessor$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "encodingVar": {
           "type": "string"
@@ -2676,16 +2676,16 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.MarkRequestInvalidAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.NewSequenceAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "concurrencyPolicy": {
           "enum": [
@@ -2699,11 +2699,11 @@
         "sequence": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.QueueProcessor$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "concurrency": {
           "type": "integer"
@@ -2739,11 +2739,11 @@
         "var": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.StoreIntProcessor$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "override": {
           "type": "boolean"
@@ -2751,11 +2751,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.StoreProcessor$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "format": {
           "enum": [
@@ -2767,11 +2767,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.StoreProcessor$LegacyBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "format": {
           "enum": [
@@ -2783,20 +2783,20 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.TransferSizeRecorder$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "key": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.handlers.json.JsonHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "delete": {
           "type": "boolean"
@@ -2853,11 +2853,11 @@
         "unquote": {
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.AddToIntAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "orElseSetTo": {
           "type": "integer"
@@ -2868,20 +2868,20 @@
         "var": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.AwaitDelayStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "key": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.AwaitIntStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "equalTo": {
           "oneOf": [
@@ -2976,25 +2976,25 @@
         "var": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.AwaitVarStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "var": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.BreakIfFinishedStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.BreakSequenceStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "allConditions": {
           "oneOf": [
@@ -3085,11 +3085,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.FailAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "allConditions": {
           "oneOf": [
@@ -3165,11 +3165,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.ForeachStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "counterVar": {
           "type": "string"
@@ -3183,11 +3183,11 @@
         "sequence": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.JsonStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "delete": {
           "type": "boolean"
@@ -3247,20 +3247,20 @@
         "unquote": {
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.LogAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "message": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.LoopStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "counterVar": {
           "type": "string"
@@ -3275,35 +3275,35 @@
             "$ref": "#/$defs/step"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.NextSequenceStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.NoopStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.RestartSequenceAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.RestartSequenceStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.ScheduleDelayStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "duration": {
           "type": "string"
@@ -3336,11 +3336,11 @@
             "FROM_NOW"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.ScheduleDelayStep$ThinkTimeBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "duration": {
           "type": "string"
@@ -3373,11 +3373,11 @@
             "FROM_NOW"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.SetAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "intArray": {
           "oneOf": [
@@ -3415,11 +3415,11 @@
         "var": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.SetAction$IntArrayBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3427,11 +3427,11 @@
         "size": {
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.SetAction$ObjectArrayBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3439,11 +3439,11 @@
         "size": {
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.SetIntAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3524,21 +3524,21 @@
         "var": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.StopStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.StopwatchBeginStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.StringToIntAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3546,11 +3546,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.TimestampStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "localeCountry": {
           "type": "string"
@@ -3561,20 +3561,20 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.UnsetAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "var": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.collections.AddItemAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3585,20 +3585,20 @@
         "value": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.collections.BoolFilter$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "value": {
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.collections.GetIndexAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "collection": {
           "type": "string"
@@ -3621,11 +3621,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.collections.GetItemAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3648,11 +3648,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.collections.GetSizeAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "boolFilter": {
           "oneOf": [
@@ -3708,11 +3708,11 @@
         "undefinedValue": {
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.collections.IntFilter$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "equalTo": {
           "oneOf": [
@@ -3804,11 +3804,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.collections.RemoveItemAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3828,11 +3828,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.collections.SetItemAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3858,11 +3858,11 @@
         "value": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.collections.StringFilter$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "caseSensitive": {
           "type": "boolean"
@@ -3906,11 +3906,11 @@
         "value": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.data.AddToSharedCounterAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3927,11 +3927,11 @@
         "value": {
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.data.GetSharedCounterAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "key": {
           "type": "string"
@@ -3939,11 +3939,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.data.PublishAgentDataAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -3951,11 +3951,11 @@
         "name": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.data.PublishGlobalCountersAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "key": {
           "type": "string"
@@ -4005,16 +4005,16 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.data.PublishGlobalCountersAction$Builder$VarsBuilder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.data.PullSharedMapStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "key": {
           "type": "string"
@@ -4044,11 +4044,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.data.PushSharedMapStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "key": {
           "type": "string"
@@ -4075,11 +4075,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.data.ReadAgentDataAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string"
@@ -4087,11 +4087,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.steps.data.SetSharedCounterAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -4102,11 +4102,11 @@
         "value": {
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.core.util.DoubleIncrementBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "base": {
           "type": "number"
@@ -4114,11 +4114,11 @@
         "increment": {
           "type": "number"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.example.DivideStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "divisor": {
           "type": "integer"
@@ -4129,11 +4129,11 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.hotrod.steps.HotRodRequestBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "cacheName": {
           "oneOf": [
@@ -4215,13 +4215,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.api.HeaderHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "maxProperties": 1,
       "properties": {
         "conditional": {
           "$ref": "#/$defs/io.hyperfoil.http.handlers.ConditionalHeaderHandler$Builder"
@@ -4245,13 +4243,13 @@
             }
           ]
         }
-      }
+      },
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false
     },
     "io.hyperfoil.http.api.StatusHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "maxProperties": 1,
       "properties": {
         "action": {
           "$ref": "#/$defs/io.hyperfoil.http.handlers.ActionStatusHandler$Builder"
@@ -4285,7 +4283,10 @@
             }
           ]
         }
-      }
+      },
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.ActionStatusHandler$Builder": {
       "type": "object",
@@ -4299,7 +4300,6 @@
     },
     "io.hyperfoil.http.handlers.ConditionalHeaderHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "allConditions": {
           "oneOf": [
@@ -4387,16 +4387,16 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.CountHeadersHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.FilterHeaderHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "header": {
           "oneOf": [
@@ -4428,17 +4428,18 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.LogInvalidHandler$BodyHandlerBuilder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.LogInvalidHandler$HeaderHandlerBuilder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.MultiplexStatusHandler$Builder": {
       "type": "object",
@@ -4452,7 +4453,6 @@
     },
     "io.hyperfoil.http.handlers.RangeStatusValidator$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "max": {
           "type": "integer"
@@ -4460,11 +4460,11 @@
         "min": {
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.RecordHeaderTimeHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "header": {
           "type": "string"
@@ -4475,11 +4475,11 @@
         "unit": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.StatusToCounterHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "add": {
           "type": "integer"
@@ -4496,25 +4496,25 @@
         "var": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.StatusToStatsHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.http.handlers.StoreStatusHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.html.EmbeddedResourceHandlerBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fetchResource": {
           "oneOf": [
@@ -4549,11 +4549,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.html.FetchResourceHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "concurrency": {
           "type": "integer"
@@ -4583,11 +4583,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.html.HtmlHandler$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "onEmbeddedResource": {
           "oneOf": [
@@ -4619,11 +4619,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.html.TagAttributeHandlerBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "attribute": {
           "type": "string"
@@ -4659,16 +4659,16 @@
         "toVar": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.AwaitAllResponsesStep$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.BodyBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "form": {
           "oneOf": [
@@ -4708,21 +4708,21 @@
         "text": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.ClearHttpCacheAction$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.FormGenerator$Builder": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {}
+      "properties": {},
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.FormGenerator$InputBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -4736,11 +4736,11 @@
         "value": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.HttpRequestStepBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "CONNECT": {
           "oneOf": [
@@ -5132,11 +5132,11 @@
         "timeout": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.HttpRequestStepBuilder$CompensationBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "metric": {
           "oneOf": [
@@ -5170,11 +5170,11 @@
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.HttpRequestStepBuilder$CompressionBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "encoding": {
           "type": "string"
@@ -5185,7 +5185,8 @@
             "TRANSFER_ENCODING"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.HttpRequestStepBuilder$HeadersBuilder": {
       "type": "object",
@@ -5199,7 +5200,6 @@
     },
     "io.hyperfoil.http.steps.HttpRequestStepBuilder$PartialHeadersBuilder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fromVar": {
           "type": "string"
@@ -5207,11 +5207,11 @@
         "pattern": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "io.hyperfoil.http.steps.HttpResponseHandlersImpl$Builder": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "autoRangeCheck": {
           "type": "boolean"
@@ -5302,8 +5302,8 @@
         "stopOnInvalid": {
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     }
-  },
-  "additionalProperties": false
+  }
 }

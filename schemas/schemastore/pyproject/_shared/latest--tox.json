@@ -5,7 +5,7 @@
   "description": "tox configuration file (tox.toml or [tool.tox] in pyproject.toml)",
   "x-lintel": {
     "source": "https://json.schemastore.org/tox.json",
-    "sourceSha256": "503310c5057c25df125cf5c9209d5358ebab7e3ebcfda1d559de9d25b5214ac8"
+    "sourceSha256": "3db701417df05dbd2e1674e016abaabf564c25e06d08a1c52c837d0c70338ce7"
   },
   "type": "object",
   "properties": {
@@ -124,6 +124,7 @@
     },
     "labels": {
       "type": "object",
+      "description": "core labels",
       "additionalProperties": {
         "type": "array",
         "items": {
@@ -181,8 +182,7 @@
             }
           ]
         }
-      },
-      "description": "core labels"
+      }
     },
     "ignore_base_python_conflict": {
       "type": "boolean",
@@ -235,10 +235,10 @@
       "properties": {
         "set_env": {
           "type": "object",
+          "description": "environment variables to set when running commands in the tox environment",
           "additionalProperties": {
             "$ref": "#/$defs/subs"
-          },
-          "description": "environment variables to set when running commands in the tox environment"
+          }
         },
         "setenv": {
           "$ref": "#/properties/env_run_base/properties/set_env",
@@ -504,17 +504,31 @@
           "description": "if set to true, tox will stop executing remaining environments when this environment fails"
         },
         "default_base_python": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/subs"
-          },
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/subs"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ],
           "description": "fallback python interpreter used when no factor or explicit base_python is defined"
         },
         "base_python": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/subs"
-          },
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/subs"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ],
           "description": "environment identifier for python, first one found wins"
         },
         "basepython": {
@@ -648,6 +662,7 @@
       "key": "https://tox.wiki/en/stable/config.html"
     }
   },
+  "additionalProperties": true,
   "$defs": {
     "subs": {
       "anyOf": [
@@ -722,6 +737,5 @@
         }
       ]
     }
-  },
-  "additionalProperties": true
+  }
 }

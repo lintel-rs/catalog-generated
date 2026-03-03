@@ -4,7 +4,6 @@
   "x-lintel": {
     "source": "https://github.com/usnistgov/OSCAL/releases/download/v1.0.1/oscal_profile_schema.json",
     "sourceSha256": "4efd7cc88e8eb77896574dc23404df20ae623b8c2c0b11927559f707fe0ca33a",
-    "invalid": true,
     "fileMatch": [
       "oscal*profile.json"
     ],
@@ -18,12 +17,15 @@
       "$ref": "#assembly_oscal-profile_profile"
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "oscal-profile-oscal-profile:profile": {
       "title": "Profile",
       "description": "Each OSCAL profile is defined by a Profile element",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "metadata",
+        "imports"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -52,16 +54,14 @@
           "$ref": "#assembly_oscal-metadata_back-matter"
         }
       },
-      "required": [
-        "uuid",
-        "metadata",
-        "imports"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:import": {
       "title": "Import resource",
       "description": "The import designates a catalog, profile, or other resource to be included (referenced and potentially modified) by this profile. The import also identifies which controls to select using the include-all, include-controls, and exclude-controls directives.",
-      "additionalProperties": false,
+      "required": [
+        "href"
+      ],
       "type": "object",
       "properties": {
         "href": {
@@ -88,15 +88,11 @@
           }
         }
       },
-      "required": [
-        "href"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:merge": {
       "title": "Merge controls",
       "description": "A Merge element merges controls in resolution.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "combine": {
           "$ref": "#assembly_oscal-profile_combine"
@@ -107,13 +103,13 @@
         "custom": {
           "$ref": "#assembly_oscal-profile_custom"
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:combine": {
       "title": "Combination rule",
       "description": "A Combine element defines whether and how to combine multiple (competing) versions of the same control",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "method": {
           "title": "Combination method",
@@ -126,7 +122,9 @@
             "keep"
           ]
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:as-is": {
       "title": "As is",
@@ -136,8 +134,6 @@
     "oscal-profile-oscal-profile:custom": {
       "title": "Custom grouping",
       "description": "A Custom element frames a structure for embedding represented controls in resolution.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "groups": {
           "type": "array",
@@ -153,12 +149,16 @@
             "$ref": "#assembly_oscal-profile_insert-controls"
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:group": {
       "title": "Control group",
       "description": "A group of (selected) controls or of groups of controls",
-      "additionalProperties": false,
+      "required": [
+        "title"
+      ],
       "type": "object",
       "properties": {
         "id": {
@@ -221,15 +221,11 @@
           }
         }
       },
-      "required": [
-        "title"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:modify": {
       "title": "Modify controls",
       "description": "Set parameters or amend controls in resolution",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "set-parameters": {
           "type": "array",
@@ -319,13 +315,13 @@
             "$ref": "#assembly_oscal-profile_alter"
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:insert-controls": {
       "title": "Select controls",
       "description": "Specifies which controls to use in the containing context.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "order": {
           "title": "Order",
@@ -355,19 +351,19 @@
             "$ref": "#assembly_oscal-profile_select-control-by-id"
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:include-all": {
       "title": "Insert All",
       "description": "Insert all controls from the imported catalog or profile resources identified in the import directive.",
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:select-control-by-id": {
       "title": "Call",
       "description": "Call a control by its ID",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "with-child-controls": {
           "title": "Include contained controls with control",
@@ -407,13 +403,13 @@
             "additionalProperties": false
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:alter": {
       "title": "Alteration",
       "description": "An Alter element specifies changes to be made to an included control when a profile is resolved.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "control-id": {
           "title": "Control Identifier Reference",
@@ -435,13 +431,13 @@
             "$ref": "#assembly_oscal-profile_add"
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:remove": {
       "title": "Removal",
       "description": "Specifies objects to be removed from a control based on specific aspects of the object that must all match.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "by-name": {
           "title": "Reference by (assigned) name",
@@ -473,13 +469,13 @@
           "type": "string",
           "pattern": "^[_A-Za-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD][_A-Za-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\-\\.0-9\\u00B7\\u0300-\\u036F\\u203F-\\u2040]*$"
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-profile:add": {
       "title": "Addition",
       "description": "Specifies contents to be added into controls, in resolution",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "position": {
           "title": "Position",
@@ -532,12 +528,19 @@
             "$ref": "#assembly_oscal-catalog-common_part"
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:metadata": {
       "title": "Publication metadata",
       "description": "Provides information about the publication and availability of the containing document.",
-      "additionalProperties": false,
+      "required": [
+        "title",
+        "last-modified",
+        "version",
+        "oscal-version"
+      ],
       "type": "object",
       "properties": {
         "title": {
@@ -617,18 +620,11 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "title",
-        "last-modified",
-        "version",
-        "oscal-version"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:revision": {
       "title": "Revision History Entry",
       "description": "An entry in a sequential list of revisions to the containing document in reverse chronological order (i.e., most recent previous revision first).",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "title": {
           "title": "Document Title",
@@ -664,12 +660,17 @@
         "remarks": {
           "$ref": "#field_oscal-metadata_remarks"
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:location": {
       "title": "Location",
       "description": "A location, with associated metadata that can be referenced.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "address"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -728,10 +729,7 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "address"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:location-uuid": {
       "title": "Location Reference",
@@ -742,7 +740,10 @@
     "oscal-profile-oscal-metadata:party": {
       "title": "Party (organization or person)",
       "description": "A responsible entity which is either a person or an organization.",
-      "additionalProperties": false,
+      "required": [
+        "uuid",
+        "type"
+      ],
       "type": "object",
       "properties": {
         "uuid": {
@@ -854,10 +855,7 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "uuid",
-        "type"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:party-uuid": {
       "title": "Party Reference",
@@ -868,7 +866,10 @@
     "oscal-profile-oscal-metadata:role": {
       "title": "Role",
       "description": "Defines a function assumed or expected to be assumed by a party in a specific situation.",
-      "additionalProperties": false,
+      "required": [
+        "id",
+        "title"
+      ],
       "type": "object",
       "properties": {
         "id": {
@@ -911,10 +912,7 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "id",
-        "title"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:role-id": {
       "title": "Role Identifier Reference",
@@ -925,8 +923,6 @@
     "oscal-profile-oscal-metadata:back-matter": {
       "title": "Back matter",
       "description": "A collection of resources, which may be included directly or by reference.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "resources": {
           "type": "array",
@@ -1066,12 +1062,17 @@
             "additionalProperties": false
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:property": {
       "title": "Property",
       "description": "An attribute, characteristic, or quality of the containing object expressed as a namespace qualified name/value pair. The value of a property is a simple scalar value, which may be expressed as a list of values.",
-      "additionalProperties": false,
+      "required": [
+        "name",
+        "value"
+      ],
       "type": "object",
       "properties": {
         "name": {
@@ -1108,15 +1109,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "name",
-        "value"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:link": {
       "title": "Link",
       "description": "A reference to a local or remote resource",
-      "additionalProperties": false,
+      "required": [
+        "href"
+      ],
       "type": "object",
       "properties": {
         "href": {
@@ -1143,14 +1143,15 @@
           "type": "string"
         }
       },
-      "required": [
-        "href"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:responsible-party": {
       "title": "Responsible Party",
       "description": "A reference to a set of organizations or persons that have responsibility for performing a referenced role in the context of the containing object.",
-      "additionalProperties": false,
+      "required": [
+        "role-id",
+        "party-uuids"
+      ],
       "type": "object",
       "properties": {
         "role-id": {
@@ -1184,15 +1185,14 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "role-id",
-        "party-uuids"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:responsible-role": {
       "title": "Responsible Role",
       "description": "A reference to one or more roles with responsibility for performing a function relative to the containing object.",
-      "additionalProperties": false,
+      "required": [
+        "role-id"
+      ],
       "type": "object",
       "properties": {
         "role-id": {
@@ -1226,14 +1226,15 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "role-id"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:hash": {
       "title": "Hash",
       "description": "A representation of a cryptographic digest generated over a resource using a specified hash algorithm.",
-      "additionalProperties": false,
+      "required": [
+        "value",
+        "algorithm"
+      ],
       "type": "object",
       "properties": {
         "algorithm": {
@@ -1246,10 +1247,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "value",
-        "algorithm"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:remarks": {
       "title": "Remarks",
@@ -1292,7 +1290,9 @@
     "oscal-profile-oscal-metadata:telephone-number": {
       "title": "Telephone Number",
       "description": "Contact number by telephone.",
-      "additionalProperties": false,
+      "required": [
+        "number"
+      ],
       "type": "object",
       "properties": {
         "type": {
@@ -1305,15 +1305,11 @@
           "type": "string"
         }
       },
-      "required": [
-        "number"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:address": {
       "title": "Address",
       "description": "A postal address for the location.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "type": {
           "title": "Address Type",
@@ -1352,7 +1348,9 @@
           "type": "string",
           "pattern": "^\\S(.*\\S)?$"
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-metadata:addr-line": {
       "title": "Address line",
@@ -1363,7 +1361,9 @@
     "oscal-profile-oscal-metadata:document-id": {
       "title": "Document Identifier",
       "description": "A document identifier qualified by an identifier scheme. A document identifier provides a globally unique identifier for a group of documents that are to be treated as different versions of the same document. If this element does not appear, or if the value of this element is empty, the value of \"document-id\" is equal to the value of the \"uuid\" flag of the top-level root element.",
-      "additionalProperties": false,
+      "required": [
+        "identifier"
+      ],
       "type": "object",
       "properties": {
         "scheme": {
@@ -1376,14 +1376,14 @@
           "type": "string"
         }
       },
-      "required": [
-        "identifier"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-catalog-common:part": {
       "title": "Part",
       "description": "A partition of a control's definition or a child of another part.",
-      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
       "type": "object",
       "properties": {
         "id": {
@@ -1442,14 +1442,14 @@
           }
         }
       },
-      "required": [
-        "name"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-catalog-common:parameter": {
       "title": "Parameter",
       "description": "Parameters provide a mechanism for the dynamic assignment of value(s) in a control.",
-      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
       "type": "object",
       "properties": {
         "id": {
@@ -1522,15 +1522,11 @@
           "$ref": "#field_oscal-metadata_remarks"
         }
       },
-      "required": [
-        "id"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-catalog-common:parameter-constraint": {
       "title": "Constraint",
       "description": "A formal or informal expression of a constraint or test",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "description": {
           "title": "Constraint Description",
@@ -1561,12 +1557,16 @@
             "additionalProperties": false
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "oscal-profile-oscal-catalog-common:parameter-guideline": {
       "title": "Guideline",
       "description": "A prose statement that provides a recommendation for the use of a parameter.",
-      "additionalProperties": false,
+      "required": [
+        "prose"
+      ],
       "type": "object",
       "properties": {
         "prose": {
@@ -1575,9 +1575,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "prose"
-      ]
+      "additionalProperties": false
     },
     "oscal-profile-oscal-catalog-common:parameter-value": {
       "title": "Parameter Value",
@@ -1588,8 +1586,6 @@
     "oscal-profile-oscal-catalog-common:parameter-selection": {
       "title": "Selection",
       "description": "Presenting a choice among alternatives",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "how-many": {
           "title": "Parameter Cardinality",
@@ -1610,9 +1606,12 @@
             "type": "string"
           }
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "$comment": "OSCAL Profile Model: JSON Schema",
   "required": [
     "profile"

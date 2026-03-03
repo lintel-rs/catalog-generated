@@ -6,7 +6,6 @@
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/open-feature/flagd-schemas/json/json-schema-v0.2.0/json/flags.json",
     "sourceSha256": "291be88781cb601502b76c8f5d2966bbe962bdebdd2842a8087624c602cf207f",
-    "invalid": true,
     "fileMatch": [
       "flagd.json",
       "flagd.yaml",
@@ -68,6 +67,7 @@
       }
     }
   },
+  "$comment": "merge the variants with the base flag to build our typed flags",
   "$defs": {
     "flag": {
       "$comment": "base flag object; no title/description here, allows for better UX, keep it in the overrides",
@@ -101,15 +101,15 @@
       "properties": {
         "variants": {
           "type": "object",
+          "default": {
+            "true": true,
+            "false": false
+          },
           "additionalProperties": false,
           "patternProperties": {
             "^.{1,}$": {
               "type": "boolean"
             }
-          },
-          "default": {
-            "true": true,
-            "false": false
           }
         }
       }
@@ -156,7 +156,16 @@
         }
       }
     },
-    "$comment": "merge the variants with the base flag to build our typed flags",
+    "objectFlag": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/flag"
+        },
+        {
+          "$ref": "#/$defs/objectVariants"
+        }
+      ]
+    },
     "booleanFlag": {
       "allOf": [
         {
@@ -184,16 +193,6 @@
         },
         {
           "$ref": "#/$defs/numberVariants"
-        }
-      ]
-    },
-    "objectFlag": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/flag"
-        },
-        {
-          "$ref": "#/$defs/objectVariants"
         }
       ]
     }

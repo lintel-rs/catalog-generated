@@ -757,7 +757,7 @@
   "schemas": {
     "AppEngineHttpRequest": {
       "description": "App Engine HTTP request. The message defines the HTTP request that is sent to an App Engine app when the task is dispatched. Using AppEngineHttpRequest requires [`appengine.applications.get`](https://cloud.google.com/appengine/docs/admin-api/access-control) Google IAM permission for the project and the following scope: `<https://www.googleapis.com/auth/cloud-platform>` The task will be delivered to the App Engine app which belongs to the same project as the queue. For more information, see [How Requests are Routed](https://cloud.google.com/appengine/docs/standard/python/how-requests-are-routed) and how routing is affected by [dispatch files](https://cloud.google.com/appengine/docs/python/config/dispatchref). Traffic is encrypted during transport and never leaves Google datacenters. Because this traffic is carried over a communication mechanism internal to Google, you cannot explicitly set the protocol (for example, HTTP or HTTPS). The request to the handler, however, will appear to have used the HTTP protocol. The AppEngineRouting used to construct the URL that the task is delivered to can be set at the queue-level or task-level: * If app_engine_routing_override is set on the queue, this value is used for all tasks in the queue, no matter what the setting is for the task-level app_engine_routing. The `url` that the task will be sent to is: * `url =` host `+` relative_uri Tasks can be dispatched to secure app handlers, unsecure app handlers, and URIs restricted with [`login: admin`](https://cloud.google.com/appengine/docs/standard/python/config/appref). Because tasks are not run as any user, they cannot be dispatched to URIs restricted with [`login: required`](https://cloud.google.com/appengine/docs/standard/python/config/appref) Task dispatches also do not follow redirects. The task attempt has succeeded if the app's request handler returns an HTTP response code in the range [`200` - `299`]. The task attempt has failed if the app's handler returns a non-2xx response code or Cloud Tasks does not receive response before the deadline. Failed tasks will be retried according to the retry configuration. `503` (Service Unavailable) is considered an App Engine system error instead of an application error and will cause Cloud Tasks' traffic congestion control to temporarily throttle the queue's dispatches. Unlike other types of task targets, a `429` (Too Many Requests) response from an app handler does not cause traffic congestion control to throttle the queue.",
-      "type": "object",
+      "id": "AppEngineHttpRequest",
       "properties": {
         "appEngineRouting": {
           "$ref": "#/schemas/AppEngineRouting",
@@ -804,11 +804,11 @@
           "type": "string"
         }
       },
-      "$id": "AppEngineHttpRequest"
+      "type": "object"
     },
     "AppEngineRouting": {
       "description": "App Engine Routing. Defines routing characteristics specific to App Engine - service, version, and instance. For more information about services, versions, and instances see [An Overview of App Engine](https://cloud.google.com/appengine/docs/python/an-overview-of-app-engine), [Microservices Architecture on Google App Engine](https://cloud.google.com/appengine/docs/python/microservices-on-app-engine), [App Engine Standard request routing](https://cloud.google.com/appengine/docs/standard/python/how-requests-are-routed), and [App Engine Flex request routing](https://cloud.google.com/appengine/docs/flexible/python/how-requests-are-routed). Using AppEngineRouting requires [`appengine.applications.get`](https://cloud.google.com/appengine/docs/admin-api/access-control) Google IAM permission for the project and the following scope: `<https://www.googleapis.com/auth/cloud-platform>`",
-      "type": "object",
+      "id": "AppEngineRouting",
       "properties": {
         "host": {
           "description": "Output only. The host that the task is sent to. The host is constructed from the domain name of the app associated with the queue's project ID (for example .appspot.com), and the service, version, and instance. Tasks which were created using the App Engine SDK might have a custom domain name. For more information, see [How Requests are Routed](https://cloud.google.com/appengine/docs/standard/python/how-requests-are-routed).",
@@ -827,11 +827,11 @@
           "type": "string"
         }
       },
-      "$id": "AppEngineRouting"
+      "type": "object"
     },
     "Attempt": {
       "description": "The status of a task attempt.",
-      "type": "object",
+      "id": "Attempt",
       "properties": {
         "dispatchTime": {
           "description": "Output only. The time that this attempt was dispatched. `dispatch_time` will be truncated to the nearest microsecond.",
@@ -853,11 +853,11 @@
           "type": "string"
         }
       },
-      "$id": "Attempt"
+      "type": "object"
     },
     "Binding": {
       "description": "Associates `members`, or principals, with a `role`.",
-      "type": "object",
+      "id": "Binding",
       "properties": {
         "condition": {
           "$ref": "#/schemas/Expr",
@@ -875,11 +875,11 @@
           "type": "string"
         }
       },
-      "$id": "Binding"
+      "type": "object"
     },
     "CmekConfig": {
       "description": "Describes the customer-managed encryption key (CMEK) configuration associated with a project and location.",
-      "type": "object",
+      "id": "CmekConfig",
       "properties": {
         "kmsKey": {
           "description": "Resource name of the Cloud KMS key, of the form `projects/PROJECT_ID/locations/LOCATION_ID/keyRings/KEY_RING_ID/cryptoKeys/KEY_ID`, that will be used to encrypt the Queues & Tasks in the region. Setting this as blank will turn off CMEK encryption.",
@@ -891,11 +891,11 @@
           "type": "string"
         }
       },
-      "$id": "CmekConfig"
+      "type": "object"
     },
     "CreateTaskRequest": {
       "description": "Request message for CreateTask.",
-      "type": "object",
+      "id": "CreateTaskRequest",
       "properties": {
         "responseView": {
           "description": "The response_view specifies which subset of the Task will be returned. By default response_view is BASIC; not all information is retrieved by default because some data, such as payloads, might be desirable to return only when needed because of its large size or because of the sensitivity of data that it contains. Authorization for FULL requires `cloudtasks.tasks.fullView` [Google IAM](https://cloud.google.com/iam/) permission on the Task resource.",
@@ -916,17 +916,17 @@
           "description": "Required. The task to add. Task names have the following format: `projects/PROJECT_ID/locations/LOCATION_ID/queues/QUEUE_ID/tasks/TASK_ID`. The user can optionally specify a task name. If a name is not specified then the system will generate a random unique task id, which will be set in the task returned in the response. If schedule_time is not set or is in the past then Cloud Tasks will set it to the current time. Task De-duplication: Explicitly specifying a task ID enables task de-duplication. If a task's ID is identical to that of an existing task or a task that was deleted or executed recently then the call will fail with ALREADY_EXISTS. If the task's queue was created using Cloud Tasks, then another task with the same name can't be created for ~1hour after the original task was deleted or executed. If the task's queue was created using queue.yaml or queue.xml, then another task with the same name can't be created for ~9days after the original task was deleted or executed. Because there is an extra lookup cost to identify duplicate task names, these CreateTask calls have significantly increased latency. Using hashed strings for the task id or for the prefix of the task id is recommended. Choosing task ids that are sequential or have sequential prefixes, for example using a timestamp, causes an increase in latency and error rates in all task commands. The infrastructure relies on an approximately uniform distribution of task ids to store and serve tasks efficiently."
         }
       },
-      "$id": "CreateTaskRequest"
+      "type": "object"
     },
     "Empty": {
       "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "type": "object",
+      "id": "Empty",
       "properties": {},
-      "$id": "Empty"
+      "type": "object"
     },
     "Expr": {
       "description": "Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at <https://github.com/google/cel-spec>. Example (Comparison): title: \"Summary size limit\" description: \"Determines if a summary is less than 100 chars\" expression: \"document.summary.size() < 100\" Example (Equality): title: \"Requestor is owner\" description: \"Determines if requestor is the document owner\" expression: \"document.owner == request.auth.claims.email\" Example (Logic): title: \"Public documents\" description: \"Determine whether the document should be publicly visible\" expression: \"document.type != 'private' && document.type != 'internal'\" Example (Data Manipulation): title: \"Notification string\" description: \"Create a notification string with a timestamp.\" expression: \"'New message received at ' + string(document.create_time)\" The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information.",
-      "type": "object",
+      "id": "Expr",
       "properties": {
         "description": {
           "description": "Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.",
@@ -945,22 +945,22 @@
           "type": "string"
         }
       },
-      "$id": "Expr"
+      "type": "object"
     },
     "GetIamPolicyRequest": {
       "description": "Request message for `GetIamPolicy` method.",
-      "type": "object",
+      "id": "GetIamPolicyRequest",
       "properties": {
         "options": {
           "$ref": "#/schemas/GetPolicyOptions",
           "description": "OPTIONAL: A `GetPolicyOptions` object for specifying options to `GetIamPolicy`."
         }
       },
-      "$id": "GetIamPolicyRequest"
+      "type": "object"
     },
     "GetPolicyOptions": {
       "description": "Encapsulates settings provided to GetIamPolicy.",
-      "type": "object",
+      "id": "GetPolicyOptions",
       "properties": {
         "requestedPolicyVersion": {
           "description": "Optional. The maximum policy version that will be used to format the policy. Valid values are 0, 1, and 3. Requests specifying an invalid value will be rejected. Requests for policies with any conditional role bindings must specify version 3. Policies with no conditional role bindings may specify any valid value or leave the field unset. The policy in the response might use the policy version that you specified, or it might use a lower policy version. For example, if you specify version 3, but the policy has no conditional role bindings, the response uses version 1. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
@@ -968,11 +968,11 @@
           "type": "integer"
         }
       },
-      "$id": "GetPolicyOptions"
+      "type": "object"
     },
     "HttpRequest": {
       "description": "HTTP request. The task will be pushed to the worker as an HTTP request. If the worker or the redirected worker acknowledges the task by returning a successful HTTP response code ([`200` - `299`]), the task will be removed from the queue. If any other HTTP response code is returned or no response is received, the task will be retried according to the following: * User-specified throttling: retry configuration, rate limits, and the queue's state. * System throttling: To prevent the worker from overloading, Cloud Tasks may temporarily reduce the queue's effective rate. User-specified settings will not be changed. System throttling happens because: * Cloud Tasks backs off on all errors. Normally the backoff specified in rate limits will be used. But if the worker returns `429` (Too Many Requests), `503` (Service Unavailable), or the rate of errors is high, Cloud Tasks will use a higher backoff rate. The retry specified in the `Retry-After` HTTP response header is considered. * To prevent traffic spikes and to smooth sudden increases in traffic, dispatches ramp up slowly when the queue is newly created or idle and if large numbers of tasks suddenly become available to dispatch (due to spikes in create task rates, the queue being unpaused, or many tasks that are scheduled at the same time).",
-      "type": "object",
+      "id": "HttpRequest",
       "properties": {
         "body": {
           "description": "HTTP request body. A request body is allowed only if the HTTP method is POST, PUT, or PATCH. It is an error to set body on a task with an incompatible HttpMethod.",
@@ -1023,11 +1023,11 @@
           "type": "string"
         }
       },
-      "$id": "HttpRequest"
+      "type": "object"
     },
     "ListLocationsResponse": {
       "description": "The response message for Locations.ListLocations.",
-      "type": "object",
+      "id": "ListLocationsResponse",
       "properties": {
         "locations": {
           "description": "A list of locations that matches the specified filter in the request.",
@@ -1041,11 +1041,11 @@
           "type": "string"
         }
       },
-      "$id": "ListLocationsResponse"
+      "type": "object"
     },
     "ListQueuesResponse": {
       "description": "Response message for ListQueues.",
-      "type": "object",
+      "id": "ListQueuesResponse",
       "properties": {
         "nextPageToken": {
           "description": "A token to retrieve next page of results. To return the next page of results, call ListQueues with this value as the page_token. If the next_page_token is empty, there are no more results. The page token is valid for only 2 hours.",
@@ -1059,11 +1059,11 @@
           "type": "array"
         }
       },
-      "$id": "ListQueuesResponse"
+      "type": "object"
     },
     "ListTasksResponse": {
       "description": "Response message for listing tasks using ListTasks.",
-      "type": "object",
+      "id": "ListTasksResponse",
       "properties": {
         "nextPageToken": {
           "description": "A token to retrieve next page of results. To return the next page of results, call ListTasks with this value as the page_token. If the next_page_token is empty, there are no more results.",
@@ -1077,11 +1077,11 @@
           "type": "array"
         }
       },
-      "$id": "ListTasksResponse"
+      "type": "object"
     },
     "Location": {
       "description": "A resource that represents a Google Cloud location.",
-      "type": "object",
+      "id": "Location",
       "properties": {
         "displayName": {
           "description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\".",
@@ -1111,11 +1111,11 @@
           "type": "string"
         }
       },
-      "$id": "Location"
+      "type": "object"
     },
     "OAuthToken": {
       "description": "Contains information needed for generating an [OAuth token](https://developers.google.com/identity/protocols/OAuth2). This type of authorization should generally only be used when calling Google APIs hosted on *.googleapis.com.",
-      "type": "object",
+      "id": "OAuthToken",
       "properties": {
         "scope": {
           "description": "OAuth scope to be used for generating OAuth access token. If not specified, \"<https://www.googleapis.com/auth/cloud-platform>\" will be used.",
@@ -1126,11 +1126,11 @@
           "type": "string"
         }
       },
-      "$id": "OAuthToken"
+      "type": "object"
     },
     "OidcToken": {
       "description": "Contains information needed for generating an [OpenID Connect token](https://developers.google.com/identity/protocols/OpenIDConnect). This type of authorization can be used for many scenarios, including calling Cloud Run, or endpoints where you intend to validate the token yourself.",
-      "type": "object",
+      "id": "OidcToken",
       "properties": {
         "audience": {
           "description": "Audience to be used when generating OIDC token. If not specified, the URI specified in target will be used.",
@@ -1141,17 +1141,17 @@
           "type": "string"
         }
       },
-      "$id": "OidcToken"
+      "type": "object"
     },
     "PauseQueueRequest": {
       "description": "Request message for PauseQueue.",
-      "type": "object",
+      "id": "PauseQueueRequest",
       "properties": {},
-      "$id": "PauseQueueRequest"
+      "type": "object"
     },
     "Policy": {
       "description": "An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** ``` { \"bindings\": [ { \"role\": \"roles/resourcemanager.organizationAdmin\", \"members\": [ \"user:mike@example.com\", \"group:admins@example.com\", \"domain:google.com\", \"serviceAccount:my-project-id@appspot.gserviceaccount.com\" ] }, { \"role\": \"roles/resourcemanager.organizationViewer\", \"members\": [ \"user:eve@example.com\" ], \"condition\": { \"title\": \"expirable access\", \"description\": \"Does not grant access after Sep 2020\", \"expression\": \"request.time < timestamp('2020-10-01T00:00:00.000Z')\", } } ], \"etag\": \"BwWWja0YfJA=\", \"version\": 3 } ``` **YAML example:** ``` bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time < timestamp('2020-10-01T00:00:00.000Z') etag: BwWWja0YfJA= version: 3 ``` For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/).",
-      "type": "object",
+      "id": "Policy",
       "properties": {
         "bindings": {
           "description": "Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of these principals can be Google groups. Each occurrence of a principal counts towards these limits. For example, if the `bindings` grant 50 different roles to `user:alice@example.com`, and not to any other principal, then you can add another 1,450 principals to the `bindings` in the `Policy`.",
@@ -1171,17 +1171,17 @@
           "type": "integer"
         }
       },
-      "$id": "Policy"
+      "type": "object"
     },
     "PurgeQueueRequest": {
       "description": "Request message for PurgeQueue.",
-      "type": "object",
+      "id": "PurgeQueueRequest",
       "properties": {},
-      "$id": "PurgeQueueRequest"
+      "type": "object"
     },
     "Queue": {
       "description": "A queue is a container of related tasks. Queues are configured to manage how those tasks are dispatched. Configurable properties include rate limits, retry options, queue types, and others.",
-      "type": "object",
+      "id": "Queue",
       "properties": {
         "appEngineRoutingOverride": {
           "$ref": "#/schemas/AppEngineRouting",
@@ -1225,11 +1225,11 @@
           "type": "string"
         }
       },
-      "$id": "Queue"
+      "type": "object"
     },
     "RateLimits": {
       "description": "Rate limits. This message determines the maximum rate that tasks can be dispatched by a queue, regardless of whether the dispatch is a first task attempt or a retry. Note: The debugging command, RunTask, will run a task even if the queue has reached its RateLimits.",
-      "type": "object",
+      "id": "RateLimits",
       "properties": {
         "maxBurstSize": {
           "description": "Output only. The max burst size. Max burst size limits how fast tasks in queue are processed when many tasks are in the queue and the rate is high. This field allows the queue to have a high rate so processing starts shortly after a task is enqueued, but still limits resource usage when many tasks are enqueued in a short period of time. The [token bucket](https://wikipedia.org/wiki/Token_Bucket) algorithm is used to control the rate of task dispatches. Each queue has a token bucket that holds tokens, up to the maximum specified by `max_burst_size`. Each time a task is dispatched, a token is removed from the bucket. Tasks will be dispatched until the queue's bucket runs out of tokens. The bucket will be continuously refilled with new tokens based on max_dispatches_per_second. Cloud Tasks will pick the value of `max_burst_size` based on the value of max_dispatches_per_second. For queues that were created or updated using `queue.yaml/xml`, `max_burst_size` is equal to [bucket_size](https://cloud.google.com/appengine/docs/standard/python/config/queueref#bucket_size). Since `max_burst_size` is output only, if UpdateQueue is called on a queue created by `queue.yaml/xml`, `max_burst_size` will be reset based on the value of max_dispatches_per_second, regardless of whether max_dispatches_per_second is updated. ",
@@ -1247,17 +1247,17 @@
           "type": "number"
         }
       },
-      "$id": "RateLimits"
+      "type": "object"
     },
     "ResumeQueueRequest": {
       "description": "Request message for ResumeQueue.",
-      "type": "object",
+      "id": "ResumeQueueRequest",
       "properties": {},
-      "$id": "ResumeQueueRequest"
+      "type": "object"
     },
     "RetryConfig": {
       "description": "Retry config. These settings determine when a failed task attempt is retried.",
-      "type": "object",
+      "id": "RetryConfig",
       "properties": {
         "maxAttempts": {
           "description": "Number of attempts per task. Cloud Tasks will attempt the task `max_attempts` times (that is, if the first attempt fails, then there will be `max_attempts - 1` retries). Must be >= -1. If unspecified when the queue is created, Cloud Tasks will pick the default. -1 indicates unlimited attempts. This field has the same meaning as [task_retry_limit in queue.yaml/xml](https://cloud.google.com/appengine/docs/standard/python/config/queueref#retry_parameters).",
@@ -1285,11 +1285,11 @@
           "type": "string"
         }
       },
-      "$id": "RetryConfig"
+      "type": "object"
     },
     "RunTaskRequest": {
       "description": "Request message for forcing a task to run now using RunTask.",
-      "type": "object",
+      "id": "RunTaskRequest",
       "properties": {
         "responseView": {
           "description": "The response_view specifies which subset of the Task will be returned. By default response_view is BASIC; not all information is retrieved by default because some data, such as payloads, might be desirable to return only when needed because of its large size or because of the sensitivity of data that it contains. Authorization for FULL requires `cloudtasks.tasks.fullView` [Google IAM](https://cloud.google.com/iam/) permission on the Task resource.",
@@ -1306,22 +1306,22 @@
           "type": "string"
         }
       },
-      "$id": "RunTaskRequest"
+      "type": "object"
     },
     "SetIamPolicyRequest": {
       "description": "Request message for `SetIamPolicy` method.",
-      "type": "object",
+      "id": "SetIamPolicyRequest",
       "properties": {
         "policy": {
           "$ref": "#/schemas/Policy",
           "description": "REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Google Cloud services (such as Projects) might reject them."
         }
       },
-      "$id": "SetIamPolicyRequest"
+      "type": "object"
     },
     "StackdriverLoggingConfig": {
       "description": "Configuration options for writing logs to [Stackdriver Logging](https://cloud.google.com/logging/docs/).",
-      "type": "object",
+      "id": "StackdriverLoggingConfig",
       "properties": {
         "samplingRatio": {
           "description": "Specifies the fraction of operations to write to [Stackdriver Logging](https://cloud.google.com/logging/docs/). This field may contain any value between 0.0 and 1.0, inclusive. 0.0 is the default and means that no operations are logged.",
@@ -1329,11 +1329,11 @@
           "type": "number"
         }
       },
-      "$id": "StackdriverLoggingConfig"
+      "type": "object"
     },
     "Status": {
       "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-      "type": "object",
+      "id": "Status",
       "properties": {
         "code": {
           "description": "The status code, which should be an enum value of google.rpc.Code.",
@@ -1356,11 +1356,11 @@
           "type": "string"
         }
       },
-      "$id": "Status"
+      "type": "object"
     },
     "Task": {
       "description": "A unit of scheduled work.",
-      "type": "object",
+      "id": "Task",
       "properties": {
         "appEngineHttpRequest": {
           "$ref": "#/schemas/AppEngineHttpRequest",
@@ -1422,11 +1422,11 @@
           "type": "string"
         }
       },
-      "$id": "Task"
+      "type": "object"
     },
     "TestIamPermissionsRequest": {
       "description": "Request message for `TestIamPermissions` method.",
-      "type": "object",
+      "id": "TestIamPermissionsRequest",
       "properties": {
         "permissions": {
           "description": "The set of permissions to check for the `resource`. Permissions with wildcards (such as `*` or `storage.*`) are not allowed. For more information see [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).",
@@ -1436,11 +1436,11 @@
           "type": "array"
         }
       },
-      "$id": "TestIamPermissionsRequest"
+      "type": "object"
     },
     "TestIamPermissionsResponse": {
       "description": "Response message for `TestIamPermissions` method.",
-      "type": "object",
+      "id": "TestIamPermissionsResponse",
       "properties": {
         "permissions": {
           "description": "A subset of `TestPermissionsRequest.permissions` that the caller is allowed.",
@@ -1450,7 +1450,7 @@
           "type": "array"
         }
       },
-      "$id": "TestIamPermissionsResponse"
+      "type": "object"
     }
   },
   "servicePath": "",

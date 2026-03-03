@@ -119,7 +119,6 @@
               ]
             }
           ],
-          "additionalProperties": false,
           "examples": [
             {
               "basis": {
@@ -132,7 +131,8 @@
                 }
               }
             }
-          ]
+          ],
+          "additionalProperties": false
         },
         "polynomial_names": {
           "type": "array",
@@ -165,11 +165,11 @@
                 "propertyNames": {
                   "minLength": 1
                 },
+                "description": "An object where each key is a string that is a Python-compatible variable name (used as variable in the `expression` field described below), and each value is a string identifying a polynomial name from `polynomial_names`. For example, `{\"num\": \"polynomial 1\", \"den\": \"polynomial 2\"}`.",
                 "additionalProperties": {
                   "type": "string",
                   "minLength": 1
-                },
-                "description": "An object where each key is a string that is a Python-compatible variable name (used as variable in the `expression` field described below), and each value is a string identifying a polynomial name from `polynomial_names`. For example, `{\"num\": \"polynomial 1\", \"den\": \"polynomial 2\"}`."
+                }
               },
               "expression": {
                 "type": "string",
@@ -272,6 +272,42 @@
                 "type": "object",
                 "minProperties": 1,
                 "description": "Specifies the numerical values of input parameters used by the tool in producing the numerical values of the polynomial coefficients. Each entry maps an input name (a string) or a group of names (a stringified tuple such as `\"('m1','m2')\"`) to one of the following:",
+                "examples": [
+                  {
+                    "description": "In the example below, `\"m1\"` is an input parameter with no associated uncertainty, `\"m2\"` and `\"m3\"` are a pair of input parameters with correlated, Gaussian uncertainties, and `\"m4\"` is a parameter that is uniformly distributed between 0 and 1.",
+                    "inputs": {
+                      "m1": 1.0,
+                      "('m2','m3')": {
+                        "mean": [
+                          1.0,
+                          2.0
+                        ],
+                        "std": [
+                          0.1,
+                          0.1
+                        ],
+                        "corr": [
+                          [
+                            1.0,
+                            0.3
+                          ],
+                          [
+                            0.3,
+                            1.0
+                          ]
+                        ]
+                      },
+                      "m4": {
+                        "distribution_type": "uniform",
+                        "distribution_parameters": {
+                          "a": 0,
+                          "b": 1
+                        },
+                        "distribution_description": "Uniform distribution with boundaries $a$ and $b$."
+                      }
+                    }
+                  }
+                ],
                 "additionalProperties": {
                   "anyOf": [
                     {
@@ -328,12 +364,12 @@
                       "required": [
                         "mean"
                       ],
-                      "additionalProperties": false,
                       "dependentRequired": {
                         "corr": [
                           "std"
                         ]
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     {
                       "type": "object",
@@ -388,43 +424,7 @@
                       "additionalProperties": false
                     }
                   ]
-                },
-                "examples": [
-                  {
-                    "description": "In the example below, `\"m1\"` is an input parameter with no associated uncertainty, `\"m2\"` and `\"m3\"` are a pair of input parameters with correlated, Gaussian uncertainties, and `\"m4\"` is a parameter that is uniformly distributed between 0 and 1.",
-                    "inputs": {
-                      "m1": 1.0,
-                      "('m2','m3')": {
-                        "mean": [
-                          1.0,
-                          2.0
-                        ],
-                        "std": [
-                          0.1,
-                          0.1
-                        ],
-                        "corr": [
-                          [
-                            1.0,
-                            0.3
-                          ],
-                          [
-                            0.3,
-                            1.0
-                          ]
-                        ]
-                      },
-                      "m4": {
-                        "distribution_type": "uniform",
-                        "distribution_parameters": {
-                          "a": 0,
-                          "b": 1
-                        },
-                        "distribution_description": "Uniform distribution with boundaries $a$ and $b$."
-                      }
-                    }
-                  }
-                ]
+                }
               },
               "tool": {
                 "type": "object",
@@ -529,7 +529,6 @@
         "parameters",
         "scale"
       ],
-      "additionalProperties": false,
       "dependentRequired": {
         "polynomial_names": [
           "observable_expressions"
@@ -537,7 +536,8 @@
         "observable_expressions": [
           "polynomial_names"
         ]
-      }
+      },
+      "additionalProperties": false
     },
     "data": {
       "type": "object",
@@ -547,14 +547,6 @@
         "polynomial_central": {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "number"
-            }
-          },
-          "description": "*This field is required to express observables as functions of polynomials. It requires the simultaneous presence of `metadata.polynomial_names` and `metadata.observable_expressions`.*\n\nAn object representing the central values of the polynomial coefficients $\\vec{p}_k$ for each named polynomial $P_k$. Each key must be a monomial key as defined above. Each value must be an array of $K$ numbers whose order matches `metadata.polynomial_names`.",
           "examples": [
             {
               "description": "Specifying two polynomials, $P_k$, given in terms of two complex parameters $C_1$ and $C_2$ as\n\n$$\n\\begin{aligned}\n    P_1 &= 1.0 + 1.2 \\ \\mathrm{Im}(C_1) + 0.8 \\ \\mathrm{Re}(C_1) \\mathrm{Re}(C_2) + 0.5 \\ \\mathrm{Re}(C_1) \\mathrm{Im}(C_2)+ 0.2 \\ \\mathrm{Im}(C_1) \\mathrm{Im}(C_2)\\ , \\\\\n    P_2 &= 1.1 + 1.3 \\ \\mathrm{Im}(C_1)  + 0.85 \\ \\mathrm{Re}(C_1) \\mathrm{Re}(C_2) + 0.55 \\ \\mathrm{Re}(C_1) \\mathrm{Im}(C_2)+ 0.25 \\ \\mathrm{Im}(C_1) \\mathrm{Im}(C_2)\\ .\n\\end{aligned}\n$$",
@@ -581,19 +573,19 @@
                 ]
               }
             }
-          ]
-        },
-        "observable_central": {
-          "type": "object",
-          "minProperties": 1,
+          ],
+          "description": "*This field is required to express observables as functions of polynomials. It requires the simultaneous presence of `metadata.polynomial_names` and `metadata.observable_expressions`.*\n\nAn object representing the central values of the polynomial coefficients $\\vec{p}_k$ for each named polynomial $P_k$. Each key must be a monomial key as defined above. Each value must be an array of $K$ numbers whose order matches `metadata.polynomial_names`.",
           "additionalProperties": {
             "type": "array",
             "minItems": 1,
             "items": {
               "type": "number"
             }
-          },
-          "description": "An object representing the central values of the observable coefficients $\\vec{o}_m$ for each observable<span>&nbsp;</span>$O_m$. In case the observables are not themselves polynomials, the observable coefficients correspond to the polynomial approximation of the observables obtained from a Taylor expansion of the observable expressions defined in `metadata.observable_expressions`. Each key must be a monomial key as defined above. Each value must be an array of $M$ numbers whose order matches `metadata.observable_names`.",
+          }
+        },
+        "observable_central": {
+          "type": "object",
+          "minProperties": 1,
           "examples": [
             {
               "description": "Specifying three observable predictions, $O_{m}$, given in terms of the three real parameters $C_1$, $C_2$, and $C_3$ as\n\n$$\n\\begin{aligned}\n    O_1 &= 1.0 + 1.2 \\ C_1 + 1.4 \\ C_1C_2+ 1.6 \\ C_1C_3\\ , \\\\\n    O_2 &= 1.1 + 1.3 \\ C_1 + 1.5 \\ C_1C_2+ 1.7 \\ C_1C_3\\ , \\\\\n    O_3 &= 2.3 + 0.3\\ C_1 + 0.7 \\ C_1C_2 + 0.5 \\ C_1C_3\\ .\n\\end{aligned}\n$$",
@@ -620,34 +612,20 @@
                 ]
               }
             }
-          ]
+          ],
+          "description": "An object representing the central values of the observable coefficients $\\vec{o}_m$ for each observable<span>&nbsp;</span>$O_m$. In case the observables are not themselves polynomials, the observable coefficients correspond to the polynomial approximation of the observables obtained from a Taylor expansion of the observable expressions defined in `metadata.observable_expressions`. Each key must be a monomial key as defined above. Each value must be an array of $M$ numbers whose order matches `metadata.observable_names`.",
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "number"
+            }
+          }
         },
         "observable_uncertainties": {
           "type": "object",
           "minProperties": 1,
           "description": "An object representing the uncertainties on the observable coefficients $\\vec{\\sigma}_m$ for each observable<span>&nbsp;</span>$O_m$. In case the observables are not themselves polynomials, the observable coefficients correspond to the polynomial approximation of the observables obtained from a Taylor expansion of the observable expressions defined in `metadata.observable_expressions`. The fields specify the nature of quoted uncertainty. In many cases there may only be a single top-level field, `\"total\"`, but multiple fields can be used to specify a breakdown into several sources of uncertainty (e.g., statistical, scale, PDF, ...). To avoid mistakes, the names of the top-level fields must not have the format of a monomial key (i.e., stringified tuples as defined above). The value of each top-level field can either be an object or an array of floats. Objects must have the same structure as `observable_central`, arrays must have length $M$. If instead of an object, an array of floats is specified, it is assumed to correspond to the parameter independent uncertainty only (e.g. the uncertainty on the SM prediction). This would be equivalent to specifying an object containing a single element with the monomial key of the constant term (e.g.&nbsp;`\"('','')\"` for a quadratic polynomial).",
-          "additionalProperties": {
-            "oneOf": [
-              {
-                "type": "object",
-                "minProperties": 1,
-                "additionalProperties": {
-                  "type": "array",
-                  "minItems": 1,
-                  "items": {
-                    "type": "number"
-                  }
-                }
-              },
-              {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "type": "number"
-                }
-              }
-            ]
-          },
           "examples": [
             {
               "observable_uncertainties": {
@@ -746,7 +724,29 @@
                 ]
               }
             }
-          ]
+          ],
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              },
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "number"
+                }
+              }
+            ]
+          }
         }
       },
       "anyOf": [
@@ -772,7 +772,6 @@
       "additionalProperties": false
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "conditionScaleArrayPolynomial": {
       "type": "object",
@@ -867,6 +866,7 @@
       }
     }
   },
+  "additionalProperties": false,
   "allOf": [
     {
       "if": {

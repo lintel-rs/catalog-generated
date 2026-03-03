@@ -30,10 +30,10 @@
           "default": 128
         }
       },
-      "additionalProperties": false,
+      "default": null,
       "nullable": true,
       "title": "Resources",
-      "default": null
+      "additionalProperties": false
     },
     "size": {
       "type": "string",
@@ -47,16 +47,18 @@
     },
     "access": {
       "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      },
-      "title": "Access information, a mapping between access type and roles.",
       "default": {
         "ssh": "contributor"
+      },
+      "title": "Access information, a mapping between access type and roles.",
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "relationships": {
       "type": "object",
+      "default": {},
+      "title": "The relationships of the application to defined services.",
       "additionalProperties": {
         "oneOf": [
           {
@@ -77,12 +79,12 @@
             }
           }
         ]
-      },
-      "title": "The relationships of the application to defined services.",
-      "default": {}
+      }
     },
     "mounts": {
       "type": "object",
+      "default": {},
+      "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space.",
       "additionalProperties": {
         "type": "object",
         "properties": {
@@ -108,9 +110,7 @@
           "source"
         ],
         "additionalProperties": false
-      },
-      "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space.",
-      "default": {}
+      }
     },
     "timezone": {
       "type": "string",
@@ -119,12 +119,12 @@
     },
     "variables": {
       "type": "object",
+      "default": {},
+      "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment.",
       "additionalProperties": {
         "type": "object",
         "additionalProperties": {}
-      },
-      "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment.",
-      "default": {}
+      }
     },
     "firewall": {
       "type": "object",
@@ -170,10 +170,10 @@
           "default": []
         }
       },
-      "additionalProperties": false,
+      "default": null,
       "nullable": true,
       "title": "Firewall",
-      "default": null
+      "additionalProperties": false
     },
     "name": {
       "type": "string",
@@ -207,35 +207,20 @@
       "required": [
         "enabled"
       ],
-      "additionalProperties": false,
-      "title": "Configuration for pre-flight checks.",
       "default": {
         "enabled": true,
         "ignored_rules": []
-      }
+      },
+      "title": "Configuration for pre-flight checks.",
+      "additionalProperties": false
     },
-    "stack": {
-      "oneOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "object"
-        },
-        {
-          "type": "array",
-          "items": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "object"
-              }
-            ]
-          }
-        }
-      ]
+    "dependencies": {
+      "type": "object",
+      "default": {},
+      "title": "External global dependencies of this application. They will be downloaded by the language's package manager.",
+      "additionalProperties": {
+        "type": "object"
+      }
     },
     "build": {
       "type": "object",
@@ -247,6 +232,8 @@
         },
         "caches": {
           "type": "object",
+          "default": {},
+          "title": "The configuration of paths managed by the build cache.",
           "additionalProperties": {
             "type": "object",
             "properties": {
@@ -277,17 +264,15 @@
               "watch"
             ],
             "additionalProperties": false
-          },
-          "title": "The configuration of paths managed by the build cache.",
-          "default": {}
+          }
         }
       },
-      "additionalProperties": false,
-      "title": "The build configuration of the application.",
       "default": {
         "flavor": null,
         "caches": {}
-      }
+      },
+      "title": "The build configuration of the application.",
+      "additionalProperties": false
     },
     "source": {
       "type": "object",
@@ -299,6 +284,8 @@
         },
         "operations": {
           "type": "object",
+          "default": {},
+          "title": "Operations that can be applied to the source code.",
           "additionalProperties": {
             "type": "object",
             "properties": {
@@ -311,17 +298,15 @@
               "command"
             ],
             "additionalProperties": false
-          },
-          "title": "Operations that can be applied to the source code.",
-          "default": {}
+          }
         }
       },
-      "additionalProperties": false,
-      "title": "Configuration related to the source code of the application.",
       "default": {
         "operations": {},
         "root": null
-      }
+      },
+      "title": "Configuration related to the source code of the application.",
+      "additionalProperties": false
     },
     "web": {
       "type": "object",
@@ -370,17 +355,17 @@
               "default": []
             }
           },
-          "additionalProperties": false,
+          "title": "Firewall",
           "nullable": true,
-          "title": "Firewall"
+          "additionalProperties": false
         },
         "variables": {
           "type": "object",
+          "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment.",
           "additionalProperties": {
             "type": "object",
             "additionalProperties": {}
-          },
-          "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment."
+          }
         },
         "timezone": {
           "type": "string",
@@ -388,6 +373,7 @@
         },
         "mounts": {
           "type": "object",
+          "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space.",
           "additionalProperties": {
             "type": "object",
             "properties": {
@@ -413,11 +399,12 @@
               "source"
             ],
             "additionalProperties": false
-          },
-          "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space."
+          }
         },
         "relationships": {
           "type": "object",
+          "default": {},
+          "title": "The relationships of the application to defined services.",
           "additionalProperties": {
             "oneOf": [
               {
@@ -438,16 +425,14 @@
                 }
               }
             ]
-          },
-          "title": "The relationships of the application to defined services.",
-          "default": {}
+          }
         },
         "access": {
           "type": "object",
+          "title": "Access information, a mapping between access type and roles.",
           "additionalProperties": {
             "type": "string"
-          },
-          "title": "Access information, a mapping between access type and roles."
+          }
         },
         "disk": {
           "type": "integer",
@@ -471,12 +456,14 @@
               "default": 128
             }
           },
-          "additionalProperties": false,
+          "title": "Resources",
           "nullable": true,
-          "title": "Resources"
+          "additionalProperties": false
         },
         "locations": {
           "type": "object",
+          "default": {},
+          "title": "The specification of the web locations served by this application.",
           "additionalProperties": {
             "type": "object",
             "properties": {
@@ -520,14 +507,16 @@
               },
               "headers": {
                 "type": "object",
+                "default": {},
+                "title": "A set of header fields set to the HTTP response. Applies only to static files, not responses from the application.",
                 "additionalProperties": {
                   "type": "string"
-                },
-                "title": "A set of header fields set to the HTTP response. Applies only to static files, not responses from the application.",
-                "default": {}
+                }
               },
               "rules": {
                 "type": "object",
+                "default": {},
+                "title": "Specific overrides.",
                 "additionalProperties": {
                   "type": "object",
                   "properties": {
@@ -552,16 +541,14 @@
                     },
                     "headers": {
                       "type": "object",
+                      "title": "A set of header fields set to the HTTP response. Replaces headers set on the location block.",
                       "additionalProperties": {
                         "type": "string"
-                      },
-                      "title": "A set of header fields set to the HTTP response. Replaces headers set on the location block."
+                      }
                     }
                   },
                   "additionalProperties": false
-                },
-                "title": "Specific overrides.",
-                "default": {}
+                }
               },
               "request_buffering": {
                 "type": "object",
@@ -577,14 +564,12 @@
                     "default": 262144000
                   }
                 },
-                "additionalProperties": false,
-                "title": "Configuration for supporting request buffering."
+                "title": "Configuration for supporting request buffering.",
+                "additionalProperties": false
               }
             },
             "additionalProperties": false
-          },
-          "title": "The specification of the web locations served by this application.",
-          "default": {}
+          }
         },
         "commands": {
           "type": "object",
@@ -605,8 +590,8 @@
           "required": [
             "start"
           ],
-          "additionalProperties": false,
-          "title": "Commands to manage the application's lifecycle."
+          "title": "Commands to manage the application's lifecycle.",
+          "additionalProperties": false
         },
         "upstream": {
           "type": "object",
@@ -622,8 +607,8 @@
               "default": null
             }
           },
-          "additionalProperties": false,
-          "title": "Configuration on how the web server communicates with the application."
+          "title": "Configuration on how the web server communicates with the application.",
+          "additionalProperties": false
         },
         "document_root": {
           "type": "string",
@@ -667,11 +652,11 @@
           "default": false
         }
       },
-      "additionalProperties": false,
-      "title": "Configuration for accessing this application via HTTP.",
       "default": {
         "locations": {}
-      }
+      },
+      "title": "Configuration for accessing this application via HTTP.",
+      "additionalProperties": false
     },
     "hooks": {
       "type": "object",
@@ -692,12 +677,14 @@
           "default": null
         }
       },
-      "additionalProperties": false,
+      "default": {},
       "title": "Scripts executed at various points in the lifecycle of the application.",
-      "default": {}
+      "additionalProperties": false
     },
     "crons": {
       "type": "object",
+      "default": {},
+      "title": "Scheduled cron tasks executed by this application.",
       "additionalProperties": {
         "type": "object",
         "properties": {
@@ -721,8 +708,8 @@
             "required": [
               "start"
             ],
-            "additionalProperties": false,
-            "title": "The start and stop commands definition."
+            "title": "The start and stop commands definition.",
+            "additionalProperties": false
           },
           "shutdown_timeout": {
             "type": "integer",
@@ -738,12 +725,12 @@
           "spec"
         ],
         "additionalProperties": false
-      },
-      "title": "Scheduled cron tasks executed by this application.",
-      "default": {}
+      }
     },
     "workers": {
       "type": "object",
+      "default": {},
+      "title": "Persistent worker containers created by this application.",
       "additionalProperties": {
         "type": "object",
         "properties": {
@@ -791,17 +778,17 @@
                 "default": []
               }
             },
-            "additionalProperties": false,
+            "title": "Firewall",
             "nullable": true,
-            "title": "Firewall"
+            "additionalProperties": false
           },
           "variables": {
             "type": "object",
+            "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment.",
             "additionalProperties": {
               "type": "object",
               "additionalProperties": {}
-            },
-            "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment."
+            }
           },
           "timezone": {
             "type": "string",
@@ -809,6 +796,7 @@
           },
           "mounts": {
             "type": "object",
+            "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space.",
             "additionalProperties": {
               "type": "object",
               "properties": {
@@ -834,11 +822,12 @@
                 "source"
               ],
               "additionalProperties": false
-            },
-            "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space."
+            }
           },
           "relationships": {
             "type": "object",
+            "default": {},
+            "title": "The relationships of the application to defined services.",
             "additionalProperties": {
               "oneOf": [
                 {
@@ -859,16 +848,14 @@
                   }
                 }
               ]
-            },
-            "title": "The relationships of the application to defined services.",
-            "default": {}
+            }
           },
           "access": {
             "type": "object",
+            "title": "Access information, a mapping between access type and roles.",
             "additionalProperties": {
               "type": "string"
-            },
-            "title": "Access information, a mapping between access type and roles."
+            }
           },
           "disk": {
             "type": "integer",
@@ -892,9 +879,9 @@
                 "default": 128
               }
             },
-            "additionalProperties": false,
+            "title": "Resources",
             "nullable": true,
-            "title": "Resources"
+            "additionalProperties": false
           },
           "commands": {
             "type": "object",
@@ -911,32 +898,45 @@
             "required": [
               "start"
             ],
-            "additionalProperties": false,
-            "title": "The commands to manage the worker."
+            "title": "The commands to manage the worker.",
+            "additionalProperties": false
           }
         },
         "required": [
           "commands"
         ],
         "additionalProperties": false
-      },
-      "title": "Persistent worker containers created by this application.",
-      "default": {}
+      }
     },
     "additional_hosts": {
       "type": "object",
+      "title": "Resolve additional IPs to domain names.",
       "additionalProperties": {
         "type": "string"
-      },
-      "title": "Resolve additional IPs to domain names."
+      }
     },
-    "dependentSchemas": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "object"
-      },
-      "title": "External global dependencies of this application. They will be downloaded by the language's package manager.",
-      "default": {}
+    "stack": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        }
+      ]
     }
   },
   "additionalProperties": false,

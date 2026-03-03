@@ -5,7 +5,7 @@
   "description": "config file for mise version manager (mise.toml)",
   "x-lintel": {
     "source": "https://mise.jdx.dev/schema/mise.json",
-    "sourceSha256": "9cc1b166af46029ebbdc5b625c7d25db52d0921a2632ebfe70708ef25d665972",
+    "sourceSha256": "c97cd9dc458df44cd5f959b711a0f473a6f54398570f5d0601a13701ee54b35b",
     "fileMatch": [
       ".mise.toml",
       ".mise.*.toml",
@@ -104,7 +104,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "hard": {
               "description": "error if current mise is lower than this version",
@@ -116,7 +115,8 @@
               "type": "string",
               "pattern": "^\\d+\\.\\d+\\.\\d+$"
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -128,12 +128,12 @@
       }
     },
     "plugins": {
+      "type": "object",
+      "description": "plugins to use",
       "additionalProperties": {
         "description": "url to plugin repository",
         "type": "string"
-      },
-      "description": "plugins to use",
-      "type": "object"
+      }
     },
     "prepare": {
       "type": "object",
@@ -176,10 +176,10 @@
           "$ref": "#/$defs/prepare_provider"
         }
       },
+      "description": "configure prepare providers",
       "additionalProperties": {
         "$ref": "#/$defs/prepare_provider"
-      },
-      "description": "configure prepare providers"
+      }
     },
     "settings": {
       "$ref": "#/$defs/settings",
@@ -191,20 +191,22 @@
       "$ref": "#/$defs/task_config"
     },
     "tasks": {
+      "type": "object",
+      "description": "task runner tasks",
       "additionalProperties": {
         "$ref": "#/$defs/task"
-      },
-      "description": "task runner tasks",
-      "type": "object"
+      }
     },
     "task_templates": {
       "description": "task templates that can be extended by tasks via extends",
+      "type": "object",
       "additionalProperties": {
         "$ref": "#/$defs/task_template"
-      },
-      "type": "object"
+      }
     },
     "tools": {
+      "type": "object",
+      "description": "dev tools to use",
       "additionalProperties": {
         "oneOf": [
           {
@@ -217,9 +219,7 @@
             "$ref": "#/$defs/tool"
           }
         ]
-      },
-      "description": "dev tools to use",
-      "type": "object"
+      }
     },
     "hooks": {
       "description": "hooks to run on events like cd, enter, leave",
@@ -310,104 +310,12 @@
       ]
     },
     "env": {
-      "additionalProperties": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "value": {
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  }
-                ]
-              },
-              "tools": {
-                "type": "boolean",
-                "description": "load tools before resolving"
-              },
-              "redact": {
-                "type": "boolean",
-                "description": "redact the value from logs"
-              },
-              "required": {
-                "oneOf": [
-                  {
-                    "type": "boolean",
-                    "description": "require this environment variable to be defined before mise runs or in a later config file"
-                  },
-                  {
-                    "type": "string",
-                    "description": "require this environment variable with user help text on how to set it"
-                  }
-                ],
-                "description": "require this environment variable to be defined before mise runs or in a later config file. Cannot be used with empty string values or value=false. Can be a boolean or a help string."
-              }
-            },
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "age": {
-                "oneOf": [
-                  {
-                    "type": "string",
-                    "description": "[experimental] age-encrypted value (simplified format)"
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string",
-                        "description": "[experimental] age-encrypted value"
-                      },
-                      "format": {
-                        "type": "string",
-                        "enum": [
-                          "raw",
-                          "zstd"
-                        ],
-                        "description": "[experimental] compression format for the encrypted value"
-                      }
-                    },
-                    "required": [
-                      "value"
-                    ],
-                    "additionalProperties": false,
-                    "description": "[experimental] age-encrypted value (complex format)"
-                  }
-                ]
-              }
-            },
-            "required": [
-              "age"
-            ],
-            "additionalProperties": false,
-            "description": "[experimental] age-encrypted environment variable"
-          },
-          {
-            "type": "string"
-          },
-          {
-            "type": "number"
-          },
-          {
-            "type": "boolean"
-          }
-        ]
-      },
+      "type": "object",
       "description": "environment variables",
       "properties": {
         "_": {
           "description": "environment modules",
-          "additionalProperties": true,
+          "type": "object",
           "properties": {
             "file": {
               "oneOf": [
@@ -619,14 +527,105 @@
               ]
             }
           },
-          "type": "object"
+          "additionalProperties": true
         }
       },
-      "type": "object"
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              },
+              "tools": {
+                "type": "boolean",
+                "description": "load tools before resolving"
+              },
+              "redact": {
+                "type": "boolean",
+                "description": "redact the value from logs"
+              },
+              "required": {
+                "oneOf": [
+                  {
+                    "type": "boolean",
+                    "description": "require this environment variable to be defined before mise runs or in a later config file"
+                  },
+                  {
+                    "type": "string",
+                    "description": "require this environment variable with user help text on how to set it"
+                  }
+                ],
+                "description": "require this environment variable to be defined before mise runs or in a later config file. Cannot be used with empty string values or value=false. Can be a boolean or a help string."
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "age": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "description": "[experimental] age-encrypted value (simplified format)"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "description": "[experimental] age-encrypted value"
+                      },
+                      "format": {
+                        "type": "string",
+                        "enum": [
+                          "raw",
+                          "zstd"
+                        ],
+                        "description": "[experimental] compression format for the encrypted value"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "description": "[experimental] age-encrypted value (complex format)",
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "age"
+            ],
+            "description": "[experimental] age-encrypted environment variable",
+            "additionalProperties": false
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      }
     },
     "settings": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "activate_aggressive": {
           "description": "Pushes tools' bin-paths to the front of PATH instead of allowing modifications of PATH after activation to take precedence.",
@@ -634,7 +633,6 @@
         },
         "age": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "identity_files": {
               "description": "[experimental] List of age identity files to use for decryption.",
@@ -659,7 +657,8 @@
               "description": "If true, fail when age decryption fails (including when age is not available, the key is missing, or the key is invalid). If false, skip decryption and continue in these cases.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "all_compile": {
           "description": "do not use precompiled binaries for any tool",
@@ -675,7 +674,6 @@
         },
         "aqua": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "baked_registry": {
               "default": true,
@@ -713,7 +711,8 @@
               "description": "Use SLSA to verify aqua tool signatures.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "arch": {
           "description": "Architecture to use for precompiled binaries.",
@@ -748,7 +747,6 @@
         },
         "cargo": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "binstall": {
               "default": true,
@@ -764,7 +762,8 @@
               "description": "Name of the cargo registry to use.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "cargo_binstall": {
           "description": "Use cargo-binstall instead of cargo install if available",
@@ -807,14 +806,14 @@
         },
         "conda": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "channel": {
               "default": "conda-forge",
               "description": "Default channel for conda packages.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "debug": {
           "description": "Sets log level to debug",
@@ -865,7 +864,6 @@
         },
         "dotnet": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "cli_telemetry_optout": {
               "description": "Set DOTNET_CLI_TELEMETRY_OPTOUT to opt out of .NET CLI telemetry.",
@@ -893,7 +891,8 @@
               "description": "URL to fetch dotnet tools from.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "enable_tools": {
           "default": [],
@@ -931,13 +930,13 @@
         },
         "erlang": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "compile": {
               "description": "If true, compile erlang from source. If false, use precompiled binaries. If not set, use precompiled binaries if available.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "exec_auto_install": {
           "default": true,
@@ -960,7 +959,6 @@
         },
         "github": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "github_attestations": {
               "default": true,
@@ -972,7 +970,8 @@
               "description": "Enable SLSA provenance verification for github backend tools.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "github_attestations": {
           "default": true,
@@ -1031,7 +1030,6 @@
         },
         "hook_env": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "cache_ttl": {
               "default": "0s",
@@ -1043,7 +1041,8 @@
               "description": "Only run hook-env checks on directory change, not on every prompt.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "http_retries": {
           "default": 0,
@@ -1091,14 +1090,14 @@
         },
         "java": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "shorthand_vendor": {
               "default": "openjdk",
               "description": "Shorthand for Java. Used when installing Java without a vendor prefix.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "jobs": {
           "default": 8,
@@ -1165,7 +1164,6 @@
         },
         "node": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "cflags": {
               "description": "Additional CFLAGS options (e.g., to override -O3).",
@@ -1234,7 +1232,8 @@
               "description": "Verify the downloaded assets using GPG.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "not_found_auto_install": {
           "default": true,
@@ -1243,7 +1242,6 @@
         },
         "npm": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "bun": {
               "description": "Use bun instead of npm if bun is installed and on PATH.",
@@ -1260,7 +1258,8 @@
                 "pnpm"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "offline": {
           "description": "Disable all HTTP requests. Tools will only use locally cached data.",
@@ -1296,7 +1295,6 @@
         },
         "pipx": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "registry_url": {
               "default": "https://pypi.org/pypi/{}/json",
@@ -1307,7 +1305,8 @@
               "description": "Use uvx instead of pipx if uv is installed and on PATH.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "pipx_uvx": {
           "description": "Use uvx instead of pipx if uv is installed and on PATH.",
@@ -1329,7 +1328,6 @@
         },
         "python": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "compile": {
               "description": "If true, compile python from source. If false, use precompiled binaries. If not set, use precompiled binaries if available.",
@@ -1396,7 +1394,8 @@
               "description": "Prefer to use venv from Python's standard library.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "python_compile": {
           "description": "If true, compile python from source. If false, use precompiled binaries. If not set, use precompiled binaries if available.",
@@ -1448,7 +1447,6 @@
         },
         "ruby": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "apply_patches": {
               "description": "A list of patch files or URLs to apply to ruby source.",
@@ -1506,11 +1504,11 @@
               "description": "Set to true to enable verbose output during ruby installation.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "rust": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "cargo_home": {
               "description": "Path to the cargo home directory. Defaults to `~/.cargo` or `%USERPROFILE%\\.cargo`",
@@ -1524,7 +1522,8 @@
               "description": "Path to the rustup home directory. Defaults to `~/.rustup` or `%USERPROFILE%\\.rustup`",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "shorthands_file": {
           "description": "Path to a file containing custom tool shorthands.",
@@ -1541,7 +1540,6 @@
         },
         "sops": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "age_key": {
               "description": "The age private key to use for sops secret decryption. Takes precedence over standard SOPS_AGE_KEY environment variable.",
@@ -1565,11 +1563,11 @@
               "description": "If true, fail when sops decryption fails (including when sops is not available, the key is missing, or the key is invalid). If false, skip decryption and continue in these cases.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "status": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "missing_tools": {
               "default": "if_other_versions_installed",
@@ -1594,11 +1592,11 @@
               "description": "Truncate status messages.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "swift": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "gpg_verify": {
               "description": "Use gpg to verify swift tool signatures.",
@@ -1608,7 +1606,8 @@
               "description": "Override the platform to use for precompiled binaries.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "system_config_file": {
           "description": "Path to the system mise config file. Default is `/etc/mise/config.toml`. This must be an env var.",
@@ -1616,7 +1615,6 @@
         },
         "task": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "disable_paths": {
               "default": [],
@@ -1705,7 +1703,8 @@
               "description": "Show completion message with elapsed time for each task on `mise run`. Default shows when output type is `prefix`.",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "task_disable_paths": {
           "description": "Paths that mise will not look for tasks in.",
@@ -1852,16 +1851,17 @@
         },
         "zig": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "use_community_mirrors": {
               "default": true,
               "description": "Download Zig from community-maintained mirrors",
               "type": "boolean"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "task_run_entry": {
       "oneOf": [
@@ -1871,20 +1871,22 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "task"
+          ],
           "properties": {
             "task": {
               "description": "single task name (with optional args) to run",
               "type": "string"
             }
           },
-          "required": [
-            "task"
-          ]
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "tasks"
+          ],
           "properties": {
             "tasks": {
               "description": "parallel task group to run",
@@ -1895,9 +1897,7 @@
               "type": "array"
             }
           },
-          "required": [
-            "tasks"
-          ]
+          "additionalProperties": false
         }
       ]
     },
@@ -2017,8 +2017,12 @@
             "env": {
               "$ref": "#/$defs/env"
             },
+            "vars": {
+              "$ref": "#/$defs/vars"
+            },
             "tools": {
               "description": "tools to install/activate before running this task",
+              "type": "object",
               "additionalProperties": {
                 "oneOf": [
                   {
@@ -2061,8 +2065,7 @@
                     }
                   }
                 ]
-              },
-              "type": "object"
+              }
             },
             "hide": {
               "default": false,
@@ -2084,7 +2087,7 @@
                   "type": "string"
                 },
                 {
-                  "additionalProperties": false,
+                  "type": "object",
                   "properties": {
                     "auto": {
                       "description": "automatically touch an internal tracked file instead of specifying outputs",
@@ -2097,7 +2100,7 @@
                   "required": [
                     "auto"
                   ],
-                  "type": "object"
+                  "additionalProperties": false
                 }
               ]
             },
@@ -2190,8 +2193,8 @@
               "type": "string"
             }
           },
-          "additionalProperties": false,
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false
         }
       ]
     },
@@ -2201,7 +2204,7 @@
       "properties": {
         "_": {
           "description": "vars modules",
-          "additionalProperties": true,
+          "type": "object",
           "properties": {
             "file": {
               "oneOf": [
@@ -2236,7 +2239,7 @@
               ]
             }
           },
-          "type": "object"
+          "additionalProperties": true
         }
       },
       "additionalProperties": {
@@ -2247,7 +2250,6 @@
     "task_config": {
       "description": "configuration for task execution/management",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "dir": {
           "description": "default directory to run tasks in defined in this file",
@@ -2261,7 +2263,8 @@
           },
           "type": "array"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "experimental_monorepo_root": {
       "description": "Marks this config as a monorepo root, enabling target path syntax for tasks. Requires MISE_EXPERIMENTAL=1. When enabled, tasks can be referenced with paths like //projects/frontend:build",
@@ -2270,7 +2273,6 @@
     "monorepo": {
       "description": "Configuration for monorepo task discovery",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "config_roots": {
           "description": "Explicit list of config root paths for monorepo task discovery. Supports single-level glob patterns (*). When set, skips filesystem walking for better performance.",
@@ -2279,7 +2281,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "tool": {
       "oneOf": [
@@ -2311,6 +2314,7 @@
             },
             "install_env": {
               "type": "object",
+              "description": "environment variables during tool installation",
               "additionalProperties": {
                 "oneOf": [
                   {
@@ -2323,8 +2327,7 @@
                     "type": "boolean"
                   }
                 ]
-              },
-              "description": "environment variables during tool installation"
+              }
             },
             "postinstall": {
               "description": "command to run after tool installation",
@@ -2365,15 +2368,7 @@
             "type": "string"
           },
           {
-            "description": "script to run",
-            "items": {
-              "description": "script to run",
-              "type": "string"
-            },
-            "type": "array"
-          },
-          {
-            "additionalProperties": false,
+            "type": "object",
             "properties": {
               "script": {
                 "description": "script to run",
@@ -2384,23 +2379,57 @@
                 "type": "string"
               }
             },
-            "type": "object"
+            "additionalProperties": false
           },
           {
-            "description": "scripts to run",
+            "type": "object",
+            "properties": {
+              "task": {
+                "description": "mise task to run",
+                "type": "string"
+              }
+            },
+            "required": [
+              "task"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "scripts/tasks to run",
             "items": {
-              "additionalProperties": false,
-              "properties": {
-                "script": {
+              "oneOf": [
+                {
                   "description": "script to run",
                   "type": "string"
                 },
-                "shell": {
-                  "description": "specify the shell to run the script inside of",
-                  "type": "string"
+                {
+                  "type": "object",
+                  "properties": {
+                    "script": {
+                      "description": "script to run",
+                      "type": "string"
+                    },
+                    "shell": {
+                      "description": "specify the shell to run the script inside of",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "task": {
+                      "description": "mise task to run",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "task"
+                  ],
+                  "additionalProperties": false
                 }
-              },
-              "type": "object"
+              ]
             },
             "type": "array"
           }
@@ -2413,11 +2442,26 @@
       "items": {
         "type": "object",
         "description": "file to watch for changes",
-        "additionalProperties": false,
+        "oneOf": [
+          {
+            "required": [
+              "run"
+            ]
+          },
+          {
+            "required": [
+              "task"
+            ]
+          }
+        ],
         "properties": {
           "run": {
             "type": "string",
             "description": "script to run when file changes"
+          },
+          "task": {
+            "type": "string",
+            "description": "mise task to run when file changes"
           },
           "patterns": {
             "type": "array",
@@ -2426,7 +2470,8 @@
               "type": "string"
             }
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "prepare_provider": {
@@ -2471,10 +2516,10 @@
         },
         "env": {
           "type": "object",
+          "description": "Environment variables to set",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "Environment variables to set"
+          }
         },
         "dir": {
           "type": "string",
@@ -2483,10 +2528,26 @@
         "description": {
           "type": "string",
           "description": "Description shown in output"
+        },
+        "depends": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Other prepare providers that must complete before this one runs"
+        },
+        "touch_outputs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to update mtime of output files/dirs after a successful run"
+        },
+        "timeout": {
+          "type": "string",
+          "description": "Timeout for the run command (e.g., \"30s\", \"5m\", \"1h\")"
         }
       },
-      "additionalProperties": false,
-      "description": "Prepare provider configuration"
+      "description": "Prepare provider configuration",
+      "additionalProperties": false
     },
     "task_props": {
       "description": "common task properties",
@@ -2591,8 +2652,12 @@
         "env": {
           "$ref": "#/$defs/env"
         },
+        "vars": {
+          "$ref": "#/$defs/vars"
+        },
         "tools": {
           "description": "tools to install/activate before running this task",
+          "type": "object",
           "additionalProperties": {
             "oneOf": [
               {
@@ -2635,8 +2700,7 @@
                 }
               }
             ]
-          },
-          "type": "object"
+          }
         },
         "hide": {
           "default": false,
@@ -2658,7 +2722,7 @@
               "type": "string"
             },
             {
-              "additionalProperties": false,
+              "type": "object",
               "properties": {
                 "auto": {
                   "description": "automatically touch an internal tracked file instead of specifying outputs",
@@ -2671,7 +2735,7 @@
               "required": [
                 "auto"
               ],
-              "type": "object"
+              "additionalProperties": false
             }
           ]
         },
@@ -2865,8 +2929,12 @@
         "env": {
           "$ref": "#/$defs/env"
         },
+        "vars": {
+          "$ref": "#/$defs/vars"
+        },
         "tools": {
           "description": "tools to install/activate before running this task",
+          "type": "object",
           "additionalProperties": {
             "oneOf": [
               {
@@ -2909,8 +2977,7 @@
                 }
               }
             ]
-          },
-          "type": "object"
+          }
         },
         "hide": {
           "default": false,
@@ -2932,7 +2999,7 @@
               "type": "string"
             },
             {
-              "additionalProperties": false,
+              "type": "object",
               "properties": {
                 "auto": {
                   "description": "automatically touch an internal tracked file instead of specifying outputs",
@@ -2945,7 +3012,7 @@
               "required": [
                 "auto"
               ],
-              "type": "object"
+              "additionalProperties": false
             }
           ]
         },
@@ -3034,8 +3101,8 @@
           "type": "string"
         }
       },
-      "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false
     }
   }
 }

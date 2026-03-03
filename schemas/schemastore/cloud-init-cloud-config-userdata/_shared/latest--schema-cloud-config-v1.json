@@ -3,8 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/cloud-init-cloud-config-userdata/_shared/latest--schema-cloud-config-v1.json",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/canonical/cloud-init/main/cloudinit/config/schemas/schema-cloud-config-v1.json",
-    "sourceSha256": "599c9251f1c3c99de508f1c2b0fa2e40b49e1a84c03d2be769d30cda9e3d4dbf",
-    "invalid": true
+    "sourceSha256": "599c9251f1c3c99de508f1c2b0fa2e40b49e1a84c03d2be769d30cda9e3d4dbf"
   },
   "type": "object",
   "properties": {
@@ -214,7 +213,6 @@
     },
     "ubuntu_pro.properties": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "enable": {
           "type": "array",
@@ -237,19 +235,18 @@
         "features": {
           "type": "object",
           "description": "Ubuntu Pro features.",
-          "additionalProperties": false,
           "properties": {
             "disable_auto_attach": {
               "type": "boolean",
               "description": "Optional boolean for controlling if ua-auto-attach.service (in Ubuntu Pro instances) will be attempted each boot. Default: ``false``.",
               "default": false
             }
-          }
+          },
+          "additionalProperties": false
         },
         "config": {
           "type": "object",
           "description": "Configuration settings or override Ubuntu Pro config.",
-          "additionalProperties": true,
           "properties": {
             "http_proxy": {
               "type": [
@@ -299,9 +296,11 @@
               "format": "uri",
               "description": "HTTPS Proxy URL used only for Ubuntu Pro APT repositories or null to unset. Stored at ``/etc/apt/apt.conf.d/90ubuntu-advantage-aptproxy``."
             }
-          }
+          },
+          "additionalProperties": true
         }
-      }
+      },
+      "additionalProperties": false
     },
     "users_groups.groups_by_groupname": {
       "additionalProperties": false,
@@ -333,7 +332,6 @@
           ]
         }
       ],
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "The user's login name. Required otherwise user creation will be skipped for this user.",
@@ -374,6 +372,9 @@
             },
             {
               "type": "object",
+              "hidden": [
+                "patternProperties"
+              ],
               "patternProperties": {
                 "^.+$": {
                   "label": "<group_name>",
@@ -385,10 +386,7 @@
                   ],
                   "minItems": 1
                 }
-              },
-              "hidden": [
-                "patternProperties"
-              ]
+              }
             }
           ]
         },
@@ -602,6 +600,7 @@
           ]
         }
       },
+      "additionalProperties": false,
       "type": "object"
     },
     "ansible.pull": {
@@ -620,7 +619,6 @@
         }
       ],
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "accept_host_key": {
           "type": "boolean",
@@ -704,7 +702,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "apt_configure.mirror": {
       "type": "array",
@@ -713,7 +712,6 @@
         "required": [
           "arches"
         ],
-        "additionalProperties": false,
         "properties": {
           "arches": {
             "type": "array",
@@ -746,13 +744,14 @@
           "keyserver": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "minItems": 1
     },
     "ca_certs.properties": {
       "type": "object",
-      "additionalProperties": false,
+      "minProperties": 1,
       "properties": {
         "remove-defaults": {
           "type": "boolean",
@@ -774,7 +773,7 @@
           "minItems": 1
         }
       },
-      "minProperties": 1
+      "additionalProperties": false
     },
     "rh_subscription_activation_key": {
       "type": "string",
@@ -828,9 +827,7 @@
             "type": "array",
             "prefixItems": [
               {
-                "enum": {
-                  "$ref": "#/$defs/all_modules"
-                }
+                "$ref": "#/$defs/all_modules"
               },
               {
                 "enum": [
@@ -854,11 +851,6 @@
           "minItems": 1,
           "items": {
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "name",
-              "settings"
-            ],
             "properties": {
               "name": {
                 "type": "string",
@@ -885,7 +877,12 @@
                   ]
                 }
               }
-            }
+            },
+            "required": [
+              "name",
+              "settings"
+            ],
+            "additionalProperties": false
           }
         }
       ]
@@ -958,7 +955,6 @@
       "properties": {
         "ansible": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "install_method": {
               "type": "string",
@@ -979,7 +975,6 @@
             },
             "setup_controller": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "repositories": {
                   "type": "array",
@@ -989,7 +984,6 @@
                       "source"
                     ],
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                       "path": {
                         "type": "string"
@@ -997,7 +991,8 @@
                       "source": {
                         "type": "string"
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   }
                 },
                 "run_ansible": {
@@ -1094,14 +1089,14 @@
                     }
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "galaxy": {
               "required": [
                 "actions"
               ],
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "actions": {
                   "type": "array",
@@ -1113,7 +1108,8 @@
                     }
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "package_name": {
               "type": "string",
@@ -1136,7 +1132,8 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -1146,7 +1143,6 @@
         "apk_repos": {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": false,
           "properties": {
             "preserve_repositories": {
               "type": "boolean",
@@ -1158,7 +1154,7 @@
                 "object",
                 "null"
               ],
-              "additionalProperties": false,
+              "minProperties": 1,
               "properties": {
                 "base_url": {
                   "type": "string",
@@ -1183,13 +1179,14 @@
               "required": [
                 "version"
               ],
-              "minProperties": 1
+              "additionalProperties": false
             },
             "local_repo_base_url": {
               "type": "string",
               "description": "The base URL of an Alpine repository containing unofficial packages."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -1198,7 +1195,6 @@
         "apt": {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": false,
           "properties": {
             "preserve_sources_list": {
               "type": "boolean",
@@ -1230,13 +1226,13 @@
             "debconf_selections": {
               "type": "object",
               "minProperties": 1,
+              "description": "Debconf additional configurations can be specified as a dictionary under the **debconf_selections** config key, with each key in the dict representing a different set of configurations. The value of each key must be a string containing all the debconf configurations that must be applied. We will bundle all of the values and pass them to **debconf-set-selections**. Therefore, each value line must be a valid entry for ``debconf-set-selections``, meaning that they must possess for distinct fields:\n\n``pkgname question type answer``\n\nWhere:\n- ``pkgname`` is the name of the package.\n- ``question`` the name of the questions.\n- ``type`` is the type of question.\n- ``answer`` is the value used to answer the question.\n\nFor example: ``ippackage ippackage/ip string 127.0.01``.",
               "additionalProperties": false,
               "patternProperties": {
                 "^.+$": {
                   "type": "string"
                 }
-              },
-              "description": "Debconf additional configurations can be specified as a dictionary under the **debconf_selections** config key, with each key in the dict representing a different set of configurations. The value of each key must be a string containing all the debconf configurations that must be applied. We will bundle all of the values and pass them to **debconf-set-selections**. Therefore, each value line must be a valid entry for ``debconf-set-selections``, meaning that they must possess for distinct fields:\n\n``pkgname question type answer``\n\nWhere:\n- ``pkgname`` is the name of the package.\n- ``question`` the name of the questions.\n- ``type`` is the type of question.\n- ``answer`` is the value used to answer the question.\n\nFor example: ``ippackage ippackage/ip string 127.0.01``."
+              }
             },
             "sources_list": {
               "type": "string",
@@ -1264,11 +1260,12 @@
             },
             "sources": {
               "type": "object",
+              "description": "Source list entries can be specified as a dictionary under the **sources** config key, with each key in the dict representing a different source file. The key of each source entry will be used as an id that can be referenced in other config entries, as well as the filename for the source's configuration under ``/etc/apt/sources.list.d``. If the name does not end with ``.list``, it will be appended. If there is no configuration for a key in **sources**, no file will be written, but the key may still be referred to as an id in other **sources** entries.\n\nEach entry under **sources** is a dictionary which may contain any of the following optional keys:\n- **source**: a sources.list entry (some variable replacements apply).\n- **keyid**: a key to import via shortid or fingerprint.\n- **key**: a raw PGP key.\n- **keyserver**: alternate keyserver to pull **keyid** key from.\n- **filename**: specify the name of the list file.\n- **append**: If ``true``, append to sources file, otherwise overwrite it. Default: ``true``.\n\nThe **source** key supports variable replacements for the following strings:\n- ``$MIRROR``\n- ``$PRIMARY``\n- ``$SECURITY``\n- ``$RELEASE``\n- ``$KEY_FILE``",
               "additionalProperties": false,
               "patternProperties": {
                 "^.+$": {
                   "type": "object",
-                  "additionalProperties": false,
+                  "minProperties": 1,
                   "properties": {
                     "source": {
                       "type": "string"
@@ -1290,12 +1287,12 @@
                       "default": true
                     }
                   },
-                  "minProperties": 1
+                  "additionalProperties": false
                 }
-              },
-              "description": "Source list entries can be specified as a dictionary under the **sources** config key, with each key in the dict representing a different source file. The key of each source entry will be used as an id that can be referenced in other config entries, as well as the filename for the source's configuration under ``/etc/apt/sources.list.d``. If the name does not end with ``.list``, it will be appended. If there is no configuration for a key in **sources**, no file will be written, but the key may still be referred to as an id in other **sources** entries.\n\nEach entry under **sources** is a dictionary which may contain any of the following optional keys:\n- **source**: a sources.list entry (some variable replacements apply).\n- **keyid**: a key to import via shortid or fingerprint.\n- **key**: a raw PGP key.\n- **keyserver**: alternate keyserver to pull **keyid** key from.\n- **filename**: specify the name of the list file.\n- **append**: If ``true``, append to sources file, otherwise overwrite it. Default: ``true``.\n\nThe **source** key supports variable replacements for the following strings:\n- ``$MIRROR``\n- ``$PRIMARY``\n- ``$SECURITY``\n- ``$RELEASE``\n- ``$KEY_FILE``"
+              }
             }
-          }
+          },
+          "additionalProperties": false
         }
       },
       "type": "object"
@@ -1401,7 +1398,6 @@
         "chef": {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": false,
           "properties": {
             "directories": {
               "type": "array",
@@ -1555,7 +1551,8 @@
                 "accept-no-persist"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -1590,7 +1587,6 @@
             "^.+$": {
               "label": "<alias name/path>",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "table_type": {
                   "type": "string",
@@ -1646,7 +1642,8 @@
                   "default": false,
                   "description": "Controls whether this module tries to be safe about writing partition tables or not. If ``overwrite: false`` is set, the device will be checked for a partition table and for a file system and if either is found, the operation will be skipped. If ``overwrite: true`` is set, no checks will be performed. Using ``overwrite: true`` is **dangerous** and can lead to data loss, so double check that the correct device has been specified if using this option. Default: ``false``."
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
         },
@@ -1654,7 +1651,6 @@
           "type": "array",
           "items": {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "label": {
                 "type": "string",
@@ -1713,7 +1709,8 @@
                 },
                 "description": "Optional command to run to create the filesystem. Can include string substitutions of the other **fs_setup** config keys. This is only necessary if you need to override the default command."
               }
-            }
+            },
+            "additionalProperties": false
           }
         }
       }
@@ -1726,7 +1723,6 @@
           "required": [
             "config"
           ],
-          "additionalProperties": false,
           "properties": {
             "config": {
               "type": "string",
@@ -1737,7 +1733,8 @@
               "default": "/etc/network/fan",
               "description": "The path to write the fan configuration to. Default: ``/etc/network/fan``."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -1755,7 +1752,6 @@
       "properties": {
         "growpart": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "mode": {
               "default": "auto",
@@ -1794,7 +1790,8 @@
               "default": false,
               "description": "If ``true``, ignore the presence of ``/etc/growroot-disabled``. If ``false`` and the file exists, then don't resize. Default: ``false``."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -1803,7 +1800,6 @@
       "properties": {
         "grub_dpkg": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "enabled": {
               "type": "boolean",
@@ -1832,7 +1828,8 @@
               "type": "string",
               "description": "Partition to use as target for grub installation. If unspecified, ``grub-probe`` of ``/boot/efi`` will be used to find the partition."
             }
-          }
+          },
+          "additionalProperties": false
         },
         "grub-dpkg": {
           "type": "object",
@@ -1847,14 +1844,12 @@
       "properties": {
         "updates": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "network": {
               "type": "object",
               "required": [
                 "when"
               ],
-              "additionalProperties": false,
               "properties": {
                 "when": {
                   "type": "array",
@@ -1868,9 +1863,11 @@
                     ]
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -1879,7 +1876,9 @@
       "properties": {
         "keyboard": {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "layout"
+          ],
           "properties": {
             "layout": {
               "type": "string",
@@ -1899,9 +1898,7 @@
               "description": "Optional. Keyboard options. Corresponds to XKBOPTIONS."
             }
           },
-          "required": [
-            "layout"
-          ]
+          "additionalProperties": false
         }
       }
     },
@@ -1910,7 +1907,9 @@
       "properties": {
         "ssh": {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "emit_keys_to_console"
+          ],
           "properties": {
             "emit_keys_to_console": {
               "type": "boolean",
@@ -1918,9 +1917,7 @@
               "description": "Set false to avoid printing SSH keys to system console. Default: ``true``."
             }
           },
-          "required": [
-            "emit_keys_to_console"
-          ]
+          "additionalProperties": false
         },
         "ssh_key_console_blacklist": {
           "type": "array",
@@ -1949,15 +1946,9 @@
           "required": [
             "client"
           ],
-          "additionalProperties": false,
           "properties": {
             "client": {
               "type": "object",
-              "additionalProperties": true,
-              "required": [
-                "account_name",
-                "computer_title"
-              ],
               "properties": {
                 "url": {
                   "type": "string",
@@ -2011,9 +2002,15 @@
                   "type": "string",
                   "description": "The URL of the HTTPS proxy, if one is needed."
                 }
-              }
+              },
+              "required": [
+                "account_name",
+                "computer_title"
+              ],
+              "additionalProperties": true
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2043,12 +2040,9 @@
         "lxd": {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": false,
           "properties": {
             "init": {
               "type": "object",
-              "additionalProperties": false,
-              "description": "LXD init configuration values to provide to `lxd init --auto` command. Can not be combined with **lxd.preseed**.",
               "properties": {
                 "network_address": {
                   "type": "string",
@@ -2085,15 +2079,15 @@
                   "type": "string",
                   "description": "The password required to add new clients."
                 }
-              }
+              },
+              "description": "LXD init configuration values to provide to `lxd init --auto` command. Can not be combined with **lxd.preseed**.",
+              "additionalProperties": false
             },
             "bridge": {
               "type": "object",
               "required": [
                 "mode"
               ],
-              "additionalProperties": false,
-              "description": "LXD bridge configuration provided to setup the host lxd bridge. Can not be combined with **lxd.preseed**.",
               "properties": {
                 "mode": {
                   "type": "string",
@@ -2157,13 +2151,16 @@
                   "type": "string",
                   "description": "Domain to advertise to DHCP clients and use for DNS resolution."
                 }
-              }
+              },
+              "description": "LXD bridge configuration provided to setup the host lxd bridge. Can not be combined with **lxd.preseed**.",
+              "additionalProperties": false
             },
             "preseed": {
               "type": "string",
               "description": "Opaque LXD preseed YAML config passed via stdin to the command: lxd init --preseed. See: <https://documentation.ubuntu.com/lxd/en/latest/howto/initialize/#non-interactive-configuration> or lxd init --dump for viable config. Can not be combined with either **lxd.init** or **lxd.bridge**."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2172,7 +2169,6 @@
       "properties": {
         "mcollective": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "conf": {
               "type": "object",
@@ -2204,7 +2200,8 @@
                 }
               }
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2250,7 +2247,6 @@
         },
         "swap": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "filename": {
               "type": "string",
@@ -2285,7 +2281,8 @@
               ],
               "description": "The maxsize in bytes of the swap file."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2297,7 +2294,6 @@
             "null",
             "object"
           ],
-          "additionalProperties": false,
           "properties": {
             "pools": {
               "type": "array",
@@ -2348,7 +2344,6 @@
               "description": "Configuration settings or overrides for the **ntp_client** specified.",
               "type": "object",
               "minProperties": 1,
-              "additionalProperties": false,
               "properties": {
                 "confpath": {
                   "type": "string",
@@ -2374,9 +2369,11 @@
                   "type": "string",
                   "description": "Inline template allowing users to customize their **ntp_client** configuration with the use of the Jinja templating engine. The template content should start with ``## template:jinja``. Within the template, you can utilize any of the following ntp module config keys: **servers**, **pools**, **allow**, and **peers**. Each cc_ntp schema config key and expected value type is defined above."
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2456,7 +2453,6 @@
           "required": [
             "url"
           ],
-          "additionalProperties": false,
           "properties": {
             "url": {
               "type": "string",
@@ -2492,7 +2488,8 @@
               "description": "The number of times to try sending the phone home data. Default: ``10``.",
               "default": 10
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2504,7 +2501,6 @@
           "required": [
             "mode"
           ],
-          "additionalProperties": false,
           "properties": {
             "delay": {
               "description": "Time in minutes to delay after cloud-init has finished. Can be ``now`` or an integer specifying the number of minutes to delay. Default: ``now``.",
@@ -2561,7 +2557,8 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2570,7 +2567,6 @@
       "properties": {
         "puppet": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "install": {
               "type": "boolean",
@@ -2639,7 +2635,6 @@
             "conf": {
               "type": "object",
               "description": "Every key present in the conf object will be added to puppet.conf. As such, section names should be one of: ``main``, ``server``, ``agent`` or ``user`` and keys should be valid puppet configuration options. The configuration is specified as a dictionary containing high-level ``<section>`` keys and lists of ``<key>=<value>`` pairs within each section. The ``certname`` key supports string substitutions for ``%i`` and ``%f``, corresponding to the instance id and fqdn of the machine respectively.\n\n``ca_cert`` is a special case. It won't be added to puppet.conf. It holds the puppetserver certificate in pem format. It should be a multi-line string (using the | YAML notation for multi-line strings).",
-              "additionalProperties": false,
               "properties": {
                 "main": {
                   "type": "object"
@@ -2656,12 +2651,12 @@
                 "ca_cert": {
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "csr_attributes": {
               "type": "object",
               "description": "create a ``csr_attributes.yaml`` file for CSR attributes and certificate extension requests. See <https://puppet.com/docs/puppet/latest/config_file_csr_attributes.html>.",
-              "additionalProperties": false,
               "properties": {
                 "custom_attributes": {
                   "type": "object"
@@ -2669,9 +2664,11 @@
                 "extension_requests": {
                   "type": "object"
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2698,7 +2695,6 @@
         },
         "resolv_conf": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "nameservers": {
               "type": "array",
@@ -2720,7 +2716,8 @@
               "type": "object",
               "description": "Key/value pairs of options to go under ``options`` heading. A unary option should be specified as ``true``."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -2729,7 +2726,72 @@
       "properties": {
         "rh_subscription": {
           "type": "object",
-          "additionalProperties": false,
+          "allOf": [
+            {
+              "not": {
+                "required": [
+                  "activation_key",
+                  "activation-key"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "auto_attach",
+                  "auto-attach"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "service_level",
+                  "service-level"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "add_pool",
+                  "add-pool"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "enable_repo",
+                  "enable-repo"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "disable_repo",
+                  "disable-repo"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "rhsm_baseurl",
+                  "rhsm-baseurl"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "server_hostname",
+                  "server-hostname"
+                ]
+              }
+            }
+          ],
           "properties": {
             "username": {
               "type": "string",
@@ -2830,72 +2892,7 @@
               "deprecated_description": "Use **server_hostname** instead."
             }
           },
-          "allOf": [
-            {
-              "not": {
-                "required": [
-                  "activation_key",
-                  "activation-key"
-                ]
-              }
-            },
-            {
-              "not": {
-                "required": [
-                  "auto_attach",
-                  "auto-attach"
-                ]
-              }
-            },
-            {
-              "not": {
-                "required": [
-                  "service_level",
-                  "service-level"
-                ]
-              }
-            },
-            {
-              "not": {
-                "required": [
-                  "add_pool",
-                  "add-pool"
-                ]
-              }
-            },
-            {
-              "not": {
-                "required": [
-                  "enable_repo",
-                  "enable-repo"
-                ]
-              }
-            },
-            {
-              "not": {
-                "required": [
-                  "disable_repo",
-                  "disable-repo"
-                ]
-              }
-            },
-            {
-              "not": {
-                "required": [
-                  "rhsm_baseurl",
-                  "rhsm-baseurl"
-                ]
-              }
-            },
-            {
-              "not": {
-                "required": [
-                  "server_hostname",
-                  "server-hostname"
-                ]
-              }
-            }
-          ]
+          "additionalProperties": false
         }
       }
     },
@@ -2963,7 +2960,6 @@
       "properties": {
         "rsyslog": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "config_dir": {
               "type": "string",
@@ -2986,7 +2982,6 @@
                     "required": [
                       "content"
                     ],
-                    "additionalProperties": false,
                     "properties": {
                       "filename": {
                         "type": "string"
@@ -2994,7 +2989,8 @@
                       "content": {
                         "type": "string"
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   }
                 ]
               }
@@ -3036,7 +3032,8 @@
               "uniqueItems": true,
               "description": "List of packages needed to be installed for rsyslog. This is only used if **install_rsyslog** is ``true``. Default: ``[rsyslog]``."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -3070,7 +3067,6 @@
       "properties": {
         "salt_minion": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "pkg_name": {
               "type": "string",
@@ -3104,7 +3100,8 @@
               "type": "string",
               "description": "Directory to write key files. Default: `config_dir`/pki/minion."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -3113,7 +3110,6 @@
       "properties": {
         "vendor_data": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "enabled": {
               "description": "Whether vendor-data is enabled or not. Default: ``true``.",
@@ -3143,7 +3139,8 @@
               },
               "description": "The command to run before any vendor scripts. Its primary use case is for profiling a script, not to prevent its run."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -3152,7 +3149,6 @@
       "properties": {
         "random_seed": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "file": {
               "type": "string",
@@ -3187,7 +3183,8 @@
               "default": false,
               "description": "If true, and **command** is not available to be run then an exception is raised and cloud-init will record failure. Otherwise, only debug error is mentioned. Default: ``false``."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -3237,7 +3234,6 @@
         },
         "chpasswd": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "expire": {
               "type": "boolean",
@@ -3256,7 +3252,6 @@
                       "name",
                       "type"
                     ],
-                    "additionalProperties": false,
                     "properties": {
                       "name": {
                         "type": "string"
@@ -3268,6 +3263,7 @@
                         "type": "string"
                       }
                     },
+                    "additionalProperties": false,
                     "type": "object"
                   },
                   {
@@ -3275,7 +3271,6 @@
                       "name",
                       "password"
                     ],
-                    "additionalProperties": false,
                     "properties": {
                       "name": {
                         "type": "string"
@@ -3292,6 +3287,7 @@
                         "type": "string"
                       }
                     },
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 ]
@@ -3315,7 +3311,8 @@
               "deprecated_version": "22.2",
               "deprecated_description": "Use **users** instead."
             }
-          }
+          },
+          "additionalProperties": false
         },
         "password": {
           "type": "string",
@@ -3329,7 +3326,6 @@
         "snap": {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": false,
           "properties": {
             "assertions": {
               "description": "Properly-signed snap assertions which will run before and snap **commands**.",
@@ -3384,7 +3380,8 @@
                 ]
               }
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -3393,7 +3390,6 @@
       "properties": {
         "spacewalk": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "server": {
               "type": "string",
@@ -3407,7 +3403,8 @@
               "type": "string",
               "description": "The activation key to use when registering with Spacewalk."
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -3505,7 +3502,6 @@
         },
         "ssh_publish_hostkeys": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "enabled": {
               "type": "boolean",
@@ -3519,7 +3515,8 @@
                 "type": "string"
               }
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -3537,14 +3534,12 @@
       "properties": {
         "drivers": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "nvidia": {
               "type": "object",
               "required": [
                 "license-accepted"
               ],
-              "additionalProperties": false,
               "properties": {
                 "license-accepted": {
                   "type": "boolean",
@@ -3554,9 +3549,11 @@
                   "type": "string",
                   "description": "The version of the driver to install (e.g. \"390\", \"410\"). Default: latest version."
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -3746,7 +3743,6 @@
             "required": [
               "path"
             ],
-            "additionalProperties": false,
             "properties": {
               "path": {
                 "type": "string",
@@ -3760,7 +3756,9 @@
               "source": {
                 "type": "object",
                 "description": "Optional specification for content loading from an arbitrary URI.",
-                "additionalProperties": false,
+                "required": [
+                  "uri"
+                ],
                 "properties": {
                   "uri": {
                     "type": "string",
@@ -3775,9 +3773,7 @@
                     }
                   }
                 },
-                "required": [
-                  "uri"
-                ]
+                "additionalProperties": false
               },
               "owner": {
                 "type": "string",
@@ -3815,7 +3811,8 @@
                 "default": false,
                 "description": "Defer writing the file until 'final' stage, after users were created, and packages were installed. Default: ``false``."
               }
-            }
+            },
+            "additionalProperties": false
           },
           "minItems": 1
         }
@@ -3838,7 +3835,23 @@
               "label": "<repo_name>",
               "type": "object",
               "description": "Object keyed on unique yum repo IDs. The key used will be used to write yum repo config files in ``yum_repo_dir``/<repo_key_id>.repo.",
-              "additionalProperties": false,
+              "anyOf": [
+                {
+                  "required": [
+                    "baseurl"
+                  ]
+                },
+                {
+                  "required": [
+                    "metalink"
+                  ]
+                },
+                {
+                  "required": [
+                    "mirrorlist"
+                  ]
+                }
+              ],
               "properties": {
                 "baseurl": {
                   "type": "string",
@@ -3865,6 +3878,7 @@
                   "description": "Whether to enable the repo. Default: ``true``."
                 }
               },
+              "additionalProperties": false,
               "patternProperties": {
                 "^[0-9a-zA-Z_]+$": {
                   "label": "<yum_config_option>",
@@ -3881,24 +3895,7 @@
                   ],
                   "description": "Any supported yum repository configuration options will be written to the yum repo config file. See: man yum.conf."
                 }
-              },
-              "anyOf": [
-                {
-                  "required": [
-                    "baseurl"
-                  ]
-                },
-                {
-                  "required": [
-                    "metalink"
-                  ]
-                },
-                {
-                  "required": [
-                    "mirrorlist"
-                  ]
-                }
-              ]
+              }
             }
           }
         }
@@ -3910,13 +3907,15 @@
         "zypper": {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": true,
           "properties": {
             "repos": {
               "type": "array",
               "items": {
                 "type": "object",
-                "additionalProperties": true,
+                "required": [
+                  "id",
+                  "baseurl"
+                ],
                 "properties": {
                   "id": {
                     "type": "string",
@@ -3928,10 +3927,7 @@
                     "description": "The base repositoy URL."
                   }
                 },
-                "required": [
-                  "id",
-                  "baseurl"
-                ]
+                "additionalProperties": true
               },
               "minItems": 1
             },
@@ -3939,7 +3935,8 @@
               "type": "object",
               "description": "Any supported zypo.conf key is written to ``/etc/zypp/zypp.conf``."
             }
-          }
+          },
+          "additionalProperties": true
         }
       }
     },
@@ -3962,7 +3959,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "output": {
               "type": "string",
@@ -3972,7 +3968,8 @@
               "type": "string",
               "description": "A filepath operation configuration. A string containing a filepath and an optional leading operator: '>', '>>' or '|'. Operators '>' and '>>' indicate whether to overwrite or append to the file. The operator '|' redirects content to the command arguments specified."
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -3981,7 +3978,6 @@
       "properties": {
         "output": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "all": {
               "$ref": "#/$defs/output_log_operator"
@@ -3995,7 +3991,8 @@
             "final": {
               "$ref": "#/$defs/output_log_operator"
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -4011,10 +4008,6 @@
               "type": "object",
               "oneOf": [
                 {
-                  "additionalProperties": false,
-                  "required": [
-                    "type"
-                  ],
                   "properties": {
                     "type": {
                       "type": "string",
@@ -4034,13 +4027,13 @@
                       "default": "DEBUG"
                     }
                   },
-                  "type": "object"
-                },
-                {
-                  "additionalProperties": false,
                   "required": [
                     "type"
                   ],
+                  "additionalProperties": false,
+                  "type": "object"
+                },
+                {
                   "properties": {
                     "type": {
                       "type": "string",
@@ -4049,14 +4042,13 @@
                       ]
                     }
                   },
+                  "required": [
+                    "type"
+                  ],
+                  "additionalProperties": false,
                   "type": "object"
                 },
                 {
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "endpoint"
-                  ],
                   "properties": {
                     "type": {
                       "type": "string",
@@ -4096,13 +4088,14 @@
                       "description": "The number of times to retry sending the webhook."
                     }
                   },
+                  "required": [
+                    "type",
+                    "endpoint"
+                  ],
+                  "additionalProperties": false,
                   "type": "object"
                 },
                 {
-                  "additionalProperties": false,
-                  "required": [
-                    "type"
-                  ],
                   "properties": {
                     "type": {
                       "type": "string",
@@ -4122,6 +4115,10 @@
                       }
                     }
                   },
+                  "required": [
+                    "type"
+                  ],
+                  "additionalProperties": false,
                   "type": "object"
                 }
               ]

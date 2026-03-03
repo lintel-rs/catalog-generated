@@ -5,8 +5,7 @@
   "description": "Static Analysis Results Format (SARIF) Version 1.0.0 JSON Schema: a standard format for the output of static analysis and other tools.",
   "x-lintel": {
     "source": "https://www.schemastore.org/sarif-1.0.0.json",
-    "sourceSha256": "690b5d0bc5ff39b6f613dcb56df34129893dc12d860eb15858b3ef71f015d425",
-    "invalid": true
+    "sourceSha256": "690b5d0bc5ff39b6f613dcb56df34129893dc12d860eb15858b3ef71f015d425"
   },
   "type": "object",
   "properties": {
@@ -34,12 +33,9 @@
     "version",
     "runs"
   ],
-  "additionalProperties": false,
   "$defs": {
     "annotatedCodeLocation": {
       "description": "An annotation used to express code flows through a method or other locations that are related to a result.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "id": {
           "description": "OBSOLETE (use \"step\" instead): An identifier for the location, unique within the scope of the code flow within which it occurs.",
@@ -151,7 +147,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the code location.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -162,10 +157,12 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
-      }
+          },
+          "additionalProperties": true
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "annotation": {
       "type": "object",
@@ -206,7 +203,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the code flow.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -217,9 +213,9 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
+          },
+          "additionalProperties": true
+        }
       },
       "required": [
         "locations"
@@ -251,7 +247,11 @@
     },
     "fileChange": {
       "description": "A change to a single file.",
-      "additionalProperties": false,
+      "dependentRequired": {
+        "uriBaseId": [
+          "uri"
+        ]
+      },
       "type": "object",
       "properties": {
         "uri": {
@@ -276,15 +276,15 @@
         "uri",
         "replacements"
       ],
+      "additionalProperties": false
+    },
+    "file": {
+      "description": "A single file. In some cases, this file might be nested within another file.",
       "dependentRequired": {
         "uriBaseId": [
           "uri"
         ]
-      }
-    },
-    "file": {
-      "description": "A single file. In some cases, this file might be nested within another file.",
-      "additionalProperties": false,
+      },
       "type": "object",
       "properties": {
         "uri": {
@@ -329,7 +329,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the file.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -340,19 +339,18 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
+          },
+          "additionalProperties": true
+        }
       },
-      "dependentRequired": {
-        "uriBaseId": [
-          "uri"
-        ]
-      }
+      "additionalProperties": false
     },
     "fix": {
       "description": "A proposed fix for the problem represented by a result object. A fix specifies a set of file to modify. For each file, it specifies a set of bytes to remove, and provides a set of new bytes to replace them.",
-      "additionalProperties": false,
+      "required": [
+        "description",
+        "fileChanges"
+      ],
       "type": "object",
       "properties": {
         "description": {
@@ -367,14 +365,13 @@
           }
         }
       },
-      "required": [
-        "description",
-        "fileChanges"
-      ]
+      "additionalProperties": false
     },
     "formattedRuleMessage": {
       "description": "Contains information that can be used to construct a formatted message that describes a result.",
-      "additionalProperties": false,
+      "required": [
+        "formatId"
+      ],
       "type": "object",
       "properties": {
         "formatId": {
@@ -389,13 +386,14 @@
           }
         }
       },
-      "required": [
-        "formatId"
-      ]
+      "additionalProperties": false
     },
     "hash": {
       "description": "A hash value of some file or collection of files, together with the algorithm used to compute the hash.",
-      "additionalProperties": false,
+      "required": [
+        "value",
+        "algorithm"
+      ],
       "type": "object",
       "properties": {
         "value": {
@@ -442,15 +440,10 @@
           ]
         }
       },
-      "required": [
-        "value",
-        "algorithm"
-      ]
+      "additionalProperties": false
     },
     "invocation": {
       "description": "The runtime environment of the analysis tool run.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "commandLine": {
           "description": "The command line used to invoke the tool.",
@@ -494,13 +487,12 @@
         "environmentVariables": {
           "description": "The environment variables associated with the analysis tool process, expressed as key/value pairs.",
           "type": "object",
-          "additionalProperties": true,
-          "default": {}
+          "default": {},
+          "additionalProperties": true
         },
         "properties": {
           "description": "Key/value pairs that provide additional information about the run.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -511,15 +503,15 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
-      }
+          },
+          "additionalProperties": true
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "location": {
       "description": "The location where an analysis tool produced a result.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "analysisTarget": {
           "$ref": "#/$defs/physicalLocation",
@@ -544,7 +536,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the location.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -555,15 +546,15 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
-      }
+          },
+          "additionalProperties": true
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "logicalLocation": {
       "description": "A logical location of a construct that produced a result.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "name": {
           "description": "Identifies the construct in which the result occurred. For example, this property might contain the name of a class or a method.",
@@ -577,12 +568,16 @@
           "description": "The type of construct this logicalLocationComponent refers to. Should be one of 'function', 'member', 'module', 'namespace', 'package', 'resource', or 'type', if any of those accurately describe the construct.",
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "notification": {
       "type": "object",
       "description": "Describes a condition relevant to the tool itself, as opposed to being relevant to a target being analyzed by the tool.",
-      "additionalProperties": false,
+      "required": [
+        "message"
+      ],
       "properties": {
         "id": {
           "description": "An identifier for the condition that was encountered.",
@@ -629,7 +624,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the notification.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -640,17 +634,19 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
+          },
+          "additionalProperties": true
+        }
       },
-      "required": [
-        "message"
-      ]
+      "additionalProperties": false
     },
     "physicalLocation": {
       "description": "A physical location relevant to a result. Specifies a reference to a programming artifact together with a range of bytes or characters within that artifact.",
-      "additionalProperties": false,
+      "dependentRequired": {
+        "uriBaseId": [
+          "uri"
+        ]
+      },
       "type": "object",
       "properties": {
         "uri": {
@@ -667,16 +663,10 @@
           "description": "The region within the file where the result was detected."
         }
       },
-      "dependentRequired": {
-        "uriBaseId": [
-          "uri"
-        ]
-      }
+      "additionalProperties": false
     },
     "region": {
       "description": "A region within a file where a result was detected.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "startLine": {
           "description": "The line number of the first character in the region.",
@@ -708,11 +698,15 @@
           "type": "integer",
           "minimum": 0
         }
-      }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "replacement": {
       "description": "The replacement of a single range of bytes in a file. Specifies the location within the file where the replacement is to be made, the number of bytes to remove at that location, and a sequence of bytes to insert at that location.",
-      "additionalProperties": false,
+      "required": [
+        "offset"
+      ],
       "type": "object",
       "properties": {
         "offset": {
@@ -730,14 +724,10 @@
           "type": "string"
         }
       },
-      "required": [
-        "offset"
-      ]
+      "additionalProperties": false
     },
     "result": {
       "description": "A result produced by an analysis tool.",
-      "additionalProperties": false,
-      "type": "object",
       "properties": {
         "ruleId": {
           "description": "The stable, unique identifier of the rule (if any) to which this notification is relevant. If 'ruleKey' is not specified, this member can be used to retrieve rule metadata from the rules dictionary, if it exists.",
@@ -844,7 +834,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the result.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -855,14 +844,18 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
-      }
+          },
+          "additionalProperties": true
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "rule": {
       "description": "Describes an analysis rule.",
-      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
       "type": "object",
       "properties": {
         "id": {
@@ -902,7 +895,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the rule.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -913,17 +905,17 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
+          },
+          "additionalProperties": true
+        }
       },
-      "required": [
-        "id"
-      ]
+      "additionalProperties": false
     },
     "run": {
       "description": "Describes a single run of an analysis tool, and contains the output of that run.",
-      "additionalProperties": false,
+      "required": [
+        "tool"
+      ],
       "type": "object",
       "properties": {
         "tool": {
@@ -999,13 +991,13 @@
           "type": "string"
         }
       },
-      "required": [
-        "tool"
-      ]
+      "additionalProperties": false
     },
     "stack": {
       "description": "A call stack that is relevant to a result.",
-      "additionalProperties": false,
+      "required": [
+        "frames"
+      ],
       "type": "object",
       "properties": {
         "message": {
@@ -1023,7 +1015,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the stack.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -1034,17 +1025,25 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
+          },
+          "additionalProperties": true
+        }
       },
-      "required": [
-        "frames"
-      ]
+      "additionalProperties": false
     },
     "stackFrame": {
       "description": "A function call within a stack trace.",
-      "additionalProperties": false,
+      "dependentRequired": {
+        "uriBaseId": [
+          "uri"
+        ],
+        "line": [
+          "uri"
+        ],
+        "column": [
+          "line"
+        ]
+      },
       "type": "object",
       "properties": {
         "message": {
@@ -1103,7 +1102,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the stack frame.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -1114,28 +1112,20 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
+          },
+          "additionalProperties": true
+        }
       },
       "required": [
         "fullyQualifiedLogicalName"
       ],
-      "dependentRequired": {
-        "uriBaseId": [
-          "uri"
-        ],
-        "line": [
-          "uri"
-        ],
-        "column": [
-          "line"
-        ]
-      }
+      "additionalProperties": false
     },
     "tool": {
       "description": "The analysis tool that was run.",
-      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
       "type": "object",
       "properties": {
         "name": {
@@ -1170,7 +1160,6 @@
         "properties": {
           "description": "Key/value pairs that provide additional information about the tool.",
           "type": "object",
-          "additionalProperties": true,
           "properties": {
             "tags": {
               "description": "A set of distinct strings that provide additional information.",
@@ -1181,14 +1170,13 @@
                 "type": "string"
               }
             }
-          }
-        },
-        "type": "object"
+          },
+          "additionalProperties": true
+        }
       },
-      "required": [
-        "name"
-      ]
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "id": "https://json.schemastore.org/sarif-1.0.0.json"
 }

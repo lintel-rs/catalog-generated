@@ -159,22 +159,22 @@
     "add-extensions": {
       "description": "This is a dictionary of extension objects. The key is the name of the extension",
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         ".*": {
           "$ref": "#/$defs/extension"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "add-build-extensions": {
       "description": "This is a dictionary of extension objects similar to add-extensions. The main difference is that the extensions are added early and are available for use during the build",
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         ".*": {
           "$ref": "#/$defs/extension"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "cleanup": {
       "description": "An array of file patterns that should be removed at the end. Patterns starting with / are taken to be full pathnames (without the /app prefix), otherwise they just match the basename",
@@ -265,6 +265,7 @@
       "type": "string"
     }
   },
+  "additionalProperties": false,
   "patternProperties": {
     "^x-.*": {
       "$ref": "#/$defs/ignored-prop-custom"
@@ -276,6 +277,23 @@
       "$ref": "#/$defs/ignored-prop-schema"
     }
   },
+  "$comment": "https://docs.flatpak.org/en/latest/flatpak-builder-command-reference.html#flatpak-manifest",
+  "oneOf": [
+    {
+      "required": [
+        "id"
+      ]
+    },
+    {
+      "required": [
+        "app-id"
+      ]
+    }
+  ],
+  "required": [
+    "runtime",
+    "sdk"
+  ],
   "$defs": {
     "ignored-prop-custom": {
       "description": "Custom property (ignored by flatpak-builder)"
@@ -357,13 +375,13 @@
         "env": {
           "description": "This is a dictionary defining environment variables to be set during the build. Elements in this override the properties that set the environment, like cflags and ldflags. Keys with a null value unset the corresponding variable",
           "type": "object",
+          "additionalProperties": false,
           "patternProperties": {
             "^[^=]+$": {
               "description": "An environment variable",
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "secret-env": {
           "description": "This is a array defining which host environment variables is transferred to build-commands or post-install environment",
@@ -436,12 +454,12 @@
         "arch": {
           "description": "This is a dictionary defining for each arch a separate build options object that override the main one",
           "type": "object",
+          "additionalProperties": false,
           "patternProperties": {
             ".*": {
               "$ref": "#/$defs/build-options"
             }
-          },
-          "additionalProperties": false
+          }
         }
       },
       "additionalProperties": false
@@ -765,6 +783,10 @@
           }
         }
       },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
       "patternProperties": {
         "^x-.*": {
           "$ref": "#/$defs/ignored-prop-custom"
@@ -772,11 +794,7 @@
         "^//.*": {
           "$ref": "#/$defs/ignored-prop-comment"
         }
-      },
-      "required": [
-        "name"
-      ],
-      "additionalProperties": false
+      }
     },
     "source": {
       "description": "These contain a pointer to the source that will be extracted into the source directory before the build starts. They can be of several types, distinguished by the type property. Additionally, the sources list can contain a plain string, which is interpreted as the name of a separate json or yaml file that is read and inserted at this point. The file can contain a single source, or an array of sources",
@@ -1051,14 +1069,7 @@
           "type": "string"
         }
       },
-      "patternProperties": {
-        "^x-.*": {
-          "$ref": "#/$defs/ignored-prop-custom"
-        },
-        "^//.*": {
-          "$ref": "#/$defs/ignored-prop-comment"
-        }
-      },
+      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -1071,7 +1082,6 @@
           ]
         }
       ],
-      "additionalProperties": false,
       "dependentSchemas": {
         "url": {
           "anyOf": [
@@ -1112,6 +1122,14 @@
               "type": "object"
             }
           ]
+        }
+      },
+      "patternProperties": {
+        "^x-.*": {
+          "$ref": "#/$defs/ignored-prop-custom"
+        },
+        "^//.*": {
+          "$ref": "#/$defs/ignored-prop-comment"
         }
       }
     },
@@ -1167,14 +1185,7 @@
           "type": "boolean"
         }
       },
-      "patternProperties": {
-        "^x-.*": {
-          "$ref": "#/$defs/ignored-prop-custom"
-        },
-        "^//.*": {
-          "$ref": "#/$defs/ignored-prop-comment"
-        }
-      },
+      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -1187,7 +1198,14 @@
           ]
         }
       ],
-      "additionalProperties": false
+      "patternProperties": {
+        "^x-.*": {
+          "$ref": "#/$defs/ignored-prop-custom"
+        },
+        "^//.*": {
+          "$ref": "#/$defs/ignored-prop-comment"
+        }
+      }
     },
     "source-bzr": {
       "type": "object",
@@ -1213,6 +1231,10 @@
           "type": "string"
         }
       },
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
       "patternProperties": {
         "^x-.*": {
           "$ref": "#/$defs/ignored-prop-custom"
@@ -1220,11 +1242,7 @@
         "^//.*": {
           "$ref": "#/$defs/ignored-prop-comment"
         }
-      },
-      "required": [
-        "url"
-      ],
-      "additionalProperties": false
+      }
     },
     "source-svn": {
       "type": "object",
@@ -1250,6 +1268,10 @@
           "type": "string"
         }
       },
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
       "patternProperties": {
         "^x-.*": {
           "$ref": "#/$defs/ignored-prop-custom"
@@ -1257,11 +1279,7 @@
         "^//.*": {
           "$ref": "#/$defs/ignored-prop-comment"
         }
-      },
-      "required": [
-        "url"
-      ],
-      "additionalProperties": false
+      }
     },
     "source-dir": {
       "type": "object",
@@ -1294,6 +1312,7 @@
       "required": [
         "path"
       ],
+      "additionalProperties": false,
       "patternProperties": {
         "^x-.*": {
           "$ref": "#/$defs/ignored-prop-custom"
@@ -1301,8 +1320,7 @@
         "^//.*": {
           "$ref": "#/$defs/ignored-prop-comment"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "source-file": {
       "type": "object",
@@ -1364,14 +1382,7 @@
           "type": "string"
         }
       },
-      "patternProperties": {
-        "^x-.*": {
-          "$ref": "#/$defs/ignored-prop-custom"
-        },
-        "^//.*": {
-          "$ref": "#/$defs/ignored-prop-comment"
-        }
-      },
+      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -1384,7 +1395,6 @@
           ]
         }
       ],
-      "additionalProperties": false,
       "dependentSchemas": {
         "url": {
           "anyOf": [
@@ -1426,6 +1436,14 @@
             }
           ]
         }
+      },
+      "patternProperties": {
+        "^x-.*": {
+          "$ref": "#/$defs/ignored-prop-custom"
+        },
+        "^//.*": {
+          "$ref": "#/$defs/ignored-prop-comment"
+        }
       }
     },
     "source-script": {
@@ -1456,6 +1474,10 @@
           "type": "string"
         }
       },
+      "additionalProperties": false,
+      "required": [
+        "commands"
+      ],
       "patternProperties": {
         "^x-.*": {
           "$ref": "#/$defs/ignored-prop-custom"
@@ -1463,11 +1485,7 @@
         "^//.*": {
           "$ref": "#/$defs/ignored-prop-comment"
         }
-      },
-      "required": [
-        "commands"
-      ],
-      "additionalProperties": false
+      }
     },
     "source-inline": {
       "type": "object",
@@ -1497,6 +1515,10 @@
           "type": "boolean"
         }
       },
+      "additionalProperties": false,
+      "required": [
+        "dest-filename"
+      ],
       "patternProperties": {
         "^x-.*": {
           "$ref": "#/$defs/ignored-prop-custom"
@@ -1504,11 +1526,7 @@
         "^//.*": {
           "$ref": "#/$defs/ignored-prop-comment"
         }
-      },
-      "required": [
-        "dest-filename"
-      ],
-      "additionalProperties": false
+      }
     },
     "source-shell": {
       "type": "object",
@@ -1534,6 +1552,10 @@
           }
         }
       },
+      "additionalProperties": false,
+      "required": [
+        "commands"
+      ],
       "patternProperties": {
         "^x-.*": {
           "$ref": "#/$defs/ignored-prop-custom"
@@ -1541,11 +1563,7 @@
         "^//.*": {
           "$ref": "#/$defs/ignored-prop-comment"
         }
-      },
-      "required": [
-        "commands"
-      ],
-      "additionalProperties": false
+      }
     },
     "source-patch": {
       "type": "object",
@@ -1595,14 +1613,7 @@
           }
         }
       },
-      "patternProperties": {
-        "^x-.*": {
-          "$ref": "#/$defs/ignored-prop-custom"
-        },
-        "^//.*": {
-          "$ref": "#/$defs/ignored-prop-comment"
-        }
-      },
+      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -1615,7 +1626,14 @@
           ]
         }
       ],
-      "additionalProperties": false
+      "patternProperties": {
+        "^x-.*": {
+          "$ref": "#/$defs/ignored-prop-custom"
+        },
+        "^//.*": {
+          "$ref": "#/$defs/ignored-prop-comment"
+        }
+      }
     },
     "source-extra-data": {
       "type": "object",
@@ -1653,6 +1671,13 @@
           "type": "number"
         }
       },
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "sha256",
+        "size",
+        "filename"
+      ],
       "patternProperties": {
         "^x-.*": {
           "$ref": "#/$defs/ignored-prop-custom"
@@ -1660,32 +1685,7 @@
         "^//.*": {
           "$ref": "#/$defs/ignored-prop-comment"
         }
-      },
-      "required": [
-        "url",
-        "sha256",
-        "size",
-        "filename"
-      ],
-      "additionalProperties": false
+      }
     }
-  },
-  "$comment": "https://docs.flatpak.org/en/latest/flatpak-builder-command-reference.html#flatpak-manifest",
-  "oneOf": [
-    {
-      "required": [
-        "id"
-      ]
-    },
-    {
-      "required": [
-        "app-id"
-      ]
-    }
-  ],
-  "required": [
-    "runtime",
-    "sdk"
-  ],
-  "additionalProperties": false
+  }
 }

@@ -355,7 +355,6 @@
       "type": "string"
     }
   },
-  "additionalProperties": false,
   "allOf": [
     {
       "if": {
@@ -423,6 +422,7 @@
       }
     }
   ],
+  "additionalProperties": false,
   "$comment": "NOTE: The properties 'ui-hidden' and 'ui-recommended' used in this schema, are non-standardized, and currently unused. They could be used to create a form, and are here for consistency with <https://git.iostud.io/makernet/iop-cdb/-/blob/dev/server/assets/okh.okhdf>.",
   "$defs": {
     "agent": {
@@ -575,11 +575,6 @@
     "lang-text": {
       "description": "a text and the language it is written in",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "text",
-        "language"
-      ],
       "properties": {
         "text": {
           "description": "the text content",
@@ -589,7 +584,12 @@
           "$ref": "#/$defs/language",
           "description": "The BCP 47 language tag the content is written in"
         }
-      }
+      },
+      "required": [
+        "text",
+        "language"
+      ],
+      "additionalProperties": false
     },
     "image": {
       "$comment": "A single image, either as a simple link (relative path or URL) or as a complex image object",
@@ -618,48 +618,6 @@
     "imageObject": {
       "description": "a single image reference (project relative path or absolute URL), optionally with additional meta-data",
       "type": "object",
-      "additionalProperties": false,
-      "examples": [
-        {
-          "location": "res/media/img/logo.svg",
-          "depicts": "This OSH projects logo"
-        },
-        {
-          "location": "res/media/img/liquid-flow.svg",
-          "depicts": "A diagram depicting the flow of the different liquids through the machine in an abstract manner"
-        },
-        {
-          "location": "res/assets/media/img/photo-white-bg.png",
-          "depicts": "A photo of the finished hardware, taken with a white background."
-        },
-        {
-          "location": "https://image-hoster-xzy.net/accounts/our-user/our-project/our-image.png",
-          "depicts": "Community supplied photo of the underbelly of our machine"
-        },
-        {
-          "location": "res/assets/media/img/photo-white-bg.png",
-          "depicts": {
-            "text": "A photo of the finished hardware, taken with a white background.",
-            "language": "en"
-          }
-        },
-        {
-          "location": "res/assets/media/img/photo-white-bg.png",
-          "depicts": [
-            {
-              "text": "A photo of the finished hardware, taken with a white background.",
-              "language": "en"
-            },
-            {
-              "text": "Ein Foto der fertigen Maschiene, aufgenommen vor einem weissen Hintergrund.",
-              "language": "de"
-            }
-          ]
-        }
-      ],
-      "required": [
-        "location"
-      ],
       "properties": {
         "location": {
           "$ref": "#/$defs/relPathOrWebUrl",
@@ -744,7 +702,49 @@
             ]
           }
         }
-      }
+      },
+      "examples": [
+        {
+          "location": "res/media/img/logo.svg",
+          "depicts": "This OSH projects logo"
+        },
+        {
+          "location": "res/media/img/liquid-flow.svg",
+          "depicts": "A diagram depicting the flow of the different liquids through the machine in an abstract manner"
+        },
+        {
+          "location": "res/assets/media/img/photo-white-bg.png",
+          "depicts": "A photo of the finished hardware, taken with a white background."
+        },
+        {
+          "location": "https://image-hoster-xzy.net/accounts/our-user/our-project/our-image.png",
+          "depicts": "Community supplied photo of the underbelly of our machine"
+        },
+        {
+          "location": "res/assets/media/img/photo-white-bg.png",
+          "depicts": {
+            "text": "A photo of the finished hardware, taken with a white background.",
+            "language": "en"
+          }
+        },
+        {
+          "location": "res/assets/media/img/photo-white-bg.png",
+          "depicts": [
+            {
+              "text": "A photo of the finished hardware, taken with a white background.",
+              "language": "en"
+            },
+            {
+              "text": "Ein Foto der fertigen Maschiene, aufgenommen vor einem weissen Hintergrund.",
+              "language": "de"
+            }
+          ]
+        }
+      ],
+      "required": [
+        "location"
+      ],
+      "additionalProperties": false
     },
     "language": {
       "$comment": "autocomplete",
@@ -843,12 +843,6 @@
     "outerDimensions": {
       "description": "Outer dimensions of the OSH module or part in mm (millimeters), which completely encompass the product.",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "width",
-        "depth",
-        "height"
-      ],
       "properties": {
         "depth": {
           "type": "number",
@@ -862,35 +856,17 @@
           "type": "number",
           "exclusiveMinimum": 0
         }
-      }
+      },
+      "required": [
+        "width",
+        "depth",
+        "height"
+      ],
+      "additionalProperties": false
     },
     "part": {
       "description": "a physical component of an open source hardware module, for which technical documentation (design files etc.) is available under a free/open license",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
-      "oneOf": [
-        {
-          "required": [
-            "source"
-          ],
-          "properties": {
-            "source": {}
-          },
-          "type": "object"
-        },
-        {
-          "required": [
-            "export"
-          ],
-          "properties": {
-            "export": {}
-          },
-          "type": "object"
-        }
-      ],
       "properties": {
         "auxiliary": {
           "$ref": "#/$defs/auxiliary"
@@ -916,7 +892,31 @@
         "tsdc": {
           "$ref": "#/$defs/tsdc"
         }
-      }
+      },
+      "required": [
+        "name"
+      ],
+      "oneOf": [
+        {
+          "required": [
+            "source"
+          ],
+          "properties": {
+            "source": {}
+          },
+          "type": "object"
+        },
+        {
+          "required": [
+            "export"
+          ],
+          "properties": {
+            "export": {}
+          },
+          "type": "object"
+        }
+      ],
+      "additionalProperties": false
     },
     "person": {
       "description": "A person (alive, dead, undead, or fictional)",
@@ -938,10 +938,6 @@
     },
     "rdfNamespace": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "namespace"
-      ],
       "properties": {
         "namespace": {
           "type": "string",
@@ -958,7 +954,11 @@
             "mycomp-prjx"
           ]
         }
-      }
+      },
+      "required": [
+        "namespace"
+      ],
+      "additionalProperties": false
     },
     "relPath": {
       "$comment": "A relative file-path to a dir or file below the root - as much as one can check for that with a regex",
@@ -1006,10 +1006,6 @@
     },
     "software": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "release"
-      ],
       "properties": {
         "installation-guide": {
           "$ref": "#/$defs/relPathOrWebUrl",
@@ -1025,7 +1021,11 @@
             "https://github.com/arduino/ArduinoCore-mbed/releases/tag/1.3.2"
           ]
         }
-      }
+      },
+      "required": [
+        "release"
+      ],
+      "additionalProperties": false
     },
     "source": {
       "$ref": "#/$defs/relPathOrWebUrlMulti",

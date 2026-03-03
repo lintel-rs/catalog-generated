@@ -18,7 +18,6 @@
       "type": "object",
       "default": {},
       "description": "Spack environment configuration, including specs, view, and any other config section (config, packages, concretizer, mirrors, etc.)",
-      "additionalProperties": false,
       "properties": {
         "bootstrap": {
           "type": "object",
@@ -47,30 +46,25 @@
                     "description": "Path to metadata directory containing bootstrap source configuration"
                   }
                 },
-                "additionalProperties": false,
                 "required": [
                   "name",
                   "metadata"
-                ]
+                ],
+                "additionalProperties": false
               },
               "description": "List of bootstrap sources tried in order. Each method may bootstrap different software depending on its type (e.g., pre-built binaries, source builds)"
             },
             "trusted": {
               "type": "object",
+              "description": "Controls which sources are enabled for automatic bootstrapping",
               "additionalProperties": {
                 "type": "boolean"
-              },
-              "description": "Controls which sources are enabled for automatic bootstrapping"
+              }
             }
           }
         },
         "cdash": {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "build-group"
-          ],
-          "description": "Configuration for uploading build results to CDash",
           "properties": {
             "build-group": {
               "type": "string",
@@ -88,23 +82,20 @@
               "type": "string",
               "description": "Site identifier for CDash reporting"
             }
-          }
+          },
+          "required": [
+            "build-group"
+          ],
+          "description": "Configuration for uploading build results to CDash",
+          "additionalProperties": false
         },
         "compilers": {
           "type": "array",
           "items": {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "compiler": {
                 "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "paths",
-                  "spec",
-                  "modules",
-                  "operating_system"
-                ],
                 "properties": {
                   "paths": {
                     "type": "object",
@@ -114,7 +105,6 @@
                       "f77",
                       "fc"
                     ],
-                    "additionalProperties": false,
                     "properties": {
                       "cc": {
                         "anyOf": [
@@ -156,12 +146,11 @@
                           }
                         ]
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   "flags": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "description": "Flags to pass to the compiler during compilation and linking",
                     "properties": {
                       "cflags": {
                         "anyOf": [
@@ -229,7 +218,9 @@
                         ],
                         "description": "Flags for linker libraries, e.g. -lpthread"
                       }
-                    }
+                    },
+                    "description": "Flags to pass to the compiler during compilation and linking",
+                    "additionalProperties": false
                   },
                   "spec": {
                     "type": "string"
@@ -281,7 +272,6 @@
                     "type": "object",
                     "description": "Environment variable modifications to apply at runtime",
                     "default": {},
-                    "additionalProperties": false,
                     "properties": {
                       "set": {
                         "description": "Environment variables to set to specific values",
@@ -347,7 +337,8 @@
                           ]
                         }
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   "extra_rpaths": {
                     "type": "array",
@@ -357,15 +348,21 @@
                     },
                     "description": "List of extra rpaths to inject by Spack's compiler wrappers"
                   }
-                }
+                },
+                "required": [
+                  "paths",
+                  "spec",
+                  "modules",
+                  "operating_system"
+                ],
+                "additionalProperties": false
               }
-            }
+            },
+            "additionalProperties": false
           }
         },
         "concretizer": {
           "type": "object",
-          "additionalProperties": false,
-          "description": "Concretizer configuration that controls dependency selection, package reuse, and solver behavior",
           "properties": {
             "force": {
               "type": "boolean",
@@ -501,8 +498,6 @@
             },
             "splice": {
               "type": "object",
-              "additionalProperties": false,
-              "description": "Configuration for spec splicing: replacing dependencies with ABI-compatible alternatives to improve package reuse",
               "properties": {
                 "explicit": {
                   "type": "array",
@@ -514,8 +509,6 @@
                       "target",
                       "replacement"
                     ],
-                    "additionalProperties": false,
-                    "description": "Explicit splice configuration",
                     "properties": {
                       "target": {
                         "type": "string",
@@ -530,14 +523,18 @@
                         "default": false,
                         "description": "If true, use transitive splice (conflicts resolved using replacement dependencies); if false, use intransitive splice (conflicts resolved using original dependencies)"
                       }
-                    }
+                    },
+                    "description": "Explicit splice configuration",
+                    "additionalProperties": false
                   }
                 },
                 "automatic": {
                   "type": "boolean",
                   "description": "Enable automatic splicing for ABI-compatible packages (experimental feature)"
                 }
-              }
+              },
+              "description": "Configuration for spec splicing: replacing dependencies with ABI-compatible alternatives to improve package reuse",
+              "additionalProperties": false
             },
             "duplicates": {
               "type": "object",
@@ -578,10 +575,10 @@
             },
             "os_compatible": {
               "type": "object",
+              "description": "Compatibility mapping between operating systems for reuse of compilers and packages (key: target OS, value: list of compatible source OSes)",
               "additionalProperties": {
                 "type": "array"
-              },
-              "description": "Compatibility mapping between operating systems for reuse of compilers and packages (key: target OS, value: list of compatible source OSes)"
+              }
             },
             "concretization_cache": {
               "type": "object",
@@ -616,7 +613,9 @@
                 }
               }
             }
-          }
+          },
+          "description": "Concretizer configuration that controls dependency selection, package reuse, and solver behavior",
+          "additionalProperties": false
         },
         "config": {
           "type": "object",
@@ -882,10 +881,10 @@
             },
             "aliases": {
               "type": "object",
+              "description": "A mapping of aliases that can be used to define new Spack commands",
               "additionalProperties": {
                 "type": "string"
-              },
-              "description": "A mapping of aliases that can be used to define new Spack commands"
+              }
             },
             "installer": {
               "type": "string",
@@ -899,7 +898,6 @@
         },
         "container": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "format": {
               "type": "string",
@@ -912,7 +910,10 @@
               "anyOf": [
                 {
                   "type": "object",
-                  "additionalProperties": false,
+                  "required": [
+                    "os",
+                    "spack"
+                  ],
                   "properties": {
                     "os": {
                       "type": "string"
@@ -924,7 +925,6 @@
                         },
                         {
                           "type": "object",
-                          "additionalProperties": false,
                           "properties": {
                             "url": {
                               "type": "string"
@@ -940,19 +940,20 @@
                               "type": "boolean",
                               "default": false
                             }
-                          }
+                          },
+                          "additionalProperties": false
                         }
                       ]
                     }
                   },
-                  "required": [
-                    "os",
-                    "spack"
-                  ]
+                  "additionalProperties": false
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
+                  "required": [
+                    "build",
+                    "final"
+                  ],
                   "properties": {
                     "build": {
                       "type": "string"
@@ -961,10 +962,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "build",
-                    "final"
-                  ]
+                  "additionalProperties": false
                 }
               ]
             },
@@ -1012,8 +1010,6 @@
             },
             "singularity": {
               "type": "object",
-              "additionalProperties": false,
-              "default": {},
               "properties": {
                 "runscript": {
                   "type": "string"
@@ -1027,18 +1023,21 @@
                 "help": {
                   "type": "string"
                 }
-              }
+              },
+              "default": {},
+              "additionalProperties": false
             },
             "docker": {
               "type": "object",
-              "additionalProperties": false,
-              "default": {}
+              "default": {},
+              "additionalProperties": false
             },
             "depfile": {
               "type": "boolean",
               "default": false
             }
-          }
+          },
+          "additionalProperties": false
         },
         "ci": {
           "type": "object",
@@ -1049,10 +1048,6 @@
                 "oneOf": [
                   {
                     "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "submapping"
-                    ],
                     "properties": {
                       "match_behavior": {
                         "type": "string",
@@ -1066,10 +1061,6 @@
                         "type": "array",
                         "items": {
                           "type": "object",
-                          "additionalProperties": false,
-                          "required": [
-                            "match"
-                          ],
                           "properties": {
                             "match": {
                               "type": "array",
@@ -1079,7 +1070,6 @@
                             },
                             "build-job": {
                               "type": "object",
-                              "additionalProperties": true,
                               "properties": {
                                 "image": {
                                   "oneOf": [
@@ -1167,11 +1157,11 @@
                                     ]
                                   }
                                 }
-                              }
+                              },
+                              "additionalProperties": true
                             },
                             "build-job-remove": {
                               "type": "object",
-                              "additionalProperties": true,
                               "properties": {
                                 "image": {
                                   "oneOf": [
@@ -1259,19 +1249,24 @@
                                     ]
                                   }
                                 }
-                              }
+                              },
+                              "additionalProperties": true
                             }
-                          }
+                          },
+                          "required": [
+                            "match"
+                          ],
+                          "additionalProperties": false
                         }
                       }
-                    }
+                    },
+                    "required": [
+                      "submapping"
+                    ],
+                    "additionalProperties": false
                   },
                   {
                     "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "dynamic-mapping"
-                    ],
                     "properties": {
                       "dynamic-mapping": {
                         "type": "object",
@@ -1319,15 +1314,17 @@
                           }
                         }
                       }
-                    }
+                    },
+                    "required": [
+                      "dynamic-mapping"
+                    ],
+                    "additionalProperties": false
                   },
                   {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                       "any-job": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -1415,11 +1412,11 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       },
                       "any-job-remove": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -1507,17 +1504,17 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                       "build-job": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -1605,11 +1602,11 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       },
                       "build-job-remove": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -1697,17 +1694,17 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                       "cleanup-job": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -1795,11 +1792,11 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       },
                       "cleanup-job-remove": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -1887,17 +1884,17 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                       "copy-job": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -1985,11 +1982,11 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       },
                       "copy-job-remove": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -2077,17 +2074,17 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                       "noop-job": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -2175,11 +2172,11 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       },
                       "noop-job-remove": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -2267,17 +2264,17 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                       "reindex-job": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -2365,11 +2362,11 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       },
                       "reindex-job-remove": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -2457,17 +2454,17 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   {
                     "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                       "signing-job": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -2555,11 +2552,11 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       },
                       "signing-job-remove": {
                         "type": "object",
-                        "additionalProperties": true,
                         "properties": {
                           "image": {
                             "oneOf": [
@@ -2647,9 +2644,11 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": true
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   }
                 ]
               }
@@ -2672,12 +2671,60 @@
             }
           }
         },
-        "include_concrete": {
+        "definitions": {
           "type": "array",
           "default": [],
-          "description": "List of paths to other environments. Includes concrete specs from their spack.lock files without modifying the source environments. Useful for phased deployments where you want to build on existing concrete specs.",
+          "description": "Named spec lists to be referred to with $name in the specs section of environments",
           "items": {
-            "type": "string"
+            "type": "object",
+            "description": "Named definition entry containing a named spec list and optional conditional 'when' clause",
+            "properties": {
+              "when": {
+                "type": "string",
+                "description": "Python code condition evaluated as boolean. Specs are appended to the named list only if the condition is True. Available variables: platform, os, target, arch, arch_str, re, env, hostname"
+              }
+            },
+            "additionalProperties": {
+              "type": "array",
+              "description": "List of specs to include in the environment, supporting both simple specs and matrix configurations",
+              "default": [],
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "description": "Matrix configuration for generating multiple specs from combinations of constraints",
+                    "properties": {
+                      "matrix": {
+                        "type": "array",
+                        "description": "List of spec constraint lists whose cross product generates multiple specs",
+                        "items": {
+                          "type": "array",
+                          "description": "List of spec constraints for this matrix dimension",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "exclude": {
+                        "type": "array",
+                        "description": "List of specific spec combinations to exclude from the matrix",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "string",
+                    "description": "Simple spec string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
           }
         },
         "develop": {
@@ -2686,11 +2733,6 @@
           "description": "Configuration for local development of Spack packages",
           "additionalProperties": {
             "type": "object",
-            "additionalProperties": false,
-            "description": "Name of a package to develop, with its spec and optional source path",
-            "required": [
-              "spec"
-            ],
             "properties": {
               "spec": {
                 "type": "string",
@@ -2700,14 +2742,18 @@
                 "type": "string",
                 "description": "Path to the source code for this package, can be absolute or relative to the environment directory"
               }
-            }
+            },
+            "description": "Name of a package to develop, with its spec and optional source path",
+            "required": [
+              "spec"
+            ],
+            "additionalProperties": false
           }
         },
         "env_vars": {
           "type": "object",
           "description": "Environment variable modifications to apply at runtime",
           "default": {},
-          "additionalProperties": false,
           "properties": {
             "set": {
               "description": "Environment variables to set to specific values",
@@ -2773,13 +2819,12 @@
                 ]
               }
             }
-          }
+          },
+          "additionalProperties": false
         },
         "include": {
           "type": "array",
           "default": [],
-          "additionalProperties": false,
-          "description": "Include external configuration files to pull in configuration from other files/URLs for modular and reusable configurations",
           "items": {
             "anyOf": [
               {
@@ -2865,7 +2910,9 @@
                 "additionalProperties": false
               }
             ]
-          }
+          },
+          "description": "Include external configuration files to pull in configuration from other files/URLs for modular and reusable configurations",
+          "additionalProperties": false
         },
         "mirrors": {
           "type": "object",
@@ -2881,24 +2928,6 @@
               {
                 "type": "object",
                 "description": "Mirror configuration entry supporting both source package archives and binary build caches with optional authentication",
-                "additionalProperties": false,
-                "anyOf": [
-                  {
-                    "required": [
-                      "url"
-                    ]
-                  },
-                  {
-                    "required": [
-                      "fetch"
-                    ]
-                  },
-                  {
-                    "required": [
-                      "pull"
-                    ]
-                  }
-                ],
                 "properties": {
                   "source": {
                     "type": "boolean",
@@ -2922,7 +2951,6 @@
                       {
                         "type": "object",
                         "description": "Detailed connection configuration with authentication and custom settings",
-                        "additionalProperties": false,
                         "properties": {
                           "url": {
                             "type": "string",
@@ -2982,7 +3010,8 @@
                             ],
                             "description": "Environment variable containing an access token for OCI registry authentication"
                           }
-                        }
+                        },
+                        "additionalProperties": false
                       }
                     ]
                   },
@@ -2996,7 +3025,6 @@
                       {
                         "type": "object",
                         "description": "Detailed connection configuration with authentication and custom settings",
-                        "additionalProperties": false,
                         "properties": {
                           "url": {
                             "type": "string",
@@ -3056,7 +3084,8 @@
                             ],
                             "description": "Environment variable containing an access token for OCI registry authentication"
                           }
-                        }
+                        },
+                        "additionalProperties": false
                       }
                     ]
                   },
@@ -3122,7 +3151,25 @@
                     ],
                     "description": "Environment variable containing an access token for OCI registry authentication"
                   }
-                }
+                },
+                "anyOf": [
+                  {
+                    "required": [
+                      "url"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "fetch"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "pull"
+                    ]
+                  }
+                ],
+                "additionalProperties": false
               }
             ]
           }
@@ -3148,7 +3195,6 @@
             "type": "object",
             "default": {},
             "description": "Named module set configuration (e.g., 'default') defining how module files are generated for a specific set of packages",
-            "additionalProperties": false,
             "properties": {
               "use_view": {
                 "anyOf": [
@@ -3265,13 +3311,11 @@
                     "type": "object",
                     "default": {},
                     "description": "Default configuration applied to all module files in this module set",
-                    "additionalProperties": false,
                     "properties": {
                       "filter": {
                         "type": "object",
                         "default": {},
                         "description": "Filter out specific environment variable modifications from module files",
-                        "additionalProperties": false,
                         "properties": {
                           "exclude_env_vars": {
                             "type": "array",
@@ -3281,7 +3325,8 @@
                             },
                             "description": "List of environment variable names to exclude from module file modifications"
                           }
-                        }
+                        },
+                        "additionalProperties": false
                       },
                       "template": {
                         "type": "string",
@@ -3335,7 +3380,6 @@
                         "type": "object",
                         "description": "Custom environment variable modifications to apply in this module file",
                         "default": {},
-                        "additionalProperties": false,
                         "properties": {
                           "set": {
                             "description": "Environment variables to set to specific values",
@@ -3401,9 +3445,11 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": false
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   "core_compilers": {
                     "type": "array",
@@ -3446,13 +3492,11 @@
                   "type": "object",
                   "default": {},
                   "description": "Configuration for individual module file behavior and content customization",
-                  "additionalProperties": false,
                   "properties": {
                     "filter": {
                       "type": "object",
                       "default": {},
                       "description": "Filter out specific environment variable modifications from module files",
-                      "additionalProperties": false,
                       "properties": {
                         "exclude_env_vars": {
                           "type": "array",
@@ -3462,7 +3506,8 @@
                           },
                           "description": "List of environment variable names to exclude from module file modifications"
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     "template": {
                       "type": "string",
@@ -3516,7 +3561,6 @@
                       "type": "object",
                       "description": "Custom environment variable modifications to apply in this module file",
                       "default": {},
-                      "additionalProperties": false,
                       "properties": {
                         "set": {
                           "description": "Environment variables to set to specific values",
@@ -3582,9 +3626,11 @@
                             ]
                           }
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               },
               "tcl": {
@@ -3661,13 +3707,11 @@
                     "type": "object",
                     "default": {},
                     "description": "Default configuration applied to all module files in this module set",
-                    "additionalProperties": false,
                     "properties": {
                       "filter": {
                         "type": "object",
                         "default": {},
                         "description": "Filter out specific environment variable modifications from module files",
-                        "additionalProperties": false,
                         "properties": {
                           "exclude_env_vars": {
                             "type": "array",
@@ -3677,7 +3721,8 @@
                             },
                             "description": "List of environment variable names to exclude from module file modifications"
                           }
-                        }
+                        },
+                        "additionalProperties": false
                       },
                       "template": {
                         "type": "string",
@@ -3731,7 +3776,6 @@
                         "type": "object",
                         "description": "Custom environment variable modifications to apply in this module file",
                         "default": {},
-                        "additionalProperties": false,
                         "properties": {
                           "set": {
                             "description": "Environment variables to set to specific values",
@@ -3797,22 +3841,22 @@
                               ]
                             }
                           }
-                        }
+                        },
+                        "additionalProperties": false
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   }
                 },
                 "additionalProperties": {
                   "type": "object",
                   "default": {},
                   "description": "Configuration for individual module file behavior and content customization",
-                  "additionalProperties": false,
                   "properties": {
                     "filter": {
                       "type": "object",
                       "default": {},
                       "description": "Filter out specific environment variable modifications from module files",
-                      "additionalProperties": false,
                       "properties": {
                         "exclude_env_vars": {
                           "type": "array",
@@ -3822,7 +3866,8 @@
                           },
                           "description": "List of environment variable names to exclude from module file modifications"
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     "template": {
                       "type": "string",
@@ -3876,7 +3921,6 @@
                       "type": "object",
                       "description": "Custom environment variable modifications to apply in this module file",
                       "default": {},
-                      "additionalProperties": false,
                       "properties": {
                         "set": {
                           "description": "Environment variables to set to specific values",
@@ -3942,9 +3986,11 @@
                             ]
                           }
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               },
               "prefix_inspections": {
@@ -3959,7 +4005,8 @@
                   "description": "List of environment variables to update with this prefix-relative path if it exists"
                 }
               }
-            }
+            },
+            "additionalProperties": false
           }
         },
         "packages": {
@@ -3971,7 +4018,15 @@
               "type": "object",
               "description": "Default settings that apply to all packages (can be overridden by package-specific settings)",
               "default": {},
-              "additionalProperties": false,
+              "deprecatedProperties": [
+                {
+                  "names": [
+                    "compiler"
+                  ],
+                  "message": "The packages:all:compiler preference has been deprecated in Spack v1.0, and is currently ignored. It will be removed from config in Spack v1.2.",
+                  "error": false
+                }
+              ],
               "properties": {
                 "require": {
                   "description": "Package requirements that must be satisfied during concretization",
@@ -3982,7 +4037,6 @@
                         "oneOf": [
                           {
                             "type": "object",
-                            "additionalProperties": false,
                             "properties": {
                               "one_of": {
                                 "type": "array",
@@ -4010,7 +4064,8 @@
                                 "type": "string",
                                 "description": "Conditional spec that triggers this requirement"
                               }
-                            }
+                            },
+                            "additionalProperties": false
                           },
                           {
                             "type": "string"
@@ -4030,7 +4085,6 @@
                     "oneOf": [
                       {
                         "type": "object",
-                        "additionalProperties": false,
                         "properties": {
                           "spec": {
                             "type": "string",
@@ -4044,7 +4098,8 @@
                             "type": "string",
                             "description": "Conditional spec that triggers this constraint"
                           }
-                        }
+                        },
+                        "additionalProperties": false
                       },
                       {
                         "type": "string"
@@ -4059,7 +4114,6 @@
                     "oneOf": [
                       {
                         "type": "object",
-                        "additionalProperties": false,
                         "properties": {
                           "spec": {
                             "type": "string",
@@ -4073,7 +4127,8 @@
                             "type": "string",
                             "description": "Conditional spec that triggers this constraint"
                           }
-                        }
+                        },
+                        "additionalProperties": false
                       },
                       {
                         "type": "string"
@@ -4105,7 +4160,6 @@
                 "permissions": {
                   "type": "object",
                   "description": "File permissions settings for package installations",
-                  "additionalProperties": false,
                   "properties": {
                     "read": {
                       "type": "string",
@@ -4129,7 +4183,8 @@
                       "type": "string",
                       "description": "The group that owns the files installed by a package"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "package_attributes": {
                   "type": "object",
@@ -4167,22 +4222,13 @@
                   "description": "Soft variant preferences as a single spec string or list of variant specifications (ignored if the concretizer can reuse existing installations)"
                 }
               },
-              "deprecatedProperties": [
-                {
-                  "names": [
-                    "compiler"
-                  ],
-                  "message": "The packages:all:compiler preference has been deprecated in Spack v1.0, and is currently ignored. It will be removed from config in Spack v1.2.",
-                  "error": false
-                }
-              ]
+              "additionalProperties": false
             }
           },
           "additionalProperties": {
             "type": "object",
             "description": "Package-specific settings that override defaults from 'all'",
             "default": {},
-            "additionalProperties": false,
             "properties": {
               "require": {
                 "description": "Package requirements that must be satisfied during concretization",
@@ -4193,7 +4239,6 @@
                       "oneOf": [
                         {
                           "type": "object",
-                          "additionalProperties": false,
                           "properties": {
                             "one_of": {
                               "type": "array",
@@ -4221,7 +4266,8 @@
                               "type": "string",
                               "description": "Conditional spec that triggers this requirement"
                             }
-                          }
+                          },
+                          "additionalProperties": false
                         },
                         {
                           "type": "string"
@@ -4241,7 +4287,6 @@
                   "oneOf": [
                     {
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "spec": {
                           "type": "string",
@@ -4255,7 +4300,8 @@
                           "type": "string",
                           "description": "Conditional spec that triggers this constraint"
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     {
                       "type": "string"
@@ -4270,7 +4316,6 @@
                   "oneOf": [
                     {
                       "type": "object",
-                      "additionalProperties": false,
                       "properties": {
                         "spec": {
                           "type": "string",
@@ -4284,7 +4329,8 @@
                           "type": "string",
                           "description": "Conditional spec that triggers this constraint"
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     {
                       "type": "string"
@@ -4315,7 +4361,6 @@
               "permissions": {
                 "type": "object",
                 "description": "File permissions settings for package installations",
-                "additionalProperties": false,
                 "properties": {
                   "read": {
                     "type": "string",
@@ -4339,7 +4384,8 @@
                     "type": "string",
                     "description": "The group that owns the files installed by a package"
                   }
-                }
+                },
+                "additionalProperties": false
               },
               "package_attributes": {
                 "type": "object",
@@ -4390,9 +4436,6 @@
                     "extra_attributes": {
                       "type": "object",
                       "description": "Additional information needed by the package to use this external",
-                      "additionalProperties": {
-                        "type": "string"
-                      },
                       "properties": {
                         "compilers": {
                           "type": "object",
@@ -4411,18 +4454,17 @@
                               "description": "Path to the Fortran compiler executable (e.g. /usr/bin/gfortran)"
                             }
                           },
+                          "additionalProperties": false,
                           "patternProperties": {
                             "^\\w": {
                               "type": "string"
                             }
-                          },
-                          "additionalProperties": false
+                          }
                         },
                         "environment": {
                           "type": "object",
                           "description": "Environment variable modifications to apply at runtime",
                           "default": {},
-                          "additionalProperties": false,
                           "properties": {
                             "set": {
                               "description": "Environment variables to set to specific values",
@@ -4488,7 +4530,8 @@
                                 ]
                               }
                             }
-                          }
+                          },
+                          "additionalProperties": false
                         },
                         "extra_rpaths": {
                           "type": "array",
@@ -4514,8 +4557,6 @@
                         },
                         "flags": {
                           "type": "object",
-                          "additionalProperties": false,
-                          "description": "Flags to pass to the compiler during compilation and linking",
                           "properties": {
                             "cflags": {
                               "anyOf": [
@@ -4583,8 +4624,13 @@
                               ],
                               "description": "Flags for linker libraries, e.g. -lpthread"
                             }
-                          }
+                          },
+                          "description": "Flags to pass to the compiler during compilation and linking",
+                          "additionalProperties": false
                         }
+                      },
+                      "additionalProperties": {
+                        "type": "string"
                       }
                     },
                     "dependencies": {
@@ -4627,13 +4673,14 @@
                       }
                     }
                   },
-                  "additionalProperties": false,
                   "required": [
                     "spec"
-                  ]
+                  ],
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "additionalProperties": false
           }
         },
         "repos": {
@@ -4735,8 +4782,6 @@
           "additionalProperties": {
             "type": "object",
             "default": {},
-            "additionalProperties": false,
-            "description": "Named upstream Spack instance configuration",
             "properties": {
               "install_tree": {
                 "type": "string",
@@ -4756,7 +4801,9 @@
                   }
                 }
               }
-            }
+            },
+            "description": "Named upstream Spack instance configuration",
+            "additionalProperties": false
           }
         },
         "view": {
@@ -4778,7 +4825,6 @@
                 "required": [
                   "root"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "root": {
                     "type": "string",
@@ -4831,6 +4877,7 @@
                     }
                   }
                 },
+                "additionalProperties": false,
                 "type": "object"
               }
             }
@@ -4845,7 +4892,6 @@
               {
                 "type": "object",
                 "description": "Matrix configuration for generating multiple specs from combinations of constraints",
-                "additionalProperties": false,
                 "properties": {
                   "matrix": {
                     "type": "array",
@@ -4865,7 +4911,8 @@
                       "type": "string"
                     }
                   }
-                }
+                },
+                "additionalProperties": false
               },
               {
                 "type": "string",
@@ -4877,63 +4924,16 @@
             ]
           }
         },
-        "$defs": {
+        "include_concrete": {
           "type": "array",
           "default": [],
-          "description": "Named spec lists to be referred to with $name in the specs section of environments",
+          "description": "List of paths to other environments. Includes concrete specs from their spack.lock files without modifying the source environments. Useful for phased deployments where you want to build on existing concrete specs.",
           "items": {
-            "type": "object",
-            "description": "Named definition entry containing a named spec list and optional conditional 'when' clause",
-            "properties": {
-              "when": {
-                "type": "string",
-                "description": "Python code condition evaluated as boolean. Specs are appended to the named list only if the condition is True. Available variables: platform, os, target, arch, arch_str, re, env, hostname"
-              }
-            },
-            "additionalProperties": {
-              "type": "array",
-              "description": "List of specs to include in the environment, supporting both simple specs and matrix configurations",
-              "default": [],
-              "items": {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "description": "Matrix configuration for generating multiple specs from combinations of constraints",
-                    "additionalProperties": false,
-                    "properties": {
-                      "matrix": {
-                        "type": "array",
-                        "description": "List of spec constraint lists whose cross product generates multiple specs",
-                        "items": {
-                          "type": "array",
-                          "description": "List of spec constraints for this matrix dimension",
-                          "items": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "exclude": {
-                        "type": "array",
-                        "description": "List of specific spec combinations to exclude from the matrix",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  {
-                    "type": "string",
-                    "description": "Simple spec string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            }
+            "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

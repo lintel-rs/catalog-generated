@@ -60,10 +60,10 @@
     },
     "custom": {
       "type": "object",
+      "description": "Per-tool custom configuration",
       "additionalProperties": {
         "$ref": "#/$defs/toolCustomConfig"
-      },
-      "description": "Per-tool custom configuration"
+      }
     },
     "contentOptions": {
       "$ref": "#/$defs/contentOptions"
@@ -77,11 +77,11 @@
     },
     "templates": {
       "type": "object",
+      "description": "Override default templates for tools or components",
       "additionalProperties": {
         "type": "string",
         "description": "Path to custom template file"
-      },
-      "description": "Override default templates for tools or components"
+      }
     },
     "hooks": {
       "$ref": "#/$defs/hooks"
@@ -97,89 +97,7 @@
   "required": [
     "version"
   ],
-  "examples": [
-    {
-      "$schema": "https://acp-protocol.dev/schemas/v1/sync.schema.json",
-      "version": "1.0.0",
-      "enabled": true,
-      "auto": true,
-      "tools": [
-        "cursor",
-        "claude-code",
-        "generic"
-      ],
-      "primer": {
-        "defaultBudget": 500,
-        "preset": "safe"
-      },
-      "custom": {
-        "cursor": {
-          "primer": {
-            "budget": 2000,
-            "capabilities": [
-              "shell",
-              "file-read",
-              "file-write"
-            ]
-          }
-        },
-        "claude-code": {
-          "primer": {
-            "budget": 4000,
-            "capabilities": [
-              "shell",
-              "mcp",
-              "file-read",
-              "file-write"
-            ],
-            "weights": {
-              "safety": 1.5,
-              "efficiency": 1.2,
-              "accuracy": 1.0,
-              "base": 1.0
-            }
-          }
-        }
-      }
-    },
-    {
-      "$schema": "https://acp-protocol.dev/schemas/v1/sync.schema.json",
-      "version": "1.0.0",
-      "enabled": true,
-      "exclude": [
-        "aider"
-      ],
-      "primer": {
-        "weights": {
-          "safety": 2.0,
-          "efficiency": 0.8,
-          "accuracy": 1.0,
-          "base": 0.8
-        }
-      },
-      "customAdapters": [
-        {
-          "name": "my-ide",
-          "displayName": "My Custom IDE",
-          "outputPath": ".my-ide/context.md",
-          "format": "markdown",
-          "detect": {
-            "files": [
-              ".my-ide/config.json"
-            ]
-          },
-          "mergeStrategy": "replace",
-          "primer": {
-            "budget": 2000,
-            "capabilities": [
-              "shell",
-              "file-read"
-            ]
-          }
-        }
-      ]
-    }
-  ],
+  "additionalProperties": false,
   "$defs": {
     "toolName": {
       "anyOf": [
@@ -603,8 +521,8 @@
               ]
             }
           ],
-          "additionalProperties": false,
-          "description": "Detection methods (at least one required)"
+          "description": "Detection methods (at least one required)",
+          "additionalProperties": false
         },
         "mergeStrategy": {
           "type": "string",
@@ -631,7 +549,6 @@
         "outputPath",
         "format"
       ],
-      "additionalProperties": false,
       "allOf": [
         {
           "if": {
@@ -651,7 +568,8 @@
             ]
           }
         }
-      ]
+      ],
+      "additionalProperties": false
     },
     "hooks": {
       "type": "object",
@@ -670,6 +588,7 @@
         },
         "perTool": {
           "type": "object",
+          "description": "Per-tool hooks",
           "additionalProperties": {
             "type": "object",
             "properties": {
@@ -681,12 +600,93 @@
               }
             },
             "additionalProperties": false
-          },
-          "description": "Per-tool hooks"
+          }
         }
       },
       "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "examples": [
+    {
+      "$schema": "https://acp-protocol.dev/schemas/v1/sync.schema.json",
+      "version": "1.0.0",
+      "enabled": true,
+      "auto": true,
+      "tools": [
+        "cursor",
+        "claude-code",
+        "generic"
+      ],
+      "primer": {
+        "defaultBudget": 500,
+        "preset": "safe"
+      },
+      "custom": {
+        "cursor": {
+          "primer": {
+            "budget": 2000,
+            "capabilities": [
+              "shell",
+              "file-read",
+              "file-write"
+            ]
+          }
+        },
+        "claude-code": {
+          "primer": {
+            "budget": 4000,
+            "capabilities": [
+              "shell",
+              "mcp",
+              "file-read",
+              "file-write"
+            ],
+            "weights": {
+              "safety": 1.5,
+              "efficiency": 1.2,
+              "accuracy": 1.0,
+              "base": 1.0
+            }
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://acp-protocol.dev/schemas/v1/sync.schema.json",
+      "version": "1.0.0",
+      "enabled": true,
+      "exclude": [
+        "aider"
+      ],
+      "primer": {
+        "weights": {
+          "safety": 2.0,
+          "efficiency": 0.8,
+          "accuracy": 1.0,
+          "base": 0.8
+        }
+      },
+      "customAdapters": [
+        {
+          "name": "my-ide",
+          "displayName": "My Custom IDE",
+          "outputPath": ".my-ide/context.md",
+          "format": "markdown",
+          "detect": {
+            "files": [
+              ".my-ide/config.json"
+            ]
+          },
+          "mergeStrategy": "replace",
+          "primer": {
+            "budget": 2000,
+            "capabilities": [
+              "shell",
+              "file-read"
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

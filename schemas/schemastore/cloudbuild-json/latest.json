@@ -41,11 +41,11 @@
       "description": "Tags for organizing and filtering builds."
     },
     "substitutions": {
+      "type": "object",
+      "description": "Substitutions data for Build resource.",
       "additionalProperties": {
         "type": "string"
-      },
-      "description": "Substitutions data for Build resource.",
-      "type": "object"
+      }
     },
     "images": {
       "description": "A list of images to be pushed upon the successful completion of all build steps. The images are pushed using the builder service account's credentials. The digests of the pushed images will be stored in the Build resource's results field. If any of the images fail to be pushed, the build status is marked FAILURE.",
@@ -108,7 +108,6 @@
     "BuildStep": {
       "description": "A step in the build pipeline.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "name": {
           "description": "Required. The name of the container image that will run this particular build step. If the image is available in the host's Docker daemon's cache, it will be run directly. If not, the host will attempt to pull the image first, using the builder service account's credentials if necessary.\n\nThe Docker daemon's cache will already have the latest versions of all of the officially supported build steps. The Docker daemon will also have cached many of the layers for some popular images, like \"ubuntu\", \"debian\", but they will be refreshed at the time you attempt to use them.\n\nIf you built an image in a previous build step, it will be stored in the host's Docker daemon's cache and is available to use as the name for a later build step.",
@@ -205,12 +204,12 @@
           "markdownDescription": "Working directory to use when running this step's container.\n\nIf this value is a relative path, it is relative to the build's working directory. If this value is absolute, it may be outside the build's working directory, in which case the contents of the path may not be persisted across build step executions, unless a volume for that path is specified. If the build specifies a `RepoSource` with `dir` and a step with a `dir`, which specifies an absolute path, the `RepoSource` `dir` is ignored for the step's execution.",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "BuildOptions": {
       "description": "Optional arguments to enable specific features of builds.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "automapSubstitutions": {
           "$ref": "#/$defs/automapSubstitutions"
@@ -267,10 +266,10 @@
               "type": "string"
             }
           },
-          "additionalProperties": false,
           "required": [
             "name"
-          ]
+          ],
+          "additionalProperties": false
         },
         "env": {
           "description": "A list of global environment variable definitions that will exist for all build steps in this build.\n\nIf a variable is defined both globally and in a build step, the variable will use the build step value. The elements are of the form \"KEY=VALUE\" for the environment variable \"KEY\" being given the value \"VALUE\".",
@@ -384,7 +383,8 @@
             "Use a md5 hash."
           ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Secret": {
       "description": "Pairs a set of secret environment variables containing encrypted values with the Cloud KMS key to use to decrypt the value.",
@@ -396,10 +396,10 @@
         },
         "secretEnv": {
           "type": "object",
+          "description": "Map of environment variable name to its encrypted value. Secret environment variables must be unique across all of a build's secrets, and must be used by at least one build step. Values can be at most 64 KB in size. There can be at most 100 secret values across all of a build's secrets.",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "Map of environment variable name to its encrypted value. Secret environment variables must be unique across all of a build's secrets, and must be used by at least one build step. Values can be at most 64 KB in size. There can be at most 100 secret values across all of a build's secrets."
+          }
         }
       }
     },
@@ -463,7 +463,14 @@
     "GoModules": {
       "description": "Allows you to upload non-container Go modules to Go repositories in Artifact Registry.",
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "repositoryName",
+        "repositoryLocation",
+        "repositoryProject_id",
+        "sourcePath",
+        "modulePath",
+        "moduleVersion"
+      ],
       "properties": {
         "repositoryName": {
           "description": "The name of your Go repository in Artifact Registry.",
@@ -490,19 +497,18 @@
           "type": "string"
         }
       },
-      "required": [
-        "repositoryName",
-        "repositoryLocation",
-        "repositoryProject_id",
-        "sourcePath",
-        "modulePath",
-        "moduleVersion"
-      ]
+      "additionalProperties": false
     },
     "MavenArtifacts": {
       "description": "Allows you to upload non-container Java artifacts to Maven repositories in Artifact Registry.",
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "repository",
+        "path",
+        "artifactId",
+        "groupId",
+        "version"
+      ],
       "properties": {
         "repository": {
           "description": "Required. Name of the Artifact Registry repository to store Java artifacts.",
@@ -526,18 +532,15 @@
           "type": "string"
         }
       },
-      "required": [
-        "repository",
-        "path",
-        "artifactId",
-        "groupId",
-        "version"
-      ]
+      "additionalProperties": false
     },
     "PythonPackages": {
       "description": "Allows you to upload Python packages to Artifact Registry.",
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "repository",
+        "paths"
+      ],
       "properties": {
         "repository": {
           "description": "Required. Name of the Artifact Registry repository to store the Python package.",
@@ -551,15 +554,15 @@
           }
         }
       },
-      "required": [
-        "repository",
-        "paths"
-      ]
+      "additionalProperties": false
     },
     "NpmPackages": {
       "description": "Uploads your built NPM packages to supported repositories.",
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "repository",
+        "packagePath"
+      ],
       "properties": {
         "repository": {
           "description": "Required. Name of the Artifact Registry repository to store the NPM package.",
@@ -571,10 +574,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "repository",
-        "packagePath"
-      ]
+      "additionalProperties": false
     },
     "Volume": {
       "description": "Volume describes a Docker container volume which is mounted into build steps in order to persist files across build step execution.",

@@ -63,9 +63,8 @@
     "schemas": {
       "$ref": "#/$defs/Schemas"
     },
-    "description": {
-      "type": "string",
-      "description": "A description of the connector. It will be presented on the Source documentation page."
+    "definitions": {
+      "type": "object"
     },
     "spec": {
       "$ref": "#/$defs/Spec"
@@ -93,14 +92,360 @@
       "description": "For internal Airbyte use only - DO NOT modify manually. Used by consumers of declarative manifests for storing related metadata.",
       "additionalProperties": true
     },
-    "$defs": {
-      "type": "object"
+    "description": {
+      "type": "string",
+      "description": "A description of the connector. It will be presented on the Source documentation page."
     }
   },
   "required": [
     "type",
     "check",
     "version"
+  ],
+  "additionalProperties": false,
+  "interpolation": {
+    "variables": [
+      {
+        "title": "config",
+        "description": "The connector configuration. The object's keys are the same as the the keys defined in the connection specification.",
+        "type": "object",
+        "examples": [
+          {
+            "start_date": "2010-01-01",
+            "api_key": "*****"
+          }
+        ]
+      },
+      {
+        "title": "parameters",
+        "description": "Additional runtime parameters, to be used for string interpolation. Parameters can be passed down from a parent component to its subcomponents using the $parameters key. This can be used to avoid repetitions.",
+        "type": "object",
+        "examples": [
+          {
+            "path": "automations",
+            "data_export_path": "automations",
+            "cursor_field": "updated_at"
+          }
+        ]
+      },
+      {
+        "title": "headers",
+        "description": "The HTTP headers from the last response received from the API. The object's keys are the header names from the response.",
+        "type": "object",
+        "examples": [
+          {
+            "Server": "nginx",
+            "Date": "Mon, 24 Apr 2023 20:17:21 GMT",
+            "Content-Type": "application/json",
+            "Content-Length": "420",
+            "Connection": "keep-alive",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "x-content-type-options": "nosniff",
+            "x-ratelimit-limit": "600",
+            "x-ratelimit-remaining": "598",
+            "x-ratelimit-reset": "39"
+          }
+        ]
+      },
+      {
+        "title": "last_record",
+        "description": "Last record extracted from the response received from the API.",
+        "type": "object",
+        "examples": [
+          {
+            "name": "Test List: 19",
+            "id": "0236d6d2",
+            "contact_count": 20,
+            "_metadata": {
+              "self": "https://api.sendgrid.com/v3/marketing/lists/0236d6d2"
+            }
+          }
+        ]
+      },
+      {
+        "title": "last_page_size",
+        "description": "Number of records extracted from the last response received from the API.",
+        "type": "object",
+        "examples": [
+          2
+        ]
+      },
+      {
+        "title": "next_page_token",
+        "description": "Object describing the token to fetch the next page of records. The object has a single key \"next_page_token\".",
+        "type": "object",
+        "examples": [
+          {
+            "next_page_token": 3
+          },
+          {
+            "next_page_token": "https://api.sendgrid.com/v3/marketing/lists/0236d6d2-75d2-42c5-962d-603e0deaf8d1"
+          }
+        ]
+      },
+      {
+        "title": "record",
+        "description": "The record being processed. The object's keys are the same keys as the records produced by the RecordSelector.",
+        "type": "object"
+      },
+      {
+        "title": "response",
+        "description": "The body of the last response received from the API. The object's keys are the same keys as the response body's.",
+        "type": "object",
+        "examples": [
+          {
+            "result": [
+              {
+                "name": "Test List: 19",
+                "id": "0236d6d2-75d2-42c5-962d-603e0deaf8d1",
+                "contact_count": 20,
+                "_metadata": {
+                  "self": "https://api.sendgrid.com/v3/marketing/lists/0236d6d2"
+                }
+              }
+            ],
+            "_metadata": {
+              "self": "https://api.sendgrid.com/v3/marketing/lists?page_size=1&page_token=",
+              "next": "https://api.sendgrid.com/v3/marketing/lists?page_size=1&page_token=0236d6d2",
+              "count": 82
+            }
+          }
+        ]
+      },
+      {
+        "title": "creation_response",
+        "description": "The response received from the creation_requester in the AsyncRetriever component.",
+        "type": "object",
+        "examples": [
+          {
+            "id": "1234"
+          }
+        ]
+      },
+      {
+        "title": "polling_response",
+        "description": "The response received from the polling_requester in the AsyncRetriever component.",
+        "type": "object",
+        "examples": [
+          {
+            "id": "1234"
+          }
+        ]
+      },
+      {
+        "title": "download_target",
+        "description": "The `URL` received from the polling_requester in the AsyncRetriever with jobStatus as `COMPLETED`.",
+        "type": "string",
+        "examples": [
+          "https://api.sendgrid.com/v3/marketing/lists?page_size=1&page_token=0236d6d2&filename=xxx_yyy_zzz.csv"
+        ]
+      },
+      {
+        "title": "stream_interval",
+        "description": "The current stream interval being processed. The keys are defined by the incremental sync component. Default keys are `start_time` and `end_time`.",
+        "type": "object",
+        "examples": [
+          {
+            "start_time": "2020-01-01 00:00:00.000+00:00",
+            "end_time": "2020-01-02 00:00:00.000+00:00"
+          }
+        ]
+      },
+      {
+        "title": "stream_partition",
+        "description": "The current stream partition being processed. The keys are defined by the partition router component.",
+        "type": "object",
+        "examples": [
+          {
+            "survey_id": 1234
+          },
+          {
+            "strategy": "DESKTOP"
+          },
+          {
+            "survey_id": 1234,
+            "strategy": "MOBILE"
+          }
+        ]
+      },
+      {
+        "title": "stream_slice",
+        "description": "This variable is deprecated. Use stream_interval or stream_partition instead.",
+        "type": "object"
+      }
+    ],
+    "macros": [
+      {
+        "title": "now_utc",
+        "description": "Returns the current date and time in the UTC timezone.",
+        "arguments": {},
+        "return_type": "Datetime",
+        "examples": [
+          "'{{ now_utc() }}' -> '2021-09-01 00:00:00+00:00'",
+          "'{{ now_utc().strftime('%Y-%m-%d') }}' -> '2021-09-01'"
+        ]
+      },
+      {
+        "title": "today_utc",
+        "description": "Returns the current date in UTC timezone. The output is a date object.",
+        "arguments": {},
+        "return_type": "Date",
+        "examples": [
+          "'{{ today_utc() }}' -> '2021-09-01'",
+          "'{{ today_utc().strftime('%Y/%m/%d')}}' -> '2021/09/01'"
+        ]
+      },
+      {
+        "title": "timestamp",
+        "description": "Converts a number or a string representing a datetime (formatted as ISO8601) to a timestamp. If the input is a number, it is converted to an int. If no timezone is specified, the string is interpreted as UTC.",
+        "arguments": {
+          "datetime": "A string formatted as ISO8601 or an integer representing a unix timestamp"
+        },
+        "return_type": "int",
+        "examples": [
+          "'{{ timestamp(1646006400) }}' -> 1646006400",
+          "'{{ timestamp('2022-02-28') }}' -> 1646006400",
+          "'{{ timestamp('2022-02-28T00:00:00Z') }}' -> 1646006400",
+          "'{{ timestamp('2022-02-28 00:00:00Z') }}' -> 1646006400",
+          "'{{ timestamp('2022-02-28T00:00:00-08:00') }}' -> 1646035200"
+        ]
+      },
+      {
+        "title": "max",
+        "description": "Returns the largest object of a iterable, or or two or more arguments.",
+        "arguments": {
+          "args": "iterable or a sequence of two or more arguments"
+        },
+        "return_type": "Any",
+        "examples": [
+          "'{{ max(2, 3) }}' -> 3",
+          "'{{ max([2, 3]) }}' -> 3"
+        ]
+      },
+      {
+        "title": "day_delta",
+        "description": "Returns the datetime of now() + num_days.",
+        "arguments": {
+          "num_days": "The number of days to add to now",
+          "format": "How to format the output string"
+        },
+        "return_type": "str",
+        "examples": [
+          "'{{ day_delta(1) }}' -> '2021-09-02T00:00:00.000000+0000'",
+          "'{{ day_delta(-1) }}' -> '2021-08-31:00:00.000000+0000'",
+          "'{{ day_delta(25, format='%Y-%m-%d') }}' -> '2021-09-02'"
+        ]
+      },
+      {
+        "title": "duration",
+        "description": "Converts an ISO8601 duration to datetime timedelta.",
+        "arguments": {
+          "duration_string": "A string representing an ISO8601 duration. See https://www.digi.com/resources/documentation/digidocs//90001488-13/reference/r_iso_8601_duration_format.htm for more details."
+        },
+        "return_type": "datetime.timedelta",
+        "examples": [
+          "'{{ duration('P1D') }}' -> '1 day, 0:00:00'",
+          "'{{ duration('P6DT23H') }}' -> '6 days, 23:00:00'",
+          "'{{ (now_utc() - duration('P1D')).strftime('%Y-%m-%dT%H:%M:%SZ') }}' -> '2021-08-31T00:00:00Z'"
+        ]
+      },
+      {
+        "title": "format_datetime",
+        "description": "Converts a datetime or a datetime-string to the specified format.",
+        "arguments": {
+          "datetime": "The datetime object or a string to convert. If datetime is a string, it must be formatted as ISO8601.",
+          "format": "The datetime format.",
+          "input_format": "(optional) The datetime format in the case it is an string."
+        },
+        "return_type": "str",
+        "examples": [
+          "{{ format_datetime(config['start_time'], '%Y-%m-%d') }}",
+          "{{ format_datetime(config['start_date'], '%Y-%m-%dT%H:%M:%S.%fZ') }}",
+          "{{ format_datetime(config['start_date'], '%Y-%m-%dT%H:%M:%S.%fZ', '%a, %d %b %Y %H:%M:%S %z') }}"
+        ]
+      },
+      {
+        "title": "str_to_datetime",
+        "description": "Converts a string to a datetime object with UTC timezone.",
+        "arguments": {
+          "s": "The string to convert."
+        },
+        "return_type": "datetime.datetime",
+        "examples": [
+          "{{ str_to_datetime('2022-01-14') }}",
+          "{{ str_to_datetime('2022-01-01 13:45:30') }}",
+          "{{ str_to_datetime('2022-01-01T13:45:30+00:00') }}",
+          "{{ str_to_datetime('2022-01-01T13:45:30.123456Z') }}"
+        ]
+      }
+    ],
+    "filters": [
+      {
+        "title": "hash",
+        "description": "Convert the specified value to a hashed string.",
+        "arguments": {
+          "hash_type": "Valid hash type for converts ('md5' as default value).",
+          "salt": "An additional value to further protect sensitive data."
+        },
+        "return_type": "str",
+        "examples": [
+          "{{ 'Test client_secret' | hash() }} -> '3032d57a12f76b61a820e47b9a5a0cbb'",
+          "{{ 'Test client_secret' | hash('md5') }} -> '3032d57a12f76b61a820e47b9a5a0cbb'",
+          "{{ 'Test client_secret' | hash('md5', salt='salt') }} -> '5011a0168579c2d94cbbe1c6ad14327c'"
+        ]
+      },
+      {
+        "title": "base64encode",
+        "description": "Convert the specified value to a string in the base64 format.",
+        "arguments": {},
+        "return_type": "str",
+        "examples": [
+          "{{ 'Test client_secret' | base64encode }} -> 'VGVzdCBjbGllbnRfc2VjcmV0'"
+        ]
+      },
+      {
+        "title": "base64decode",
+        "description": "Decodes the specified base64 format value into a common string.",
+        "arguments": {},
+        "return_type": "str",
+        "examples": [
+          "{{ 'ZmFrZSByZWZyZXNoX3Rva2VuIHZhbHVl' | base64decode }} -> 'fake refresh_token value'"
+        ]
+      },
+      {
+        "title": "string",
+        "description": "Converts the specified value to a string.",
+        "arguments": {},
+        "return_type": "str",
+        "examples": [
+          "{{ 1 | string }} -> \"1\"",
+          "{{ [\"hello\", \"world\" | string }} -> \"[\"hello\", \"world\"]\""
+        ]
+      },
+      {
+        "title": "regex_search",
+        "description": "Match the input string against a regular expression and return the first match.",
+        "arguments": {
+          "regex": "The regular expression to search for. It must include a capture group."
+        },
+        "return_type": "str",
+        "examples": [
+          "{{ \"goodbye, cruel world\" | regex_search(\"goodbye,\\s(.*)$\") }} -> \"cruel world\""
+        ]
+      }
+    ]
+  },
+  "anyOf": [
+    {
+      "required": [
+        "streams"
+      ]
+    },
+    {
+      "required": [
+        "dynamic_streams"
+      ]
+    }
   ],
   "$defs": {
     "AddedFieldDefinition": {
@@ -393,12 +738,6 @@
       "title": "Selective Authenticator",
       "description": "Authenticator that selects concrete authenticator based on config property.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "authenticators",
-        "authenticator_selection_path"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -427,6 +766,15 @@
           "title": "Authenticators",
           "description": "Authenticators to select from.",
           "type": "object",
+          "examples": [
+            {
+              "authenticators": {
+                "token": "#/definitions/ApiKeyAuthenticator",
+                "oauth": "#/definitions/OAuthAuthenticator",
+                "jwt": "#/definitions/JwtAuthenticator"
+              }
+            }
+          ],
           "additionalProperties": {
             "anyOf": [
               {
@@ -457,22 +805,19 @@
                 "$ref": "#/$defs/NoAuth"
               }
             ]
-          },
-          "examples": [
-            {
-              "authenticators": {
-                "token": "#/definitions/ApiKeyAuthenticator",
-                "oauth": "#/definitions/OAuthAuthenticator",
-                "jwt": "#/definitions/JwtAuthenticator"
-              }
-            }
-          ]
+          }
         },
         "$parameters": {
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "authenticators",
+        "authenticator_selection_path"
+      ],
+      "additionalProperties": true
     },
     "CheckStream": {
       "title": "Streams to Check",
@@ -801,11 +1146,6 @@
       "title": "Custom Authenticator",
       "description": "Authenticator component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -817,26 +1157,26 @@
           "title": "Class Name",
           "description": "Fully-qualified name of the class that will be implementing the custom authentication strategy. Has to be a sub class of DeclarativeAuthenticator. The format is `source_<name>.<package>.<class_name>`.",
           "type": "string",
-          "additionalProperties": true,
           "examples": [
             "source_railz.components.ShortLivedTokenAuthenticator"
-          ]
+          ],
+          "additionalProperties": true
         },
         "$parameters": {
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomBackoffStrategy": {
       "title": "Custom Backoff Strategy",
       "description": "Backoff strategy component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -856,17 +1196,17 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomErrorHandler": {
       "title": "Custom Error Handler",
       "description": "Error handler component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -886,18 +1226,17 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomIncrementalSync": {
       "title": "Custom Incremental Sync",
       "description": "Incremental component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name",
-        "cursor_field"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -909,10 +1248,10 @@
           "title": "Class Name",
           "description": "Fully-qualified name of the class that will be implementing the custom incremental sync. The format is `source_<name>.<package>.<class_name>`.",
           "type": "string",
-          "additionalProperties": true,
           "examples": [
             "source_railz.components.MyCustomIncrementalSync"
-          ]
+          ],
+          "additionalProperties": true
         },
         "cursor_field": {
           "description": "The location of the value on a record that will be used as a bookmark during sync.",
@@ -922,17 +1261,18 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name",
+        "cursor_field"
+      ],
+      "additionalProperties": true
     },
     "CustomPaginationStrategy": {
       "title": "Custom Pagination Strategy",
       "description": "Pagination strategy component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -952,17 +1292,17 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomRecordExtractor": {
       "title": "Custom Record Extractor",
       "description": "Record extractor component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -982,17 +1322,17 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomRecordFilter": {
       "title": "Custom Record Filter",
       "description": "Record filter component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -1012,17 +1352,17 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomRequester": {
       "title": "Custom Requester",
       "description": "Requester component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -1034,26 +1374,26 @@
           "title": "Class Name",
           "description": "Fully-qualified name of the class that will be implementing the custom requester strategy. The format is `source_<name>.<package>.<class_name>`.",
           "type": "string",
-          "additionalProperties": true,
           "examples": [
             "source_railz.components.MyCustomRecordExtractor"
-          ]
+          ],
+          "additionalProperties": true
         },
         "$parameters": {
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomRetriever": {
       "title": "Custom Retriever",
       "description": "Retriever component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -1065,26 +1405,26 @@
           "title": "Class Name",
           "description": "Fully-qualified name of the class that will be implementing the custom retriever strategy. The format is `source_<name>.<package>.<class_name>`.",
           "type": "string",
-          "additionalProperties": true,
           "examples": [
             "source_railz.components.MyCustomRetriever"
-          ]
+          ],
+          "additionalProperties": true
         },
         "$parameters": {
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomPartitionRouter": {
       "title": "Custom Partition Router",
       "description": "Partition router component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -1104,17 +1444,17 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomSchemaLoader": {
       "title": "Custom Schema Loader",
       "description": "Schema Loader component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -1134,17 +1474,17 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomSchemaNormalization": {
       "title": "Custom Schema Normalization",
       "description": "Schema normalization component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -1156,26 +1496,26 @@
           "title": "Class Name",
           "description": "Fully-qualified name of the class that will be implementing the custom normalization. The format is `source_<name>.<package>.<class_name>`.",
           "type": "string",
-          "additionalProperties": true,
           "examples": [
             "source_amazon_seller_partner.components.LedgerDetailedViewReportsTypeTransformer"
-          ]
+          ],
+          "additionalProperties": true
         },
         "$parameters": {
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomStateMigration": {
       "title": "Custom State Migration",
       "description": "Apply a custom transformation on the input state.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -1195,17 +1535,17 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "CustomTransformation": {
       "title": "Custom Transformation",
       "description": "Transformation component whose behavior is derived from a custom code implementation of the connector.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -1225,13 +1565,17 @@
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "LegacyToPerPartitionStateMigration": {
       "title": "Legacy To Per-partition-state Migration",
       "description": "Transforms the input state for per-partitioned streams from the legacy format to the low-code format. The cursor field and partition ID fields are automatically extracted from the stream's DatetimebasedCursor and SubstreamPartitionRouter.\nExample input state: { \"13506132\": { \"last_changed\": \"2022-12-27T08:34:39+00:00\" } Example output state: { \"partition\": {\"id\": \"13506132\"}, \"cursor\": {\"last_changed\": \"2022-12-27T08:34:39+00:00\"} } ",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "type": {
           "type": "string",
@@ -1239,7 +1583,8 @@
             "LegacyToPerPartitionStateMigration"
           ]
         }
-      }
+      },
+      "additionalProperties": true
     },
     "IncrementingCountCursor": {
       "title": "Incrementing Count Cursor",
@@ -1594,7 +1939,6 @@
           "type": "object",
           "title": "JWT Headers",
           "description": "JWT headers used when signing JSON web token.",
-          "additionalProperties": false,
           "properties": {
             "kid": {
               "type": "string",
@@ -1621,7 +1965,8 @@
                 "JWT"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "additional_jwt_headers": {
           "type": "object",
@@ -1633,7 +1978,6 @@
           "type": "object",
           "title": "JWT Payload",
           "description": "JWT Payload used when signing JSON web token.",
-          "additionalProperties": false,
           "properties": {
             "iss": {
               "type": "string",
@@ -1656,7 +2000,8 @@
                 "appstoreconnect-v1"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "additional_jwt_payload": {
           "type": "object",
@@ -1807,26 +2152,26 @@
           "title": "Refresh Request Body",
           "description": "Body of the request sent to get a new access token.",
           "type": "object",
-          "additionalProperties": true,
           "examples": [
             {
               "applicationId": "{{ config['application_id'] }}",
               "applicationSecret": "{{ config['application_secret'] }}",
               "token": "{{ config['token'] }}"
             }
-          ]
+          ],
+          "additionalProperties": true
         },
         "refresh_request_headers": {
           "title": "Refresh Request Headers",
           "description": "Headers of the request sent to get a new access token.",
           "type": "object",
-          "additionalProperties": true,
           "examples": [
             {
               "Authorization": "<AUTH_TOKEN>",
               "Content-Type": "application/x-www-form-urlencoded"
             }
-          ]
+          ],
+          "additionalProperties": true
         },
         "scopes": {
           "title": "Scopes",
@@ -1996,11 +2341,6 @@
       "title": "Declarative Stream",
       "description": "A stream whose behavior is described by a set of declarative low code components.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "retriever"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -2212,7 +2552,12 @@
           "type": "object",
           "additional_properties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "retriever"
+      ],
+      "additionalProperties": true
     },
     "HTTPAPIBudget": {
       "title": "HTTP API Budget",
@@ -3831,11 +4176,6 @@
       "title": "Custom Decoder",
       "description": "Use this to implement custom decoder logic.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -3847,26 +4187,26 @@
           "title": "Class Name",
           "description": "Fully-qualified name of the class that will be implementing the custom decoding. Has to be a sub class of Decoder. The format is `source_<name>.<package>.<class_name>`.",
           "type": "string",
-          "additionalProperties": true,
           "examples": [
             "source_amazon_ads.components.GzipJsonlDecoder"
-          ]
+          ],
+          "additionalProperties": true
         },
         "$parameters": {
           "type": "object",
           "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "ZipfileDecoder": {
       "title": "ZIP File",
       "description": "Select 'ZIP file' for response data that is returned as a zipfile. Requires specifying an inner data type/decoder to parse the unzipped data.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "decoder"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -3892,7 +4232,12 @@
             }
           ]
         }
-      }
+      },
+      "required": [
+        "type",
+        "decoder"
+      ],
+      "additionalProperties": true
     },
     "ListPartitionRouter": {
       "title": "List Partition Router",
@@ -4069,7 +4414,6 @@
       "title": "OAuth Config Specification",
       "description": "Specification describing how an 'advanced' Auth flow would need to function.",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "oauth_user_input_from_connector_config_specification": {
           "title": "OAuth user input",
@@ -4099,11 +4443,6 @@
           "title": "DeclarativeOAuth Connector Specification",
           "description": "The DeclarativeOAuth specific blob.\nPertains to the fields defined by the connector relating to the OAuth flow.\n\nInterpolation capabilities:\n- The variables placeholders are declared as `{{my_var}}`.\n- The nested resolution variables like `{{ {{my_nested_var}} }}` is allowed as well.\n\n- The allowed interpolation context is:\n  + base64Encoder - encode to `base64`, {{ {{my_var_a}}:{{my_var_b}} | base64Encoder }}\n  + base64Decorer - decode from `base64` encoded string, {{ {{my_string_variable_or_string_value}} | base64Decoder }}\n  + urlEncoder - encode the input string to URL-like format, {{ <https://test.host.com/endpoint> | urlEncoder}}\n  + urlDecorer - decode the input url-encoded string into text format, {{ urlDecoder:https%3A%2F%2Fairbyte.io | urlDecoder}}\n  + codeChallengeS256 - get the `codeChallenge` encoded value to provide additional data-provider specific authorisation values, {{ {{state_value}} | codeChallengeS256 }}\n\nExamples:\n  - The TikTok Marketing DeclarativeOAuth spec:\n  {\n    \"oauth_connector_input_specification\": {\n      \"type\": \"object\",\n      \"additionalProperties\": false,\n      \"properties\": {\n          \"consent_url\": \"<https://ads.tiktok.com/marketing_api/auth?{{client_id_key}}={{client_id_value}}&{{redirect_uri_key}}={{> {{redirect_uri_value}} | urlEncoder}}&{{state_key}}={{state_value}}\",\n          \"access_token_url\": \"<https://business-api.tiktok.com/open_api/v1.3/oauth2/access_token/>\",\n          \"access_token_params\": {\n              \"{{ auth_code_key }}\": \"{{ auth_code_value }}\",\n              \"{{ client_id_key }}\": \"{{ client_id_value }}\",\n              \"{{ client_secret_key }}\": \"{{ client_secret_value }}\"\n          },\n          \"access_token_headers\": {\n              \"Content-Type\": \"application/json\",\n              \"Accept\": \"application/json\"\n          },\n          \"extract_output\": [\"data.access_token\"],\n          \"client_id_key\": \"app_id\",\n          \"client_secret_key\": \"secret\",\n          \"auth_code_key\": \"auth_code\"\n      }\n    }\n  }",
           "type": "object",
-          "additionalProperties": true,
-          "required": [
-            "consent_url",
-            "access_token_url"
-          ],
           "properties": {
             "consent_url": {
               "title": "Consent URL",
@@ -4133,26 +4472,26 @@
             "access_token_headers": {
               "title": "Access Token Headers",
               "type": "object",
-              "additionalProperties": true,
-              "description": "The DeclarativeOAuth Specific optional headers to inject while exchanging the `auth_code` to `access_token` during `completeOAuthFlow` step.",
               "examples": [
                 {
                   "Authorization": "Basic {{ {{ client_id_value }}:{{ client_secret_value }} | base64Encoder }}"
                 }
-              ]
+              ],
+              "description": "The DeclarativeOAuth Specific optional headers to inject while exchanging the `auth_code` to `access_token` during `completeOAuthFlow` step.",
+              "additionalProperties": true
             },
             "access_token_params": {
               "title": "Access Token Query Params (Json Encoded)",
               "type": "object",
-              "additionalProperties": true,
-              "description": "The DeclarativeOAuth Specific optional query parameters to inject while exchanging the `auth_code` to `access_token` during `completeOAuthFlow` step.\nWhen this property is provided, the query params will be encoded as `Json` and included in the outgoing API request.",
               "examples": [
                 {
                   "{{ auth_code_key }}": "{{ auth_code_value }}",
                   "{{ client_id_key }}": "{{ client_id_value }}",
                   "{{ client_secret_key }}": "{{ client_secret_value }}"
                 }
-              ]
+              ],
+              "description": "The DeclarativeOAuth Specific optional query parameters to inject while exchanging the `auth_code` to `access_token` during `completeOAuthFlow` step.\nWhen this property is provided, the query params will be encoded as `Json` and included in the outgoing API request.",
+              "additionalProperties": true
             },
             "extract_output": {
               "title": "Extract Output",
@@ -4172,7 +4511,12 @@
             "state": {
               "title": "Configurable State Query Param",
               "type": "object",
-              "additionalProperties": true,
+              "examples": [
+                {
+                  "min": 7,
+                  "max": 128
+                }
+              ],
               "required": [
                 "min",
                 "max"
@@ -4186,12 +4530,7 @@
                   "type": "integer"
                 }
               },
-              "examples": [
-                {
-                  "min": 7,
-                  "max": 128
-                }
-              ]
+              "additionalProperties": true
             },
             "client_id_key": {
               "title": "Client ID Key Override",
@@ -4241,13 +4580,17 @@
                 "my_custom_redirect_uri_key_name"
               ]
             }
-          }
+          },
+          "required": [
+            "consent_url",
+            "access_token_url"
+          ],
+          "additionalProperties": true
         },
         "complete_oauth_output_specification": {
           "title": "OAuth output specification",
           "description": "OAuth specific blob. This is a Json Schema used to validate Json configurations produced by the OAuth flows as they are\nreturned by the distant OAuth APIs.\nMust be a valid JSON describing the fields to merge back to `ConnectorSpecification.connectionSpecification`.\nFor each field, a special annotation `path_in_connector_config` can be specified to determine where to merge it,\nExamples:\n    complete_oauth_output_specification={\n      refresh_token: {\n        type: string,\n        path_in_connector_config: ['credentials', 'refresh_token']\n      }\n    }",
           "type": "object",
-          "additionalProperties": true,
           "examples": [
             {
               "refresh_token": {
@@ -4258,13 +4601,13 @@
                 ]
               }
             }
-          ]
+          ],
+          "additionalProperties": true
         },
         "complete_oauth_server_input_specification": {
           "title": "OAuth input specification",
           "description": "OAuth specific blob. This is a Json Schema used to validate Json configurations persisted as Airbyte Server configurations.\nMust be a valid non-nested JSON describing additional fields configured by the Airbyte Instance or Workspace Admins to be used by the\nserver when completing an OAuth flow (typically exchanging an auth code for refresh token).\nExamples:\n    complete_oauth_server_input_specification={\n      client_id: {\n        type: string\n      },\n      client_secret: {\n        type: string\n      }\n    }",
           "type": "object",
-          "additionalProperties": true,
           "examples": [
             {
               "client_id": {
@@ -4274,13 +4617,13 @@
                 "type": "string"
               }
             }
-          ]
+          ],
+          "additionalProperties": true
         },
         "complete_oauth_server_output_specification": {
           "title": "OAuth server output specification",
           "description": "OAuth specific blob. This is a Json Schema used to validate Json configurations persisted as Airbyte Server configurations that\nalso need to be merged back into the connector configuration at runtime.\nThis is a subset configuration of `complete_oauth_server_input_specification` that filters fields out to retain only the ones that\nare necessary for the connector to function with OAuth. (some fields could be used during oauth flows but not needed afterwards, therefore\nthey would be listed in the `complete_oauth_server_input_specification` but not `complete_oauth_server_output_specification`)\nMust be a valid non-nested JSON describing additional fields configured by the Airbyte Instance or Workspace Admins to be used by the\nconnector when using OAuth flow APIs.\nThese fields are to be merged back to `ConnectorSpecification.connectionSpecification`.\nFor each field, a special annotation `path_in_connector_config` can be specified to determine where to merge it,\nExamples:\n      complete_oauth_server_output_specification={\n        client_id: {\n          type: string,\n          path_in_connector_config: ['credentials', 'client_id']\n        },\n        client_secret: {\n          type: string,\n          path_in_connector_config: ['credentials', 'client_secret']\n        }\n      }",
           "type": "object",
-          "additionalProperties": true,
           "examples": [
             {
               "client_id": {
@@ -4298,9 +4641,11 @@
                 ]
               }
             }
-          ]
+          ],
+          "additionalProperties": true
         }
-      }
+      },
+      "additionalProperties": true
     },
     "OffsetIncrement": {
       "title": "Offset Increment",
@@ -5594,10 +5939,6 @@
         "config_normalization_rules": {
           "title": "Config Normalization Rules",
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "type"
-          ],
           "properties": {
             "type": {
               "type": "string",
@@ -5652,7 +5993,11 @@
               },
               "default": []
             }
-          }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
         }
       }
     },
@@ -6511,7 +6856,7 @@
             "{{ config['report_validation_schema'] }}",
             "'{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"Person\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"name\": {\n      \"type\": \"string\",\n      \"description\": \"The person's name\"\n    },\n    \"age\": {\n      \"type\": \"integer\",\n      \"minimum\": 0,\n      \"description\": \"The person's age\"\n    }\n  },\n  \"required\": [\"name\", \"age\"]\n}'\n",
             {
-              "$schema": "http://json-schema.org/draft-07/schema",
+              "$schema": "http://json-schema.org/draft-07/schema#",
               "title": "Person",
               "type": "object",
               "properties": {
@@ -6538,11 +6883,6 @@
       "title": "Custom Validation Strategy",
       "description": "Custom validation strategy that allows for custom validation logic.",
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "type",
-        "class_name"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -6554,12 +6894,17 @@
           "title": "Class Name",
           "description": "Fully-qualified name of the class that will be implementing the custom validation strategy. Has to be a sub class of ValidationStrategy. The format is `source_<name>.<package>.<class_name>`.",
           "type": "string",
-          "additionalProperties": true,
           "examples": [
             "source_declarative_manifest.components.MyCustomValidationStrategy"
-          ]
+          ],
+          "additionalProperties": true
         }
-      }
+      },
+      "required": [
+        "type",
+        "class_name"
+      ],
+      "additionalProperties": true
     },
     "ConfigRemapField": {
       "title": "Remap Field",
@@ -6587,7 +6932,6 @@
             "object",
             "string"
           ],
-          "additionalProperties": true,
           "examples": [
             {
               "pending": "in_progress",
@@ -6595,7 +6939,8 @@
               "cancelled": "terminated"
             },
             "{{ config['status_mapping'] }}"
-          ]
+          ],
+          "additionalProperties": true
         },
         "field_path": {
           "title": "Field Path",
@@ -6757,350 +7102,5 @@
       }
     }
   },
-  "interpolation": {
-    "variables": [
-      {
-        "title": "config",
-        "description": "The connector configuration. The object's keys are the same as the the keys defined in the connection specification.",
-        "type": "object",
-        "examples": [
-          {
-            "start_date": "2010-01-01",
-            "api_key": "*****"
-          }
-        ]
-      },
-      {
-        "title": "parameters",
-        "description": "Additional runtime parameters, to be used for string interpolation. Parameters can be passed down from a parent component to its subcomponents using the $parameters key. This can be used to avoid repetitions.",
-        "type": "object",
-        "examples": [
-          {
-            "path": "automations",
-            "data_export_path": "automations",
-            "cursor_field": "updated_at"
-          }
-        ]
-      },
-      {
-        "title": "headers",
-        "description": "The HTTP headers from the last response received from the API. The object's keys are the header names from the response.",
-        "type": "object",
-        "examples": [
-          {
-            "Server": "nginx",
-            "Date": "Mon, 24 Apr 2023 20:17:21 GMT",
-            "Content-Type": "application/json",
-            "Content-Length": "420",
-            "Connection": "keep-alive",
-            "referrer-policy": "strict-origin-when-cross-origin",
-            "x-content-type-options": "nosniff",
-            "x-ratelimit-limit": "600",
-            "x-ratelimit-remaining": "598",
-            "x-ratelimit-reset": "39"
-          }
-        ]
-      },
-      {
-        "title": "last_record",
-        "description": "Last record extracted from the response received from the API.",
-        "type": "object",
-        "examples": [
-          {
-            "name": "Test List: 19",
-            "id": "0236d6d2",
-            "contact_count": 20,
-            "_metadata": {
-              "self": "https://api.sendgrid.com/v3/marketing/lists/0236d6d2"
-            }
-          }
-        ]
-      },
-      {
-        "title": "last_page_size",
-        "description": "Number of records extracted from the last response received from the API.",
-        "type": "object",
-        "examples": [
-          2
-        ]
-      },
-      {
-        "title": "next_page_token",
-        "description": "Object describing the token to fetch the next page of records. The object has a single key \"next_page_token\".",
-        "type": "object",
-        "examples": [
-          {
-            "next_page_token": 3
-          },
-          {
-            "next_page_token": "https://api.sendgrid.com/v3/marketing/lists/0236d6d2-75d2-42c5-962d-603e0deaf8d1"
-          }
-        ]
-      },
-      {
-        "title": "record",
-        "description": "The record being processed. The object's keys are the same keys as the records produced by the RecordSelector.",
-        "type": "object"
-      },
-      {
-        "title": "response",
-        "description": "The body of the last response received from the API. The object's keys are the same keys as the response body's.",
-        "type": "object",
-        "examples": [
-          {
-            "result": [
-              {
-                "name": "Test List: 19",
-                "id": "0236d6d2-75d2-42c5-962d-603e0deaf8d1",
-                "contact_count": 20,
-                "_metadata": {
-                  "self": "https://api.sendgrid.com/v3/marketing/lists/0236d6d2"
-                }
-              }
-            ],
-            "_metadata": {
-              "self": "https://api.sendgrid.com/v3/marketing/lists?page_size=1&page_token=",
-              "next": "https://api.sendgrid.com/v3/marketing/lists?page_size=1&page_token=0236d6d2",
-              "count": 82
-            }
-          }
-        ]
-      },
-      {
-        "title": "creation_response",
-        "description": "The response received from the creation_requester in the AsyncRetriever component.",
-        "type": "object",
-        "examples": [
-          {
-            "id": "1234"
-          }
-        ]
-      },
-      {
-        "title": "polling_response",
-        "description": "The response received from the polling_requester in the AsyncRetriever component.",
-        "type": "object",
-        "examples": [
-          {
-            "id": "1234"
-          }
-        ]
-      },
-      {
-        "title": "download_target",
-        "description": "The `URL` received from the polling_requester in the AsyncRetriever with jobStatus as `COMPLETED`.",
-        "type": "string",
-        "examples": [
-          "https://api.sendgrid.com/v3/marketing/lists?page_size=1&page_token=0236d6d2&filename=xxx_yyy_zzz.csv"
-        ]
-      },
-      {
-        "title": "stream_interval",
-        "description": "The current stream interval being processed. The keys are defined by the incremental sync component. Default keys are `start_time` and `end_time`.",
-        "type": "object",
-        "examples": [
-          {
-            "start_time": "2020-01-01 00:00:00.000+00:00",
-            "end_time": "2020-01-02 00:00:00.000+00:00"
-          }
-        ]
-      },
-      {
-        "title": "stream_partition",
-        "description": "The current stream partition being processed. The keys are defined by the partition router component.",
-        "type": "object",
-        "examples": [
-          {
-            "survey_id": 1234
-          },
-          {
-            "strategy": "DESKTOP"
-          },
-          {
-            "survey_id": 1234,
-            "strategy": "MOBILE"
-          }
-        ]
-      },
-      {
-        "title": "stream_slice",
-        "description": "This variable is deprecated. Use stream_interval or stream_partition instead.",
-        "type": "object"
-      }
-    ],
-    "macros": [
-      {
-        "title": "now_utc",
-        "description": "Returns the current date and time in the UTC timezone.",
-        "arguments": {},
-        "return_type": "Datetime",
-        "examples": [
-          "'{{ now_utc() }}' -> '2021-09-01 00:00:00+00:00'",
-          "'{{ now_utc().strftime('%Y-%m-%d') }}' -> '2021-09-01'"
-        ]
-      },
-      {
-        "title": "today_utc",
-        "description": "Returns the current date in UTC timezone. The output is a date object.",
-        "arguments": {},
-        "return_type": "Date",
-        "examples": [
-          "'{{ today_utc() }}' -> '2021-09-01'",
-          "'{{ today_utc().strftime('%Y/%m/%d')}}' -> '2021/09/01'"
-        ]
-      },
-      {
-        "title": "timestamp",
-        "description": "Converts a number or a string representing a datetime (formatted as ISO8601) to a timestamp. If the input is a number, it is converted to an int. If no timezone is specified, the string is interpreted as UTC.",
-        "arguments": {
-          "datetime": "A string formatted as ISO8601 or an integer representing a unix timestamp"
-        },
-        "return_type": "int",
-        "examples": [
-          "'{{ timestamp(1646006400) }}' -> 1646006400",
-          "'{{ timestamp('2022-02-28') }}' -> 1646006400",
-          "'{{ timestamp('2022-02-28T00:00:00Z') }}' -> 1646006400",
-          "'{{ timestamp('2022-02-28 00:00:00Z') }}' -> 1646006400",
-          "'{{ timestamp('2022-02-28T00:00:00-08:00') }}' -> 1646035200"
-        ]
-      },
-      {
-        "title": "max",
-        "description": "Returns the largest object of a iterable, or or two or more arguments.",
-        "arguments": {
-          "args": "iterable or a sequence of two or more arguments"
-        },
-        "return_type": "Any",
-        "examples": [
-          "'{{ max(2, 3) }}' -> 3",
-          "'{{ max([2, 3]) }}' -> 3"
-        ]
-      },
-      {
-        "title": "day_delta",
-        "description": "Returns the datetime of now() + num_days.",
-        "arguments": {
-          "num_days": "The number of days to add to now",
-          "format": "How to format the output string"
-        },
-        "return_type": "str",
-        "examples": [
-          "'{{ day_delta(1) }}' -> '2021-09-02T00:00:00.000000+0000'",
-          "'{{ day_delta(-1) }}' -> '2021-08-31:00:00.000000+0000'",
-          "'{{ day_delta(25, format='%Y-%m-%d') }}' -> '2021-09-02'"
-        ]
-      },
-      {
-        "title": "duration",
-        "description": "Converts an ISO8601 duration to datetime timedelta.",
-        "arguments": {
-          "duration_string": "A string representing an ISO8601 duration. See https://www.digi.com/resources/documentation/digidocs//90001488-13/reference/r_iso_8601_duration_format.htm for more details."
-        },
-        "return_type": "datetime.timedelta",
-        "examples": [
-          "'{{ duration('P1D') }}' -> '1 day, 0:00:00'",
-          "'{{ duration('P6DT23H') }}' -> '6 days, 23:00:00'",
-          "'{{ (now_utc() - duration('P1D')).strftime('%Y-%m-%dT%H:%M:%SZ') }}' -> '2021-08-31T00:00:00Z'"
-        ]
-      },
-      {
-        "title": "format_datetime",
-        "description": "Converts a datetime or a datetime-string to the specified format.",
-        "arguments": {
-          "datetime": "The datetime object or a string to convert. If datetime is a string, it must be formatted as ISO8601.",
-          "format": "The datetime format.",
-          "input_format": "(optional) The datetime format in the case it is an string."
-        },
-        "return_type": "str",
-        "examples": [
-          "{{ format_datetime(config['start_time'], '%Y-%m-%d') }}",
-          "{{ format_datetime(config['start_date'], '%Y-%m-%dT%H:%M:%S.%fZ') }}",
-          "{{ format_datetime(config['start_date'], '%Y-%m-%dT%H:%M:%S.%fZ', '%a, %d %b %Y %H:%M:%S %z') }}"
-        ]
-      },
-      {
-        "title": "str_to_datetime",
-        "description": "Converts a string to a datetime object with UTC timezone.",
-        "arguments": {
-          "s": "The string to convert."
-        },
-        "return_type": "datetime.datetime",
-        "examples": [
-          "{{ str_to_datetime('2022-01-14') }}",
-          "{{ str_to_datetime('2022-01-01 13:45:30') }}",
-          "{{ str_to_datetime('2022-01-01T13:45:30+00:00') }}",
-          "{{ str_to_datetime('2022-01-01T13:45:30.123456Z') }}"
-        ]
-      }
-    ],
-    "filters": [
-      {
-        "title": "hash",
-        "description": "Convert the specified value to a hashed string.",
-        "arguments": {
-          "hash_type": "Valid hash type for converts ('md5' as default value).",
-          "salt": "An additional value to further protect sensitive data."
-        },
-        "return_type": "str",
-        "examples": [
-          "{{ 'Test client_secret' | hash() }} -> '3032d57a12f76b61a820e47b9a5a0cbb'",
-          "{{ 'Test client_secret' | hash('md5') }} -> '3032d57a12f76b61a820e47b9a5a0cbb'",
-          "{{ 'Test client_secret' | hash('md5', salt='salt') }} -> '5011a0168579c2d94cbbe1c6ad14327c'"
-        ]
-      },
-      {
-        "title": "base64encode",
-        "description": "Convert the specified value to a string in the base64 format.",
-        "arguments": {},
-        "return_type": "str",
-        "examples": [
-          "{{ 'Test client_secret' | base64encode }} -> 'VGVzdCBjbGllbnRfc2VjcmV0'"
-        ]
-      },
-      {
-        "title": "base64decode",
-        "description": "Decodes the specified base64 format value into a common string.",
-        "arguments": {},
-        "return_type": "str",
-        "examples": [
-          "{{ 'ZmFrZSByZWZyZXNoX3Rva2VuIHZhbHVl' | base64decode }} -> 'fake refresh_token value'"
-        ]
-      },
-      {
-        "title": "string",
-        "description": "Converts the specified value to a string.",
-        "arguments": {},
-        "return_type": "str",
-        "examples": [
-          "{{ 1 | string }} -> \"1\"",
-          "{{ [\"hello\", \"world\" | string }} -> \"[\"hello\", \"world\"]\""
-        ]
-      },
-      {
-        "title": "regex_search",
-        "description": "Match the input string against a regular expression and return the first match.",
-        "arguments": {
-          "regex": "The regular expression to search for. It must include a capture group."
-        },
-        "return_type": "str",
-        "examples": [
-          "{{ \"goodbye, cruel world\" | regex_search(\"goodbye,\\s(.*)$\") }} -> \"cruel world\""
-        ]
-      }
-    ]
-  },
-  "anyOf": [
-    {
-      "required": [
-        "streams"
-      ]
-    },
-    {
-      "required": [
-        "dynamic_streams"
-      ]
-    }
-  ],
-  "additionalProperties": false,
   "version": "1.0.0"
 }

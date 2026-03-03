@@ -65,6 +65,8 @@
       "$ref": "#/$defs/external-documentation"
     }
   },
+  "unevaluatedProperties": false,
+  "$ref": "#/$defs/specification-extensions",
   "$defs": {
     "info": {
       "$comment": "https://spec.openapis.org/oas/v3.2#info-object",
@@ -270,6 +272,8 @@
           }
         }
       },
+      "unevaluatedProperties": false,
+      "$ref": "#/$defs/specification-extensions",
       "patternProperties": {
         "^(?:schemas|responses|parameters|examples|requestBodies|headers|securitySchemes|links|callbacks|pathItems|mediaTypes)$": {
           "$comment": "Enumerating all of the property names in the regex above is necessary for unevaluatedProperties to work as expected",
@@ -277,20 +281,18 @@
             "pattern": "^[a-zA-Z0-9._-]+$"
           }
         }
-      },
-      "$ref": "#/$defs/specification-extensions",
-      "unevaluatedProperties": false
+      }
     },
     "paths": {
       "$comment": "https://spec.openapis.org/oas/v3.2#paths-object",
       "type": "object",
+      "unevaluatedProperties": false,
+      "$ref": "#/$defs/specification-extensions",
       "patternProperties": {
         "^/": {
           "$ref": "#/$defs/path-item"
         }
-      },
-      "$ref": "#/$defs/specification-extensions",
-      "unevaluatedProperties": false
+      }
     },
     "path-item": {
       "$comment": "https://spec.openapis.org/oas/v3.2#path-item-object",
@@ -317,9 +319,6 @@
         },
         "additionalOperations": {
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/operation"
-          },
           "propertyNames": {
             "$comment": "RFC9110 restricts methods to \"1*tchar\" in ABNF",
             "pattern": "^[a-zA-Z0-9!#$%&'*+.^_`|~-]+$",
@@ -336,6 +335,9 @@
                 "QUERY"
               ]
             }
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/operation"
           }
         },
         "get": {
@@ -771,11 +773,11 @@
     "content": {
       "$comment": "https://spec.openapis.org/oas/v3.2#fixed-fields-10",
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/media-type-or-reference"
-      },
       "propertyNames": {
         "format": "media-range"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/media-type-or-reference"
       }
     },
     "media-type": {
@@ -938,24 +940,24 @@
           "$ref": "#/$defs/response-or-reference"
         }
       },
-      "patternProperties": {
-        "^[1-5](?:[0-9]{2}|XX)$": {
-          "$ref": "#/$defs/response-or-reference"
-        }
-      },
+      "unevaluatedProperties": false,
       "minProperties": 1,
       "$ref": "#/$defs/specification-extensions",
-      "unevaluatedProperties": false,
+      "then": {
+        "required": [
+          "default"
+        ]
+      },
       "if": {
         "$comment": "either default, or at least one response code property must exist",
         "patternProperties": {
           "^[1-5](?:[0-9]{2}|XX)$": false
         }
       },
-      "then": {
-        "required": [
-          "default"
-        ]
+      "patternProperties": {
+        "^[1-5](?:[0-9]{2}|XX)$": {
+          "$ref": "#/$defs/response-or-reference"
+        }
       }
     },
     "response": {
@@ -1321,7 +1323,6 @@
           "$ref": "#/$defs/security-scheme/$defs/type-oidc"
         }
       ],
-      "unevaluatedProperties": false,
       "$defs": {
         "type-apikey": {
           "if": {
@@ -1446,7 +1447,8 @@
             "type": "object"
           }
         }
-      }
+      },
+      "unevaluatedProperties": false
     },
     "security-scheme-or-reference": {
       "if": {
@@ -1482,7 +1484,6 @@
         }
       },
       "$ref": "#/$defs/specification-extensions",
-      "unevaluatedProperties": false,
       "$defs": {
         "implicit": {
           "type": "object",
@@ -1604,7 +1605,8 @@
           "$ref": "#/$defs/specification-extensions",
           "unevaluatedProperties": false
         }
-      }
+      },
+      "unevaluatedProperties": false
     },
     "security-requirement": {
       "$comment": "https://spec.openapis.org/oas/v3.2#security-requirement-object",
@@ -1676,8 +1678,6 @@
       }
     }
   },
-  "$ref": "#/$defs/specification-extensions",
-  "unevaluatedProperties": false,
   "anyOf": [
     {
       "required": [

@@ -5,7 +5,7 @@
   "description": "Configuration file schema for Gemini CLI settings. This schema enables IDE completion for `settings.json`.",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/google-gemini/gemini-cli/refs/heads/main/schemas/settings.schema.json",
-    "sourceSha256": "49fed7d16e4406dfba50ad449f0a17f7a473e6bb28b5f81f4e714486af548163",
+    "sourceSha256": "85f64eef2c9656763cb9069fa386ef26356ffd90d7ccebde70c7dc13ea7a197d",
     "fileMatch": [
       "**/.gemini/settings.json",
       "**/gemini-cli/settings.json",
@@ -173,14 +173,15 @@
             "enabled": {
               "title": "Enable Session Cleanup",
               "description": "Enable automatic session cleanup",
-              "markdownDescription": "Enable automatic session cleanup\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `false`",
-              "default": false,
+              "markdownDescription": "Enable automatic session cleanup\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `true`",
+              "default": true,
               "type": "boolean"
             },
             "maxAge": {
               "title": "Keep chat history",
               "description": "Automatically delete chats older than this time period (e.g., \"30d\", \"7d\", \"24h\", \"1w\")",
-              "markdownDescription": "Automatically delete chats older than this time period (e.g., \"30d\", \"7d\", \"24h\", \"1w\")\n\n- Category: `General`\n- Requires restart: `no`",
+              "markdownDescription": "Automatically delete chats older than this time period (e.g., \"30d\", \"7d\", \"24h\", \"1w\")\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `30d`",
+              "default": "30d",
               "type": "string"
             },
             "maxCount": {
@@ -195,13 +196,6 @@
               "markdownDescription": "Minimum retention period (safety limit, defaults to \"1d\")\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `1d`",
               "default": "1d",
               "type": "string"
-            },
-            "warningAcknowledged": {
-              "title": "Warning Acknowledged",
-              "description": "INTERNAL: Whether the user has acknowledged the session retention warning",
-              "markdownDescription": "INTERNAL: Whether the user has acknowledged the session retention warning\n\n- Category: `General`\n- Requires restart: `no`\n- Default: `false`",
-              "default": false,
-              "type": "boolean"
             }
           },
           "additionalProperties": false
@@ -2065,12 +2059,10 @@
       "additionalProperties": false
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "MCPServerConfig": {
       "type": "object",
       "description": "Definition of a Model Context Protocol (MCP) server configuration.",
-      "additionalProperties": false,
       "properties": {
         "command": {
           "type": "string",
@@ -2181,12 +2173,12 @@
           "type": "string",
           "description": "Service account email to impersonate (name@project.iam.gserviceaccount.com)."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "TelemetrySettings": {
       "type": "object",
       "description": "Telemetry configuration for Gemini CLI.",
-      "additionalProperties": false,
       "properties": {
         "enabled": {
           "type": "boolean",
@@ -2224,37 +2216,37 @@
           "type": "boolean",
           "description": "Whether to use CLI authentication for telemetry (only for in-process exporters)."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "BugCommandSettings": {
       "type": "object",
       "description": "Configuration for the bug report helper command.",
-      "additionalProperties": false,
+      "required": [
+        "urlTemplate"
+      ],
       "properties": {
         "urlTemplate": {
           "type": "string",
           "description": "Template used to open a bug report URL. Variables in the template are populated at runtime."
         }
       },
-      "required": [
-        "urlTemplate"
-      ]
+      "additionalProperties": false
     },
     "SummarizeToolOutputSettings": {
       "type": "object",
       "description": "Controls summarization behavior for individual tools. All properties are optional.",
-      "additionalProperties": false,
       "properties": {
         "tokenBudget": {
           "type": "number",
           "description": "Maximum number of tokens used when summarizing tool output."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "AgentOverride": {
       "type": "object",
       "description": "Override settings for a specific agent.",
-      "additionalProperties": false,
       "properties": {
         "modelConfig": {
           "type": "object",
@@ -2263,7 +2255,6 @@
         "runConfig": {
           "type": "object",
           "description": "Run configuration for an agent.",
-          "additionalProperties": false,
           "properties": {
             "maxTimeMinutes": {
               "type": "number",
@@ -2273,18 +2264,23 @@
               "type": "number",
               "description": "The maximum number of conversational turns."
             }
-          }
+          },
+          "additionalProperties": false
         },
         "enabled": {
           "type": "boolean",
           "description": "Whether to enable the agent."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "CustomTheme": {
       "type": "object",
       "description": "Custom theme definition used for styling Gemini CLI output. Colors are provided as hex strings or named ANSI colors.",
-      "additionalProperties": false,
+      "required": [
+        "type",
+        "name"
+      ],
       "properties": {
         "type": {
           "type": "string",
@@ -2299,7 +2295,6 @@
         },
         "text": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "primary": {
               "type": "string"
@@ -2313,18 +2308,17 @@
             "accent": {
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "background": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "primary": {
               "type": "string"
             },
             "diff": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "added": {
                   "type": "string"
@@ -2332,13 +2326,14 @@
                 "removed": {
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         },
         "border": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "default": {
               "type": "string"
@@ -2346,11 +2341,11 @@
             "focused": {
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "ui": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "comment": {
               "type": "string"
@@ -2364,11 +2359,11 @@
                 "type": "string"
               }
             }
-          }
+          },
+          "additionalProperties": false
         },
         "status": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "error": {
               "type": "string"
@@ -2379,7 +2374,8 @@
             "warning": {
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "Background": {
           "type": "string"
@@ -2430,10 +2426,7 @@
           }
         }
       },
-      "required": [
-        "type",
-        "name"
-      ]
+      "additionalProperties": false
     },
     "StringOrStringArray": {
       "description": "Accepts either a single string or an array of strings.",
@@ -2504,5 +2497,6 @@
         }
       }
     }
-  }
+  },
+  "additionalProperties": false
 }

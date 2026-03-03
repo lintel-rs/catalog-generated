@@ -61,7 +61,6 @@
   "$defs": {
     "Advisor": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "skipExcluded": {
           "type": "boolean"
@@ -69,7 +68,8 @@
         "config": {
           "$ref": "#/$defs/AdvisorConfig"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "AdvisorConfig": {
       "type": "object",
@@ -82,7 +82,6 @@
     },
     "Downloader": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "allowMovingRevisions": {
           "type": "boolean"
@@ -102,11 +101,11 @@
             "$ref": "#/$defs/SourceCodeOrigins"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "LicenseFilePatterns": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "licenseFilenames": {
           "type": "array",
@@ -132,11 +131,11 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Notifier": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "mail": {
           "$ref": "#/$defs/Mail"
@@ -144,11 +143,11 @@
         "jira": {
           "$ref": "#/$defs/Jira"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Jira": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "host": {
           "type": "string"
@@ -159,11 +158,11 @@
         "password": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Mail": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "hostName": {
           "type": "string"
@@ -183,19 +182,20 @@
         "fromAddress": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Reporter": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "config"
+      ],
       "properties": {
         "config": {
           "$ref": "#/$defs/ReporterOptions"
         }
       },
-      "required": [
-        "config"
-      ]
+      "additionalProperties": false
     },
     "ReporterOptions": {
       "type": "object",
@@ -205,7 +205,6 @@
     },
     "Scanner": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "skipConcluded": {
           "type": "boolean"
@@ -249,11 +248,11 @@
         "provenanceStorage": {
           "$ref": "#/$defs/ProvenanceStorage"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Archive": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -264,11 +263,11 @@
         "postgresStorage": {
           "$ref": "#/$defs/PostgresConfig"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "FileListStorage": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fileStorage": {
           "$ref": "#/$defs/FileStorage"
@@ -276,22 +275,11 @@
         "postgresStorage": {
           "$ref": "#/$defs/PostgresConfig"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "FileStorage": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "localFileStorage": {
-          "$ref": "#/$defs/LocalFileStorage"
-        },
-        "httpFileStorage": {
-          "$ref": "#/$defs/HttpFileStorage"
-        },
-        "s3FileStorage": {
-          "$ref": "#/$defs/S3FileStorage"
-        }
-      },
       "oneOf": [
         {
           "required": [
@@ -308,11 +296,25 @@
             "s3FileStorage"
           ]
         }
-      ]
+      ],
+      "properties": {
+        "localFileStorage": {
+          "$ref": "#/$defs/LocalFileStorage"
+        },
+        "httpFileStorage": {
+          "$ref": "#/$defs/HttpFileStorage"
+        },
+        "s3FileStorage": {
+          "$ref": "#/$defs/S3FileStorage"
+        }
+      },
+      "additionalProperties": false
     },
     "LocalFileStorage": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "directory"
+      ],
       "properties": {
         "directory": {
           "type": "string"
@@ -321,13 +323,13 @@
           "type": "boolean"
         }
       },
-      "required": [
-        "directory"
-      ]
+      "additionalProperties": false
     },
     "HttpFileStorage": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
       "properties": {
         "url": {
           "type": "string",
@@ -340,13 +342,13 @@
           "$ref": "#/$defs/Headers"
         }
       },
-      "required": [
-        "url"
-      ]
+      "additionalProperties": false
     },
     "S3FileStorage": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "bucketName"
+      ],
       "properties": {
         "accessKeyId": {
           "type": "string"
@@ -367,25 +369,26 @@
           "type": "string"
         }
       },
-      "required": [
-        "bucketName"
-      ]
+      "additionalProperties": false
     },
     "PostgresConfig": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "connection"
+      ],
       "properties": {
         "connection": {
           "$ref": "#/$defs/Connection"
         }
       },
-      "required": [
-        "connection"
-      ]
+      "additionalProperties": false
     },
     "Connection": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "url",
+        "username"
+      ],
       "properties": {
         "url": {
           "type": "string"
@@ -430,10 +433,7 @@
           "type": "integer"
         }
       },
-      "required": [
-        "url",
-        "username"
-      ]
+      "additionalProperties": false
     },
     "DetectedLicenseMapping": {
       "type": "object",
@@ -449,7 +449,6 @@
     },
     "ProvenanceStorage": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "fileStorage": {
           "$ref": "#/$defs/FileStorage"
@@ -457,7 +456,8 @@
         "postgresStorage": {
           "$ref": "#/$defs/PostgresConfig"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Storages": {
       "type": "object",

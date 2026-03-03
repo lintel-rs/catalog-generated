@@ -67,7 +67,7 @@
     },
     "package-dir": {
       "type": "object",
-      "additionalProperties": false,
+      "description": ":class:`dict`-like structure mapping from package names to directories where their code can be found. The empty string (as key) means that all packages are contained inside the given directory will be included in the distribution.",
       "propertyNames": {
         "anyOf": [
           {
@@ -78,16 +78,16 @@
           }
         ]
       },
+      "additionalProperties": false,
       "patternProperties": {
         "^.*$": {
           "type": "string"
         }
-      },
-      "description": ":class:`dict`-like structure mapping from package names to directories where their code can be found. The empty string (as key) means that all packages are contained inside the given directory will be included in the distribution."
+      }
     },
     "package-data": {
       "type": "object",
-      "additionalProperties": false,
+      "description": "Mapping from package names to lists of glob patterns. Usually this option is not needed when using ``include-package-data = true`` For more information on how to include data files, check ``setuptools`` `docs <https://setuptools.pypa.io/en/latest/userguide/datafiles.html>`_.",
       "propertyNames": {
         "anyOf": [
           {
@@ -99,6 +99,7 @@
           }
         ]
       },
+      "additionalProperties": false,
       "patternProperties": {
         "^.*$": {
           "type": "array",
@@ -106,8 +107,7 @@
             "type": "string"
           }
         }
-      },
-      "description": "Mapping from package names to lists of glob patterns. Usually this option is not needed when using ``include-package-data = true`` For more information on how to include data files, check ``setuptools`` `docs <https://setuptools.pypa.io/en/latest/userguide/datafiles.html>`_."
+      }
     },
     "include-package-data": {
       "type": "boolean",
@@ -115,7 +115,7 @@
     },
     "exclude-package-data": {
       "type": "object",
-      "additionalProperties": false,
+      "description": "Mapping from package names to lists of glob patterns that should be excluded For more information on how to include data files, check ``setuptools`` `docs <https://setuptools.pypa.io/en/latest/userguide/datafiles.html>`_.",
       "propertyNames": {
         "anyOf": [
           {
@@ -127,6 +127,7 @@
           }
         ]
       },
+      "additionalProperties": false,
       "patternProperties": {
         "^.*$": {
           "type": "array",
@@ -134,8 +135,7 @@
             "type": "string"
           }
         }
-      },
-      "description": "Mapping from package names to lists of glob patterns that should be excluded For more information on how to include data files, check ``setuptools`` `docs <https://setuptools.pypa.io/en/latest/userguide/datafiles.html>`_."
+      }
     },
     "namespace-packages": {
       "$comment": "https://setuptools.pypa.io/en/latest/userguide/package_discovery.html",
@@ -157,6 +157,7 @@
     },
     "data-files": {
       "type": "object",
+      "description": "``dict``-like structure where each key represents a directory and the value is a list of glob patterns that should be installed in them. **DISCOURAGED**: please notice this might not work as expected with wheels. Whenever possible, consider using data files inside the package directories (or create a new namespace package that only contains data files). See `data files support <https://setuptools.pypa.io/en/latest/userguide/datafiles.html>`_.",
       "patternProperties": {
         "^.*$": {
           "type": "array",
@@ -164,18 +165,17 @@
             "type": "string"
           }
         }
-      },
-      "description": "``dict``-like structure where each key represents a directory and the value is a list of glob patterns that should be installed in them. **DISCOURAGED**: please notice this might not work as expected with wheels. Whenever possible, consider using data files inside the package directories (or create a new namespace package that only contains data files). See `data files support <https://setuptools.pypa.io/en/latest/userguide/datafiles.html>`_."
+      }
     },
     "cmdclass": {
       "type": "object",
+      "description": "Mapping of distutils-style command names to ``setuptools.Command`` subclasses which in turn should be represented by strings with a qualified class name (i.e., \"dotted\" form with module), e.g.::\n\n     cmdclass = {mycmd = \"pkg.subpkg.module.CommandClass\"}\n\n The command class should be a directly defined at the top-level of the containing module (no class nesting).",
       "patternProperties": {
         "^.*$": {
           "type": "string",
           "format": "python-qualified-identifier"
         }
-      },
-      "description": "Mapping of distutils-style command names to ``setuptools.Command`` subclasses which in turn should be represented by strings with a qualified class name (i.e., \"dotted\" form with module), e.g.::\n\n     cmdclass = {mycmd = \"pkg.subpkg.module.CommandClass\"}\n\n The command class should be a directly defined at the top-level of the containing module (no class nesting)."
+      }
     },
     "license-files": {
       "$comment": "TODO: revise if PEP 639 is accepted. Probably ``project.license-files``?",
@@ -188,7 +188,6 @@
     "dynamic": {
       "type": "object",
       "description": "Instructions for loading :pep:`621`-related metadata dynamically",
-      "additionalProperties": false,
       "properties": {
         "version": {
           "oneOf": [
@@ -249,10 +248,10 @@
             "file"
           ]
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "package-name": {
       "title": "Valid package name",
@@ -273,7 +272,9 @@
       "title": "'file:' directive",
       "description": "Value is read from a file (or list of files and then concatenated)",
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "file"
+      ],
       "properties": {
         "file": {
           "oneOf": [
@@ -289,9 +290,7 @@
           ]
         }
       },
-      "required": [
-        "file"
-      ]
+      "additionalProperties": false
     },
     "file-directive-for-dependencies": {
       "title": "'file:' directive for dependencies",
@@ -307,7 +306,7 @@
     "attr-directive": {
       "title": "'attr:' directive",
       "type": "object",
-      "additionalProperties": false,
+      "description": "Value is read from a module attribute. Supports callables and iterables; unsupported types are cast via ``str()``",
       "properties": {
         "attr": {
           "type": "string",
@@ -317,16 +316,15 @@
       "required": [
         "attr"
       ],
-      "description": "Value is read from a module attribute. Supports callables and iterables; unsupported types are cast via ``str()``"
+      "additionalProperties": false
     },
     "find-directive": {
       "title": "'find:' directive",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "find": {
           "type": "object",
-          "additionalProperties": false,
+          "description": "Dynamic `package discovery <https://setuptools.pypa.io/en/latest/userguide/package_discovery.html>`_.",
           "properties": {
             "where": {
               "description": "Directories to be searched for packages (Unix-style relative path)",
@@ -354,10 +352,12 @@
               "description": "When ``True``, directories without a ``__init__.py`` file will also be scanned for :pep:`420`-style implicit namespaces"
             }
           },
-          "description": "Dynamic `package discovery <https://setuptools.pypa.io/en/latest/userguide/package_discovery.html>`_."
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "$comment": "TODO: Use https://github.com/pypa/setuptools/blob/fb7f3d3cab98f2c00cbf18fe887ce73007f49e18/setuptools/config/setuptools.schema.json"
 }

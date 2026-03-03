@@ -5,8 +5,7 @@
   "description": "The AWS::GameLift::Fleet resource creates an Amazon GameLift (GameLift) fleet to host game servers. A fleet is a set of EC2 or Anywhere instances, each of which can host multiple game sessions.. Source:- <https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-gamelift.git>",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-gamelift-fleet.json",
-    "sourceSha256": "1b73556eda7f68ebe6e386c66ee25f2dac45ef648d50d1b5fca435e6c8e3858a",
-    "invalid": true
+    "sourceSha256": "1b73556eda7f68ebe6e386c66ee25f2dac45ef648d50d1b5fca435e6c8e3858a"
   },
   "type": "object",
   "properties": {
@@ -257,6 +256,13 @@
     "/properties/FleetId"
   ],
   "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-resource-providers-gamelift.git",
+  "additionalProperties": false,
+  "readOnlyProperties": [
+    "/properties/FleetId"
+  ],
+  "required": [
+    "Name"
+  ],
   "$defs": {
     "AnywhereConfiguration": {
       "description": "Configuration for Anywhere fleet.",
@@ -269,11 +275,11 @@
           "maxLength": 11
         }
       },
-      "additionalProperties": false,
+      "title": "AWSGameLiftFleetAnywhereConfigurationDefinition",
       "required": [
         "Cost"
       ],
-      "title": "AWSGameLiftFleetAnywhereConfigurationDefinition",
+      "additionalProperties": false,
       "type": "object"
     },
     "CertificateConfiguration": {
@@ -295,11 +301,11 @@
           ]
         }
       },
-      "additionalProperties": false,
+      "title": "AWSGameLiftFleetCertificateConfigurationDefinition",
       "required": [
         "CertificateType"
       ],
-      "title": "AWSGameLiftFleetCertificateConfigurationDefinition"
+      "additionalProperties": false
     },
     "IpPermission": {
       "description": "A range of IP addresses and port settings that allow inbound traffic to connect to server processes on an Amazon GameLift hosting resource. New game sessions that are started on the fleet are assigned an IP address/port number combination, which must fall into the fleet's allowed ranges. For fleets created with a custom game server, the ranges reflect the server's game session assignments. For Realtime Servers fleets, Amazon GameLift automatically opens two port ranges, one for TCP messaging and one for UDP, for use by the Realtime servers.",
@@ -345,14 +351,14 @@
           "maximum": 60000
         }
       },
-      "additionalProperties": false,
+      "title": "AWSGameLiftFleetIpPermissionDefinition",
       "required": [
         "FromPort",
         "IpRange",
         "Protocol",
         "ToPort"
       ],
-      "title": "AWSGameLiftFleetIpPermissionDefinition"
+      "additionalProperties": false
     },
     "Location": {
       "oneOf": [
@@ -388,13 +394,13 @@
           "minimum": 0
         }
       },
-      "additionalProperties": false,
+      "title": "AWSGameLiftFleetLocationCapacityDefinition",
       "required": [
         "DesiredEC2Instances",
         "MinSize",
         "MaxSize"
       ],
-      "title": "AWSGameLiftFleetLocationCapacityDefinition"
+      "additionalProperties": false
     },
     "LocationConfiguration": {
       "description": "A remote location where a multi-location fleet can deploy EC2 instances for game hosting.",
@@ -407,11 +413,11 @@
           "$ref": "#/$defs/LocationCapacity"
         }
       },
-      "additionalProperties": false,
+      "title": "AWSGameLiftFleetLocationConfigurationDefinition",
       "required": [
         "Location"
       ],
-      "title": "AWSGameLiftFleetLocationConfigurationDefinition"
+      "additionalProperties": false
     },
     "ResourceCreationLimitPolicy": {
       "description": "A policy that limits the number of game sessions a player can create on the same fleet. This optional policy gives game owners control over how players can consume available game server resources. A resource creation policy makes the following statement: \"An individual player can create a maximum number of new game sessions within a specified time period\".\n\nThe policy is evaluated when a player tries to create a new game session. For example, assume you have a policy of 10 new game sessions and a time period of 60 minutes. On receiving a CreateGameSession request, Amazon GameLift checks that the player (identified by CreatorId) has created fewer than 10 game sessions in the past 60 minutes.",
@@ -428,8 +434,8 @@
           "minimum": 0
         }
       },
-      "additionalProperties": false,
-      "title": "AWSGameLiftFleetResourceCreationLimitPolicyDefinition"
+      "title": "AWSGameLiftFleetResourceCreationLimitPolicyDefinition",
+      "additionalProperties": false
     },
     "RuntimeConfiguration": {
       "description": "A collection of server process configurations that describe the processes to run on each instance in a fleet. All fleets must have a runtime configuration. Each instance in the fleet maintains server processes as specified in the runtime configuration, launching new ones as existing processes end. Each instance regularly checks for an updated runtime configuration makes adjustments as called for.\n\nThe runtime configuration enables the instances in a fleet to run multiple processes simultaneously. Potential scenarios are as follows: (1) Run multiple processes of a single game server executable to maximize usage of your hosting resources. (2) Run one or more processes of different executables, such as your game server and a metrics tracking program. (3) Run multiple processes of a single game server but with different launch parameters, for example to run one process on each instance in debug mode.\n\nAn Amazon GameLift instance is limited to 50 processes running simultaneously. A runtime configuration must specify fewer than this limit. To calculate the total number of processes specified in a runtime configuration, add the values of the ConcurrentExecutions parameter for each ServerProcess object in the runtime configuration.",
@@ -457,8 +463,8 @@
           "insertionOrder": false
         }
       },
-      "additionalProperties": false,
-      "title": "AWSGameLiftFleetRuntimeConfigurationDefinition"
+      "title": "AWSGameLiftFleetRuntimeConfigurationDefinition",
+      "additionalProperties": false
     },
     "ServerProcess": {
       "description": "A set of instructions for launching server processes on each instance in a fleet. Each instruction set identifies the location of the server executable, optional launch parameters, and the number of server processes with this configuration to maintain concurrently on the instance. Server process configurations make up a fleet's RuntimeConfiguration.",
@@ -497,21 +503,14 @@
           "description": "An optional list of parameters to pass to the server executable or Realtime script on launch."
         }
       },
-      "additionalProperties": false,
+      "title": "AWSGameLiftFleetServerProcessDefinition",
       "required": [
         "ConcurrentExecutions",
         "LaunchPath"
       ],
-      "title": "AWSGameLiftFleetServerProcessDefinition"
+      "additionalProperties": false
     }
   },
-  "readOnlyProperties": [
-    "/properties/FleetId"
-  ],
-  "required": [
-    "Name"
-  ],
-  "additionalProperties": false,
   "createOnlyProperties": [
     "/properties/BuildId",
     "/properties/CertificateConfiguration",

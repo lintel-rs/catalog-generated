@@ -127,25 +127,20 @@
     "dependencies": {
       "description": "Cargo is configured to look for dependencies on [crates.io](https://crates.io) by default. Only\nthe name and a version string are required in this case. In [the cargo\nguide](https://doc.rust-lang.org/cargo/guide/index.html), we specified a dependency on the `time` crate:\n\n```toml\n[dependencies]\ntime = \"0.1.12\"\n```\n\nThe string `\"0.1.12\"` is a [semver](https://github.com/steveklabnik/semver#requirements) version requirement. Since this\nstring does not have any operators in it, it is interpreted the same way as\nif we had specified `\"^0.1.12\"`, which is called a caret requirement.\n\nA dependency can also be defined by a table with additional options:\n\n```toml\n[dependencies]\ntime = { path = \"../time\", version = \"0.1.12\" }\n```",
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Dependency"
-      },
-      "x-tombi-additional-key-label": "crate_name",
-      "x-tombi-table-keys-order": "version-sort",
       "x-taplo": {
         "links": {
           "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html"
         }
+      },
+      "x-tombi-additional-key-label": "crate_name",
+      "x-tombi-table-keys-order": "version-sort",
+      "additionalProperties": {
+        "$ref": "#/$defs/Dependency"
       }
     },
     "dev-dependencies": {
       "description": "The format of `[dev-dependencies]` is equivalent to `[dependencies]`:\n\n```toml\n[dev-dependencies]\ntempdir = \"0.3\"\n```\n\nDev-dependencies are not used when compiling\na package for building, but are used for compiling tests, examples, and\nbenchmarks.\n\nThese dependencies are *not* propagated to other packages which depend on this\npackage.\n\nYou can also have target-specific development dependencies by using\n`dev-dependencies` in the target section header instead of `dependencies`. For\nexample:\n\n```toml\n[target.'cfg(unix)'.dev-dependencies]\nmio = \"0.0.1\"\n```\n\n> **Note**: When a package is published, only dev-dependencies that specify a\n> `version` will be included in the published crate. For most use cases,\n> dev-dependencies are not needed when published, though some users (like OS\n> packagers) may want to run tests within a crate, so providing a `version` if\n> possible can still be beneficial.\n",
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Dependency"
-      },
-      "x-tombi-additional-key-label": "crate_name",
-      "x-tombi-table-keys-order": "version-sort",
       "x-taplo": {
         "links": {
           "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#development-dependencies"
@@ -156,28 +151,28 @@
         "crates": {
           "schemas": "dependencies"
         }
+      },
+      "x-tombi-additional-key-label": "crate_name",
+      "x-tombi-table-keys-order": "version-sort",
+      "additionalProperties": {
+        "$ref": "#/$defs/Dependency"
       }
     },
     "dev_dependencies": {
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Dependency"
+      "x-taplo": {
+        "hidden": true
       },
       "description": "[dev_dependencies] is deprecated. Use [dev-dependencies] instead.",
       "deprecated": true,
       "x-tombi-table-keys-order": "version-sort",
-      "x-taplo": {
-        "hidden": true
+      "additionalProperties": {
+        "$ref": "#/$defs/Dependency"
       }
     },
     "build-dependencies": {
       "description": "You can depend on other Cargo-based crates for use in your build scripts.\nDependencies are declared through the `build-dependencies` section of the\nmanifest:\n\n```toml\n[build-dependencies]\ncc = \"1.0.3\"\n```\n\nThe build script **does not** have access to the dependencies listed\nin the `dependencies` or `dev-dependencies` section. Build\ndependencies will likewise not be available to the package itself\nunless listed under the `dependencies` section as well. A package\nitself and its build script are built separately, so their\ndependencies need not coincide. Cargo is kept simpler and cleaner by\nusing independent dependencies for independent purposes.",
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Dependency"
-      },
-      "x-tombi-additional-key-label": "crate_name",
-      "x-tombi-table-keys-order": "version-sort",
       "x-taplo": {
         "links": {
           "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#build-dependencies"
@@ -188,18 +183,23 @@
         "crates": {
           "schemas": "dependencies"
         }
+      },
+      "x-tombi-additional-key-label": "crate_name",
+      "x-tombi-table-keys-order": "version-sort",
+      "additionalProperties": {
+        "$ref": "#/$defs/Dependency"
       }
     },
     "build_dependencies": {
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Dependency"
+      "x-taplo": {
+        "hidden": true
       },
       "description": "[build_dependencies] is deprecated. Use [build-dependencies] instead.",
       "deprecated": true,
       "x-tombi-table-keys-order": "version-sort",
-      "x-taplo": {
-        "hidden": true
+      "additionalProperties": {
+        "$ref": "#/$defs/Dependency"
       }
     },
     "target": {
@@ -213,18 +213,18 @@
     "badges": {
       "description": "[crates.io](https://crates.io) can display various badges for build status, test coverage, etc. for\neach crate. All badges are optional.\n\n- The badges pertaining to build status that are currently available are\n  Appveyor, CircleCI, Cirrus CI, GitLab, Azure DevOps, Travis CI and Bitbucket\n  Pipelines.\n- Available badges pertaining to code test coverage are Codecov and Coveralls.\n- There are also maintenance-related badges based on isitmaintained.com\n  which state the issue resolution time, percent of open issues, and future\n  maintenance intentions.\n\nMost badge specifications require a `repository` key. It is expected to be in\n`user/repo` format.\n\n```toml\n[badges]\n\n# Appveyor: `repository` is required. `branch` is optional; default is `master`\n# `service` is optional; valid values are `github` (default), `bitbucket`, and\n# `gitlab`; `id` is optional; you can specify the appveyor project id if you\n# want to use that instead. `project_name` is optional; use when the repository\n# name differs from the appveyor project name.\nappveyor = { repository = \"...\", branch = \"master\", service = \"github\" }\n\n# Circle CI: `repository` is required. `branch` is optional; default is `master`\ncircle-ci = { repository = \"...\", branch = \"master\" }\n\n# Cirrus CI: `repository` is required. `branch` is optional; default is `master`\ncirrus-ci = { repository = \"...\", branch = \"master\" }\n\n# GitLab: `repository` is required. `branch` is optional; default is `master`\ngitlab = { repository = \"...\", branch = \"master\" }\n\n# Azure DevOps: `project` is required. `pipeline` is required. `build` is optional; default is `1`\n# Note: project = `organization/project`, pipeline = `name_of_pipeline`, build = `definitionId`\nazure-devops = { project = \"...\", pipeline = \"...\", build=\"2\" }\n\n# Travis CI: `repository` in format \"<user>/<project>\" is required.\n# `branch` is optional; default is `master`\ntravis-ci = { repository = \"...\", branch = \"master\" }\n\n# Bitbucket Pipelines: `repository` is required. `branch` is required\nbitbucket-pipelines = { repository = \"...\", branch = \"master\" }\n\n# Codecov: `repository` is required. `branch` is optional; default is `master`\n# `service` is optional; valid values are `github` (default), `bitbucket`, and\n# `gitlab`.\ncodecov = { repository = \"...\", branch = \"master\", service = \"github\" }\n\n# Coveralls: `repository` is required. `branch` is optional; default is `master`\n# `service` is optional; valid values are `github` (default) and `bitbucket`.\ncoveralls = { repository = \"...\", branch = \"master\", service = \"github\" }\n\n# Is it maintained resolution time: `repository` is required.\nis-it-maintained-issue-resolution = { repository = \"...\" }\n\n# Is it maintained percentage of open issues: `repository` is required.\nis-it-maintained-open-issues = { repository = \"...\" }\n\n# Maintenance: `status` is required. Available options are:\n# - `actively-developed`: New features are being added and bugs are being fixed.\n# - `passively-maintained`: There are no plans for new features, but the maintainer intends to\n#   respond to issues that get filed.\n# - `as-is`: The crate is feature complete, the maintainer does not intend to continue working on\n#   it or providing support, but it works for the purposes it was designed for.\n# - `experimental`: The author wants to share it with the community but is not intending to meet\n#   anyone's particular use case.\n# - `looking-for-maintainer`: The current maintainer would like to transfer the crate to someone\n#   else.\n# - `deprecated`: The maintainer does not recommend using this crate (the description of the crate\n#   can describe why, there could be a better solution available or there could be problems with\n#   the crate that the author does not want to fix).\n# - `none`: Displays no badge on crates.io, since the maintainer has not chosen to specify\n#   their intentions, potential crate users will need to investigate on their own.\nmaintenance = { status = \"...\" }\n```",
       "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": {
-          "type": "string"
-        },
-        "x-tombi-table-keys-order": "version-sort"
-      },
-      "x-tombi-additional-key-label": "badge_name",
-      "x-tombi-table-keys-order": "version-sort",
       "x-taplo": {
         "links": {
           "key": "https://doc.rust-lang.org/cargo/reference/manifest.html#the-badges-section"
+        }
+      },
+      "x-tombi-additional-key-label": "badge_name",
+      "x-tombi-table-keys-order": "version-sort",
+      "additionalProperties": {
+        "type": "object",
+        "x-tombi-table-keys-order": "version-sort",
+        "additionalProperties": {
+          "type": "string"
         }
       }
     },
@@ -248,6 +248,16 @@
           }
         }
       },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/features.html"
+        }
+      },
+      "x-tombi-additional-key-label": "feature_name",
+      "x-tombi-table-keys-order": {
+        "properties": "schema",
+        "additionalProperties": "version-sort"
+      },
       "additionalProperties": {
         "type": "array",
         "uniqueItems": true,
@@ -255,16 +265,6 @@
           "type": "string"
         },
         "x-tombi-array-values-order": "version-sort"
-      },
-      "x-tombi-additional-key-label": "feature_name",
-      "x-tombi-table-keys-order": {
-        "properties": "schema",
-        "additionalProperties": "version-sort"
-      },
-      "x-taplo": {
-        "links": {
-          "key": "https://doc.rust-lang.org/cargo/reference/features.html"
-        }
       }
     },
     "lints": {
@@ -284,8 +284,8 @@
           "required": [
             "workspace"
           ],
-          "additionalProperties": false,
-          "x-tombi-table-keys-order": "version-sort"
+          "x-tombi-table-keys-order": "version-sort",
+          "additionalProperties": false
         }
       ],
       "x-taplo": {
@@ -301,40 +301,40 @@
         "crates-io": {
           "title": "Override the dependency on crates.io",
           "type": "object",
+          "x-tombi-table-keys-order": "version-sort",
+          "x-tombi-additional-key-label": "crate_name",
           "additionalProperties": {
             "$ref": "#/$defs/Dependency"
-          },
-          "x-tombi-additional-key-label": "crate_name",
-          "x-tombi-table-keys-order": "version-sort"
+          }
         }
       },
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": {
-          "$ref": "#/$defs/Dependency"
-        },
-        "x-tombi-additional-key-label": "crate_name",
-        "x-tombi-table-keys-order": "version-sort"
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section"
+        }
       },
       "x-tombi-additional-key-label": "source_url_or_registry_name",
       "x-tombi-table-keys-order": {
         "properties": "schema",
         "additionalProperties": "version-sort"
       },
-      "x-taplo": {
-        "links": {
-          "key": "https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section"
+      "additionalProperties": {
+        "type": "object",
+        "x-tombi-table-keys-order": "version-sort",
+        "x-tombi-additional-key-label": "crate_name",
+        "additionalProperties": {
+          "$ref": "#/$defs/Dependency"
         }
       }
     },
     "replace": {
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Dependency"
-      },
-      "x-tombi-table-keys-order": "version-sort",
       "x-taplo": {
         "hidden": true
+      },
+      "x-tombi-table-keys-order": "version-sort",
+      "additionalProperties": {
+        "$ref": "#/$defs/Dependency"
       }
     },
     "profile": {
@@ -342,6 +342,16 @@
     }
   },
   "x-tombi-table-keys-order": "schema",
+  "additionalProperties": false,
+  "x-tombi-toml-version": "v1.0.0",
+  "x-taplo-info": {
+    "authors": [
+      "tamasfe (https://github.com/tamasfe)"
+    ],
+    "patterns": [
+      "^(.*(/|\\\\)Cargo\\.toml|Cargo\\.toml)$"
+    ]
+  },
   "$defs": {
     "Build": {
       "title": "Build",
@@ -588,13 +598,13 @@
         }
       },
       "minProperties": 1,
-      "additionalProperties": false,
-      "x-tombi-table-keys-order": "schema",
       "x-taplo": {
         "initFields": [
           "version"
         ]
-      }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
     },
     "DetailedLint": {
       "title": "Detailed Lint",
@@ -705,36 +715,36 @@
         "rust": {
           "description": "Lint settings for the Rust compiler. See the Rust compiler's [individual lints](https://doc.rust-lang.org/rustc/lints/listing/index.html) or [lint groups](https://doc.rust-lang.org/rustc/lints/groups.html).",
           "type": "object",
+          "x-tombi-table-keys-order": "version-sort",
+          "x-tombi-additional-key-label": "lint_name",
           "additionalProperties": {
             "$ref": "#/$defs/Lint"
-          },
-          "x-tombi-additional-key-label": "lint_name",
-          "x-tombi-table-keys-order": "version-sort"
+          }
         },
         "rustdoc": {
           "description": "Lint settings for [Rustdoc](https://doc.rust-lang.org/rustdoc/). See Rustdoc's [individual lints](https://doc.rust-lang.org/rustdoc/lints.html) (rustdoc does not have lint groups)",
           "type": "object",
+          "x-tombi-table-keys-order": "version-sort",
+          "x-tombi-additional-key-label": "lint_name",
           "additionalProperties": {
             "$ref": "#/$defs/Lint"
-          },
-          "x-tombi-additional-key-label": "lint_name",
-          "x-tombi-table-keys-order": "version-sort"
+          }
         },
         "clippy": {
           "description": "Lint settings for [Clippy](https://doc.rust-lang.org/clippy/). See Clippy's [individual lints](https://rust-lang.github.io/rust-clippy/master/index.html) or [lint groups](https://doc.rust-lang.org/clippy/lints.html) documentation.",
           "type": "object",
+          "x-tombi-table-keys-order": "version-sort",
+          "x-tombi-additional-key-label": "lint_name",
           "additionalProperties": {
             "$ref": "#/$defs/Lint"
-          },
-          "x-tombi-additional-key-label": "lint_name",
-          "x-tombi-table-keys-order": "version-sort"
+          }
         }
       },
-      "additionalProperties": true,
       "x-tombi-table-keys-order": {
         "properties": "schema",
         "additionalProperties": "version-sort"
-      }
+      },
+      "additionalProperties": true
     },
     "Lto": {
       "title": "Lto",
@@ -1060,18 +1070,18 @@
         "metadata": {
           "description": "Cargo by default will warn about unused keys in `Cargo.toml` to assist in\ndetecting typos and such. The `package.metadata` table, however, is completely\nignored by Cargo and will not be warned about. This section can be used for\ntools which would like to store package configuration in `Cargo.toml`. For\nexample:\n\n```toml\n[package]\nname = \"...\"\n# ...\n\n# Metadata used when generating an Android APK, for example.\n[package.metadata.android]\npackage-name = \"my-awesome-android-app\"\nassets = \"path/to/static\"\n```\n",
           "type": "object",
-          "additionalProperties": true,
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/manifest.html#the-metadata-table"
+            }
+          },
           "properties": {
             "playdate": {
               "$ref": "#/$defs/PlaydateMetadata"
             }
           },
           "x-tombi-table-keys-order": "schema",
-          "x-taplo": {
-            "links": {
-              "key": "https://doc.rust-lang.org/cargo/reference/manifest.html#the-metadata-table"
-            }
-          }
+          "additionalProperties": true
         },
         "default-run": {
           "description": "The `default-run` field in the `[package]` section of the manifest can be used\nto specify a default binary picked by [`cargo run`](https://doc.rust-lang.org/cargo/commands/cargo-run.html). For example, when there is\nboth `src/bin/a.rs` and `src/bin/b.rs`:\n\n```toml\n[package]\ndefault-run = \"a\"\n```",
@@ -1147,13 +1157,13 @@
           }
         }
       },
-      "additionalProperties": false,
-      "x-tombi-table-keys-order": "schema",
       "x-taplo": {
         "links": {
           "key": "https://doc.rust-lang.org/cargo/reference/manifest.html#the-package-section"
         }
-      }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
     },
     "Panic": {
       "title": "Panic",
@@ -1182,25 +1192,20 @@
         "dependencies": {
           "description": "Cargo is configured to look for dependencies on [crates.io](https://crates.io) by default. Only\nthe name and a version string are required in this case. In [the cargo\nguide](https://doc.rust-lang.org/cargo/guide/index.html), we specified a dependency on the `time` crate:\n\n```toml\n[dependencies]\ntime = \"0.1.12\"\n```\n\nThe string `\"0.1.12\"` is a [semver](https://github.com/steveklabnik/semver#requirements) version requirement. Since this\nstring does not have any operators in it, it is interpreted the same way as\nif we had specified `\"^0.1.12\"`, which is called a caret requirement.\n\nA dependency can also be defined by a table with additional options:\n\n```toml\n[dependencies]\ntime = { path = \"../time\", version = \"0.1.12\" }\n```",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Dependency"
-          },
-          "x-tombi-additional-key-label": "crate_name",
-          "x-tombi-table-keys-order": "version-sort",
           "x-taplo": {
             "links": {
               "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html"
             }
+          },
+          "x-tombi-additional-key-label": "crate_name",
+          "x-tombi-table-keys-order": "version-sort",
+          "additionalProperties": {
+            "$ref": "#/$defs/Dependency"
           }
         },
         "dev-dependencies": {
           "description": "The format of `[dev-dependencies]` is equivalent to `[dependencies]`:\n\n```toml\n[dev-dependencies]\ntempdir = \"0.3\"\n```\n\nDev-dependencies are not used when compiling\na package for building, but are used for compiling tests, examples, and\nbenchmarks.\n\nThese dependencies are *not* propagated to other packages which depend on this\npackage.\n\nYou can also have target-specific development dependencies by using\n`dev-dependencies` in the target section header instead of `dependencies`. For\nexample:\n\n```toml\n[target.'cfg(unix)'.dev-dependencies]\nmio = \"0.0.1\"\n```\n\n> **Note**: When a package is published, only dev-dependencies that specify a\n> `version` will be included in the published crate. For most use cases,\n> dev-dependencies are not needed when published, though some users (like OS\n> packagers) may want to run tests within a crate, so providing a `version` if\n> possible can still be beneficial.\n",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Dependency"
-          },
-          "x-tombi-additional-key-label": "crate_name",
-          "x-tombi-table-keys-order": "version-sort",
           "x-taplo": {
             "links": {
               "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#development-dependencies"
@@ -1211,26 +1216,26 @@
             "crates": {
               "schemas": "dependencies"
             }
+          },
+          "x-tombi-additional-key-label": "crate_name",
+          "x-tombi-table-keys-order": "version-sort",
+          "additionalProperties": {
+            "$ref": "#/$defs/Dependency"
           }
         },
         "dev_dependencies": {
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Dependency"
-          },
-          "x-tombi-table-keys-order": "version-sort",
           "x-taplo": {
             "hidden": true
+          },
+          "x-tombi-table-keys-order": "version-sort",
+          "additionalProperties": {
+            "$ref": "#/$defs/Dependency"
           }
         },
         "build-dependencies": {
           "description": "You can depend on other Cargo-based crates for use in your build scripts.\nDependencies are declared through the `build-dependencies` section of the\nmanifest:\n\n```toml\n[build-dependencies]\ncc = \"1.0.3\"\n```\n\nThe build script **does not** have access to the dependencies listed\nin the `dependencies` or `dev-dependencies` section. Build\ndependencies will likewise not be available to the package itself\nunless listed under the `dependencies` section as well. A package\nitself and its build script are built separately, so their\ndependencies need not coincide. Cargo is kept simpler and cleaner by\nusing independent dependencies for independent purposes.",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Dependency"
-          },
-          "x-tombi-additional-key-label": "crate_name",
-          "x-tombi-table-keys-order": "version-sort",
           "x-taplo": {
             "links": {
               "key": "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#build-dependencies"
@@ -1241,16 +1246,21 @@
             "crates": {
               "schemas": "dependencies"
             }
+          },
+          "x-tombi-additional-key-label": "crate_name",
+          "x-tombi-table-keys-order": "version-sort",
+          "additionalProperties": {
+            "$ref": "#/$defs/Dependency"
           }
         },
         "build_dependencies": {
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Dependency"
-          },
-          "x-tombi-table-keys-order": "version-sort",
           "x-taplo": {
             "hidden": true
+          },
+          "x-tombi-table-keys-order": "version-sort",
+          "additionalProperties": {
+            "$ref": "#/$defs/Dependency"
           }
         }
       },
@@ -1439,15 +1449,15 @@
     "ProfilePackageOverrides": {
       "description": "Package-specific overrides.\n\nThe package name is a [Package ID Spec](https://doc.rust-lang.org/cargo/reference/pkgid-spec.html), so you can\ntarget individual versions of a package with syntax such as `[profile.dev.package.\"foo:2.1.0\"]`.",
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/Profile"
-      },
-      "x-tombi-additional-key-label": "profile_name",
-      "x-tombi-table-keys-order": "version-sort",
       "x-taplo": {
         "links": {
           "key": "https://doc.rust-lang.org/cargo/reference/profiles.html#overrides"
         }
+      },
+      "x-tombi-additional-key-label": "profile_name",
+      "x-tombi-table-keys-order": "version-sort",
+      "additionalProperties": {
+        "$ref": "#/$defs/Profile"
       }
     },
     "Profile": {
@@ -1520,18 +1530,18 @@
           "$ref": "#/$defs/ProfileWithBuildOverride"
         }
       },
-      "additionalProperties": {
-        "$ref": "#/$defs/ProfileWithBuildOverride"
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/profiles.html"
+        }
       },
       "x-tombi-additional-key-label": "profile_name",
       "x-tombi-table-keys-order": {
         "properties": "schema",
         "additionalProperties": "ascending"
       },
-      "x-taplo": {
-        "links": {
-          "key": "https://doc.rust-lang.org/cargo/reference/profiles.html"
-        }
+      "additionalProperties": {
+        "$ref": "#/$defs/ProfileWithBuildOverride"
       }
     },
     "Publish": {
@@ -1932,15 +1942,15 @@
         "dependencies": {
           "description": "The `workspace.dependencies` table is where you define dependencies to be\ninherited by members of a workspace.\n\nSpecifying a workspace dependency is similar to [package dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html) except:\n- Dependencies from this table cannot be declared as `optional`\n- [`features`][features] declared in this table are additive with the `features` from `[dependencies]`\n\nYou can then [inherit the workspace dependency as a package dependency](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#inheriting-a-dependency-from-a-workspace)\n\nExample:\n```toml\n# [PROJECT_DIR]/Cargo.toml\n[workspace]\nmembers = [\"bar\"]\n\n[workspace.dependencies]\ncc = \"1.0.73\"\nrand = \"0.8.5\"\nregex = { version = \"1.6.0\", default-features = false, features = [\"std\"] }\n```\n\n```toml\n# [PROJECT_DIR]/bar/Cargo.toml\n[package]\nname = \"bar\"\nversion = \"0.2.0\"\n\n[dependencies]\nregex = { workspace = true, features = [\"unicode\"] }\n\n[build-dependencies]\ncc.workspace = true\n\n[dev-dependencies]\nrand.workspace = true\n```",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/Dependency"
-          },
-          "x-tombi-additional-key-label": "crate_name",
-          "x-tombi-table-keys-order": "version-sort",
           "x-taplo": {
             "links": {
               "key": "https://doc.rust-lang.org/cargo/reference/workspaces.html#the-workspace-section"
             }
+          },
+          "x-tombi-additional-key-label": "crate_name",
+          "x-tombi-table-keys-order": "version-sort",
+          "additionalProperties": {
+            "$ref": "#/$defs/Dependency"
           }
         },
         "lints": {
@@ -1955,12 +1965,12 @@
         "metadata": {
           "description": "The `workspace.metadata` table is ignored by Cargo and will not be warned\nabout. This section can be used for tools that would like to store workspace\nconfiguration in `Cargo.toml`. For example:\n\n```toml\n[workspace]\nmembers = [\"member1\", \"member2\"]\n\n[workspace.metadata.webcontents]\nroot = \"path/to/webproject\"\ntool = [\"npm\", \"run\", \"build\"]\n# ...\n```\n\nThere is a similar set of tables at the package level at\n`package.metadata`. While cargo does not specify a\nformat for the content of either of these tables, it is suggested that\nexternal tools may wish to use them in a consistent fashion, such as referring\nto the data in `workspace.metadata` if data is missing from `package.metadata`,\nif that makes sense for the tool in question.\n",
           "type": "object",
-          "additionalProperties": true,
           "x-taplo": {
             "links": {
               "key": "https://doc.rust-lang.org/cargo/reference/workspaces.html#the-workspace-section"
             }
-          }
+          },
+          "additionalProperties": true
         }
       },
       "x-tombi-table-keys-order": "schema",
@@ -2159,8 +2169,8 @@
       "required": [
         "workspace"
       ],
-      "additionalProperties": false,
-      "x-tombi-table-keys-order": "schema"
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
     },
     "PlaydateMetadata": {
       "title": "Playdate Package Metadata",
@@ -2287,7 +2297,11 @@
           "additionalProperties": true
         }
       },
-      "additionalProperties": false,
+      "x-taplo-info": {
+        "authors": [
+          "Alex Koz. (https://github.com/boozook)"
+        ]
+      },
       "x-tombi-table-keys-order": "schema",
       "x-taplo": {
         "initKeys": [
@@ -2302,11 +2316,7 @@
           "key": "https://sdk.play.date/#pdxinfo"
         }
       },
-      "x-taplo-info": {
-        "authors": [
-          "Alex Koz. (https://github.com/boozook)"
-        ]
-      }
+      "additionalProperties": false
     },
     "PlaydateMetadataAssetsArray": {
       "type": "array",
@@ -2334,6 +2344,13 @@
           "$ref": "#/$defs/PlaydateMetadataAssetsOptions"
         }
       },
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/boozook/playdate/blob/main/support/build/README.md#assets-table"
+        }
+      },
+      "x-tombi-additional-key-label": "asset_path",
+      "x-tombi-table-keys-order": "schema",
       "additionalProperties": {
         "anyOf": [
           {
@@ -2347,20 +2364,17 @@
             "description": "Include or exclude the file or glob-pattern."
           }
         ]
-      },
-      "x-tombi-additional-key-label": "asset_path",
-      "x-tombi-table-keys-order": "schema",
-      "x-taplo": {
-        "links": {
-          "key": "https://github.com/boozook/playdate/blob/main/support/build/README.md#assets-table"
-        }
       }
     },
     "PlaydateMetadataAssetsOptions": {
       "type": "object",
       "title": "Assets Configuration",
       "description": "Options for assets paths resolution and how to build assets collection",
-      "additionalProperties": false,
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/boozook/playdate/blob/main/support/build/README.md#assets-options"
+        }
+      },
       "properties": {
         "overwrite": {
           "type": "boolean",
@@ -2382,38 +2396,24 @@
         }
       },
       "x-tombi-table-keys-order": "schema",
-      "x-taplo": {
-        "links": {
-          "key": "https://github.com/boozook/playdate/blob/main/support/build/README.md#assets-options"
-        }
-      }
+      "additionalProperties": false
     },
     "PlaydateMetadataOptions": {
       "type": "object",
       "title": "Configuration",
       "description": "Package build options.",
-      "additionalProperties": true,
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/boozook/playdate/blob/main/support/build/README.md#options"
+        }
+      },
       "properties": {
         "assets": {
           "$ref": "#/$defs/PlaydateMetadataAssetsOptions"
         }
       },
       "x-tombi-table-keys-order": "schema",
-      "x-taplo": {
-        "links": {
-          "key": "https://github.com/boozook/playdate/blob/main/support/build/README.md#options"
-        }
-      }
+      "additionalProperties": true
     }
-  },
-  "x-tombi-toml-version": "v1.0.0",
-  "x-taplo-info": {
-    "authors": [
-      "tamasfe (https://github.com/tamasfe)"
-    ],
-    "patterns": [
-      "^(.*(/|\\\\)Cargo\\.toml|Cargo\\.toml)$"
-    ]
-  },
-  "additionalProperties": false
+  }
 }

@@ -20,18 +20,17 @@
   "$defs": {
     "RawConfig": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "$schema": {
           "type": "string"
         },
         "env": {
           "type": "object",
+          "default": {},
+          "description": "The `env` section defines overrides for the configuration for different environments.\n\nAll environment fields can be specified at the top level of the config indicating the default environment settings.\n\n- Some fields are inherited and overridable in each environment.\n- But some are not inherited and must be explicitly specified in every environment, if they are specified at the top level.\n\nFor more information, see the documentation at <https://developers.cloudflare.com/workers/cli-wrangler/configuration#environments>",
           "additionalProperties": {
             "$ref": "#/$defs/RawEnvironment"
-          },
-          "description": "The `env` section defines overrides for the configuration for different environments.\n\nAll environment fields can be specified at the top level of the config indicating the default environment settings.\n\n- Some fields are inherited and overridable in each environment.\n- But some are not inherited and must be explicitly specified in every environment, if they are specified at the top level.\n\nFor more information, see the documentation at <https://developers.cloudflare.com/workers/cli-wrangler/configuration#environments>",
-          "default": {}
+          }
         },
         "name": {
           "type": "string",
@@ -122,11 +121,11 @@
               }
             }
           },
-          "additionalProperties": false,
-          "description": "\"Cron\" definitions to trigger a Worker's \"scheduled\" function.\n\nLets you call Workers periodically, much like a cron job.\n\nMore details here <https://developers.cloudflare.com/workers/platform/cron-triggers>\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#triggers>",
           "default": {
             "crons": []
-          }
+          },
+          "description": "\"Cron\" definitions to trigger a Worker's \"scheduled\" function.\n\nLets you call Workers periodically, much like a cron job.\n\nMore details here <https://developers.cloudflare.com/workers/platform/cron-triggers>\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#triggers>",
+          "additionalProperties": false
         },
         "limits": {
           "$ref": "#/$defs/UserLimits",
@@ -165,11 +164,11 @@
               "description": "The directory to watch for changes while using wrangler dev, defaults to the current working directory"
             }
           },
-          "additionalProperties": false,
-          "description": "Configures a custom build step to be run by Wrangler when building your Worker.\n\nRefer to the [custom builds documentation](https://developers.cloudflare.com/workers/cli-wrangler/configuration#build) for more details.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#custom-builds>",
           "default": {
             "watch_dir": "./src"
-          }
+          },
+          "description": "Configures a custom build step to be run by Wrangler when building your Worker.\n\nRefer to the [custom builds documentation](https://developers.cloudflare.com/workers/cli-wrangler/configuration#build) for more details.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#custom-builds>",
+          "additionalProperties": false
         },
         "no_bundle": {
           "type": "boolean",
@@ -216,11 +215,11 @@
           "required": [
             "bindings"
           ],
-          "additionalProperties": false,
-          "description": "List of bindings that you will send to logfwdr",
           "default": {
             "bindings": []
-          }
+          },
+          "description": "List of bindings that you will send to logfwdr",
+          "additionalProperties": false
         },
         "logpush": {
           "type": "boolean",
@@ -335,19 +334,21 @@
           "required": [
             "exclude"
           ],
-          "additionalProperties": false,
-          "description": "Configuration for Python modules."
+          "description": "Configuration for Python modules.",
+          "additionalProperties": false
         },
         "define": {
           "type": "object",
+          "default": {},
+          "description": "A map of values to substitute when deploying your Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "A map of values to substitute when deploying your Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
-          "default": {}
+          }
         },
         "vars": {
           "type": "object",
+          "default": {},
+          "description": "A map of environment variables to set when deploying your Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables>",
           "additionalProperties": {
             "anyOf": [
               {
@@ -357,9 +358,7 @@
                 "$ref": "#/$defs/Json"
               }
             ]
-          },
-          "description": "A map of environment variables to set when deploying your Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables>",
-          "default": {}
+          }
         },
         "secrets": {
           "type": "object",
@@ -372,9 +371,9 @@
               "description": "List of secret names that are required by your Worker. When defined, this property:\n- Replaces .dev.vars/.env inference for type generation\n- Enables deploy-time validation to ensure secrets are configured\n- Enables local dev validation with warnings for missing secrets"
             }
           },
-          "additionalProperties": false,
+          "default": "undefined",
           "description": "Secrets configuration.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
-          "default": "undefined"
+          "additionalProperties": false
         },
         "durable_objects": {
           "type": "object",
@@ -386,11 +385,11 @@
           "required": [
             "bindings"
           ],
-          "additionalProperties": false,
-          "description": "A list of durable objects that your Worker should be bound to.\n\nFor more information about Durable Objects, see the documentation at <https://developers.cloudflare.com/workers/learning/using-durable-objects>\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#durable-objects>",
           "default": {
             "bindings": []
-          }
+          },
+          "description": "A list of durable objects that your Worker should be bound to.\n\nFor more information about Durable Objects, see the documentation at <https://developers.cloudflare.com/workers/learning/using-durable-objects>\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#durable-objects>",
+          "additionalProperties": false
         },
         "workflows": {
           "type": "array",
@@ -569,12 +568,12 @@
               "description": "Consumer configuration"
             }
           },
-          "additionalProperties": false,
-          "description": "Specifies Queues that are bound to this Worker environment.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#queues>",
           "default": {
             "consumers": [],
             "producers": []
-          }
+          },
+          "description": "Specifies Queues that are bound to this Worker environment.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#queues>",
+          "additionalProperties": false
         },
         "r2_buckets": {
           "type": "array",
@@ -729,8 +728,8 @@
               },
               "props": {
                 "type": "object",
-                "additionalProperties": {},
-                "description": "Optional properties that will be made available to the service via ctx.props."
+                "description": "Optional properties that will be made available to the service via ctx.props.",
+                "additionalProperties": {}
               },
               "remote": {
                 "type": "boolean",
@@ -782,9 +781,9 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
+          "default": {},
           "description": "A browser that will be usable from the Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#browser-rendering>",
-          "default": {}
+          "additionalProperties": false
         },
         "ai": {
           "type": "object",
@@ -803,9 +802,9 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
+          "default": {},
           "description": "Binding to the AI project.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#workers-ai>",
-          "default": {}
+          "additionalProperties": false
         },
         "images": {
           "type": "object",
@@ -821,9 +820,9 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
+          "default": {},
           "description": "Binding to Cloudflare Images\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#images>",
-          "default": {}
+          "additionalProperties": false
         },
         "media": {
           "type": "object",
@@ -839,9 +838,9 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
+          "default": {},
           "description": "Binding to Cloudflare Media Transformations\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
-          "default": {}
+          "additionalProperties": false
         },
         "version_metadata": {
           "type": "object",
@@ -853,8 +852,8 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
-          "description": "Binding to the Worker Version's metadata"
+          "description": "Binding to the Worker Version's metadata",
+          "additionalProperties": false
         },
         "unsafe": {
           "type": "object",
@@ -901,8 +900,8 @@
                       },
                       "options": {
                         "type": "object",
-                        "additionalProperties": {},
-                        "description": "Optional mapping of unsafe bindings names to options provided for the plugin."
+                        "description": "Optional mapping of unsafe bindings names to options provided for the plugin.",
+                        "additionalProperties": {}
                       }
                     },
                     "required": [
@@ -921,8 +920,8 @@
             },
             "metadata": {
               "type": "object",
-              "additionalProperties": {},
-              "description": "Arbitrary key/value pairs that will be included in the uploaded metadata.  Values specified here will always be applied to metadata last, so can add new or override existing fields."
+              "description": "Arbitrary key/value pairs that will be included in the uploaded metadata.  Values specified here will always be applied to metadata last, so can add new or override existing fields.",
+              "additionalProperties": {}
             },
             "capnp": {
               "anyOf": [
@@ -961,9 +960,9 @@
               "description": "Used for internal capnp uploads for the Workers runtime"
             }
           },
-          "additionalProperties": false,
+          "default": {},
           "description": "\"Unsafe\" tables for features that aren't directly supported by wrangler.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
-          "default": {}
+          "additionalProperties": false
         },
         "mtls_certificates": {
           "type": "array",
@@ -1149,8 +1148,8 @@
                   "limit",
                   "period"
                 ],
-                "additionalProperties": false,
-                "description": "Simple rate limiting configuration."
+                "description": "Simple rate limiting configuration.",
+                "additionalProperties": false
               }
             },
             "required": [
@@ -1256,43 +1255,44 @@
           "required": [
             "bucket"
           ],
-          "additionalProperties": false,
-          "description": "The definition of a Worker Site, a feature that lets you upload static assets with your Worker.\n\nMore details at <https://developers.cloudflare.com/workers/platform/sites>\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#workers-sites>"
+          "description": "The definition of a Worker Site, a feature that lets you upload static assets with your Worker.\n\nMore details at <https://developers.cloudflare.com/workers/platform/sites>\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#workers-sites>",
+          "additionalProperties": false
         },
         "wasm_modules": {
           "type": "object",
+          "description": "A list of wasm modules that your worker should be bound to. This is the \"legacy\" way of binding to a wasm module. ES module workers should do proper module imports.",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "A list of wasm modules that your worker should be bound to. This is the \"legacy\" way of binding to a wasm module. ES module workers should do proper module imports."
+          }
         },
         "text_blobs": {
           "type": "object",
+          "description": "A list of text files that your worker should be bound to. This is the \"legacy\" way of binding to a text file. ES module workers should do proper module imports.",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "A list of text files that your worker should be bound to. This is the \"legacy\" way of binding to a text file. ES module workers should do proper module imports."
+          }
         },
         "data_blobs": {
           "type": "object",
+          "description": "A list of data files that your worker should be bound to. This is the \"legacy\" way of binding to a data file. ES module workers should do proper module imports.",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "A list of data files that your worker should be bound to. This is the \"legacy\" way of binding to a data file. ES module workers should do proper module imports."
+          }
         },
         "alias": {
           "type": "object",
+          "description": "A map of module aliases. Lets you swap out a module for any others. Corresponds with esbuild's `alias` config\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#module-aliasing>",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "A map of module aliases. Lets you swap out a module for any others. Corresponds with esbuild's `alias` config\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#module-aliasing>"
+          }
         },
         "keep_vars": {
           "type": "boolean",
           "description": "By default, the Wrangler configuration file is the source of truth for your environment configuration, like a terraform file.\n\nIf you change your vars in the dashboard, wrangler *will* override/delete them on its next deploy.\n\nIf you want to keep your dashboard vars when wrangler deploys, set this field to true.",
           "default": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "RawEnvironment": {
       "type": "object",
@@ -1386,11 +1386,11 @@
               }
             }
           },
-          "additionalProperties": false,
-          "description": "\"Cron\" definitions to trigger a Worker's \"scheduled\" function.\n\nLets you call Workers periodically, much like a cron job.\n\nMore details here <https://developers.cloudflare.com/workers/platform/cron-triggers>\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#triggers>",
           "default": {
             "crons": []
-          }
+          },
+          "description": "\"Cron\" definitions to trigger a Worker's \"scheduled\" function.\n\nLets you call Workers periodically, much like a cron job.\n\nMore details here <https://developers.cloudflare.com/workers/platform/cron-triggers>\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#triggers>",
+          "additionalProperties": false
         },
         "limits": {
           "$ref": "#/$defs/UserLimits",
@@ -1429,11 +1429,11 @@
               "description": "The directory to watch for changes while using wrangler dev, defaults to the current working directory"
             }
           },
-          "additionalProperties": false,
-          "description": "Configures a custom build step to be run by Wrangler when building your Worker.\n\nRefer to the [custom builds documentation](https://developers.cloudflare.com/workers/cli-wrangler/configuration#build) for more details.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#custom-builds>",
           "default": {
             "watch_dir": "./src"
-          }
+          },
+          "description": "Configures a custom build step to be run by Wrangler when building your Worker.\n\nRefer to the [custom builds documentation](https://developers.cloudflare.com/workers/cli-wrangler/configuration#build) for more details.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#custom-builds>",
+          "additionalProperties": false
         },
         "no_bundle": {
           "type": "boolean",
@@ -1480,11 +1480,11 @@
           "required": [
             "bindings"
           ],
-          "additionalProperties": false,
-          "description": "List of bindings that you will send to logfwdr",
           "default": {
             "bindings": []
-          }
+          },
+          "description": "List of bindings that you will send to logfwdr",
+          "additionalProperties": false
         },
         "logpush": {
           "type": "boolean",
@@ -1599,19 +1599,21 @@
           "required": [
             "exclude"
           ],
-          "additionalProperties": false,
-          "description": "Configuration for Python modules."
+          "description": "Configuration for Python modules.",
+          "additionalProperties": false
         },
         "define": {
           "type": "object",
+          "default": {},
+          "description": "A map of values to substitute when deploying your Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "A map of values to substitute when deploying your Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
-          "default": {}
+          }
         },
         "vars": {
           "type": "object",
+          "default": {},
+          "description": "A map of environment variables to set when deploying your Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables>",
           "additionalProperties": {
             "anyOf": [
               {
@@ -1621,9 +1623,7 @@
                 "$ref": "#/$defs/Json"
               }
             ]
-          },
-          "description": "A map of environment variables to set when deploying your Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables>",
-          "default": {}
+          }
         },
         "secrets": {
           "type": "object",
@@ -1636,9 +1636,9 @@
               "description": "List of secret names that are required by your Worker. When defined, this property:\n- Replaces .dev.vars/.env inference for type generation\n- Enables deploy-time validation to ensure secrets are configured\n- Enables local dev validation with warnings for missing secrets"
             }
           },
-          "additionalProperties": false,
+          "default": "undefined",
           "description": "Secrets configuration.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
-          "default": "undefined"
+          "additionalProperties": false
         },
         "durable_objects": {
           "type": "object",
@@ -1650,11 +1650,11 @@
           "required": [
             "bindings"
           ],
-          "additionalProperties": false,
-          "description": "A list of durable objects that your Worker should be bound to.\n\nFor more information about Durable Objects, see the documentation at <https://developers.cloudflare.com/workers/learning/using-durable-objects>\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#durable-objects>",
           "default": {
             "bindings": []
-          }
+          },
+          "description": "A list of durable objects that your Worker should be bound to.\n\nFor more information about Durable Objects, see the documentation at <https://developers.cloudflare.com/workers/learning/using-durable-objects>\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#durable-objects>",
+          "additionalProperties": false
         },
         "workflows": {
           "type": "array",
@@ -1833,12 +1833,12 @@
               "description": "Consumer configuration"
             }
           },
-          "additionalProperties": false,
-          "description": "Specifies Queues that are bound to this Worker environment.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#queues>",
           "default": {
             "consumers": [],
             "producers": []
-          }
+          },
+          "description": "Specifies Queues that are bound to this Worker environment.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#queues>",
+          "additionalProperties": false
         },
         "r2_buckets": {
           "type": "array",
@@ -1993,8 +1993,8 @@
               },
               "props": {
                 "type": "object",
-                "additionalProperties": {},
-                "description": "Optional properties that will be made available to the service via ctx.props."
+                "description": "Optional properties that will be made available to the service via ctx.props.",
+                "additionalProperties": {}
               },
               "remote": {
                 "type": "boolean",
@@ -2046,9 +2046,9 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
+          "default": {},
           "description": "A browser that will be usable from the Worker.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#browser-rendering>",
-          "default": {}
+          "additionalProperties": false
         },
         "ai": {
           "type": "object",
@@ -2067,9 +2067,9 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
+          "default": {},
           "description": "Binding to the AI project.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#workers-ai>",
-          "default": {}
+          "additionalProperties": false
         },
         "images": {
           "type": "object",
@@ -2085,9 +2085,9 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
+          "default": {},
           "description": "Binding to Cloudflare Images\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.\n\nFor reference, see <https://developers.cloudflare.com/workers/wrangler/configuration/#images>",
-          "default": {}
+          "additionalProperties": false
         },
         "media": {
           "type": "object",
@@ -2103,9 +2103,9 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
+          "default": {},
           "description": "Binding to Cloudflare Media Transformations\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
-          "default": {}
+          "additionalProperties": false
         },
         "version_metadata": {
           "type": "object",
@@ -2117,8 +2117,8 @@
           "required": [
             "binding"
           ],
-          "additionalProperties": false,
-          "description": "Binding to the Worker Version's metadata"
+          "description": "Binding to the Worker Version's metadata",
+          "additionalProperties": false
         },
         "unsafe": {
           "type": "object",
@@ -2165,8 +2165,8 @@
                       },
                       "options": {
                         "type": "object",
-                        "additionalProperties": {},
-                        "description": "Optional mapping of unsafe bindings names to options provided for the plugin."
+                        "description": "Optional mapping of unsafe bindings names to options provided for the plugin.",
+                        "additionalProperties": {}
                       }
                     },
                     "required": [
@@ -2185,8 +2185,8 @@
             },
             "metadata": {
               "type": "object",
-              "additionalProperties": {},
-              "description": "Arbitrary key/value pairs that will be included in the uploaded metadata.  Values specified here will always be applied to metadata last, so can add new or override existing fields."
+              "description": "Arbitrary key/value pairs that will be included in the uploaded metadata.  Values specified here will always be applied to metadata last, so can add new or override existing fields.",
+              "additionalProperties": {}
             },
             "capnp": {
               "anyOf": [
@@ -2225,9 +2225,9 @@
               "description": "Used for internal capnp uploads for the Workers runtime"
             }
           },
-          "additionalProperties": false,
+          "default": {},
           "description": "\"Unsafe\" tables for features that aren't directly supported by wrangler.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
-          "default": {}
+          "additionalProperties": false
         },
         "mtls_certificates": {
           "type": "array",
@@ -2413,8 +2413,8 @@
                   "limit",
                   "period"
                 ],
-                "additionalProperties": false,
-                "description": "Simple rate limiting configuration."
+                "description": "Simple rate limiting configuration.",
+                "additionalProperties": false
               }
             },
             "required": [
@@ -2473,8 +2473,8 @@
           "default": []
         }
       },
-      "additionalProperties": false,
-      "description": "The raw environment configuration that we read from the config file.\n\nAll the properties are optional, and will be replaced with defaults in the configuration that is used in the rest of the codebase."
+      "description": "The raw environment configuration that we read from the config file.\n\nAll the properties are optional, and will be replaced with defaults in the configuration that is used in the rest of the codebase.",
+      "additionalProperties": false
     },
     "Route": {
       "anyOf": [
@@ -2598,8 +2598,8 @@
       "required": [
         "tag"
       ],
-      "additionalProperties": false,
-      "description": "Configuration in wrangler for Durable Object Migrations"
+      "description": "Configuration in wrangler for Durable Object Migrations",
+      "additionalProperties": false
     },
     "UserLimits": {
       "type": "object",
@@ -2635,8 +2635,8 @@
         "type",
         "globs"
       ],
-      "additionalProperties": false,
-      "description": "A bundling resolver rule, defining the modules type for paths that match the specified globs."
+      "description": "A bundling resolver rule, defining the modules type for paths that match the specified globs.",
+      "additionalProperties": false
     },
     "ConfigModuleRuleType": {
       "type": "string",
@@ -2888,8 +2888,8 @@
           "type": "boolean"
         }
       },
-      "additionalProperties": false,
-      "description": "Configuration in wrangler for Cloudchamber"
+      "description": "Configuration in wrangler for Cloudchamber",
+      "additionalProperties": false
     },
     "ContainerApp": {
       "type": "object",
@@ -2912,10 +2912,10 @@
         },
         "image_vars": {
           "type": "object",
+          "description": "Image variables available to the image at build-time only. For runtime env vars, refer to <https://developers.cloudflare.com/containers/examples/env-vars-and-secrets/>",
           "additionalProperties": {
             "type": "string"
-          },
-          "description": "Image variables available to the image at build-time only. For runtime env vars, refer to <https://developers.cloudflare.com/containers/examples/env-vars-and-secrets/>"
+          }
         },
         "class_name": {
           "type": "string",
@@ -3069,8 +3069,8 @@
         "image",
         "class_name"
       ],
-      "additionalProperties": false,
-      "description": "Configuration for a container application"
+      "description": "Configuration for a container application",
+      "additionalProperties": false
     },
     "TailConsumer": {
       "type": "object",

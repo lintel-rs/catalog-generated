@@ -20,10 +20,6 @@
     "repo": {
       "type": "object",
       "description": "Git repo of where this plagiarizable project is hosted",
-      "additionalProperties": false,
-      "required": [
-        "url"
-      ],
       "properties": {
         "url": {
           "type": "string",
@@ -34,7 +30,11 @@
           "description": "The default branch that downstream projects should checkout when plagiarizing this project",
           "default": "master"
         }
-      }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false
     },
     "move": {
       "type": "object",
@@ -89,7 +89,6 @@
                   "type",
                   "options"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "type": {
                     "type": "string",
@@ -109,7 +108,8 @@
                       }
                     }
                   }
-                }
+                },
+                "additionalProperties": false
               },
               {
                 "type": "object",
@@ -117,7 +117,6 @@
                 "required": [
                   "type"
                 ],
-                "additionalProperties": false,
                 "properties": {
                   "type": {
                     "description": "Condition type",
@@ -126,7 +125,8 @@
                       "always"
                     ]
                   }
-                }
+                },
+                "additionalProperties": false
               }
             ]
           }
@@ -143,20 +143,20 @@
         "strings": {
           "description": "Strings to find in target project and be replaced with plagiarized project's values",
           "type": "object",
+          "properties": {
+            "project": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "project"
+          ],
           "additionalProperties": {
             "type": [
               "string",
               "integer",
               "boolean"
             ]
-          },
-          "required": [
-            "project"
-          ],
-          "properties": {
-            "project": {
-              "type": "string"
-            }
           }
         },
         "vars": {
@@ -222,11 +222,6 @@
       "description": "Files that are used the have similarities between instances of that that. .env files for example are similar and could be templated",
       "items": {
         "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name",
-          "replace"
-        ],
         "properties": {
           "name": {
             "type": "string",
@@ -234,10 +229,6 @@
           },
           "replace": {
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "strings"
-            ],
             "properties": {
               "strings": {
                 "type": "object",
@@ -274,7 +265,11 @@
                   ]
                 }
               }
-            }
+            },
+            "required": [
+              "strings"
+            ],
+            "additionalProperties": false
           },
           "merge": {
             "type": "array",
@@ -297,7 +292,6 @@
           },
           "create": {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "files": {
                 "type": "array",
@@ -306,13 +300,13 @@
                   "description": "The path to the file to create if it does not already exist"
                 }
               }
-            }
+            },
+            "additionalProperties": false
           },
           "configs": {
             "type": "array",
             "items": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "strings": {
                   "type": "object",
@@ -335,17 +329,22 @@
                     ]
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
-        }
+        },
+        "required": [
+          "name",
+          "replace"
+        ],
+        "additionalProperties": false
       }
     },
     "push": {
       "type": "array",
       "items": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "values": {
             "type": "object",
@@ -368,34 +367,17 @@
           },
           "git": {
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "repos",
-              "commit",
-              "branch",
-              "remotes"
-            ],
             "properties": {
               "repos": {
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "remote"
-                  ],
                   "properties": {
                     "local": {
                       "type": "string"
                     },
                     "remote": {
                       "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "url",
-                        "checkout",
-                        "defaultName"
-                      ],
                       "properties": {
                         "url": {
                           "type": "string"
@@ -406,17 +388,23 @@
                         "defaultName": {
                           "type": "string"
                         }
-                      }
+                      },
+                      "required": [
+                        "url",
+                        "checkout",
+                        "defaultName"
+                      ],
+                      "additionalProperties": false
                     }
-                  }
+                  },
+                  "required": [
+                    "remote"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "commit": {
                 "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "message"
-                ],
                 "properties": {
                   "create": {
                     "type": "boolean",
@@ -425,7 +413,11 @@
                   "message": {
                     "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "message"
+                ],
+                "additionalProperties": false
               },
               "branch": {
                 "type": "string"
@@ -444,7 +436,6 @@
               },
               "hooks": {
                 "type": "object",
-                "additionalProperties": false,
                 "properties": {
                   "post-push": {
                     "type": "array",
@@ -492,18 +483,26 @@
                       ]
                     }
                   }
-                }
+                },
+                "additionalProperties": false
               }
-            }
+            },
+            "required": [
+              "repos",
+              "commit",
+              "branch",
+              "remotes"
+            ],
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       }
     }
   },
   "required": [
     "replace"
   ],
-  "additionalProperties": false,
   "$defs": {
     "moveItems": {
       "type": "object",
@@ -531,7 +530,6 @@
         "type",
         "path"
       ],
-      "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
@@ -601,6 +599,7 @@
           }
         }
       },
+      "additionalProperties": false,
       "type": "object"
     },
     "mergeYaml": {
@@ -609,7 +608,6 @@
         "type",
         "path"
       ],
-      "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
@@ -679,6 +677,7 @@
           }
         }
       },
+      "additionalProperties": false,
       "type": "object"
     },
     "mergeGit": {
@@ -687,7 +686,6 @@
         "type",
         "path"
       ],
-      "additionalProperties": false,
       "properties": {
         "type": {
           "type": "string",
@@ -701,15 +699,11 @@
           "description": "Path to file to merge"
         }
       },
+      "additionalProperties": false,
       "type": "object"
     },
     "mergeEnv": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "path"
-      ],
       "properties": {
         "type": {
           "type": "string",
@@ -746,8 +740,14 @@
             "type": "string"
           }
         }
-      }
+      },
+      "required": [
+        "type",
+        "path"
+      ],
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "id": "https://json.schemastore.org/plagiarize-me"
 }

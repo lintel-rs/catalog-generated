@@ -6,7 +6,6 @@
   "x-lintel": {
     "source": "https://www.schemastore.org/opspec-io-0.1.7.json",
     "sourceSha256": "b2df0d4e5d186c33f7bee157e396884a344e13058e84726b8bb8858d19d6739c",
-    "invalid": true,
     "fileMatch": [
       "**/.opspec/*/*.yml",
       "**/.opspec/*/*.yaml"
@@ -26,8 +25,9 @@
       "description": "Description of the op"
     },
     "inputs": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Parameter of an op",
+      "additionalProperties": false,
       "patternProperties": {
         "[-_.a-zA-Z0-9]+": {
           "oneOf": [
@@ -74,7 +74,7 @@
           ],
           "properties": {
             "array": {
-              "additionalProperties": false,
+              "type": "object",
               "title": "arrayParam",
               "description": "Array parameter of an op",
               "properties": {
@@ -127,10 +127,10 @@
                   "additionalProperties": false
                 }
               },
-              "type": "object"
+              "additionalProperties": false
             },
             "boolean": {
-              "additionalProperties": false,
+              "type": "object",
               "title": "booleanParam",
               "description": "Boolean parameter of an op",
               "properties": {
@@ -142,10 +142,10 @@
                   "type": "boolean"
                 }
               },
-              "type": "object"
+              "additionalProperties": false
             },
             "dir": {
-              "additionalProperties": false,
+              "type": "object",
               "title": "dirParam",
               "description": "Directory parameter of an op",
               "properties": {
@@ -163,10 +163,10 @@
                   "type": "boolean"
                 }
               },
-              "type": "object"
+              "additionalProperties": false
             },
             "file": {
-              "additionalProperties": false,
+              "type": "object",
               "title": "fileParam",
               "description": "File parameter of an op",
               "properties": {
@@ -182,10 +182,10 @@
                   "type": "boolean"
                 }
               },
-              "type": "object"
+              "additionalProperties": false
             },
             "number": {
-              "additionalProperties": false,
+              "type": "object",
               "title": "numberParam",
               "description": "Number parameter of an op",
               "properties": {
@@ -263,10 +263,10 @@
                   "additionalProperties": false
                 }
               },
-              "type": "object"
+              "additionalProperties": false
             },
             "object": {
-              "additionalProperties": false,
+              "type": "object",
               "title": "objectParam",
               "description": "Object parameter of an op",
               "properties": {
@@ -309,12 +309,18 @@
                         "$ref": "#/properties/inputs/patternProperties/%5B-_.a-zA-Z0-9%5D%2B/properties/object/properties/constraints"
                       }
                     },
-                    "required": {
-                      "description": "JSON Schema [required keyword](https://tools.ietf.org/html/draft-wright-json-schema-validation-00#section-5.15)",
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
+                    "dependencies": {
+                      "description": "JSON Schema [dependencies keyword](https://tools.ietf.org/html/draft-wright-json-schema-validation-00#section-5.19)",
+                      "oneOf": [
+                        {
+                          "$ref": "#/properties/inputs/patternProperties/%5B-_.a-zA-Z0-9%5D%2B/properties/object/properties/constraints/properties/properties/additionalProperties"
+                        },
+                        {
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
                     },
                     "enum": {
                       "description": "JSON Schema [enum keyword](https://tools.ietf.org/html/draft-wright-json-schema-validation-00#section-5.20)",
@@ -400,30 +406,21 @@
                         "$ref": "#/properties/inputs/patternProperties/%5B-_.a-zA-Z0-9%5D%2B/properties/object/properties/constraints/properties/properties/additionalProperties"
                       }
                     },
-                    "dependentSchemas": {
-                      "description": "JSON Schema [dependencies keyword](https://tools.ietf.org/html/draft-wright-json-schema-validation-00#section-5.19)"
-                    },
-                    "dependentRequired": {
-                      "oneOf": [
-                        {
-                          "$ref": "#/properties/inputs/patternProperties/%5B-_.a-zA-Z0-9%5D%2B/properties/object/properties/constraints/properties/properties/additionalProperties"
-                        },
-                        {
-                          "items": {
-                            "type": "string"
-                          }
-                        }
-                      ]
-                    },
-                    "type": "object"
+                    "required": {
+                      "description": "JSON Schema [required keyword](https://tools.ietf.org/html/draft-wright-json-schema-validation-00#section-5.15)",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
                   },
                   "additionalProperties": false
                 }
               },
-              "type": "object"
+              "additionalProperties": false
             },
             "socket": {
-              "additionalProperties": false,
+              "type": "object",
               "title": "socketParam",
               "description": "Socket parameter of an op",
               "properties": {
@@ -435,10 +432,10 @@
                   "type": "boolean"
                 }
               },
-              "type": "object"
+              "additionalProperties": false
             },
             "string": {
-              "additionalProperties": false,
+              "type": "object",
               "title": "stringParam",
               "description": "String parameter of an op",
               "properties": {
@@ -577,19 +574,18 @@
                   "additionalProperties": false
                 }
               },
-              "type": "object"
+              "additionalProperties": false
             }
           },
           "type": "object"
         }
-      },
-      "type": "object"
+      }
     },
     "outputs": {
       "$ref": "#/properties/inputs"
     },
     "run": {
-      "additionalProperties": false,
+      "title": "call",
       "description": "A single node of the [call graph](https://en.wikipedia.org/wiki/Call_graph)",
       "oneOf": [
         {
@@ -639,6 +635,7 @@
             "dirs": {
               "type": "object",
               "description": "Directories in the container",
+              "additionalProperties": false,
               "patternProperties": {
                 "^([a-zA-Z]:)?[-_.\\/a-zA-Z0-9]+$": {
                   "oneOf": [
@@ -652,12 +649,12 @@
                     }
                   ]
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "envVars": {
               "oneOf": [
                 {
+                  "type": "object",
                   "additionalProperties": false,
                   "patternProperties": {
                     "^[^=]+$": {
@@ -672,8 +669,7 @@
                         }
                       ]
                     }
-                  },
-                  "type": "object"
+                  }
                 },
                 {
                   "description": "Reference to a value",
@@ -686,6 +682,7 @@
             "files": {
               "type": "object",
               "description": "Files in the container",
+              "additionalProperties": false,
               "patternProperties": {
                 "^([a-zA-Z]:)?[-_.\\/a-zA-Z0-9]+$": {
                   "oneOf": [
@@ -699,8 +696,7 @@
                     }
                   ]
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "image": {
               "type": "object",
@@ -731,6 +727,7 @@
             "ports": {
               "description": "Ports bound from the container to the host",
               "type": "object",
+              "additionalProperties": false,
               "patternProperties": {
                 "[0-9]+(-[0-9]+)?(tcp|udp)?": {
                   "description": "Host port(s) to bind to",
@@ -740,18 +737,17 @@
                   ],
                   "pattern": "[0-9]+(-[0-9]+)?"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "sockets": {
               "type": "object",
+              "additionalProperties": false,
               "patternProperties": {
                 "[:a-zA-Z0-9]+": {
                   "description": "Container socket address mapped to a socket ref",
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "workDir": {
               "description": "Working directory path (overrides any defined by image)",
@@ -827,6 +823,7 @@
             "inputs": {
               "description": "Initializes INPUT_NAME from VALUE in format 'INPUT_NAME: VALUE'. If VALUE is null, it MUST be assumed VALUE == $(INPUT_NAME)",
               "type": "object",
+              "additionalProperties": false,
               "patternProperties": {
                 "[-_.a-zA-Z0-9]+": {
                   "oneOf": [
@@ -845,12 +842,12 @@
                     }
                   ]
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "outputs": {
               "description": "Initializes NAME from OUTPUT_NAME in format 'NAME: OUTPUT_NAME'. If OUTPUT_NAME is null, it MUST be assumed NAME == OUTPUT_NAME",
               "type": "object",
+              "additionalProperties": false,
               "patternProperties": {
                 "[-_.a-zA-Z0-9]+": {
                   "oneOf": [
@@ -862,8 +859,7 @@
                     }
                   ]
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "pullCreds": {
               "type": "object",
@@ -903,7 +899,7 @@
           }
         },
         "parallelLoop": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Loop in which all iterations are called simultaneously.",
           "properties": {
             "range": {
@@ -921,7 +917,7 @@
             "range",
             "run"
           ],
-          "type": "object"
+          "additionalProperties": false
         },
         "serial": {
           "title": "serialCall",
@@ -931,7 +927,7 @@
           }
         },
         "serialLoop": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "Loop in which each iteration gets called sequentially.",
           "oneOf": [
             {
@@ -968,7 +964,7 @@
               }
             },
             "vars": {
-              "additionalProperties": false,
+              "type": "object",
               "description": "Variables added to scope on each iteration",
               "properties": {
                 "index": {
@@ -985,13 +981,13 @@
                   "description": "Variable each iterations associated value will be made available through"
                 }
               },
-              "type": "object"
+              "additionalProperties": false
             }
           },
-          "type": "object"
+          "additionalProperties": false
         }
       },
-      "title": "call",
+      "additionalProperties": false,
       "type": "object"
     },
     "version": {

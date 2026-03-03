@@ -6,7 +6,6 @@
   "x-lintel": {
     "source": "https://github.com/mason-org/registry-schema/releases/latest/download/package.schema.json",
     "sourceSha256": "10b5ec58ee6b30395541f970080a2042d11adf6d239901298376300ecaadb343",
-    "invalid": true,
     "fileMatch": [
       "**/packages/*/package.yaml"
     ],
@@ -84,6 +83,7 @@
       ]
     }
   },
+  "additionalProperties": false,
   "$defs": {
     "enums:license": {
       "anyOf": [
@@ -803,11 +803,6 @@
     },
     "components:deprecation": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "since",
-        "message"
-      ],
       "properties": {
         "message": {
           "type": "string",
@@ -817,7 +812,12 @@
           "type": "string",
           "description": "The version number when the deprecation was made."
         }
-      }
+      },
+      "required": [
+        "since",
+        "message"
+      ],
+      "additionalProperties": false
     },
     "components:source": {
       "allOf": [
@@ -842,7 +842,7 @@
                     }
                   },
                   {
-                    "$ref": "#/$defs/components:source/definitions/Source"
+                    "$ref": "#/$defs/components:source/$defs/Source"
                   }
                 ]
               }
@@ -850,7 +850,7 @@
           }
         },
         {
-          "$ref": "#/$defs/components:source/definitions/Source"
+          "$ref": "#/$defs/components:source/$defs/Source"
         }
       ],
       "$defs": {
@@ -1014,11 +1014,11 @@
             {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/components:sources:generic:download/definitions/Download"
+                "$ref": "#/$defs/components:sources:generic:download/$defs/Download"
               }
             },
             {
-              "$ref": "#/$defs/components:sources:generic:download/definitions/Download"
+              "$ref": "#/$defs/components:sources:generic:download/$defs/Download"
             }
           ]
         }
@@ -1029,7 +1029,6 @@
           "required": [
             "files"
           ],
-          "additionalProperties": true,
           "properties": {
             "target": {
               "oneOf": [
@@ -1046,15 +1045,16 @@
             },
             "files": {
               "type": "object",
+              "additionalProperties": false,
               "patternProperties": {
                 "^[a-zA-Z0-9_\\-\\.]+$": {
                   "type": "string",
                   "pattern": "^https?://"
                 }
-              },
-              "additionalProperties": false
+              }
             }
-          }
+          },
+          "additionalProperties": true
         }
       }
     },
@@ -1149,11 +1149,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "additionalProperties": true,
-                "required": [
-                  "file",
-                  "target"
-                ],
                 "properties": {
                   "target": {
                     "oneOf": [
@@ -1181,15 +1176,16 @@
                       }
                     ]
                   }
-                }
+                },
+                "required": [
+                  "file",
+                  "target"
+                ],
+                "additionalProperties": true
               }
             },
             {
               "type": "object",
-              "additionalProperties": true,
-              "required": [
-                "file"
-              ],
               "properties": {
                 "file": {
                   "oneOf": [
@@ -1204,7 +1200,11 @@
                     }
                   ]
                 }
-              }
+              },
+              "required": [
+                "file"
+              ],
+              "additionalProperties": true
             }
           ]
         }
@@ -1327,11 +1327,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "additionalProperties": true,
-                "required": [
-                  "file",
-                  "target"
-                ],
                 "properties": {
                   "target": {
                     "oneOf": [
@@ -1376,15 +1371,16 @@
                       "universal"
                     ]
                   }
-                }
+                },
+                "required": [
+                  "file",
+                  "target"
+                ],
+                "additionalProperties": true
               }
             },
             {
               "type": "object",
-              "additionalProperties": true,
-              "required": [
-                "file"
-              ],
               "properties": {
                 "file": {
                   "oneOf": [
@@ -1399,7 +1395,11 @@
                     }
                   ]
                 }
-              }
+              },
+              "required": [
+                "file"
+              ],
+              "additionalProperties": true
             }
           ]
         }
@@ -1433,41 +1433,41 @@
     },
     "components:schemas": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "lsp": {
           "type": "string",
           "description": "A URL to where the LSP JSON schema can be downloaded from. If the provided URL is a VSCode package.json you MUST prefix the url with vscode:",
           "pattern": "^(vscode:)?https://"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "components:bin": {
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z0-9_\\-\\.]+$": {
           "type": "string"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "components:share": {
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z0-9_\\-\\./]+$": {
           "type": "string"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "components:opt": {
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z0-9_\\-\\./]+$": {
           "type": "string"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "components:neovim": {
       "type": "object",
@@ -1478,7 +1478,6 @@
       }
     }
   },
-  "additionalProperties": false,
   "required": [
     "name",
     "description",

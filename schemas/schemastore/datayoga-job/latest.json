@@ -34,7 +34,6 @@
       "type": "array"
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "block": {
       "allOf": [
@@ -58,7 +57,9 @@
                 "description": "Add fields to a record",
                 "oneOf": [
                   {
-                    "additionalProperties": false,
+                    "required": [
+                      "fields"
+                    ],
                     "description": "Add multiple fields",
                     "examples": [
                       {
@@ -80,7 +81,7 @@
                       "fields": {
                         "description": "Fields",
                         "items": {
-                          "additionalProperties": false,
+                          "type": "object",
                           "properties": {
                             "expression": {
                               "description": "Expression",
@@ -104,18 +105,20 @@
                             "expression",
                             "language"
                           ],
-                          "type": "object"
+                          "additionalProperties": false
                         },
                         "type": "array"
                       }
                     },
-                    "required": [
-                      "fields"
-                    ],
+                    "additionalProperties": false,
                     "type": "object"
                   },
                   {
-                    "additionalProperties": false,
+                    "required": [
+                      "field",
+                      "expression",
+                      "language"
+                    ],
                     "description": "Add one field",
                     "examples": [
                       {
@@ -142,11 +145,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "field",
-                      "expression",
-                      "language"
-                    ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 ],
@@ -233,18 +232,18 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Write into a Cassandra data store",
                 "examples": [
                   {
-                    "type": "relational.write",
+                    "id": "load_snowflake",
                     "properties": {
                       "connection": "eu_datalake",
                       "load_strategy": "APPEND",
                       "schema": "dbo",
                       "table": "employees"
                     },
-                    "$id": "load_snowflake"
+                    "type": "relational.write"
                   }
                 ],
                 "properties": {
@@ -328,7 +327,7 @@
                   "opcode_field"
                 ],
                 "title": "cassandra.write",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -351,7 +350,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Read data from CSV",
                 "examples": [
                   {
@@ -421,7 +420,7 @@
                   "file"
                 ],
                 "title": "files.read_csv",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -444,7 +443,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Filter records",
                 "examples": [
                   {
@@ -471,7 +470,7 @@
                   "language"
                 ],
                 "title": "filter",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -494,7 +493,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Receives HTTP requests and process the data.",
                 "examples": [
                   {
@@ -515,7 +514,7 @@
                   }
                 },
                 "title": "http.receiver",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -627,39 +626,9 @@
                     ]
                   },
                   "extra_headers": {
-                    "additionalProperties": {
-                      "oneOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "properties": {
-                            "expression": {
-                              "description": "Expression",
-                              "type": "string"
-                            },
-                            "language": {
-                              "description": "Language",
-                              "enum": [
-                                "jmespath",
-                                "sql"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "expression",
-                            "language"
-                          ],
-                          "type": "object"
-                        }
-                      ]
-                    },
+                    "type": "object",
                     "description": "Extra headers to be included in the HTTP request",
                     "title": "Additional HTTP Headers",
-                    "type": "object"
-                  },
-                  "extra_query_parameters": {
                     "additionalProperties": {
                       "oneOf": [
                         {
@@ -687,9 +656,39 @@
                           "type": "object"
                         }
                       ]
-                    },
+                    }
+                  },
+                  "extra_query_parameters": {
+                    "type": "object",
                     "description": "Extra query parameters to be included in the HTTP request",
-                    "type": "object"
+                    "additionalProperties": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "properties": {
+                            "expression": {
+                              "description": "Expression",
+                              "type": "string"
+                            },
+                            "language": {
+                              "description": "Language",
+                              "enum": [
+                                "jmespath",
+                                "sql"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "expression",
+                            "language"
+                          ],
+                          "type": "object"
+                        }
+                      ]
+                    }
                   },
                   "method": {
                     "description": "HTTP method to be used for the request",
@@ -727,6 +726,9 @@
                     "type": "object"
                   },
                   "payload": {
+                    "type": "object",
+                    "description": "Data to be sent in the request body",
+                    "title": "Request Payload",
                     "additionalProperties": {
                       "oneOf": [
                         {
@@ -754,10 +756,7 @@
                           "type": "object"
                         }
                       ]
-                    },
-                    "description": "Data to be sent in the request body",
-                    "title": "Request Payload",
-                    "type": "object"
+                    }
                   },
                   "timeout": {
                     "description": "Timeout duration for this specific HTTP request in seconds",
@@ -794,7 +793,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Apply Jinja template to a field",
                 "examples": [
                   {
@@ -821,7 +820,7 @@
                   "template"
                 ],
                 "title": "jinja_template",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -844,7 +843,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Maps a record into a new output based on expressions",
                 "examples": [
                   {
@@ -884,7 +883,7 @@
                   "language"
                 ],
                 "title": "map",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -907,7 +906,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Read data from parquet",
                 "examples": [
                   {
@@ -924,7 +923,7 @@
                   "file"
                 ],
                 "title": "parquet.read",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -947,7 +946,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Write data to parquet",
                 "examples": [
                   {
@@ -964,7 +963,7 @@
                   "file"
                 ],
                 "title": "parquet.write",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -987,7 +986,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Lookup data from Redis using the given command and key",
                 "properties": {
                   "args": {
@@ -1021,7 +1020,7 @@
                     "type": "string"
                   },
                   "when": {
-                    "additionalProperties": false,
+                    "type": "object",
                     "description": "Optional condition to determine whether to execute the lookup for each record",
                     "properties": {
                       "expression": {
@@ -1044,7 +1043,7 @@
                       "language"
                     ],
                     "title": "Conditional execution",
-                    "type": "object"
+                    "additionalProperties": false
                   }
                 },
                 "required": [
@@ -1055,7 +1054,7 @@
                   "field"
                 ],
                 "title": "redis.lookup",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -1078,7 +1077,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Read from Redis stream",
                 "properties": {
                   "connection": {
@@ -1102,7 +1101,7 @@
                   "stream_name"
                 ],
                 "title": "redis.read_stream",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -1125,7 +1124,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Write to a Redis data structure",
                 "properties": {
                   "command": {
@@ -1175,7 +1174,7 @@
                   "key"
                 ],
                 "title": "redis.write",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -1198,18 +1197,18 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Lookup values in a relational table",
                 "examples": [
                   {
-                    "type": "relational.write",
+                    "id": "load_snowflake",
                     "properties": {
                       "connection": "eu_datalake",
                       "load_strategy": "APPEND",
                       "schema": "dbo",
                       "table": "employees"
                     },
-                    "$id": "load_snowflake"
+                    "type": "relational.write"
                   }
                 ],
                 "properties": {
@@ -1294,7 +1293,7 @@
                 },
                 "required": [],
                 "title": "relational.lookup",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -1317,17 +1316,17 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Read a table from an SQL-compatible data store",
                 "examples": [
                   {
-                    "type": "relational.read",
+                    "id": "read_snowflake",
                     "properties": {
                       "connection": "eu_datalake",
                       "schema": "dbo",
                       "table": "employees"
                     },
-                    "$id": "read_snowflake"
+                    "type": "relational.read"
                   }
                 ],
                 "properties": {
@@ -1382,7 +1381,7 @@
                   "table"
                 ],
                 "title": "relational.read",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -1405,7 +1404,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "allOf": [
                   {
                     "not": {
@@ -1419,14 +1418,14 @@
                 "description": "Write into a SQL-compatible data store",
                 "examples": [
                   {
-                    "type": "relational.write",
+                    "id": "load_snowflake",
                     "properties": {
                       "connection": "eu_datalake",
                       "load_strategy": "APPEND",
                       "schema": "dbo",
                       "table": "employees"
                     },
-                    "$id": "load_snowflake"
+                    "type": "relational.write"
                   }
                 ],
                 "properties": {
@@ -1552,7 +1551,7 @@
                   "table"
                 ],
                 "title": "relational.write",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -1578,7 +1577,9 @@
                 "description": "Remove fields",
                 "oneOf": [
                   {
-                    "additionalProperties": false,
+                    "required": [
+                      "fields"
+                    ],
                     "description": "Remove multiple fields",
                     "examples": [
                       {
@@ -1596,7 +1597,7 @@
                       "fields": {
                         "description": "Fields",
                         "items": {
-                          "additionalProperties": false,
+                          "type": "object",
                           "properties": {
                             "field": {
                               "description": "Field",
@@ -1606,18 +1607,18 @@
                           "required": [
                             "field"
                           ],
-                          "type": "object"
+                          "additionalProperties": false
                         },
                         "type": "array"
                       }
                     },
-                    "required": [
-                      "fields"
-                    ],
+                    "additionalProperties": false,
                     "type": "object"
                   },
                   {
-                    "additionalProperties": false,
+                    "required": [
+                      "field"
+                    ],
                     "description": "Remove one field",
                     "examples": [
                       {
@@ -1630,9 +1631,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "field"
-                    ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 ],
@@ -1663,13 +1662,15 @@
                 "description": "Renames fields. All other fields remain unchanged",
                 "oneOf": [
                   {
-                    "additionalProperties": false,
+                    "required": [
+                      "fields"
+                    ],
                     "description": "Rename multiple fields",
                     "properties": {
                       "fields": {
                         "description": "Fields",
                         "items": {
-                          "additionalProperties": false,
+                          "type": "object",
                           "examples": [
                             {
                               "fields": [
@@ -1698,18 +1699,19 @@
                             "from_field",
                             "to_field"
                           ],
-                          "type": "object"
+                          "additionalProperties": false
                         },
                         "type": "array"
                       }
                     },
-                    "required": [
-                      "fields"
-                    ],
+                    "additionalProperties": false,
                     "type": "object"
                   },
                   {
-                    "additionalProperties": false,
+                    "required": [
+                      "from_field",
+                      "to_field"
+                    ],
                     "description": "Rename one field",
                     "examples": [
                       {
@@ -1727,10 +1729,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "from_field",
-                      "to_field"
-                    ],
+                    "additionalProperties": false,
                     "type": "object"
                   }
                 ],
@@ -1758,7 +1757,7 @@
           "then": {
             "properties": {
               "with": {
-                "additionalProperties": false,
+                "type": "object",
                 "description": "Add a sequence number field to data",
                 "examples": [],
                 "properties": {
@@ -1780,7 +1779,7 @@
                 },
                 "required": [],
                 "title": "sequence",
-                "type": "object"
+                "additionalProperties": false
               }
             },
             "type": "object"
@@ -1873,5 +1872,6 @@
       },
       "type": "object"
     }
-  }
+  },
+  "additionalProperties": false
 }

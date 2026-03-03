@@ -5,7 +5,6 @@
   "x-lintel": {
     "source": "https://github.com/napari/npe2/releases/latest/download/schema.json",
     "sourceSha256": "7258dbc6fdefd8c2f7ba11bdff8b9a6b4c2404515448ed0cbb721eeb66be861d",
-    "invalid": true,
     "fileMatch": [
       "napari.yml",
       "napari.yaml",
@@ -135,7 +134,7 @@
       "type": "string"
     },
     "CommandContribution": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Contribute a **command** (a python callable) consisting of a unique `id`,\na `title` and (optionally) a `python_path` that points to a fully qualified python\ncallable.  If a `python_path` is not included in the manifest, it *must* be\nregistered during activation with `register_command`.\n\nNote, some other contributions (e.g. `readers`, `writers` and `widgets`) will\n*point* to a specific command.  The command itself (i.e. the callable python\nobject) will always appear in the `contributions.commands` section, but those\ncontribution types may add additional contribution-specific metadata.\n\n```{admonition} Future Plans\nCommand contributions will eventually include an **icon**, **category**, and\n**enabled** state. Enablement is expressed with *when clauses*, that capture a\nconditional expression determining whether the command should be enabled or not,\nbased on the current state of the program.  (i.e. \"*If the active layer is a\n`Labels` layer*\")\n\nCommands will eventually be availble in a Command Palette (accessible with a\nhotkey) but they can also show in other menus.\n```",
       "properties": {
         "id": {
@@ -222,7 +221,7 @@
         "title"
       ],
       "title": "CommandContribution",
-      "type": "object"
+      "additionalProperties": false
     },
     "ConfigurationContribution": {
       "description": "A configuration contribution for a plugin.\n\nThis enables plugins to provide a schema for their configurables.\nConfiguration contributions are used to generate the settings UI.",
@@ -234,13 +233,12 @@
         },
         "properties": {
           "type": "object",
+          "title": "Properties",
+          "description": "Configuration properties. In the settings UI, your configuration key will be used to namespace and construct a title. Though a plugin can contain multiple categories of settings, each plugin setting must still have its own unique key. Capital letters in your key are used to indicate word breaks. For example, if your key is 'gitMagic.blame.dateFormat', the generated title for the setting will look like 'Blame: Date Format'",
           "additionalProperties": {
             "$ref": "#/$defs/ConfigurationProperty"
-          },
-          "description": "Configuration properties. In the settings UI, your configuration key will be used to namespace and construct a title. Though a plugin can contain multiple categories of settings, each plugin setting must still have its own unique key. Capital letters in your key are used to indicate word breaks. For example, if your key is 'gitMagic.blame.dateFormat', the generated title for the setting will look like 'Blame: Date Format'",
-          "title": "Properties"
-        },
-        "type": "object"
+          }
+        }
       },
       "required": [
         "title",
@@ -556,18 +554,30 @@
           "default": null,
           "title": "Required"
         },
-        "pattern_error_message": {
+        "dependencies": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Draft06JsonSchema"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              }
             },
             {
               "type": "null"
             }
           ],
           "default": null,
-          "description": "When restricting string types to a given regular expression with the `pattern` field, this field may be used to provide a custom error when the pattern does not match.",
-          "title": "Pattern Error Message"
+          "title": "Dependencies"
         },
         "property_names": {
           "anyOf": [
@@ -714,10 +724,10 @@
         "properties": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "$ref": "#/$defs/Draft07JsonSchema"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -729,10 +739,10 @@
         "pattern_properties": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "$ref": "#/$defs/Draft07JsonSchema"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -871,32 +881,18 @@
           "description": "When specified, gives the order of this setting relative to other settings within the same category. Settings with an order property will be placed before settings without this property set; and settings without `order` will be placed in alphabetical order.",
           "title": "Order"
         },
-        "dependentSchemas": {
-          "default": null,
-          "title": "Dependencies"
-        },
-        "dependentRequired": {
+        "pattern_error_message": {
           "anyOf": [
             {
-              "additionalProperties": {
-                "anyOf": [
-                  {
-                    "$ref": "#/$defs/Draft06JsonSchema"
-                  },
-                  {
-                    "items": {
-                      "type": "string"
-                    },
-                    "type": "array"
-                  }
-                ]
-              },
-              "type": "object"
+              "type": "string"
             },
             {
               "type": "null"
             }
-          ]
+          ],
+          "default": null,
+          "description": "When restricting string types to a given regular expression with the `pattern` field, this field may be used to provide a custom error when the pattern does not match.",
+          "title": "Pattern Error Message"
         }
       },
       "title": "ConfigurationProperty",
@@ -1002,6 +998,9 @@
           "title": "Themes"
         },
         "menus": {
+          "type": "object",
+          "description": "Add menu items to existing napari menus.A menu item can be a command, such as open a widget, or a submenu.Using menu items, nested hierarchies can be created within napari menus.This allows you to organize your plugin's contributions withinnapari's menu structure.",
+          "title": "Menus",
           "additionalProperties": {
             "items": {
               "anyOf": [
@@ -1014,10 +1013,7 @@
               ]
             },
             "type": "array"
-          },
-          "description": "Add menu items to existing napari menus.A menu item can be a command, such as open a widget, or a submenu.Using menu items, nested hierarchies can be created within napari menus.This allows you to organize your plugin's contributions withinnapari's menu structure.",
-          "title": "Menus",
-          "type": "object"
+          }
         },
         "submenus": {
           "anyOf": [
@@ -1366,16 +1362,30 @@
           "default": null,
           "title": "Required"
         },
-        "not": {
+        "dependencies": {
           "anyOf": [
             {
-              "$ref": "#/$defs/Draft06JsonSchema"
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Draft06JsonSchema"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              }
             },
             {
               "type": "null"
             }
           ],
-          "default": null
+          "default": null,
+          "title": "Dependencies"
         },
         "property_names": {
           "anyOf": [
@@ -1443,10 +1453,10 @@
         "properties": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "$ref": "#/$defs/Draft06JsonSchema"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -1458,10 +1468,10 @@
         "pattern_properties": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "$ref": "#/$defs/Draft06JsonSchema"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -1515,32 +1525,16 @@
           "default": null,
           "title": "One Of"
         },
-        "dependentSchemas": {
-          "default": null,
-          "title": "Dependencies"
-        },
-        "dependentRequired": {
+        "not": {
           "anyOf": [
             {
-              "additionalProperties": {
-                "anyOf": [
-                  {
-                    "$ref": "#/$defs/Draft06JsonSchema"
-                  },
-                  {
-                    "items": {
-                      "type": "string"
-                    },
-                    "type": "array"
-                  }
-                ]
-              },
-              "type": "object"
+              "$ref": "#/$defs/Draft06JsonSchema"
             },
             {
               "type": "null"
             }
-          ]
+          ],
+          "default": null
         }
       },
       "title": "Draft06JsonSchema",
@@ -1849,16 +1843,30 @@
           "default": null,
           "title": "Required"
         },
-        "not": {
+        "dependencies": {
           "anyOf": [
             {
-              "$ref": "#/$defs/Draft07JsonSchema"
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Draft06JsonSchema"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              }
             },
             {
               "type": "null"
             }
           ],
-          "default": null
+          "default": null,
+          "title": "Dependencies"
         },
         "property_names": {
           "anyOf": [
@@ -2005,10 +2013,10 @@
         "properties": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "$ref": "#/$defs/Draft07JsonSchema"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -2020,10 +2028,10 @@
         "pattern_properties": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "$ref": "#/$defs/Draft07JsonSchema"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -2077,32 +2085,16 @@
           "default": null,
           "title": "One Of"
         },
-        "dependentSchemas": {
-          "default": null,
-          "title": "Dependencies"
-        },
-        "dependentRequired": {
+        "not": {
           "anyOf": [
             {
-              "additionalProperties": {
-                "anyOf": [
-                  {
-                    "$ref": "#/$defs/Draft06JsonSchema"
-                  },
-                  {
-                    "items": {
-                      "type": "string"
-                    },
-                    "type": "array"
-                  }
-                ]
-              },
-              "type": "object"
+              "$ref": "#/$defs/Draft07JsonSchema"
             },
             {
               "type": "null"
             }
-          ]
+          ],
+          "default": null
         }
       },
       "title": "Draft07JsonSchema",
@@ -2637,7 +2629,7 @@
       "type": "object"
     },
     "ReaderContribution": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Contribute a file reader.\n\nReaders may be associated with specific **filename_patterns** (e.g. \"*.tif\",\n\"*.zip\") and are invoked whenever `viewer.open('some/path')` is used on the\ncommand line, or when a user opens a file in the graphical user interface by\ndropping a file into the canvas, or using `File -> Open...`",
       "properties": {
         "command": {
@@ -2665,7 +2657,7 @@
         "filename_patterns"
       ],
       "title": "ReaderContribution",
-      "type": "object"
+      "additionalProperties": false
     },
     "SampleDataGenerator": {
       "description": "Contribute a callable command that creates data on demand.",
@@ -3016,7 +3008,7 @@
       "type": "object"
     },
     "WidgetContribution": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Contribute a widget that can be added to the napari viewer.\n\nWidget contributions point to a **command** that, when called, returns a widget\n*instance*; this includes functions that return a widget instance, (e.g. those\ndecorated with `magicgui.magic_factory`) and subclasses of either\n[`QtWidgets.QWidget`](https://doc.qt.io/qt-5/qwidget.html) or\n[`magicgui.widgets.Widget`](https://napari.org/magicgui/api/_autosummary/magicgui.widgets._bases.Widget.html).\n\nOptionally, **autogenerate** may be used to create a widget (using\n[magicgui](https://napari.org/magicgui/)) from a command.  (In this case, the\ncommand needn't return a widget instance; it can be any function suitable as an\nargument to `magicgui.magicgui()`.)",
       "properties": {
         "command": {
@@ -3041,10 +3033,10 @@
         "display_name"
       ],
       "title": "WidgetContribution",
-      "type": "object"
+      "additionalProperties": false
     },
     "WriterContribution": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Contribute a layer writer.\n\nWriters accept data from one or more layers and write them to file. Writers declare\nsupport for writing one or more **layer_types**, may be associated with specific\n**filename_patterns** (e.g. \"\\*.tif\", \"\\*.zip\") and are invoked whenever\n`viewer.layers.save('some/path.ext')` is used on the command line, or when a user\nrequests to save one or more layers in the graphical user interface with `File ->\nSave Selected Layer(s)...` or `Save All Layers...`",
       "properties": {
         "command": {
@@ -3080,7 +3072,7 @@
         "layer_types"
       ],
       "title": "WriterContribution",
-      "type": "object"
+      "additionalProperties": false
     }
   },
   "required": [

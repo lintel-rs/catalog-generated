@@ -47,14 +47,6 @@
       "description": "IaC tool configuration for native blueprints. MUTUALLY EXCLUSIVE with 'packages'."
     },
     "inputs": {
-      "additionalProperties": {
-        "$ref": "#/$defs/SlimInput"
-      },
-      "propertyNames": {
-        "pattern": "^[a-zA-Z0-9_]+$"
-      },
-      "type": "object",
-      "description": "Input parameters that can be passed when deploying. Each input must be an object, not null. Use {} for unconstrained inputs.",
       "examples": [
         {
           "bucket_name": {
@@ -72,7 +64,15 @@
           },
           "unconstrained_param": {}
         }
-      ]
+      ],
+      "propertyNames": {
+        "pattern": "^[a-zA-Z0-9_]+$"
+      },
+      "type": "object",
+      "description": "Input parameters that can be passed when deploying. Each input must be an object, not null. Use {} for unconstrained inputs.",
+      "additionalProperties": {
+        "$ref": "#/$defs/SlimInput"
+      }
     },
     "packages": {
       "items": {
@@ -82,21 +82,21 @@
       "description": "List of packages to deploy. MUTUALLY EXCLUSIVE with 'native'"
     },
     "outputs": {
-      "additionalProperties": {
-        "$ref": "#/$defs/SlimOutput"
-      },
+      "description": "Values to expose after deployment completes",
       "propertyNames": {
         "pattern": "^[a-zA-Z0-9_]+$"
       },
       "type": "object",
-      "description": "Values to expose after deployment completes"
+      "additionalProperties": {
+        "$ref": "#/$defs/SlimOutput"
+      }
     }
   },
-  "additionalProperties": false,
   "required": [
     "name",
     "version"
   ],
+  "additionalProperties": false,
   "$defs": {
     "Lifecycle": {
       "properties": {
@@ -113,9 +113,9 @@
           "description": "Configuration for the destroy phase"
         }
       },
-      "additionalProperties": false,
+      "title": "Custom Lifecycle Configuration",
       "type": "object",
-      "title": "Custom Lifecycle Configuration"
+      "additionalProperties": false
     },
     "LifecyclePhase": {
       "properties": {
@@ -138,20 +138,20 @@
           "description": "Override arguments for this phase"
         },
         "env_vars": {
+          "description": "Additional environment variables for this phase",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Additional environment variables for this phase"
+          }
         },
         "skip": {
           "type": "boolean",
           "description": "Skip this lifecycle phase"
         }
       },
-      "additionalProperties": false,
+      "title": "Lifecycle Phase Configuration",
       "type": "object",
-      "title": "Lifecycle Phase Configuration"
+      "additionalProperties": false
     },
     "Native": {
       "properties": {
@@ -206,23 +206,23 @@
           "description": "Arguments passed to the command"
         },
         "env_vars": {
+          "description": "Environment variables for execution",
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object",
-          "description": "Environment variables for execution"
+          }
         },
         "lifecycle": {
           "$ref": "#/$defs/Lifecycle",
           "description": "Custom lifecycle phase configurations"
         }
       },
-      "additionalProperties": false,
+      "title": "IaC Tool Configuration",
       "type": "object",
       "required": [
         "type"
       ],
-      "title": "IaC Tool Configuration"
+      "additionalProperties": false
     },
     "SemanticVersion": {
       "type": "string",
@@ -265,10 +265,6 @@
           "description": "Restrict input to specific values"
         }
       },
-      "additionalProperties": false,
-      "type": "object",
-      "title": "Blueprint Input Parameter",
-      "description": "Input parameter definition. Must be an object (not null or empty). Use {} for unconstrained input, or specify properties: type, description, default, allowed_values",
       "examples": [
         {
           "default": "my-bucket",
@@ -293,7 +289,11 @@
           "type": "list"
         },
         {}
-      ]
+      ],
+      "type": "object",
+      "title": "Blueprint Input Parameter",
+      "description": "Input parameter definition. Must be an object (not null or empty). Use {} for unconstrained input, or specify properties: type, description, default, allowed_values",
+      "additionalProperties": false
     },
     "SlimOutput": {
       "properties": {
@@ -305,12 +305,12 @@
           "description": "Explanation of what this output represents"
         }
       },
-      "additionalProperties": false,
+      "title": "Blueprint Output",
       "type": "object",
       "required": [
         "value"
       ],
-      "title": "Blueprint Output"
+      "additionalProperties": false
     },
     "SlimPackage": {
       "oneOf": [
@@ -374,12 +374,12 @@
           "description": "Alias for props. Property values passed to the package"
         }
       },
-      "additionalProperties": false,
+      "title": "Child package",
       "type": "object",
       "required": [
         "name"
       ],
-      "title": "Child package"
+      "additionalProperties": false
     },
     "Source": {
       "type": "string",

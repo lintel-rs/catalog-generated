@@ -5,8 +5,7 @@
   "description": "Wireless Device Import Tasks. Source:- <https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git>",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/resources/cloudformation-modified/aws-iotwireless-wirelessdeviceimporttask.json",
-    "sourceSha256": "896769ca4562d6801e09e2923c7cb052a217f1cf22c443aef7b817dc5f884128",
-    "invalid": true
+    "sourceSha256": "896769ca4562d6801e09e2923c7cb052a217f1cf22c443aef7b817dc5f884128"
   },
   "type": "object",
   "properties": {
@@ -26,7 +25,27 @@
     "Sidewalk": {
       "description": "sidewalk contain file for created device and role",
       "type": "object",
-      "additionalProperties": false,
+      "oneOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "DeviceCreationFile"
+              ]
+            },
+            {
+              "required": [
+                "Role"
+              ]
+            }
+          ]
+        },
+        {
+          "required": [
+            "SidewalkManufacturingSn"
+          ]
+        }
+      ],
       "properties": {
         "SidewalkManufacturingSn": {
           "oneOf": [
@@ -57,27 +76,7 @@
           "$ref": "#/$defs/Role"
         }
       },
-      "oneOf": [
-        {
-          "allOf": [
-            {
-              "required": [
-                "DeviceCreationFile"
-              ]
-            },
-            {
-              "required": [
-                "Role"
-              ]
-            }
-          ]
-        },
-        {
-          "required": [
-            "SidewalkManufacturingSn"
-          ]
-        }
-      ]
+      "additionalProperties": false
     },
     "Tags": {
       "description": "An array of key-value pairs to apply to this resource.",
@@ -94,6 +93,11 @@
     "/properties/Id"
   ],
   "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "additionalProperties": false,
+  "writeOnlyProperties": [
+    "/properties/Sidewalk/DeviceCreationFile",
+    "/properties/Sidewalk/SidewalkManufacturingSn"
+  ],
   "$defs": {
     "DeviceCreationFileList": {
       "description": "sidewalk create device's file path",
@@ -152,15 +156,10 @@
         "Key",
         "Value"
       ],
-      "additionalProperties": false,
-      "title": "AWSIoTWirelessWirelessDeviceImportTaskTagDefinition"
+      "title": "AWSIoTWirelessWirelessDeviceImportTaskTagDefinition",
+      "additionalProperties": false
     }
   },
-  "writeOnlyProperties": [
-    "/properties/Sidewalk/DeviceCreationFile",
-    "/properties/Sidewalk/SidewalkManufacturingSn"
-  ],
-  "additionalProperties": false,
   "tagging": {
     "taggable": true,
     "tagOnCreate": true,

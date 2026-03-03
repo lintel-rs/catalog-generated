@@ -26,11 +26,19 @@
       "required": [
         "psm_file"
       ],
-      "additionalProperties": false,
       "properties": {
         "feature_generators": {
           "description": "Feature generators and their configurations.",
           "type": "object",
+          "default": {
+            "basic": {},
+            "ms2pip": {
+              "model": "HCD",
+              "ms2_tolerance": 0.02
+            },
+            "deeplc": {},
+            "maxquant": {}
+          },
           "patternProperties": {
             ".*": {
               "$ref": "#/$defs/feature_generator"
@@ -53,15 +61,6 @@
             "im2deep": {
               "$ref": "#/$defs/im2deep"
             }
-          },
-          "default": {
-            "basic": {},
-            "ms2pip": {
-              "model": "HCD",
-              "ms2_tolerance": 0.02
-            },
-            "deeplc": {},
-            "maxquant": {}
           }
         },
         "rescoring_engine": {
@@ -69,6 +68,9 @@
           "type": "object",
           "minProperties": 0,
           "maxProperties": 1,
+          "default": {
+            "mokapot": {}
+          },
           "patternProperties": {
             ".*": {
               "$ref": "#/$defs/rescoring_engine"
@@ -79,9 +81,6 @@
             "mokapot": {
               "$ref": "#/$defs/mokapot"
             }
-          },
-          "default": {
-            "mokapot": {}
           }
         },
         "config_file": {
@@ -317,7 +316,8 @@
           ],
           "default": false
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "required": [
@@ -344,7 +344,6 @@
       "$ref": "#/$defs/feature_generator",
       "description": "MS²PIP feature generator configuration",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "model": {
           "description": "MS²PIP model to use (see MS²PIP documentation)",
@@ -357,13 +356,13 @@
           "minimum": 0,
           "default": 0.02
         }
-      }
+      },
+      "additionalProperties": true
     },
     "deeplc": {
       "$ref": "#/$defs/feature_generator",
       "description": "DeepLC feature generator configuration",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "calibration_set_size": {
           "description": "Calibration set size",
@@ -377,7 +376,8 @@
           ],
           "default": 0.15
         }
-      }
+      },
+      "additionalProperties": true
     },
     "maxquant": {
       "$ref": "#/$defs/feature_generator",
@@ -389,7 +389,6 @@
       "$ref": "#/$defs/feature_generator",
       "description": "Ion mobility feature generator configuration using Ionmob",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "ionmob_model": {
           "description": "Path to Ionmob model directory",
@@ -406,26 +405,26 @@
           "type": "string",
           "default": "tokenizer.json"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "im2deep": {
       "$ref": "#/$defs/feature_generator",
       "description": "Ion mobility feature generator configuration using IM2Deep",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "reference_dataset": {
           "description": "Path to IM2Deep reference dataset file",
           "type": "string",
           "default": "Meier_unimod.parquet"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "mokapot": {
       "$ref": "#/$defs/rescoring_engine",
       "description": "Mokapot rescoring engine configuration. Additional properties are passed to the Mokapot brew function.",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "train_fdr": {
           "description": "FDR threshold for training Mokapot",
@@ -444,13 +443,13 @@
           "type": "boolean",
           "default": false
         }
-      }
+      },
+      "additionalProperties": true
     },
     "percolator": {
       "$ref": "#/$defs/rescoring_engine",
       "description": "Percolator rescoring engine configuration",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "init-weights": {
           "description": "Weights file for scoring function",
@@ -464,7 +463,8 @@
           ],
           "default": false
         }
-      }
+      },
+      "additionalProperties": true
     }
   }
 }

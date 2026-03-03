@@ -4,7 +4,6 @@
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/packages/cspell-types/cspell.schema.json",
     "sourceSha256": "c66caf24a88fcb53149c8ccfa69a7694077324077cbc83cfbe4f26d1324388fc",
-    "invalid": true,
     "fileMatch": [
       ".cspell.json",
       "cspell.json",
@@ -91,14 +90,14 @@
       "type": "boolean"
     },
     "enabledFileTypes": {
-      "additionalProperties": {
-        "type": "boolean"
-      },
+      "type": "object",
       "description": "Enable / Disable checking file types (languageIds).\n\nThis setting replaces:  {@link  Settings.enabledLanguageIds }  and  {@link  Settings.enableFiletypes } .\n\nA Value of:\n- `true` - enable checking for the file type\n- `false` - disable checking for the file type\n\nA file type of `*` is a wildcard that enables all file types.\n\n**Example: enable all file types**\n\n| File Type | Enabled | Comment | | --------- | ------- | ------- | | `*`       | `true`  | Enable all file types. | | `json`    | `false` | Disable checking for json files. |",
       "markdownDescription": "Enable / Disable checking file types (languageIds).\n\nThis setting replaces:  {@link  Settings.enabledLanguageIds }  and  {@link  Settings.enableFiletypes } .\n\nA Value of:\n- `true` - enable checking for the file type\n- `false` - disable checking for the file type\n\nA file type of `*` is a wildcard that enables all file types.\n\n**Example: enable all file types**\n\n| File Type | Enabled | Comment |\n| --------- | ------- | ------- |\n| `*`       | `true`  | Enable all file types. |\n| `json`    | `false` | Disable checking for json files. |",
       "since": "8.8.1",
       "title": "Enabled File Types to Check",
-      "type": "object"
+      "additionalProperties": {
+        "type": "boolean"
+      }
     },
     "enabledLanguageIds": {
       "description": "Specify a list of file types to spell check. It is better to use  {@link  Settings.enabledFileTypes }  to Enable / Disable checking files types.",
@@ -441,11 +440,10 @@
       "type": "array"
     }
   },
+  "additionalProperties": false,
   "$defs": {
     "CSpellVFS": {
-      "additionalProperties": {
-        "$ref": "#/$defs/CSpellVFSFileEntry"
-      },
+      "type": "object",
       "description": "A declaration of files to add to the CSpell Virtual File System.",
       "markdownDescription": "A declaration of files to add to the CSpell Virtual File System.",
       "propertyNames": {
@@ -454,7 +452,9 @@
         "since": "9.7.0"
       },
       "since": "9.7.0",
-      "type": "object"
+      "additionalProperties": {
+        "$ref": "#/$defs/CSpellVFSFileEntry"
+      }
     },
     "CSpellVFSData": {
       "$ref": "#/$defs/CSpellVFSTextData",
@@ -462,7 +462,7 @@
       "markdownDescription": "The data content of a CSpellVFS file."
     },
     "CSpellVFSFileEntry": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "An entry in the CSpell Virtual File System. It may or may not have a URL.",
       "markdownDescription": "An entry in the CSpell Virtual File System.\nIt may or may not have a URL.",
       "properties": {
@@ -491,7 +491,7 @@
         "data"
       ],
       "since": "9.7.0",
-      "type": "object"
+      "additionalProperties": false
     },
     "CSpellVFSFileUrl": {
       "description": "A URL string representing a CSpellVFS file. It should be of the form:\n\n```txt cspell-vfs:///<module>/<path-to-file>/<file-name> ```\n\nExample: `cspell-vfs:///@cspell/dict-en_us/en_US.trie.gz`",
@@ -512,7 +512,7 @@
       "type": "string"
     },
     "CacheSettings": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "cacheFormat": {
           "$ref": "#/$defs/CacheFormat",
@@ -538,7 +538,7 @@
           "type": "boolean"
         }
       },
-      "type": "object"
+      "additionalProperties": false
     },
     "CacheStrategy": {
       "default": "content",
@@ -556,7 +556,7 @@
       "type": "string"
     },
     "CharacterSetCosts": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "characters": {
           "$ref": "#/$defs/CharacterSet",
@@ -578,21 +578,10 @@
         "characters",
         "cost"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "CompatibleEngineVersions": {
-      "additionalProperties": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/SemVersionPredicate"
-          },
-          {
-            "not": {}
-          }
-        ],
-        "description": "Other engine version predicates.",
-        "markdownDescription": "Other engine version predicates."
-      },
+      "type": "object",
       "description": "Engine version predicates.\n\nThis allows dictionaries and other components to specify the versions of engines (like cspell) they are compatible with.",
       "markdownDescription": "Engine version predicates.\n\nThis allows dictionaries and other components to specify the versions of engines (like cspell) they are compatible with.",
       "properties": {
@@ -610,10 +599,21 @@
         }
       },
       "since": "9.6.3",
-      "type": "object"
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SemVersionPredicate"
+          },
+          {
+            "not": {}
+          }
+        ],
+        "description": "Other engine version predicates.",
+        "markdownDescription": "Other engine version predicates."
+      }
     },
     "CostMapDefInsDel": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "description": {
           "description": "A description to describe the purpose of the map.",
@@ -650,10 +650,10 @@
         "insDel",
         "map"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "CostMapDefReplace": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "description": {
           "description": "A description to describe the purpose of the map.",
@@ -690,10 +690,10 @@
         "map",
         "replace"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "CostMapDefSwap": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "description": {
           "description": "A description to describe the purpose of the map.",
@@ -730,7 +730,7 @@
         "map",
         "swap"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "CustomDictionaryPath": {
       "description": "A path or url to a custom dictionary file.",
@@ -770,7 +770,7 @@
       ]
     },
     "DictionaryDefinitionAlternate": {
-      "additionalProperties": false,
+      "type": "object",
       "deprecated": true,
       "deprecationMessage": "Use {@link DictionaryDefinitionPreferred } instead.\nThis will be removed in a future release.",
       "description": "Only for legacy dictionary definitions.",
@@ -830,10 +830,10 @@
         "file",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryDefinitionAugmented": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Used to provide extra data related to the dictionary",
       "markdownDescription": "Used to provide extra data related to the dictionary",
       "properties": {
@@ -898,10 +898,10 @@
         "name",
         "path"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryDefinitionCustom": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "For Defining Custom dictionaries. They are generally scoped to a `user`, `workspace`, or `folder`. When `addWords` is true, indicates that the spell checker can add words to the file.\n\nNote: only plain text files with one word per line are supported at this moment.",
       "markdownDescription": "For Defining Custom dictionaries. They are generally scoped to a\n`user`, `workspace`, or `folder`.\nWhen `addWords` is true, indicates that the spell checker can add words\nto the file.\n\nNote: only plain text files with one word per line are supported at this moment.",
       "properties": {
@@ -984,7 +984,7 @@
         "name",
         "path"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryDefinitionInline": {
       "anyOf": [
@@ -1006,7 +1006,7 @@
       "since": "6.23.0"
     },
     "DictionaryDefinitionInlineFlagWords": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "description": {
           "description": "Optional description of the contents / purpose of the dictionary.",
@@ -1061,10 +1061,10 @@
         "flagWords",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryDefinitionInlineIgnoreWords": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "description": {
           "description": "Optional description of the contents / purpose of the dictionary.",
@@ -1119,10 +1119,10 @@
         "ignoreWords",
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryDefinitionInlineSuggestWords": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "description": {
           "description": "Optional description of the contents / purpose of the dictionary.",
@@ -1177,10 +1177,10 @@
         "name",
         "suggestWords"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryDefinitionInlineWords": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "description": {
           "description": "Optional description of the contents / purpose of the dictionary.",
@@ -1235,10 +1235,10 @@
         "name",
         "words"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryDefinitionPreferred": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "btrie": {
           "$ref": "#/$defs/DictionaryPathToBTrie",
@@ -1298,10 +1298,10 @@
         "name",
         "path"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryDefinitionSimple": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "An Empty Dictionary Definition",
       "markdownDescription": "An Empty Dictionary Definition",
       "properties": {
@@ -1325,7 +1325,7 @@
       "required": [
         "name"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryFileTypes": {
       "enum": [
@@ -1339,11 +1339,11 @@
     "DictionaryId": {
       "description": "This is the name of a dictionary.\n\nName Format:\n- Must contain at least 1 number or letter.\n- Spaces are allowed.\n- Leading and trailing space will be removed.\n- Names ARE case-sensitive.\n- Must not contain `*`, `!`, `;`, `,`, `{`, `}`, `[`, `]`, `~`.",
       "markdownDescription": "This is the name of a dictionary.\n\nName Format:\n- Must contain at least 1 number or letter.\n- Spaces are allowed.\n- Leading and trailing space will be removed.\n- Names ARE case-sensitive.\n- Must not contain `*`, `!`, `;`, `,`, `{`, `}`, `[`, `]`, `~`.",
-      "pattern": "^(?=[^!*,;{}[\\]~\\n]+$)(?=(.*\\w)).+$",
+      "pattern": "^(?=[^!*,;{}\\[\\]~\\n]+$)(?=(.*\\w)).+$",
       "type": "string"
     },
     "DictionaryInformation": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Use by dictionary authors to help improve the quality of suggestions given from the dictionary.\n\nAdded with `v5.16.0`.",
       "markdownDescription": "Use by dictionary authors to help improve the quality of suggestions\ngiven from the dictionary.\n\nAdded with `v5.16.0`.",
       "properties": {
@@ -1412,12 +1412,12 @@
           "markdownDescription": "Used in making suggestions. The lower the value, the more likely the suggestion\nwill be near the top of the suggestion list."
         }
       },
-      "type": "object"
+      "additionalProperties": false
     },
     "DictionaryNegRef": {
       "description": "This a negative reference to a named dictionary.\n\nIt is used to exclude or include a dictionary by name.\n\nThe reference starts with 1 or more `!`.\n- `!<dictionary_name>` - Used to exclude the dictionary matching `<dictionary_name>`.\n- `!!<dictionary_name>` - Used to re-include a dictionary matching `<dictionary_name>`.    Overrides `!<dictionary_name>`.\n- `!!!<dictionary_name>` - Used to exclude a dictionary matching `<dictionary_name>`.    Overrides `!!<dictionary_name>`.",
       "markdownDescription": "This a negative reference to a named dictionary.\n\nIt is used to exclude or include a dictionary by name.\n\nThe reference starts with 1 or more `!`.\n- `!<dictionary_name>` - Used to exclude the dictionary matching `<dictionary_name>`.\n- `!!<dictionary_name>` - Used to re-include a dictionary matching `<dictionary_name>`.\n   Overrides `!<dictionary_name>`.\n- `!!!<dictionary_name>` - Used to exclude a dictionary matching `<dictionary_name>`.\n   Overrides `!!<dictionary_name>`.",
-      "pattern": "^(?=!+[^!*,;{}[\\]~\\n]+$)(?=(.*\\w)).+$",
+      "pattern": "^(?=!+[^!*,;{}\\[\\]~\\n]+$)(?=(.*\\w)).+$",
       "type": "string"
     },
     "DictionaryPath": {
@@ -1449,7 +1449,7 @@
       "markdownDescription": "Reference to a dictionary by name.\nOne of:\n-  {@link  DictionaryRef } \n-  {@link  DictionaryNegRef }"
     },
     "EditCosts": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "accentCosts": {
           "default": 1,
@@ -1482,7 +1482,7 @@
           "type": "number"
         }
       },
-      "type": "object"
+      "additionalProperties": false
     },
     "FSPathResolvable": {
       "$ref": "#/$defs/FsPath",
@@ -1493,7 +1493,7 @@
       "type": "boolean"
     },
     "Features": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Features are behaviors or settings that can be explicitly configured.",
       "markdownDescription": "Features are behaviors or settings that can be explicitly configured.",
       "properties": {
@@ -1503,7 +1503,7 @@
           "markdownDescription": "Enable/disable using weighted suggestions."
         }
       },
-      "type": "object"
+      "additionalProperties": false
     },
     "FsPath": {
       "description": "A File System Path. Relative paths are relative to the configuration file.",
@@ -1516,7 +1516,7 @@
       "markdownDescription": "These are glob expressions."
     },
     "HunspellInformation": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "aff": {
           "description": "Selected Hunspell AFF content. The content must be UTF-8\n\nSections:\n- TRY\n- MAP\n- REP\n- KEY\n- ICONV\n- OCONV\n\nExample: ```hunspell # Comment TRY aeistlunkodmrvpgjhäõbüoöfcwzxðqþ` MAP aàâäAÀÂÄ MAP eéèêëEÉÈÊË MAP iîïyIÎÏY MAP oôöOÔÖ MAP (IJ)(Ĳ) ```",
@@ -1524,7 +1524,7 @@
           "type": "string"
         },
         "costs": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "The costs to apply when using the hunspell settings",
           "markdownDescription": "The costs to apply when using the hunspell settings",
           "properties": {
@@ -1588,13 +1588,13 @@
               "type": "number"
             }
           },
-          "type": "object"
+          "additionalProperties": false
         }
       },
       "required": [
         "aff"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "LanguageId": {
       "anyOf": [
@@ -1628,7 +1628,7 @@
       "type": "string"
     },
     "LanguageSetting": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "allowCompoundWords": {
           "default": false,
@@ -1797,7 +1797,7 @@
       "required": [
         "languageId"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "LocaleId": {
       "description": "This is a written language locale like: `en`, `en-GB`, `fr`, `es`, `de` or `en,fr` for both English and French",
@@ -1818,7 +1818,7 @@
       ]
     },
     "OverrideSettings": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "allowCompoundWords": {
           "default": false,
@@ -1871,14 +1871,14 @@
           "type": "boolean"
         },
         "enabledFileTypes": {
-          "additionalProperties": {
-            "type": "boolean"
-          },
+          "type": "object",
           "description": "Enable / Disable checking file types (languageIds).\n\nThis setting replaces:  {@link  Settings.enabledLanguageIds }  and  {@link  Settings.enableFiletypes } .\n\nA Value of:\n- `true` - enable checking for the file type\n- `false` - disable checking for the file type\n\nA file type of `*` is a wildcard that enables all file types.\n\n**Example: enable all file types**\n\n| File Type | Enabled | Comment | | --------- | ------- | ------- | | `*`       | `true`  | Enable all file types. | | `json`    | `false` | Disable checking for json files. |",
           "markdownDescription": "Enable / Disable checking file types (languageIds).\n\nThis setting replaces:  {@link  Settings.enabledLanguageIds }  and  {@link  Settings.enableFiletypes } .\n\nA Value of:\n- `true` - enable checking for the file type\n- `false` - disable checking for the file type\n\nA file type of `*` is a wildcard that enables all file types.\n\n**Example: enable all file types**\n\n| File Type | Enabled | Comment |\n| --------- | ------- | ------- |\n| `*`       | `true`  | Enable all file types. |\n| `json`    | `false` | Disable checking for json files. |",
           "since": "8.8.1",
           "title": "Enabled File Types to Check",
-          "type": "object"
+          "additionalProperties": {
+            "type": "boolean"
+          }
         },
         "enabledLanguageIds": {
           "description": "Specify a list of file types to spell check. It is better to use  {@link  Settings.enabledFileTypes }  to Enable / Disable checking files types.",
@@ -2095,13 +2095,13 @@
       "required": [
         "filename"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "Pattern": {
       "type": "string"
     },
     "PatternAdjustment": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "id": {
           "description": "Id of the Adjustment, i.e. `short-compound`",
@@ -2124,7 +2124,7 @@
         "regexp",
         "penalty"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "PatternId": {
       "description": "This matches the name in a pattern definition.",
@@ -2180,7 +2180,7 @@
       "type": "string"
     },
     "RegExpPatternDefinition": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "description": {
           "description": "Description of the pattern.",
@@ -2212,7 +2212,7 @@
         "name",
         "pattern"
       ],
-      "type": "object"
+      "additionalProperties": false
     },
     "RegExpPatternList": {
       "description": "A list of pattern names or regular expressions.",
@@ -2309,7 +2309,7 @@
       "type": "string"
     },
     "SubstitutionDefinition": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Allows for the definition of a substitution set. A substitution set is a collection of substitution entries that can be applied to a document before spell checking. This is useful for converting html entities, url encodings, or other transformations that may be necessary to get the correct text for spell checking.\n\nSubstitutions are applied based upon the longest matching find string. If there are multiple matches of the same `find`, the last one in the list is used. This allows for the overriding of substitutions. For example, if you have a substitution for `&` to `and`, and then a substitution for `&amp;` to `&`, the `&amp;` substitution will be used for the string `&amp;`, and the `&` substitution will be used for the string `&`.",
       "markdownDescription": "Allows for the definition of a substitution set. A substitution set is a collection of substitution\nentries that can be applied to a document before spell checking. This is useful for converting html entities, url encodings,\nor other transformations that may be necessary to get the correct text for spell checking.\n\nSubstitutions are applied based upon the longest matching find string. If there are multiple matches of the same `find`,\nthe last one in the list is used. This allows for the overriding of substitutions. For example, if you have a substitution\nfor `&` to `and`, and then a substitution for `&amp;` to `&`, the `&amp;` substitution will be used for the string `&amp;`,\nand the `&` substitution will be used for the string `&`.",
       "properties": {
@@ -2337,7 +2337,7 @@
         "entries"
       ],
       "since": "9.7.0",
-      "type": "object"
+      "additionalProperties": false
     },
     "SubstitutionDefinitions": {
       "description": "The set of available substitutions. This is a collection of substitution definitions that can be applied to a document before spell checking.",
@@ -2443,6 +2443,5 @@
       "type": "string"
     }
   },
-  "additionalProperties": false,
   "allowTrailingCommas": true
 }

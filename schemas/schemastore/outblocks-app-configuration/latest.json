@@ -21,59 +21,6 @@
     "OutblocksApp": {
       "title": "OutblocksApp",
       "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "name": {
-          "description": "Name of the app. Defaults to directory name.",
-          "type": "string"
-        },
-        "type": {
-          "description": "Type of the app.",
-          "type": "string",
-          "enum": [
-            "static",
-            "function",
-            "service"
-          ]
-        },
-        "env": {
-          "description": "Environment variables common for all operations.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "dir": {
-          "description": "Working directory of the app where all commands will be run. Defaults to location of this yaml. All other dirs will be relative to this one.",
-          "type": "string"
-        },
-        "url": {
-          "description": "External URL of the app.",
-          "type": "string"
-        },
-        "path_redirect": {
-          "description": "Path redirect rewrites URL to specified path. URL path from 'url' field will be stripped and replaced with value below.",
-          "type": "string"
-        },
-        "needs": {
-          "description": "Application dependencies to inject.",
-          "$ref": "#/$defs/Needs"
-        },
-        "run": {
-          "description": "Run config used for dev builds during run.",
-          "$ref": "#/$defs/Run"
-        },
-        "cdn": {
-          "description": "CDN settings.",
-          "$ref": "#/$defs/CDN"
-        },
-        "build": {
-          "type": "object"
-        }
-      },
-      "required": [
-        "type"
-      ],
       "allOf": [
         {
           "if": {
@@ -196,7 +143,60 @@
             "type": "object"
           }
         }
-      ]
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of the app. Defaults to directory name.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of the app.",
+          "type": "string",
+          "enum": [
+            "static",
+            "function",
+            "service"
+          ]
+        },
+        "env": {
+          "description": "Environment variables common for all operations.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "dir": {
+          "description": "Working directory of the app where all commands will be run. Defaults to location of this yaml. All other dirs will be relative to this one.",
+          "type": "string"
+        },
+        "url": {
+          "description": "External URL of the app.",
+          "type": "string"
+        },
+        "path_redirect": {
+          "description": "Path redirect rewrites URL to specified path. URL path from 'url' field will be stripped and replaced with value below.",
+          "type": "string"
+        },
+        "needs": {
+          "description": "Application dependencies to inject.",
+          "$ref": "#/$defs/Needs"
+        },
+        "run": {
+          "description": "Run config used for dev builds during run.",
+          "$ref": "#/$defs/Run"
+        },
+        "cdn": {
+          "description": "CDN settings.",
+          "$ref": "#/$defs/CDN"
+        },
+        "build": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": true
     },
     "Needs": {
       "title": "Needs",
@@ -218,7 +218,6 @@
     "Run": {
       "title": "Run config",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "plugin": {
           "description": "Run plugin override. Defaults to first supported plugin available.",
@@ -249,12 +248,12 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "StaticDeploy": {
       "title": "Static deploy config",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "plugin": {
           "description": "Deploy plugin override. Defaults to first supported plugin available.",
@@ -279,12 +278,12 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "ServiceDeploy": {
       "title": "Service deploy config",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "plugin": {
           "description": "Deploy plugin override. Defaults to first supported plugin available.",
@@ -321,17 +320,14 @@
           "description": "Service application container config used for docker based deployments.",
           "$ref": "#/$defs/ServiceContainer"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "Scheduler": {
       "title": "Scheduler config",
       "type": "array",
       "items": {
         "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "cron"
-        ],
         "properties": {
           "cron": {
             "description": "Scheduler cron, e.g. */30 * * * * runs every 30 minutes.",
@@ -365,13 +361,16 @@
               "type": "string"
             }
           }
-        }
+        },
+        "required": [
+          "cron"
+        ],
+        "additionalProperties": false
       }
     },
     "FunctionDeploy": {
       "title": "Function deploy config",
       "type": "object",
-      "additionalProperties": true,
       "properties": {
         "plugin": {
           "description": "Deploy plugin override. Defaults to first supported plugin available.",
@@ -400,12 +399,12 @@
           "description": "Execution timeout. Execution is considered failed and can be terminated if the function is not completed at the end of the timeout period.",
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": true
     },
     "FunctionPackage": {
       "title": "Function package config",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "patterns": {
           "description": "Package patterns to exclude (or force include if starts with '!').",
@@ -414,22 +413,22 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "CDN": {
       "title": "CDN",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "enabled": {
           "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "StaticBasicAuth": {
       "title": "Static app basic auth config",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "realm": {
           "description": "Basic auth realm name, defaults to 'restricted'.",
@@ -442,12 +441,12 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "StaticBuild": {
       "title": "Build static app",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "env": {
           "description": "Additional environment variables available during build.",
@@ -474,12 +473,12 @@
           "description": "Output dir to where static files end up.",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ServiceBuild": {
       "title": "Service app build definition",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "image": {
           "description": "Docker image to use. If specified, will try to pull this image if skip-build is enabled.",
@@ -515,12 +514,12 @@
           "description": "Dockerfile to use, relative to context path. Defaults to 'Dockerfile'.",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "FunctionBuild": {
       "title": "Build function app",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "env": {
           "description": "Additional environment variables available during build.",
@@ -547,12 +546,12 @@
           "description": "Output dir to where built files end up.",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ServiceContainer": {
       "title": "Service app container definition",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "port": {
           "description": "Docker container port to use.",
@@ -594,12 +593,12 @@
           "description": "Startup probe definition.",
           "$ref": "#/$defs/ServiceContainerProbe"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ServiceContainerProbe": {
       "title": "Service app container probe definition",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "http_path": {
           "description": "HTTP path to probe.",
@@ -629,7 +628,8 @@
           "description": "When a probe fails, Kubernetes will try failure_threshold times before giving up. Defaults to 3.",
           "type": "integer"
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "$ref": "#/$defs/OutblocksApp"

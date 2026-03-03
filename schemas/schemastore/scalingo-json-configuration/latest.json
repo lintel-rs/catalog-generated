@@ -97,7 +97,9 @@
     "scripts": {
       "description": "The scripts.postdeploy key is now deprecated in favor of postdeploy hook in the Procfile.\n\nMore information on the dedicated page : <https://doc.scalingo.com/platform/app/review-apps#run-a-task-after-the-first-deployment-of-a-review-app>",
       "type": "object",
-      "additionalProperties": false,
+      "default": {
+        "first-deploy": "bundle exec rake db:deploy db:seed"
+      },
       "properties": {
         "first-deploy": {
           "description": "Job to run as postdeploy hook at the first deployment of a review app or one-click deployed app",
@@ -105,9 +107,7 @@
         }
       },
       "required": [],
-      "default": {
-        "first-deploy": "bundle exec rake db:deploy db:seed"
-      }
+      "additionalProperties": false
     },
     "addons": {
       "$ref": "#/$defs/addons",
@@ -118,7 +118,6 @@
       ]
     }
   },
-  "additionalProperties": false,
   "$defs": {
     "addons": {
       "description": "If no addons key is specified, the default behaviour is to duplicate the addons from the parent application.\n\nThe addons field contains an array of object describing the addons you need to deploy for your review app.\n\nSee <https://doc.scalingo.com/addons>",
@@ -127,7 +126,9 @@
         "oneOf": [
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "plan"
+            ],
             "properties": {
               "plan": {
                 "description": "The plan uses the format addon-name:plan-id. E.g. mongodb:mongo-starter-256 or redis:redis-sandbox.\n\nSee <https://doc.scalingo.com/addons>",
@@ -148,7 +149,6 @@
               "options": {
                 "description": "The only options field is version which contains the version to deploy (e.g. 4.0.16-1).",
                 "type": "object",
-                "additionalProperties": true,
                 "properties": {
                   "version": {
                     "description": "The version to deploy (e.g. 4.0.16-1)",
@@ -157,12 +157,11 @@
                       "4.0.16-1"
                     ]
                   }
-                }
+                },
+                "additionalProperties": true
               }
             },
-            "required": [
-              "plan"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "string",
@@ -218,7 +217,9 @@
           {
             "type": "object",
             "description": "Name of the env variable",
-            "additionalProperties": false,
+            "required": [
+              "description"
+            ],
             "properties": {
               "description": {
                 "description": "Description of the variable to explain what it does",
@@ -229,14 +230,14 @@
                 "const": false
               }
             },
-            "required": [
-              "description"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
             "description": "Name of the env variable",
-            "additionalProperties": false,
+            "required": [
+              "generator"
+            ],
             "properties": {
               "description": {
                 "description": "Description of the variable to explain what it does",
@@ -257,14 +258,14 @@
                 ]
               }
             },
-            "required": [
-              "generator"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
             "description": "Name of the env variable",
-            "additionalProperties": false,
+            "required": [
+              "generator"
+            ],
             "properties": {
               "description": {
                 "description": "Description of the variable to explain what it does",
@@ -293,14 +294,14 @@
                 ]
               }
             },
-            "required": [
-              "generator"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
             "description": "Name of the env variable",
-            "additionalProperties": false,
+            "required": [
+              "value"
+            ],
             "properties": {
               "description": {
                 "description": "Description of the variable to explain what it does",
@@ -320,13 +321,14 @@
                 ]
               }
             },
-            "required": [
-              "value"
-            ]
+            "additionalProperties": false
           },
           {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "generator",
+              "template"
+            ],
             "properties": {
               "description": {
                 "description": "Description of the variable to explain what it does",
@@ -355,10 +357,7 @@
                 ]
               }
             },
-            "required": [
-              "generator",
-              "template"
-            ]
+            "additionalProperties": false
           }
         ],
         "examples": [
@@ -379,6 +378,7 @@
       }
     }
   },
+  "additionalProperties": false,
   "required": [
     "name"
   ]

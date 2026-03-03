@@ -29,7 +29,6 @@
       "properties": {
         "main": {
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "params": {
               "description": "The name of the parameter variable.",
@@ -45,7 +44,8 @@
               "$ref": "#/$defs/stepArray",
               "description": "An array of objects with a single step."
             }
-          }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": {
@@ -61,7 +61,6 @@
     "subworkflow": {
       "type": "object",
       "description": "A subworkflow.",
-      "additionalProperties": false,
       "properties": {
         "params": {
           "description": "The name of the parameter variable.",
@@ -74,7 +73,8 @@
           "$ref": "#/$defs/stepArray",
           "description": "An array of objects with a single step."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "stepArray": {
       "type": "array",
@@ -98,7 +98,20 @@
     "step": {
       "type": "object",
       "description": "A single workflow step.",
-      "additionalProperties": false,
+      "dependentRequired": {
+        "args": [
+          "call"
+        ],
+        "result": [
+          "call"
+        ],
+        "except": [
+          "try"
+        ],
+        "retry": [
+          "try"
+        ]
+      },
       "properties": {
         "assign": {
           "$ref": "#/$defs/assign"
@@ -143,20 +156,7 @@
           "$ref": "#/$defs/stepArray"
         }
       },
-      "dependentRequired": {
-        "args": [
-          "call"
-        ],
-        "result": [
-          "call"
-        ],
-        "except": [
-          "try"
-        ],
-        "retry": [
-          "try"
-        ]
-      }
+      "additionalProperties": false
     },
     "assign": {
       "description": "A list of variable assignment maps.",
@@ -216,7 +216,6 @@
     "args": {
       "type": "object",
       "description": "Pass arguments and their values when calling a function that accepts parameters.",
-      "additionalProperties": true,
       "properties": {
         "url": {
           "anyOf": [
@@ -285,7 +284,6 @@
         "auth": {
           "description": "Required if the API being called requires authentication.",
           "type": "object",
-          "additionalProperties": false,
           "properties": {
             "type": {
               "description": "The type of authentication.",
@@ -327,7 +325,8 @@
                 }
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         "timeout": {
           "description": "Time in seconds. How long a request is allowed to run before throwing an exception. Default and maximum values vary by call.",
@@ -375,7 +374,8 @@
             }
           }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "result": {
       "description": "Assign the result from a call to this variable."
@@ -410,7 +410,18 @@
     "for": {
       "description": "Iterates over a sequence of numbers or through a collection of data, such as a list or map.",
       "type": "object",
-      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "in"
+          ]
+        },
+        {
+          "required": [
+            "range"
+          ]
+        }
+      ],
       "required": [
         "value",
         "steps"
@@ -462,23 +473,23 @@
           "description": "Each iteration the steps will be executed."
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "in"
-          ]
-        },
-        {
-          "required": [
-            "range"
-          ]
-        }
-      ]
+      "additionalProperties": false
     },
     "parallel": {
       "type": "object",
       "description": "Define a part of your workflow where two or more steps can execute concurrently. A 'parallel' step waits until all the steps defined within it have completed or are interrupted by an unhandled exception; execution then continues.",
-      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "for"
+          ]
+        },
+        {
+          "required": [
+            "branches"
+          ]
+        }
+      ],
       "properties": {
         "exception_policy": {
           "description": "The action for other branches when an exception occurs. Optional. The default policy, 'continueAll', results in no further action, and all other branches will attempt to run.",
@@ -506,18 +517,7 @@
           "description": "A loop where iterations can run concurrently. Required, if not using 'branches'."
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "for"
-          ]
-        },
-        {
-          "required": [
-            "branches"
-          ]
-        }
-      ]
+      "additionalProperties": false
     },
     "branches": {
       "$ref": "#/$defs/stepArray",
@@ -637,7 +637,6 @@
     "except": {
       "description": "A try/except structure for error handling.",
       "type": "object",
-      "additionalProperties": false,
       "properties": {
         "as": {
           "description": "The name of a map variable that contains the error message.",
@@ -647,7 +646,8 @@
           "$ref": "#/$defs/stepArray",
           "description": "A list of steps."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "retry": {
       "description": "Define a retry policy to retry steps that return a specific error code.",
@@ -655,7 +655,6 @@
         {
           "type": "object",
           "description": "Retry block. Optional, if using a default retry policy.",
-          "additionalProperties": false,
           "properties": {
             "predicate": {
               "type": "string",
@@ -668,7 +667,6 @@
             "backoff": {
               "type": "object",
               "description": "Block that controls how retries occur.",
-              "additionalProperties": false,
               "properties": {
                 "initial_delay": {
                   "type": "integer",
@@ -682,9 +680,11 @@
                   "type": "integer",
                   "description": "Multiplier applied to the previous delay to calculate the delay for the subsequent retry."
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "description": "Default retry policy. Optional, if using retry block. Options include ${http.default_retry} and ${http.default_retry_non_idempotent}.",

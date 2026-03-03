@@ -6,7 +6,6 @@
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/open-feature/flagd-schemas/json/json-schema-v0.1.1/json/flagd-definitions.json",
     "sourceSha256": "9b3e94516ae530d0ba61d8c7097a515c4bb9f62478c5501839f5de924469f973",
-    "invalid": true,
     "fileMatch": [
       "flagd.json",
       "flagd.yaml",
@@ -87,15 +86,15 @@
       "properties": {
         "variants": {
           "type": "object",
+          "default": {
+            "on": true,
+            "off": false
+          },
           "additionalProperties": false,
           "patternProperties": {
             "^.{1,}$": {
               "type": "boolean"
             }
-          },
-          "default": {
-            "on": true,
-            "off": false
           }
         }
       }
@@ -142,7 +141,16 @@
         }
       }
     },
-    "$comment": "Merge the variants with the base flag to build our typed flags",
+    "objectFlag": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/flag"
+        },
+        {
+          "$ref": "#/$defs/objectVariants"
+        }
+      ]
+    },
     "booleanFlag": {
       "allOf": [
         {
@@ -172,16 +180,7 @@
           "$ref": "#/$defs/numberVariants"
         }
       ]
-    },
-    "objectFlag": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/flag"
-        },
-        {
-          "$ref": "#/$defs/objectVariants"
-        }
-      ]
     }
-  }
+  },
+  "$comment": "Merge the variants with the base flag to build our typed flags"
 }

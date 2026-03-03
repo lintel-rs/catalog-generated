@@ -20,46 +20,31 @@
   "type": "object",
   "properties": {
     "services": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z0-9_-]{1,128}$",
+        "type": "string"
+      },
       "additionalProperties": {
         "$ref": "#/$defs/gitpod.v1.AutomationsFile.Service"
-      },
-      "propertyNames": {
-        "pattern": "^[a-zA-Z0-9_-]{1,128}$",
-        "type": "string"
-      },
-      "type": "object"
+      }
     },
     "tasks": {
-      "additionalProperties": {
-        "$ref": "#/$defs/gitpod.v1.AutomationsFile.Task"
-      },
+      "type": "object",
       "propertyNames": {
         "pattern": "^[a-zA-Z0-9_-]{1,128}$",
         "type": "string"
       },
-      "type": "object"
+      "additionalProperties": {
+        "$ref": "#/$defs/gitpod.v1.AutomationsFile.Task"
+      }
     }
   },
   "$defs": {
     "gitpod.v1.AutomationsFile.Service": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
       "additionalProperties": false,
-      "patternProperties": {
-        "^(runs_on)$": {
-          "$ref": "#/$defs/gitpod.v1.RunsOn"
-        },
-        "^(triggered_by)$": {
-          "items": {
-            "enum": [
-              "manual",
-              "postEnvironmentStart",
-              "postDevcontainerStart"
-            ],
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
       "properties": {
         "commands": {
           "$ref": "#/$defs/gitpod.v1.ServiceSpec.Commands"
@@ -99,18 +84,7 @@
         }
       },
       "title": "Service",
-      "type": "object"
-    },
-    "gitpod.v1.AutomationsFile.Task": {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "additionalProperties": false,
       "patternProperties": {
-        "^(depends_on)$": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
         "^(runs_on)$": {
           "$ref": "#/$defs/gitpod.v1.RunsOn"
         },
@@ -119,14 +93,18 @@
             "enum": [
               "manual",
               "postEnvironmentStart",
-              "postDevcontainerStart",
-              "prebuild"
+              "postDevcontainerStart"
             ],
             "type": "string"
           },
           "type": "array"
         }
-      },
+      }
+    },
+    "gitpod.v1.AutomationsFile.Task": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
       "properties": {
         "command": {
           "default": "",
@@ -165,11 +143,33 @@
         }
       },
       "title": "Task",
-      "type": "object"
+      "patternProperties": {
+        "^(depends_on)$": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "^(runs_on)$": {
+          "$ref": "#/$defs/gitpod.v1.RunsOn"
+        },
+        "^(triggered_by)$": {
+          "items": {
+            "enum": [
+              "manual",
+              "postEnvironmentStart",
+              "postDevcontainerStart",
+              "prebuild"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      }
     },
     "gitpod.v1.RunsOn": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "docker": {
           "$ref": "#/$defs/gitpod.v1.RunsOn.Docker"
@@ -179,11 +179,11 @@
         }
       },
       "title": "Runs On",
-      "type": "object"
+      "additionalProperties": false
     },
     "gitpod.v1.RunsOn.Docker": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "environment": {
           "items": {
@@ -198,19 +198,19 @@
         }
       },
       "title": "Docker",
-      "type": "object"
+      "additionalProperties": false
     },
     "gitpod.v1.RunsOn.Machine": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "additionalProperties": false,
+      "type": "object",
       "description": "Machine runs the service/task directly on the VM/machine level.",
       "properties": {},
       "title": "Machine",
-      "type": "object"
+      "additionalProperties": false
     },
     "gitpod.v1.ServiceSpec.Commands": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "ready": {
           "default": "",
@@ -230,7 +230,7 @@
         }
       },
       "title": "Commands",
-      "type": "object"
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

@@ -55,7 +55,6 @@
           "type": "object",
           "title": "Component",
           "description": "A deployable unit in the project.",
-          "additionalProperties": false,
           "properties": {
             "role": {
               "type": "string",
@@ -178,7 +177,34 @@
               "type": "object",
               "title": "Autoscaling Configuration",
               "description": "Defines the autoscaling settings for the component, allowing automatic adjustment of replicas based on resource usage.",
-              "additionalProperties": false,
+              "examples": [
+                {
+                  "enabled": true,
+                  "minReplicas": 2,
+                  "maxReplicas": 6,
+                  "metrics": [
+                    {
+                      "type": "cpu",
+                      "target": 70
+                    }
+                  ]
+                },
+                {
+                  "enabled": true,
+                  "minReplicas": 3,
+                  "maxReplicas": 10,
+                  "metrics": [
+                    {
+                      "type": "cpu",
+                      "target": 65
+                    },
+                    {
+                      "type": "memory",
+                      "target": 75
+                    }
+                  ]
+                }
+              ],
               "properties": {
                 "enabled": {
                   "type": "boolean",
@@ -209,7 +235,10 @@
                     "type": "object",
                     "title": "Metric",
                     "description": "Configuration for an individual autoscaling metric.",
-                    "additionalProperties": false,
+                    "required": [
+                      "type",
+                      "target"
+                    ],
                     "properties": {
                       "type": {
                         "type": "string",
@@ -227,10 +256,7 @@
                         "minimum": 1
                       }
                     },
-                    "required": [
-                      "type",
-                      "target"
-                    ]
+                    "additionalProperties": false
                   },
                   "default": [
                     {
@@ -257,40 +283,21 @@
                 "minReplicas",
                 "maxReplicas"
               ],
-              "examples": [
-                {
-                  "enabled": true,
-                  "minReplicas": 2,
-                  "maxReplicas": 6,
-                  "metrics": [
-                    {
-                      "type": "cpu",
-                      "target": 70
-                    }
-                  ]
-                },
-                {
-                  "enabled": true,
-                  "minReplicas": 3,
-                  "maxReplicas": 10,
-                  "metrics": [
-                    {
-                      "type": "cpu",
-                      "target": 65
-                    },
-                    {
-                      "type": "memory",
-                      "target": 75
-                    }
-                  ]
-                }
-              ]
+              "additionalProperties": false
             },
             "resources": {
               "type": "object",
               "title": "Resource Configuration",
               "description": "Defines the resource requests and limits for the component, including CPU, memory, and ephemeral storage. At least one resource field must be specified.",
-              "additionalProperties": false,
+              "examples": [
+                {
+                  "cpu": "500m",
+                  "memory": "512Mi"
+                },
+                {
+                  "ephemeralStorage": "2Gi"
+                }
+              ],
               "properties": {
                 "cpu": {
                   "type": "string",
@@ -312,15 +319,7 @@
                 }
               },
               "minProperties": 0,
-              "examples": [
-                {
-                  "cpu": "500m",
-                  "memory": "512Mi"
-                },
-                {
-                  "ephemeralStorage": "2Gi"
-                }
-              ]
+              "additionalProperties": false
             },
             "resourcePreset": {
               "type": "string",
@@ -345,7 +344,15 @@
               "type": "object",
               "title": "Ingress Configuration",
               "description": "Specifies the ingress settings for exposing the component via HTTP/HTTPS.",
-              "additionalProperties": false,
+              "examples": [
+                {
+                  "host": "app.example.com",
+                  "tls": true
+                },
+                {
+                  "host": "api.mydomain.dev"
+                }
+              ],
               "properties": {
                 "host": {
                   "type": "string",
@@ -363,29 +370,12 @@
               "required": [
                 "host"
               ],
-              "examples": [
-                {
-                  "host": "app.example.com",
-                  "tls": true
-                },
-                {
-                  "host": "api.mydomain.dev"
-                }
-              ]
+              "additionalProperties": false
             },
             "env": {
               "type": "object",
               "title": "Environment Variables",
               "description": "Defines environment variables for the component as key-value pairs. Keys must be uppercase letters, numbers, or underscores, starting with a letter or underscore. Values must be a string, number, or boolean. Complex types like arrays or objects are not allowed.",
-              "patternProperties": {
-                "^[A-Z_][A-Z0-9_]*$": {
-                  "type": [
-                    "string",
-                    "number",
-                    "boolean"
-                  ]
-                }
-              },
               "additionalProperties": false,
               "examples": [
                 {
@@ -394,9 +384,19 @@
                   "MAX_RETRIES": 5,
                   "TIMEOUT": 30.5
                 }
-              ]
+              ],
+              "patternProperties": {
+                "^[A-Z_][A-Z0-9_]*$": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                }
+              }
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -408,7 +408,9 @@
         "type": "object",
         "title": "Environment Definition",
         "description": "The environment definition.",
-        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -452,13 +454,7 @@
               "description": "The name of the variable.",
               "pattern": "^[A-Z0-9]+(?:_[A-Z0-9]+)*$"
             },
-            "additionalProperties": {
-              "type": [
-                "string",
-                "number",
-                "boolean"
-              ]
-            },
+            "default": {},
             "examples": [
               {
                 "APP_ENV": "production",
@@ -466,16 +462,19 @@
                 "DEBUG": false
               }
             ],
-            "default": {}
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            }
           }
         },
-        "required": [
-          "name"
-        ]
+        "additionalProperties": false
       }
     }
   },
-  "additionalProperties": false,
   "examples": [
     {
       "apiVersion": "v1-beta.2",
@@ -531,6 +530,7 @@
       }
     }
   ],
+  "additionalProperties": false,
   "required": [
     "apiVersion",
     "project",

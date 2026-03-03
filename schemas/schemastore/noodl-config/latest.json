@@ -13,9 +13,20 @@
     ]
   },
   "type": "object",
+  "patternProperties": {
+    "^[a-zA-Z0-9]*$": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Page"
+        }
+      ],
+      "type": "object"
+    }
+  },
+  "$ref": "#/$defs/RootConfig",
   "$defs": {
     "Action": {
-      "additionalProperties": {},
+      "type": "object",
       "properties": {
         "actionType": {
           "$ref": "#/$defs/ActionType"
@@ -102,7 +113,7 @@
           "title": "Wait"
         }
       },
-      "type": "object"
+      "additionalProperties": {}
     },
     "ActionChain": {
       "description": "A chain of actions in sequential order",
@@ -156,7 +167,7 @@
           "type": "string"
         },
         {
-          "additionalProperties": true,
+          "type": "object",
           "properties": {
             "color": {
               "$ref": "#/$defs/Color"
@@ -175,7 +186,7 @@
               "$ref": "#/$defs/NoodlUnit"
             }
           },
-          "type": "object"
+          "additionalProperties": true
         }
       ],
       "title": "Border"
@@ -302,9 +313,11 @@
     },
     "BuiltInEval": {
       "description": "Objects that become built in functions when parsed/serialized",
+      "type": "object",
+      "title": "Built in eval object",
       "patternProperties": {
         "^=.builtIn.[a-zA-Z0-9]+$": {
-          "additionalProperties": true,
+          "type": "object",
           "properties": {
             "dataIn": {
               "$ref": "#/$defs/DataIn"
@@ -313,11 +326,9 @@
               "$ref": "#/$defs/DataOut"
             }
           },
-          "type": "object"
+          "additionalProperties": true
         }
-      },
-      "title": "Built in eval object",
-      "type": "object"
+      }
     },
     "Color": {
       "examples": [
@@ -328,7 +339,7 @@
       "type": "string"
     },
     "Component": {
-      "additionalProperties": true,
+      "type": "object",
       "description": "Components are the building blocks that construct to user interfaces",
       "properties": {
         "audioStream": {
@@ -642,7 +653,7 @@
         }
       },
       "title": "Component",
-      "type": "object"
+      "additionalProperties": true
     },
     "ComponentType": {
       "examples": [
@@ -676,7 +687,7 @@
       "type": "string"
     },
     "ConfigVersionObjectByDevice": {
-      "additionalProperties": false,
+      "type": "object",
       "properties": {
         "cadlVersion": {
           "properties": {
@@ -697,7 +708,7 @@
         }
       },
       "title": "Root config version object",
-      "type": "object"
+      "additionalProperties": false
     },
     "ContentType": {
       "description": "Determines the content type of the component. For example, a textField component may be a date textField if it has contentType: date, or a password textField with contentType: password, etc",
@@ -743,6 +754,8 @@
     },
     "DataKeyObject": {
       "description": "Data key in the emit object",
+      "type": "object",
+      "title": "Data key",
       "patternProperties": {
         "^[a-zA-Z0-9]+$": {
           "examples": [
@@ -750,9 +763,7 @@
           ],
           "type": "object"
         }
-      },
-      "title": "Data key",
-      "type": "object"
+      }
     },
     "DataKeyString": {
       "description": "The path to a data object or value. It might provide a different behavior depending on where it is placed. For example, a dataKey set on a textField component will bind its value to the path in the dataKey, enabling it to mutate the value while updating textField's value",
@@ -774,7 +785,7 @@
       "title": "Data out"
     },
     "Emit": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "An emit is a special type of action that usually contains a dataKey paired with a list of actions that are called in order. Some emits can contain just a list of actions. When paired with a dataKey it is usually mutating the value at the path in the dataKey",
       "properties": {
         "actions": {
@@ -807,7 +818,7 @@
         "actions"
       ],
       "title": "Emit",
-      "type": "object"
+      "additionalProperties": false
     },
     "Empty": {
       "const": "",
@@ -939,12 +950,12 @@
             "type": "array"
           },
           {
+            "type": "object",
             "patternProperties": {
               "(=.[a-zA_Z0-9])*@$": {
                 "$ref": "#/$defs/Value"
               }
-            },
-            "type": "object"
+            }
           }
         ]
       },
@@ -962,7 +973,7 @@
       "type": "string"
     },
     "Page": {
-      "additionalProperties": {},
+      "type": "object",
       "description": "A page object",
       "properties": {
         "check": {
@@ -1016,7 +1027,7 @@
         }
       },
       "title": "Page",
-      "type": "object"
+      "additionalProperties": {}
     },
     "PageActions": {
       "items": {
@@ -1121,7 +1132,7 @@
       "type": "string"
     },
     "Root": {
-      "additionalProperties": true,
+      "type": "object",
       "description": "The root/base object. It is global to all descendants",
       "properties": {
         "BaseCSS": {
@@ -1134,13 +1145,7 @@
           "type": "object"
         },
         "BaseDataModel": {
-          "additionalProperties": {
-            "anyOf": [
-              {
-                "type": "object"
-              }
-            ]
-          },
+          "type": "object",
           "properties": {
             "Config": {
               "$ref": "#/$defs/RootConfig"
@@ -1150,7 +1155,13 @@
             }
           },
           "title": "Base data models",
-          "type": "object"
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "object"
+              }
+            ]
+          }
         },
         "BasePage": {
           "title": "Base page components",
@@ -1167,10 +1178,10 @@
         }
       },
       "title": "Root object",
-      "type": "object"
+      "additionalProperties": true
     },
     "RootConfig": {
-      "additionalProperties": true,
+      "type": "object",
       "properties": {
         "android": {
           "$ref": "#/$defs/ConfigVersionObjectByDevice",
@@ -1287,7 +1298,7 @@
         }
       },
       "title": "Root/base config",
-      "type": "object"
+      "additionalProperties": true
     },
     "RootEvalReference": {
       "description": "Mutates the value at the root referenced path after receiving its result",
@@ -1317,7 +1328,7 @@
       "type": "array"
     },
     "Style": {
-      "additionalProperties": true,
+      "type": "object",
       "properties": {
         "align": {
           "description": "The alignment in a block. If align is horizontal, siblings will align horizontally, vice versa. This is functionally equivalent to the \"axis\" keyword",
@@ -1552,7 +1563,7 @@
         }
       },
       "title": "Component style object",
-      "type": "object"
+      "additionalProperties": true
     },
     "Text": {
       "description": "Used to display text in the user interface. Most commonly used in label components",
@@ -1588,7 +1599,7 @@
       "type": "string"
     },
     "TextAlignObject": {
-      "additionalProperties": true,
+      "type": "object",
       "properties": {
         "x": {
           "examples": [
@@ -1607,7 +1618,7 @@
         }
       },
       "title": "Text align object",
-      "type": "object"
+      "additionalProperties": true
     },
     "TextBoard": {
       "description": "A component that contains children of text that are positioned inline (side by side)",
@@ -1680,17 +1691,6 @@
       "description": "An identifier which is used to bind a component and an action together. Actions can define a viewTag that invokes certain behavior towards a component. The component must also contain the same viewTag key/value. If multiple components have the same viewTag, then the action will effect multiple components",
       "title": "View tag",
       "type": "string"
-    }
-  },
-  "$ref": "#/$defs/RootConfig",
-  "patternProperties": {
-    "^[a-zA-Z0-9]*$": {
-      "anyOf": [
-        {
-          "$ref": "#/$defs/Page"
-        }
-      ],
-      "type": "object"
     }
   }
 }

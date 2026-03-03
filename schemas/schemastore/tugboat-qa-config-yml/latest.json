@@ -54,44 +54,6 @@
         "^[a-z0-9_-]+$": {
           "description": "Configuration for a single service",
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "image"
-          ],
-          "allOf": [
-            {
-              "if": {
-                "properties": {
-                  "default": {
-                    "const": true
-                  }
-                },
-                "type": "object"
-              },
-              "then": {
-                "properties": {
-                  "checkout": {
-                    "default": true
-                  },
-                  "expose": {
-                    "default": 80
-                  }
-                },
-                "type": "object"
-              },
-              "else": {
-                "properties": {
-                  "checkout": {
-                    "default": false
-                  },
-                  "expose": {
-                    "default": null
-                  }
-                },
-                "type": "object"
-              }
-            }
-          ],
           "properties": {
             "image": {
               "$comment": "https://docs.tugboatqa.com/reference/tugboat-configuration/#image",
@@ -139,6 +101,7 @@
                 {
                   "type": "object",
                   "description": "Environment variables defined as key-value pairs",
+                  "additionalProperties": false,
                   "patternProperties": {
                     "^[A-Z_][A-Z0-9_]*$": {
                       "type": [
@@ -147,8 +110,7 @@
                         "boolean"
                       ]
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 {
                   "type": "array",
@@ -170,8 +132,6 @@
               "title": "Build stage commands",
               "description": "Commands to run at different stages of the Preview lifecycle. These commands run in sequence: init → update → build → ready → online. Start commands run every time a Preview starts, and clone commands run when creating a new Preview from an existing one.",
               "type": "object",
-              "additionalProperties": false,
-              "minProperties": 1,
               "properties": {
                 "init": {
                   "title": "Initialization commands",
@@ -203,7 +163,9 @@
                   "description": "Commands that should be run on the cloned (new) Preview that has been created from an existing Preview",
                   "$ref": "#/$defs/commandGroup"
                 }
-              }
+              },
+              "minProperties": 1,
+              "additionalProperties": false
             },
             "aliases": {
               "$comment": "https://docs.tugboatqa.com/reference/tugboat-configuration/#aliases",
@@ -268,7 +230,6 @@
               "$comment": "https://docs.tugboatqa.com/reference/tugboat-configuration/#lighthouse",
               "description": "Lighthouse configurations that affect all of the URLs defined for this Service. Values configured here override the Tugboat default values, but can also be overridden per-URL.",
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "enabled": {
                   "description": "Whether to render Lighthouse Reports for the URLs defined for this Service",
@@ -295,7 +256,8 @@
                     "desktop"
                   ]
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "visualdiff": {
               "$comment": "https://docs.tugboatqa.com/reference/tugboat-configuration/#visualdiff",
@@ -361,6 +323,7 @@
                 {
                   "description": "Alias Groups - URLs grouped by alias",
                   "type": "object",
+                  "additionalProperties": false,
                   "patternProperties": {
                     "^(:default|[a-z0-9-]+)$": {
                       "type": "array",
@@ -397,8 +360,7 @@
                         ]
                       }
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 }
               ]
             },
@@ -456,6 +418,7 @@
                 },
                 {
                   "type": "object",
+                  "additionalProperties": false,
                   "patternProperties": {
                     "^(:default|[a-z0-9-]+)$": {
                       "type": "array",
@@ -493,20 +456,53 @@
                         ]
                       }
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 }
               ]
             }
-          }
+          },
+          "required": [
+            "image"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "default": {
+                    "const": true
+                  }
+                },
+                "type": "object"
+              },
+              "then": {
+                "properties": {
+                  "checkout": {
+                    "default": true
+                  },
+                  "expose": {
+                    "default": 80
+                  }
+                },
+                "type": "object"
+              },
+              "else": {
+                "properties": {
+                  "checkout": {
+                    "default": false
+                  },
+                  "expose": {
+                    "default": null
+                  }
+                },
+                "type": "object"
+              }
+            }
+          ],
+          "additionalProperties": false
         }
       }
     }
   },
-  "additionalProperties": false,
-  "required": [
-    "services"
-  ],
   "$defs": {
     "screenshotConfig": {
       "type": "object",
@@ -809,5 +805,9 @@
         }
       ]
     }
-  }
+  },
+  "required": [
+    "services"
+  ],
+  "additionalProperties": false
 }

@@ -42,12 +42,12 @@
       ]
     },
     "build": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "An object containing another object with information to be passed to the Build Process",
       "deprecated": true,
       "properties": {
         "env": {
-          "additionalProperties": false,
+          "type": "object",
           "description": "An object containing the deployment's environment variable names and values to be passed to Builds. Secrets can be referenced by prefixing the value with `@`",
           "example": {
             "A_SECRET": "@a-secret"
@@ -55,23 +55,23 @@
           "deprecated": true,
           "maxProperties": 1000,
           "minProperties": 0,
+          "additionalProperties": false,
           "patternProperties": {
             ".+": {
               "maxLength": 65536,
               "minLength": 0,
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         }
       },
-      "type": "object"
+      "additionalProperties": false
     },
     "builds": {
       "description": "A list of build descriptions whose src references valid source files.",
       "deprecated": true,
       "items": {
-        "additionalProperties": false,
+        "type": "object",
         "properties": {
           "config": {
             "description": "Optionally, an object including arbitrary metadata to be passed to the Builder",
@@ -93,7 +93,7 @@
         "required": [
           "use"
         ],
-        "type": "object"
+        "additionalProperties": false
       },
       "maxItems": 128,
       "minItems": 0,
@@ -104,7 +104,7 @@
       "type": "boolean"
     },
     "env": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "An object containing the deployment's environment variable names and values. Secrets can be referenced by prefixing the value with `@`",
       "example": {
         "A_SECRET": "@a-secret"
@@ -112,14 +112,14 @@
       "deprecated": true,
       "maxProperties": 1000,
       "minProperties": 0,
+      "additionalProperties": false,
       "patternProperties": {
         ".+": {
           "maxLength": 65536,
           "minLength": 0,
           "type": "string"
         }
-      },
-      "type": "object"
+      }
     },
     "passiveRegions": {
       "description": "An array of the passive regions the deployment's Serverless Functions should be deployed to that can be failed over to during a lambda outage",
@@ -150,7 +150,7 @@
       "type": "array"
     },
     "functions": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "An object describing custom options for your Serverless Functions. Each key must be glob pattern that matches the paths of the Serverless Functions you would like to customize (like `api/*.js` or `api/test.js`).",
       "example": {
         "src/pages/**": {
@@ -160,9 +160,10 @@
       },
       "maxProperties": 50,
       "minProperties": 1,
+      "additionalProperties": false,
       "patternProperties": {
         "^.{1,256}$": {
-          "additionalProperties": false,
+          "type": "object",
           "properties": {
             "excludeFiles": {
               "description": "A glob pattern to match files that should be excluded from your Serverless Function. If you’re using a Community Runtime, the behavior might vary.",
@@ -228,7 +229,6 @@
                       "topic",
                       "consumer"
                     ],
-                    "additionalProperties": false,
                     "properties": {
                       "type": {
                         "description": "Event type pattern this trigger handles",
@@ -271,7 +271,8 @@
                         "minimum": 1,
                         "maximum": 100
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   },
                   {
                     "type": "object",
@@ -279,7 +280,6 @@
                       "type",
                       "topic"
                     ],
-                    "additionalProperties": false,
                     "properties": {
                       "type": {
                         "description": "Event type pattern this trigger handles",
@@ -316,16 +316,16 @@
                         "minimum": 1,
                         "maximum": 16384
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   }
                 ]
               }
             }
           },
-          "type": "object"
+          "additionalProperties": false
         }
-      },
-      "type": "object"
+      }
     },
     "git": {
       "type": "object",
@@ -394,11 +394,6 @@
       "description": "A list of header definitions.",
       "items": {
         "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "source",
-          "headers"
-        ],
         "properties": {
           "source": {
             "description": "A pattern that matches each incoming pathname (excluding querystring)",
@@ -411,11 +406,6 @@
             "maxItems": 1024,
             "items": {
               "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "key",
-                "value"
-              ],
               "properties": {
                 "key": {
                   "type": "string",
@@ -425,7 +415,12 @@
                   "type": "string",
                   "maxLength": 32768
                 }
-              }
+              },
+              "required": [
+                "key",
+                "value"
+              ],
+              "additionalProperties": false
             }
           },
           "has": {
@@ -436,11 +431,6 @@
               "anyOf": [
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "value"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -460,8 +450,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -527,19 +515,21 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "value"
+                  ],
+                  "additionalProperties": false
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "key"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -566,8 +556,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -633,11 +621,18 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "key"
+                  ],
+                  "additionalProperties": false
                 }
               ]
             }
@@ -650,11 +645,6 @@
               "anyOf": [
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "value"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -674,8 +664,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -741,19 +729,21 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "value"
+                  ],
+                  "additionalProperties": false
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "key"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -780,8 +770,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -847,24 +835,32 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "key"
+                  ],
+                  "additionalProperties": false
                 }
               ]
             }
           }
-        }
+        },
+        "required": [
+          "source",
+          "headers"
+        ],
+        "additionalProperties": false
       }
     },
     "images": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "sizes"
-      ],
       "properties": {
         "contentDispositionType": {
           "enum": [
@@ -909,7 +905,6 @@
           "maxItems": 25,
           "items": {
             "type": "object",
-            "additionalProperties": false,
             "properties": {
               "pathname": {
                 "type": "string",
@@ -921,7 +916,8 @@
                 "minLength": 0,
                 "maxLength": 256
               }
-            }
+            },
+            "additionalProperties": false
           }
         },
         "minimumCacheTTL": {
@@ -945,10 +941,6 @@
           "maxItems": 50,
           "items": {
             "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "hostname"
-            ],
             "properties": {
               "protocol": {
                 "enum": [
@@ -976,7 +968,11 @@
                 "minLength": 0,
                 "maxLength": 256
               }
-            }
+            },
+            "required": [
+              "hostname"
+            ],
+            "additionalProperties": false
           }
         },
         "sizes": {
@@ -987,7 +983,11 @@
             "type": "number"
           }
         }
-      }
+      },
+      "required": [
+        "sizes"
+      ],
+      "additionalProperties": false
     },
     "name": {
       "description": "A name for the deployment",
@@ -1004,11 +1004,6 @@
       "description": "A list of redirect definitions.",
       "items": {
         "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "source",
-          "destination"
-        ],
         "properties": {
           "source": {
             "description": "A pattern that matches each incoming pathname (excluding querystring).",
@@ -1039,11 +1034,6 @@
               "anyOf": [
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "value"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -1063,8 +1053,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -1130,19 +1118,21 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "value"
+                  ],
+                  "additionalProperties": false
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "key"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -1169,8 +1159,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -1236,11 +1224,18 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "key"
+                  ],
+                  "additionalProperties": false
                 }
               ]
             }
@@ -1253,11 +1248,6 @@
               "anyOf": [
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "value"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -1277,8 +1267,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -1344,19 +1332,21 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "value"
+                  ],
+                  "additionalProperties": false
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "key"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -1383,8 +1373,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -1450,11 +1438,18 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "key"
+                  ],
+                  "additionalProperties": false
                 }
               ]
             }
@@ -1469,7 +1464,12 @@
               "maxLength": 256
             }
           }
-        }
+        },
+        "required": [
+          "source",
+          "destination"
+        ],
+        "additionalProperties": false
       }
     },
     "bulkRedirectsPath": {
@@ -1500,11 +1500,6 @@
       "description": "A list of rewrite definitions.",
       "items": {
         "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "source",
-          "destination"
-        ],
         "properties": {
           "source": {
             "description": "A pattern that matches each incoming pathname (excluding querystring).",
@@ -1524,11 +1519,6 @@
               "anyOf": [
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "value"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -1548,8 +1538,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -1615,19 +1603,21 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "value"
+                  ],
+                  "additionalProperties": false
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "key"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -1654,8 +1644,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -1721,11 +1709,18 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "key"
+                  ],
+                  "additionalProperties": false
                 }
               ]
             }
@@ -1738,11 +1733,6 @@
               "anyOf": [
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "value"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -1762,8 +1752,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -1829,19 +1817,21 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "value"
+                  ],
+                  "additionalProperties": false
                 },
                 {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "key"
-                  ],
                   "properties": {
                     "type": {
                       "description": "The type of request element to check",
@@ -1868,8 +1858,6 @@
                         {
                           "description": "A condition operation object",
                           "type": "object",
-                          "additionalProperties": false,
-                          "minProperties": 1,
                           "properties": {
                             "eq": {
                               "description": "Equal to",
@@ -1935,11 +1923,18 @@
                               "description": "Less than or equal to",
                               "type": "number"
                             }
-                          }
+                          },
+                          "minProperties": 1,
+                          "additionalProperties": false
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type",
+                    "key"
+                  ],
+                  "additionalProperties": false
                 }
               ]
             }
@@ -1964,7 +1959,12 @@
             "description": "When set to true (default), external rewrites will respect the Cache-Control header from the origin. When false, caching is disabled for this rewrite.",
             "type": "boolean"
           }
-        }
+        },
+        "required": [
+          "source",
+          "destination"
+        ],
+        "additionalProperties": false
       }
     },
     "routes": {
@@ -1984,7 +1984,6 @@
             "required": [
               "src"
             ],
-            "additionalProperties": false,
             "properties": {
               "src": {
                 "type": "string",
@@ -2042,8 +2041,6 @@
               },
               "locale": {
                 "type": "object",
-                "additionalProperties": false,
-                "minProperties": 1,
                 "properties": {
                   "redirect": {
                     "type": "object",
@@ -2073,7 +2070,9 @@
                     "type": "string",
                     "maxLength": 4096
                   }
-                }
+                },
+                "minProperties": 1,
+                "additionalProperties": false
               },
               "middleware": {
                 "type": "number"
@@ -2095,11 +2094,6 @@
                   "anyOf": [
                     {
                       "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "type",
-                        "value"
-                      ],
                       "properties": {
                         "type": {
                           "description": "The type of request element to check",
@@ -2119,8 +2113,6 @@
                             {
                               "description": "A condition operation object",
                               "type": "object",
-                              "additionalProperties": false,
-                              "minProperties": 1,
                               "properties": {
                                 "eq": {
                                   "description": "Equal to",
@@ -2186,19 +2178,21 @@
                                   "description": "Less than or equal to",
                                   "type": "number"
                                 }
-                              }
+                              },
+                              "minProperties": 1,
+                              "additionalProperties": false
                             }
                           ]
                         }
-                      }
+                      },
+                      "required": [
+                        "type",
+                        "value"
+                      ],
+                      "additionalProperties": false
                     },
                     {
                       "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "type",
-                        "key"
-                      ],
                       "properties": {
                         "type": {
                           "description": "The type of request element to check",
@@ -2225,8 +2219,6 @@
                             {
                               "description": "A condition operation object",
                               "type": "object",
-                              "additionalProperties": false,
-                              "minProperties": 1,
                               "properties": {
                                 "eq": {
                                   "description": "Equal to",
@@ -2292,11 +2284,18 @@
                                   "description": "Less than or equal to",
                                   "type": "number"
                                 }
-                              }
+                              },
+                              "minProperties": 1,
+                              "additionalProperties": false
                             }
                           ]
                         }
-                      }
+                      },
+                      "required": [
+                        "type",
+                        "key"
+                      ],
+                      "additionalProperties": false
                     }
                   ]
                 }
@@ -2309,11 +2308,6 @@
                   "anyOf": [
                     {
                       "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "type",
-                        "value"
-                      ],
                       "properties": {
                         "type": {
                           "description": "The type of request element to check",
@@ -2333,8 +2327,6 @@
                             {
                               "description": "A condition operation object",
                               "type": "object",
-                              "additionalProperties": false,
-                              "minProperties": 1,
                               "properties": {
                                 "eq": {
                                   "description": "Equal to",
@@ -2400,19 +2392,21 @@
                                   "description": "Less than or equal to",
                                   "type": "number"
                                 }
-                              }
+                              },
+                              "minProperties": 1,
+                              "additionalProperties": false
                             }
                           ]
                         }
-                      }
+                      },
+                      "required": [
+                        "type",
+                        "value"
+                      ],
+                      "additionalProperties": false
                     },
                     {
                       "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "type",
-                        "key"
-                      ],
                       "properties": {
                         "type": {
                           "description": "The type of request element to check",
@@ -2439,8 +2433,6 @@
                             {
                               "description": "A condition operation object",
                               "type": "object",
-                              "additionalProperties": false,
-                              "minProperties": 1,
                               "properties": {
                                 "eq": {
                                   "description": "Equal to",
@@ -2506,11 +2498,18 @@
                                   "description": "Less than or equal to",
                                   "type": "number"
                                 }
-                              }
+                              },
+                              "minProperties": 1,
+                              "additionalProperties": false
                             }
                           ]
                         }
-                      }
+                      },
+                      "required": [
+                        "type",
+                        "key"
+                      ],
+                      "additionalProperties": false
                     }
                   ]
                 }
@@ -2518,10 +2517,6 @@
               "mitigate": {
                 "description": "Mitigation action to take on a route",
                 "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "action"
-                ],
                 "properties": {
                   "action": {
                     "description": "The mitigation action to take",
@@ -2531,7 +2526,11 @@
                       "deny"
                     ]
                   }
-                }
+                },
+                "required": [
+                  "action"
+                ],
+                "additionalProperties": false
               },
               "transforms": {
                 "description": "A list of transform rules to adjust the query parameters of a request or HTTP headers of request or response",
@@ -2539,145 +2538,6 @@
                 "minItems": 1,
                 "items": {
                   "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "op",
-                    "target"
-                  ],
-                  "properties": {
-                    "type": {
-                      "description": "The scope of the transform to apply",
-                      "type": "string",
-                      "enum": [
-                        "request.headers",
-                        "request.query",
-                        "response.headers"
-                      ]
-                    },
-                    "op": {
-                      "description": "The operation to perform on the target",
-                      "type": "string",
-                      "enum": [
-                        "append",
-                        "set",
-                        "delete"
-                      ]
-                    },
-                    "target": {
-                      "description": "The target of the transform",
-                      "type": "object",
-                      "required": [
-                        "key"
-                      ],
-                      "properties": {
-                        "key": {
-                          "description": "A value to match against. Can be a string or a condition operation object (without regex support)",
-                          "anyOf": [
-                            {
-                              "description": "A valid header name (letters, numbers, hyphens, underscores)",
-                              "type": "string",
-                              "maxLength": 4096
-                            },
-                            {
-                              "description": "A condition operation object",
-                              "type": "object",
-                              "additionalProperties": false,
-                              "minProperties": 1,
-                              "properties": {
-                                "eq": {
-                                  "description": "Equal to",
-                                  "anyOf": [
-                                    {
-                                      "type": "string",
-                                      "maxLength": 4096
-                                    },
-                                    {
-                                      "type": "number"
-                                    }
-                                  ]
-                                },
-                                "neq": {
-                                  "description": "Not equal",
-                                  "type": "string",
-                                  "maxLength": 4096
-                                },
-                                "inc": {
-                                  "description": "In array",
-                                  "type": "array",
-                                  "items": {
-                                    "type": "string",
-                                    "maxLength": 4096
-                                  }
-                                },
-                                "ninc": {
-                                  "description": "Not in array",
-                                  "type": "array",
-                                  "items": {
-                                    "type": "string",
-                                    "maxLength": 4096
-                                  }
-                                },
-                                "pre": {
-                                  "description": "Starts with",
-                                  "type": "string",
-                                  "maxLength": 4096
-                                },
-                                "suf": {
-                                  "description": "Ends with",
-                                  "type": "string",
-                                  "maxLength": 4096
-                                },
-                                "gt": {
-                                  "description": "Greater than",
-                                  "type": "number"
-                                },
-                                "gte": {
-                                  "description": "Greater than or equal to",
-                                  "type": "number"
-                                },
-                                "lt": {
-                                  "description": "Less than",
-                                  "type": "number"
-                                },
-                                "lte": {
-                                  "description": "Less than or equal to",
-                                  "type": "number"
-                                }
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "args": {
-                      "description": "The arguments to the operation",
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "maxLength": 4096
-                        },
-                        {
-                          "type": "array",
-                          "minItems": 1,
-                          "items": {
-                            "type": "string",
-                            "maxLength": 4096
-                          }
-                        }
-                      ]
-                    },
-                    "env": {
-                      "description": "An array of environment variable names that should be replaced at runtime in the args value",
-                      "type": "array",
-                      "minItems": 1,
-                      "maxItems": 64,
-                      "items": {
-                        "type": "string",
-                        "maxLength": 256
-                      }
-                    }
-                  },
                   "allOf": [
                     {
                       "if": {
@@ -2758,7 +2618,146 @@
                         "type": "object"
                       }
                     }
-                  ]
+                  ],
+                  "required": [
+                    "type",
+                    "op",
+                    "target"
+                  ],
+                  "properties": {
+                    "type": {
+                      "description": "The scope of the transform to apply",
+                      "type": "string",
+                      "enum": [
+                        "request.headers",
+                        "request.query",
+                        "response.headers"
+                      ]
+                    },
+                    "op": {
+                      "description": "The operation to perform on the target",
+                      "type": "string",
+                      "enum": [
+                        "append",
+                        "set",
+                        "delete"
+                      ]
+                    },
+                    "target": {
+                      "description": "The target of the transform",
+                      "type": "object",
+                      "required": [
+                        "key"
+                      ],
+                      "properties": {
+                        "key": {
+                          "description": "A value to match against. Can be a string or a condition operation object (without regex support)",
+                          "anyOf": [
+                            {
+                              "description": "A valid header name (letters, numbers, hyphens, underscores)",
+                              "type": "string",
+                              "maxLength": 4096
+                            },
+                            {
+                              "description": "A condition operation object",
+                              "type": "object",
+                              "properties": {
+                                "eq": {
+                                  "description": "Equal to",
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 4096
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                },
+                                "neq": {
+                                  "description": "Not equal",
+                                  "type": "string",
+                                  "maxLength": 4096
+                                },
+                                "inc": {
+                                  "description": "In array",
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "maxLength": 4096
+                                  }
+                                },
+                                "ninc": {
+                                  "description": "Not in array",
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "maxLength": 4096
+                                  }
+                                },
+                                "pre": {
+                                  "description": "Starts with",
+                                  "type": "string",
+                                  "maxLength": 4096
+                                },
+                                "suf": {
+                                  "description": "Ends with",
+                                  "type": "string",
+                                  "maxLength": 4096
+                                },
+                                "gt": {
+                                  "description": "Greater than",
+                                  "type": "number"
+                                },
+                                "gte": {
+                                  "description": "Greater than or equal to",
+                                  "type": "number"
+                                },
+                                "lt": {
+                                  "description": "Less than",
+                                  "type": "number"
+                                },
+                                "lte": {
+                                  "description": "Less than or equal to",
+                                  "type": "number"
+                                }
+                              },
+                              "minProperties": 1,
+                              "additionalProperties": false
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "args": {
+                      "description": "The arguments to the operation",
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 4096
+                        },
+                        {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string",
+                            "maxLength": 4096
+                          }
+                        }
+                      ]
+                    },
+                    "env": {
+                      "description": "An array of environment variable names that should be replaced at runtime in the args value",
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 64,
+                      "items": {
+                        "type": "string",
+                        "maxLength": 256
+                      }
+                    }
+                  },
+                  "additionalProperties": false
                 }
               },
               "env": {
@@ -2775,14 +2774,14 @@
                 "description": "When set to true (default), external rewrites will respect the Cache-Control header from the origin. When false, caching is disabled for this rewrite.",
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           },
           {
             "type": "object",
             "required": [
               "handle"
             ],
-            "additionalProperties": false,
             "properties": {
               "handle": {
                 "type": "string",
@@ -2796,7 +2795,8 @@
                   "rewrite"
                 ]
               }
-            }
+            },
+            "additionalProperties": false
           }
         ]
       }
@@ -2819,7 +2819,7 @@
     "wildcard": {
       "private": true,
       "items": {
-        "additionalProperties": false,
+        "type": "object",
         "properties": {
           "domain": {
             "maxLength": 255,
@@ -2836,7 +2836,7 @@
           "domain",
           "value"
         ],
-        "type": "object"
+        "additionalProperties": false
       },
       "maxItems": 25,
       "minItems": 1,
@@ -3003,7 +3003,6 @@
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "type": {
             "description": "Service type: web, cron, or worker. Defaults to web.",
@@ -3123,7 +3122,8 @@
             "minLength": 1,
             "maxLength": 256
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "experimentalServiceGroups": {

@@ -121,6 +121,7 @@
           "description": "topology nodes configuration container",
           "markdownDescription": "topology [nodes](https://containerlab.dev/manual/nodes/) configuration container",
           "type": "object",
+          "additionalProperties": false,
           "patternProperties": {
             "^[a-zA-Z0-9][a-zA-Z0-9-._|]*$": {
               "oneOf": [
@@ -132,8 +133,7 @@
                 }
               ]
             }
-          },
-          "additionalProperties": false
+          }
         },
         "groups": {
           "description": "topology groups configuration container",
@@ -338,10 +338,10 @@
           }
         }
       },
-      "additionalProperties": false,
       "required": [
         "nodes"
-      ]
+      ],
+      "additionalProperties": false
     },
     "settings": {
       "description": "Global containerlab settings",
@@ -355,6 +355,11 @@
       "additionalProperties": false
     }
   },
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "topology"
+  ],
   "$defs": {
     "env": {
       "type": "object",
@@ -744,7 +749,6 @@
                 "$ref": "#/$defs/env"
               }
             },
-            "additionalProperties": false,
             "allOf": [
               {
                 "if": {
@@ -772,7 +776,8 @@
                   "type": "object"
                 }
               }
-            ]
+            ],
+            "additionalProperties": false
           },
           "uniqueItems": true,
           "description": "List of node components, used for multicontainer systems",
@@ -1631,7 +1636,6 @@
           "description": "CA certificate validity duration. Can only be set if the external CA certificate is not provided"
         }
       },
-      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -1681,7 +1685,8 @@
             ]
           }
         }
-      ]
+      ],
+      "additionalProperties": false
     },
     "stages-config": {
       "type": "object",
@@ -1807,7 +1812,10 @@
           "description": "List of exec commands as objects, each containing `command`, `target`, and `phase`",
           "items": {
             "type": "object",
-            "additionalProperties": false,
+            "required": [
+              "command",
+              "phase"
+            ],
             "properties": {
               "command": {
                 "type": "string",
@@ -1827,10 +1835,7 @@
                 "description": "Phase to execute this command (on-enter or on-exit)"
               }
             },
-            "required": [
-              "command",
-              "phase"
-            ]
+            "additionalProperties": false
           }
         }
       ]
@@ -2129,10 +2134,5 @@
         "m-sfm6-12e"
       ]
     }
-  },
-  "required": [
-    "name",
-    "topology"
-  ],
-  "additionalProperties": false
+  }
 }

@@ -122,13 +122,13 @@
               "description": "The module path that is resolved when the module specifier matches \"name\", shadows the \"main\" field."
             }
           },
+          "additionalProperties": false,
           "patternProperties": {
             "^\\./.+": {
               "$ref": "#/$defs/packageExportsEntryOrFallback",
               "description": "The module path prefix that is resolved when the module specifier starts with \"name/\", set to \"./*\" to allow external modules to import any subpath."
             }
-          },
-          "additionalProperties": false
+          }
         },
         {
           "$ref": "#/$defs/packageExportsEntryObject",
@@ -143,13 +143,13 @@
     "imports": {
       "description": "The \"imports\" field is used to create private mappings that only apply to import specifiers from within the package itself.",
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^#.+$": {
           "$ref": "#/$defs/packageImportsEntryOrFallback",
           "description": "The module path that is resolved when this environment matches the property name."
         }
-      },
-      "additionalProperties": false
+      }
     },
     "bin": {
       "type": [
@@ -193,6 +193,7 @@
             }
           }
         },
+        "additionalProperties": false,
         "patternProperties": {
           "^[^*]+$": {
             "description": "Maps the file path matching the property key to the file paths specified in the array.",
@@ -209,8 +210,7 @@
               "pattern": "^[^*]*(?:\\*[^*]*)?$"
             }
           }
-        },
-        "additionalProperties": false
+        }
       }
     },
     "man": {
@@ -411,40 +411,8 @@
       "type": "object",
       "additionalProperties": true
     },
-    "stackblitz": {
-      "description": "Defines the StackBlitz configuration for the project.",
-      "type": "object",
-      "properties": {
-        "installDependencies": {
-          "description": "StackBlitz automatically installs npm dependencies when opening a project.",
-          "type": "boolean"
-        },
-        "startCommand": {
-          "description": "A terminal command to be executed when opening the project, after installing npm dependencies.",
-          "type": [
-            "string",
-            "boolean"
-          ]
-        },
-        "compileTrigger": {
-          "description": "The compileTrigger option controls how file changes in the editor are written to the WebContainers in-memory filesystem. ",
-          "oneOf": [
-            {
-              "type": "string",
-              "enum": [
-                "auto",
-                "keystroke",
-                "save"
-              ]
-            }
-          ]
-        },
-        "env": {
-          "description": "A map of default environment variables that will be set in each top-level shell process.",
-          "type": "object"
-        }
-      },
-      "additionalProperties": false
+    "dependencies": {
+      "$ref": "#/$defs/dependency"
     },
     "devDependencies": {
       "$ref": "#/$defs/devDependency"
@@ -758,6 +726,7 @@
         "packageExtensions": {
           "description": "Used to extend the existing package definitions with additional information.",
           "type": "object",
+          "additionalProperties": false,
           "patternProperties": {
             "^.+$": {
               "type": "object",
@@ -777,8 +746,7 @@
               },
               "additionalProperties": false
             }
-          },
-          "additionalProperties": false
+          }
         },
         "peerDependencyRules": {
           "type": "object",
@@ -936,49 +904,42 @@
       },
       "additionalProperties": false
     },
-    "dependentSchemas": {
-      "$ref": "#/$defs/dependency"
+    "stackblitz": {
+      "description": "Defines the StackBlitz configuration for the project.",
+      "type": "object",
+      "properties": {
+        "installDependencies": {
+          "description": "StackBlitz automatically installs npm dependencies when opening a project.",
+          "type": "boolean"
+        },
+        "startCommand": {
+          "description": "A terminal command to be executed when opening the project, after installing npm dependencies.",
+          "type": [
+            "string",
+            "boolean"
+          ]
+        },
+        "compileTrigger": {
+          "description": "The compileTrigger option controls how file changes in the editor are written to the WebContainers in-memory filesystem. ",
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "auto",
+                "keystroke",
+                "save"
+              ]
+            }
+          ]
+        },
+        "env": {
+          "description": "A map of default environment variables that will be set in each top-level shell process.",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
     }
   },
-  "patternProperties": {
-    "^_": {
-      "description": "Any property starting with _ is valid.",
-      "tsType": "any"
-    }
-  },
-  "anyOf": [
-    {
-      "type": "object",
-      "not": {
-        "required": [
-          "bundledDependencies",
-          "bundleDependencies"
-        ]
-      }
-    },
-    {
-      "type": "object",
-      "not": {
-        "required": [
-          "bundleDependencies"
-        ]
-      },
-      "required": [
-        "bundledDependencies"
-      ]
-    },
-    {
-      "type": "object",
-      "not": {
-        "required": [
-          "bundledDependencies"
-        ]
-      },
-      "required": [
-        "bundleDependencies"
-      ]
-    }
-  ],
   "$defs": {
     "person": {
       "description": "A person who has been involved in creating or maintaining this package.",
@@ -1036,13 +997,13 @@
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "additionalProperties": true,
         "properties": {
           "optional": {
             "description": "Specifies that this peer dependency is optional and should not be installed automatically.",
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": true
       }
     },
     "license": {
@@ -1156,6 +1117,7 @@
           "description": "The module path that is resolved for TypeScript types when this specifier is imported. Should be listed before other conditions. Additionally, versioned \"types\" condition in the form \"types@{selector}\" are supported."
         }
       },
+      "additionalProperties": false,
       "patternProperties": {
         "^[^.0-9]+$": {
           "$ref": "#/$defs/packageExportsEntryOrFallback",
@@ -1165,8 +1127,7 @@
           "$ref": "#/$defs/packageExportsEntryOrFallback",
           "description": "The module path that is resolved for TypeScript types when this specifier is imported. Should be listed before other conditions. Additionally, versioned \"types\" condition in the form \"types@{selector}\" are supported."
         }
-      },
-      "additionalProperties": false
+      }
     },
     "packageExportsEntry": {
       "oneOf": [
@@ -1227,6 +1188,7 @@
           "description": "The module path that is resolved for TypeScript types when this specifier is imported. Should be listed before other conditions. Additionally, versioned \"types\" condition in the form \"types@{selector}\" are supported."
         }
       },
+      "additionalProperties": false,
       "patternProperties": {
         "^[^.0-9]+$": {
           "$ref": "#/$defs/packageImportsEntryOrFallback",
@@ -1236,8 +1198,7 @@
           "$ref": "#/$defs/packageImportsEntryOrFallback",
           "description": "The module path that is resolved for TypeScript types when this specifier is imported. Should be listed before other conditions. Additionally, versioned \"types\" condition in the form \"types@{selector}\" are supported."
         }
-      },
-      "additionalProperties": false
+      }
     },
     "packageImportsEntry": {
       "oneOf": [
@@ -1283,10 +1244,10 @@
           "description": "The type of funding or the platform through which funding can be provided, e.g. patreon, opencollective, tidelift or github."
         }
       },
-      "additionalProperties": false,
       "required": [
         "url"
-      ]
+      ],
+      "additionalProperties": false
     },
     "devEngineDependency": {
       "description": "Specifies requirements for development environment components such as operating systems, runtimes, or package managers. Used to ensure consistent development environments across the team.",
@@ -1314,6 +1275,45 @@
           "description": "What action to take if validation fails"
         }
       }
+    }
+  },
+  "anyOf": [
+    {
+      "type": "object",
+      "not": {
+        "required": [
+          "bundledDependencies",
+          "bundleDependencies"
+        ]
+      }
+    },
+    {
+      "type": "object",
+      "not": {
+        "required": [
+          "bundleDependencies"
+        ]
+      },
+      "required": [
+        "bundledDependencies"
+      ]
+    },
+    {
+      "type": "object",
+      "not": {
+        "required": [
+          "bundledDependencies"
+        ]
+      },
+      "required": [
+        "bundleDependencies"
+      ]
+    }
+  ],
+  "patternProperties": {
+    "^_": {
+      "description": "Any property starting with _ is valid.",
+      "tsType": "any"
     }
   }
 }

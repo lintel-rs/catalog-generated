@@ -175,11 +175,9 @@
       "description": "If you are using a CDN for a source (e.g. Federation Supergraph), this will be the polling interval in milliseconds for the CDN without a downtime"
     }
   },
+  "additionalProperties": false,
   "$defs": {
     "Cache": {
-      "additionalProperties": true,
-      "type": "object",
-      "title": "Cache",
       "properties": {
         "cfwKv": {
           "$ref": "#/$defs/CFWorkersKVCacheConfig"
@@ -204,10 +202,15 @@
             }
           ]
         }
-      }
+      },
+      "type": "object",
+      "title": "Cache",
+      "additionalProperties": true
     },
     "CFWorkersKVCacheConfig": {
-      "additionalProperties": false,
+      "required": [
+        "namespace"
+      ],
       "type": "object",
       "title": "CFWorkersKVCacheConfig",
       "properties": {
@@ -216,24 +219,19 @@
           "description": "The name of the Workers KV namespace to use for caching.\n\nMake sure you have configured the following namespace described in [here](https://developers.cloudflare.com/workers/wrangler/cli-wrangler/commands/#kv)."
         }
       },
-      "required": [
-        "namespace"
-      ]
+      "additionalProperties": false
     },
     "FileCacheConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FileCacheConfig",
       "properties": {
         "path": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "FileCacheConfig",
+      "additionalProperties": false
     },
     "LocalforageConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "LocalforageConfig",
       "properties": {
         "driver": {
           "type": "array",
@@ -264,10 +262,15 @@
         "description": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "LocalforageConfig",
+      "additionalProperties": false
     },
     "RedisConfigCluster": {
-      "additionalProperties": false,
+      "required": [
+        "startupNodes"
+      ],
       "type": "object",
       "title": "RedisConfigCluster",
       "properties": {
@@ -300,12 +303,13 @@
           "description": "Enable TLS for Redis Cluster connections. Required for AWS Elasticache Clusters with TLS.\n\n@see <https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls>"
         }
       },
-      "required": [
-        "startupNodes"
-      ]
+      "additionalProperties": false
     },
     "RedisConfigSentinel": {
-      "additionalProperties": false,
+      "required": [
+        "name",
+        "sentinels"
+      ],
       "type": "object",
       "title": "RedisConfigSentinel",
       "properties": {
@@ -342,13 +346,13 @@
           "description": "Flag to indicate lazyConnect value for Redis client.\n\n@default: true"
         }
       },
-      "required": [
-        "name",
-        "sentinels"
-      ]
+      "additionalProperties": false
     },
     "RedisSentinelConfig": {
-      "additionalProperties": false,
+      "required": [
+        "host",
+        "port"
+      ],
       "type": "object",
       "title": "RedisSentinelConfig",
       "properties": {
@@ -362,15 +366,9 @@
           "type": "string"
         }
       },
-      "required": [
-        "host",
-        "port"
-      ]
+      "additionalProperties": false
     },
     "RedisConfigSingle": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "RedisConfigSingle",
       "properties": {
         "host": {
           "type": "string"
@@ -397,12 +395,12 @@
           "type": "boolean",
           "description": "Flag to indicate lazyConnect value for Redis client.\n\n@default: true"
         }
-      }
+      },
+      "type": "object",
+      "title": "RedisConfigSingle",
+      "additionalProperties": false
     },
     "ServeConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ServeConfig",
       "properties": {
         "fork": {
           "description": "Spawn multiple server instances as node clusters (default: `1`) (Any of: Int, Boolean)",
@@ -481,12 +479,12 @@
           "additionalItems": false,
           "description": "By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.\n\nThis option allows you to specify additional parameters that are allowed in the request body.\n\n@default []\n\n@example ['doc_id', 'id']"
         }
-      }
+      },
+      "type": "object",
+      "title": "ServeConfig",
+      "additionalProperties": false
     },
     "CorsConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "CorsConfig",
       "properties": {
         "origin": {
           "anyOf": [
@@ -529,10 +527,16 @@
         "optionsSuccessStatus": {
           "type": "integer"
         }
-      }
+      },
+      "type": "object",
+      "title": "CorsConfig",
+      "additionalProperties": false
     },
     "HTTPSConfig": {
-      "additionalProperties": false,
+      "required": [
+        "key",
+        "cert"
+      ],
       "type": "object",
       "title": "HTTPSConfig",
       "properties": {
@@ -543,34 +547,34 @@
           "type": "string"
         }
       },
-      "required": [
-        "key",
-        "cert"
-      ]
+      "additionalProperties": false
     },
     "SDKConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SDKConfig",
       "properties": {
         "generateOperations": {
           "$ref": "#/$defs/GenerateOperationsConfig",
           "description": "Use this only if you don't want to use `documents` for SDK,\nand let Mesh generate them for you"
         }
-      }
+      },
+      "type": "object",
+      "title": "SDKConfig",
+      "additionalProperties": false
     },
     "GenerateOperationsConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GenerateOperationsConfig",
       "properties": {
         "selectionSetDepth": {
           "type": "integer"
         }
-      }
+      },
+      "type": "object",
+      "title": "GenerateOperationsConfig",
+      "additionalProperties": false
     },
     "Source": {
-      "additionalProperties": false,
+      "required": [
+        "name",
+        "handler"
+      ],
       "type": "object",
       "title": "Source",
       "properties": {
@@ -591,15 +595,9 @@
           "description": "List of transforms to apply to the current API source, before unifying it with the rest of the sources"
         }
       },
-      "required": [
-        "name",
-        "handler"
-      ]
+      "additionalProperties": false
     },
     "Transform": {
-      "additionalProperties": true,
-      "type": "object",
-      "title": "Transform",
       "properties": {
         "cache": {
           "type": "array",
@@ -728,12 +726,12 @@
           "$ref": "#/$defs/TypeMergingConfig",
           "description": "[Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration"
         }
-      }
+      },
+      "type": "object",
+      "title": "Transform",
+      "additionalProperties": true
     },
     "Handler": {
-      "additionalProperties": true,
-      "type": "object",
-      "title": "Handler",
       "properties": {
         "graphql": {
           "description": "Handler for remote/local/third-party GraphQL schema (Any of: GraphQLHandlerHTTPConfiguration, GraphQLHandlerCodeFirstConfiguration, GraphQLHandlerMultipleHTTPConfiguration)",
@@ -797,12 +795,12 @@
           "$ref": "#/$defs/TuqlHandler",
           "description": "Handler for SQLite database, based on `tuql`"
         }
-      }
+      },
+      "type": "object",
+      "title": "Handler",
+      "additionalProperties": true
     },
     "Plugin": {
-      "additionalProperties": true,
-      "type": "object",
-      "title": "Plugin",
       "properties": {
         "maskedErrors": {
           "$ref": "#/$defs/MaskedErrorsPluginConfig"
@@ -876,20 +874,29 @@
         "prometheus": {
           "$ref": "#/$defs/PrometheusConfig"
         }
-      }
+      },
+      "type": "object",
+      "title": "Plugin",
+      "additionalProperties": true
     },
     "MaskedErrorsPluginConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MaskedErrorsPluginConfig",
       "properties": {
         "errorMessage": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "MaskedErrorsPluginConfig",
+      "additionalProperties": false
     },
     "AdditionalStitchingResolverObject": {
-      "additionalProperties": false,
+      "required": [
+        "sourceName",
+        "sourceTypeName",
+        "sourceFieldName",
+        "targetTypeName",
+        "targetFieldName"
+      ],
       "type": "object",
       "title": "AdditionalStitchingResolverObject",
       "properties": {
@@ -927,16 +934,18 @@
           "description": "If return types don't match,\nyou can specify a result type to apply inline fragment"
         }
       },
+      "additionalProperties": false
+    },
+    "AdditionalStitchingBatchResolverObject": {
       "required": [
         "sourceName",
         "sourceTypeName",
         "sourceFieldName",
+        "keyField",
+        "keysArg",
         "targetTypeName",
         "targetFieldName"
-      ]
-    },
-    "AdditionalStitchingBatchResolverObject": {
-      "additionalProperties": false,
+      ],
       "type": "object",
       "title": "AdditionalStitchingBatchResolverObject",
       "properties": {
@@ -980,18 +989,14 @@
           "description": "If return types don't match,\nyou can specify a result type to apply inline fragment"
         }
       },
-      "required": [
-        "sourceName",
-        "sourceTypeName",
-        "sourceFieldName",
-        "keyField",
-        "keysArg",
-        "targetTypeName",
-        "targetFieldName"
-      ]
+      "additionalProperties": false
     },
     "AdditionalSubscriptionObject": {
-      "additionalProperties": false,
+      "required": [
+        "targetTypeName",
+        "targetFieldName",
+        "pubsubTopic"
+      ],
       "type": "object",
       "title": "AdditionalSubscriptionObject",
       "properties": {
@@ -1014,14 +1019,12 @@
           "type": "string"
         }
       },
-      "required": [
-        "targetTypeName",
-        "targetFieldName",
-        "pubsubTopic"
-      ]
+      "additionalProperties": false
     },
     "PubSubConfig": {
-      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
       "type": "object",
       "title": "PubSubConfig",
       "properties": {
@@ -1044,14 +1047,9 @@
           ]
         }
       },
-      "required": [
-        "name"
-      ]
+      "additionalProperties": false
     },
     "PersistedOperationsConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PersistedOperationsConfig",
       "properties": {
         "allowArbitraryOperations": {
           "type": "boolean",
@@ -1065,12 +1063,12 @@
           "$ref": "#/$defs/CustomPersistedQueryErrors",
           "description": "Custom errors to be thrown"
         }
-      }
+      },
+      "type": "object",
+      "title": "PersistedOperationsConfig",
+      "additionalProperties": false
     },
     "CustomPersistedQueryErrors": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "CustomPersistedQueryErrors",
       "properties": {
         "notFound": {
           "type": "string",
@@ -1084,10 +1082,15 @@
           "type": "string",
           "description": "Error to be thrown when the extraction of the persisted operation id failed"
         }
-      }
+      },
+      "type": "object",
+      "title": "CustomPersistedQueryErrors",
+      "additionalProperties": false
     },
     "GraphQLHandlerMultipleHTTPConfiguration": {
-      "additionalProperties": false,
+      "required": [
+        "sources"
+      ],
       "type": "object",
       "title": "GraphQLHandlerMultipleHTTPConfiguration",
       "properties": {
@@ -1113,12 +1116,13 @@
           "description": "Handling strategy configuration"
         }
       },
-      "required": [
-        "sources"
-      ]
+      "additionalProperties": false
     },
     "GraphQLHandlerhighestValueStrategyConfig": {
-      "additionalProperties": false,
+      "required": [
+        "selectionSet",
+        "value"
+      ],
       "type": "object",
       "title": "GraphQLHandlerhighestValueStrategyConfig",
       "properties": {
@@ -1129,13 +1133,12 @@
           "type": "string"
         }
       },
-      "required": [
-        "selectionSet",
-        "value"
-      ]
+      "additionalProperties": false
     },
     "GraphQLHandlerCodeFirstConfiguration": {
-      "additionalProperties": false,
+      "required": [
+        "source"
+      ],
       "type": "object",
       "title": "GraphQLHandlerCodeFirstConfiguration",
       "properties": {
@@ -1156,12 +1159,12 @@
           "description": "A file path to your GraphQL Schema\nIf you provide a path to a code file(js or ts),\nother options will be ignored and the schema exported from the file will be used directly."
         }
       },
-      "required": [
-        "source"
-      ]
+      "additionalProperties": false
     },
     "GraphQLHandlerHTTPConfiguration": {
-      "additionalProperties": false,
+      "required": [
+        "endpoint"
+      ],
       "type": "object",
       "title": "GraphQLHandlerHTTPConfiguration",
       "properties": {
@@ -1249,12 +1252,12 @@
           "description": "JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.\nMore information about the WebSocket `connectionParams`:\n  - When using `subscriptionsProtocol=WS` (graphql-ws): <https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams>\n  - When using `subscriptionsProtocol=LEGACY_WS` (subscriptions-transport-ws): <https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#subscriptionclient>"
         }
       },
-      "required": [
-        "endpoint"
-      ]
+      "additionalProperties": false
     },
     "GrpcHandler": {
-      "additionalProperties": false,
+      "required": [
+        "endpoint"
+      ],
       "type": "object",
       "title": "GrpcHandler",
       "properties": {
@@ -1311,14 +1314,9 @@
           "properties": {}
         }
       },
-      "required": [
-        "endpoint"
-      ]
+      "additionalProperties": false
     },
     "LoadOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "LoadOptions",
       "properties": {
         "defaults": {
           "type": "boolean"
@@ -1330,10 +1328,15 @@
           },
           "additionalItems": false
         }
-      }
+      },
+      "type": "object",
+      "title": "LoadOptions",
+      "additionalProperties": false
     },
     "ProtoFilePath": {
-      "additionalProperties": false,
+      "required": [
+        "file"
+      ],
       "type": "object",
       "title": "ProtoFilePath",
       "properties": {
@@ -1344,14 +1347,9 @@
           "$ref": "#/$defs/LoadOptions"
         }
       },
-      "required": [
-        "file"
-      ]
+      "additionalProperties": false
     },
     "GrpcCredentialsSsl": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GrpcCredentialsSsl",
       "properties": {
         "rootCA": {
           "type": "string"
@@ -1362,12 +1360,12 @@
         "privateKey": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "GrpcCredentialsSsl",
+      "additionalProperties": false
     },
     "QueryStringOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "QueryStringOptions",
       "properties": {
         "indices": {
           "type": "boolean",
@@ -1391,12 +1389,12 @@
           "type": "boolean",
           "description": "Stringify the nested objects as JSON\n(default: false)"
         }
-      }
+      },
+      "type": "object",
+      "title": "QueryStringOptions",
+      "additionalProperties": false
     },
     "JsonSchemaHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "JsonSchemaHandler",
       "properties": {
         "source": {
           "type": "string"
@@ -1453,10 +1451,17 @@
           "type": "integer",
           "description": "Timeout for the HTTP request in milliseconds"
         }
-      }
+      },
+      "type": "object",
+      "title": "JsonSchemaHandler",
+      "additionalProperties": false
     },
     "JsonSchemaHTTPOperation": {
-      "additionalProperties": false,
+      "required": [
+        "field",
+        "type",
+        "path"
+      ],
       "type": "object",
       "title": "JsonSchemaHTTPOperation",
       "properties": {
@@ -1626,14 +1631,14 @@
           "description": "If true, `@deprecated` will be added to the field definition"
         }
       },
+      "additionalProperties": false
+    },
+    "JsonSchemaPubSubOperation": {
       "required": [
         "field",
         "type",
-        "path"
-      ]
-    },
-    "JsonSchemaPubSubOperation": {
-      "additionalProperties": false,
+        "pubsubTopic"
+      ],
       "type": "object",
       "title": "JsonSchemaPubSubOperation",
       "properties": {
@@ -1746,16 +1751,9 @@
           "description": "If true, `@deprecated` will be added to the field definition"
         }
       },
-      "required": [
-        "field",
-        "type",
-        "pubsubTopic"
-      ]
+      "additionalProperties": false
     },
     "MongooseHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MongooseHandler",
       "properties": {
         "connectionString": {
           "type": "string"
@@ -1774,10 +1772,16 @@
           },
           "additionalItems": false
         }
-      }
+      },
+      "type": "object",
+      "title": "MongooseHandler",
+      "additionalProperties": false
     },
     "MongooseModel": {
-      "additionalProperties": false,
+      "required": [
+        "name",
+        "path"
+      ],
       "type": "object",
       "title": "MongooseModel",
       "properties": {
@@ -1791,15 +1795,9 @@
           "$ref": "#/$defs/ComposeWithMongooseOpts"
         }
       },
-      "required": [
-        "name",
-        "path"
-      ]
+      "additionalProperties": false
     },
     "ComposeWithMongooseOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ComposeWithMongooseOpts",
       "properties": {
         "name": {
           "type": "string"
@@ -1816,12 +1814,12 @@
         "resolvers": {
           "$ref": "#/$defs/TypeConverterResolversOpts"
         }
-      }
+      },
+      "type": "object",
+      "title": "ComposeWithMongooseOpts",
+      "additionalProperties": false
     },
     "ComposeMongooseInputType": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ComposeMongooseInputType",
       "properties": {
         "name": {
           "type": "string"
@@ -1835,12 +1833,12 @@
         "resolvers": {
           "$ref": "#/$defs/TypeConverterResolversOpts"
         }
-      }
+      },
+      "type": "object",
+      "title": "ComposeMongooseInputType",
+      "additionalProperties": false
     },
     "ComposeWithMongooseFieldsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ComposeWithMongooseFieldsOpts",
       "properties": {
         "only": {
           "type": "array",
@@ -1863,12 +1861,12 @@
           },
           "additionalItems": false
         }
-      }
+      },
+      "type": "object",
+      "title": "ComposeWithMongooseFieldsOpts",
+      "additionalProperties": false
     },
     "TypeConverterResolversOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "TypeConverterResolversOpts",
       "properties": {
         "findById": {
           "description": "Any of: Boolean, ComposeWithMongooseResolverOpts",
@@ -2036,12 +2034,12 @@
             }
           ]
         }
-      }
+      },
+      "type": "object",
+      "title": "TypeConverterResolversOpts",
+      "additionalProperties": false
     },
     "ComposeWithMongooseResolverOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ComposeWithMongooseResolverOpts",
       "properties": {
         "filter": {
           "$ref": "#/$defs/FilterHelperArgsOpts"
@@ -2058,12 +2056,12 @@
         "skip": {
           "type": "boolean"
         }
-      }
+      },
+      "type": "object",
+      "title": "ComposeWithMongooseResolverOpts",
+      "additionalProperties": false
     },
     "FilterHelperArgsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FilterHelperArgsOpts",
       "properties": {
         "filterTypeName": {
           "type": "string"
@@ -2100,32 +2098,32 @@
           },
           "additionalItems": false
         }
-      }
+      },
+      "type": "object",
+      "title": "FilterHelperArgsOpts",
+      "additionalProperties": false
     },
     "SortHelperArgsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "SortHelperArgsOpts",
       "properties": {
         "sortTypeName": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "SortHelperArgsOpts",
+      "additionalProperties": false
     },
     "LimitHelperArgsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "LimitHelperArgsOpts",
       "properties": {
         "defaultValue": {
           "type": "integer"
         }
-      }
+      },
+      "type": "object",
+      "title": "LimitHelperArgsOpts",
+      "additionalProperties": false
     },
     "RecordHelperArgsOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "RecordHelperArgsOpts",
       "properties": {
         "recordTypeName": {
           "type": "string"
@@ -2147,22 +2145,22 @@
           },
           "additionalItems": false
         }
-      }
+      },
+      "type": "object",
+      "title": "RecordHelperArgsOpts",
+      "additionalProperties": false
     },
     "PaginationResolverOpts": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PaginationResolverOpts",
       "properties": {
         "perPage": {
           "type": "integer"
         }
-      }
+      },
+      "type": "object",
+      "title": "PaginationResolverOpts",
+      "additionalProperties": false
     },
     "MySQLHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MySQLHandler",
       "properties": {
         "host": {
           "type": "string",
@@ -2224,10 +2222,16 @@
           "additionalItems": false,
           "description": "Use specific fields of specific tables"
         }
-      }
+      },
+      "type": "object",
+      "title": "MySQLHandler",
+      "additionalProperties": false
     },
     "TableField": {
-      "additionalProperties": false,
+      "required": [
+        "table",
+        "fields"
+      ],
       "type": "object",
       "title": "TableField",
       "properties": {
@@ -2242,15 +2246,9 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "table",
-        "fields"
-      ]
+      "additionalProperties": false
     },
     "MySQLSSLOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MySQLSSLOptions",
       "properties": {
         "rejectUnauthorized": {
           "type": "boolean",
@@ -2260,10 +2258,17 @@
           "type": "string",
           "description": "Path to your CA"
         }
-      }
+      },
+      "type": "object",
+      "title": "MySQLSSLOptions",
+      "additionalProperties": false
     },
     "Neo4jHandler": {
-      "additionalProperties": false,
+      "required": [
+        "endpoint",
+        "username",
+        "password"
+      ],
       "type": "object",
       "title": "Neo4jHandler",
       "properties": {
@@ -2292,14 +2297,12 @@
           "description": "Specifies database name"
         }
       },
-      "required": [
-        "endpoint",
-        "username",
-        "password"
-      ]
+      "additionalProperties": false
     },
     "ODataHandler": {
-      "additionalProperties": false,
+      "required": [
+        "endpoint"
+      ],
       "type": "object",
       "title": "ODataHandler",
       "properties": {
@@ -2334,12 +2337,12 @@
           "description": "Use $expand for navigation props instead of seperate HTTP requests (Default: false)"
         }
       },
-      "required": [
-        "endpoint"
-      ]
+      "additionalProperties": false
     },
     "OpenapiHandler": {
-      "additionalProperties": false,
+      "required": [
+        "source"
+      ],
       "type": "object",
       "title": "OpenapiHandler",
       "properties": {
@@ -2393,12 +2396,13 @@
           "description": "Timeout for the HTTP request in milliseconds"
         }
       },
-      "required": [
-        "source"
-      ]
+      "additionalProperties": false
     },
     "SelectQueryOrMutationFieldConfig": {
-      "additionalProperties": false,
+      "required": [
+        "type",
+        "fieldName"
+      ],
       "type": "object",
       "title": "SelectQueryOrMutationFieldConfig",
       "properties": {
@@ -2416,15 +2420,9 @@
           "type": "string"
         }
       },
-      "required": [
-        "type",
-        "fieldName"
-      ]
+      "additionalProperties": false
     },
     "HivePlugin": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HivePlugin",
       "properties": {
         "enabled": {
           "description": "If this expression is truthy, mocking would be enabled\nYou can use environment variables expression, for example: `process.env.MOCKING_ENABLED != null` (Any of: Boolean, String)",
@@ -2461,12 +2459,12 @@
           "$ref": "#/$defs/HivePersistedDocumentsConfiguration",
           "description": "Experimental persisted documents configuration\n[See more](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway)"
         }
-      }
+      },
+      "type": "object",
+      "title": "HivePlugin",
+      "additionalProperties": false
     },
     "HiveAgentOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HiveAgentOptions",
       "properties": {
         "name": {
           "type": "string"
@@ -2521,12 +2519,12 @@
           "type": "integer",
           "description": "Max number of traces to send at once (defaults to 25)"
         }
-      }
+      },
+      "type": "object",
+      "title": "HiveAgentOptions",
+      "additionalProperties": false
     },
     "HiveUsageOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HiveUsageOptions",
       "properties": {
         "clientInfo": {
           "$ref": "#/$defs/HiveClientInfo",
@@ -2571,12 +2569,12 @@
             }
           ]
         }
-      }
+      },
+      "type": "object",
+      "title": "HiveUsageOptions",
+      "additionalProperties": false
     },
     "HiveClientInfo": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HiveClientInfo",
       "properties": {
         "name": {
           "type": "string",
@@ -2586,10 +2584,16 @@
           "type": "string",
           "description": "Extract client version\nExample: `{context.headers['x-client-version']}`"
         }
-      }
+      },
+      "type": "object",
+      "title": "HiveClientInfo",
+      "additionalProperties": false
     },
     "HiveReportingOptions": {
-      "additionalProperties": false,
+      "required": [
+        "author",
+        "commit"
+      ],
       "type": "object",
       "title": "HiveReportingOptions",
       "properties": {
@@ -2608,13 +2612,13 @@
           "type": "string"
         }
       },
-      "required": [
-        "author",
-        "commit"
-      ]
+      "additionalProperties": false
     },
     "HiveSelfHostingOptions": {
-      "additionalProperties": false,
+      "required": [
+        "graphqlEndpoint",
+        "applicationUrl"
+      ],
       "type": "object",
       "title": "HiveSelfHostingOptions",
       "properties": {
@@ -2631,13 +2635,12 @@
           "description": "Point to your own instance of GraphQL Hive Usage API\n\nUsed by usage reporting."
         }
       },
-      "required": [
-        "graphqlEndpoint",
-        "applicationUrl"
-      ]
+      "additionalProperties": false
     },
     "HivePersistedDocumentsConfiguration": {
-      "additionalProperties": false,
+      "required": [
+        "cdn"
+      ],
       "type": "object",
       "title": "HivePersistedDocumentsConfiguration",
       "properties": {
@@ -2654,12 +2657,13 @@
           "description": "Maximum amount of operations that shall be kept in memory after being loaded from the CDN. 10 seconds by default"
         }
       },
-      "required": [
-        "cdn"
-      ]
+      "additionalProperties": false
     },
     "HivePersistedDocumentsConfigurationCDN": {
-      "additionalProperties": false,
+      "required": [
+        "endpoint",
+        "accessToken"
+      ],
       "type": "object",
       "title": "HivePersistedDocumentsConfigurationCDN",
       "properties": {
@@ -2672,15 +2676,9 @@
           "description": "Access Token for Persisted Documents CDN"
         }
       },
-      "required": [
-        "endpoint",
-        "accessToken"
-      ]
+      "additionalProperties": false
     },
     "HTTPCachePlugin": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HTTPCachePlugin",
       "properties": {
         "matches": {
           "type": "array",
@@ -2714,12 +2712,12 @@
           "additionalItems": false,
           "description": "If the following patterns match the request URL, the response will not be cached. (Any of: String, URLPatternObj)"
         }
-      }
+      },
+      "type": "object",
+      "title": "HTTPCachePlugin",
+      "additionalProperties": false
     },
     "URLPatternObj": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "URLPatternObj",
       "properties": {
         "protocol": {
           "type": "string"
@@ -2748,12 +2746,12 @@
         "baseURL": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "URLPatternObj",
+      "additionalProperties": false
     },
     "HTTPDetailsExtensionsConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "HTTPDetailsExtensionsConfig",
       "properties": {
         "if": {
           "anyOf": [
@@ -2770,12 +2768,12 @@
             }
           ]
         }
-      }
+      },
+      "type": "object",
+      "title": "HTTPDetailsExtensionsConfig",
+      "additionalProperties": false
     },
     "LiveQueryConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "LiveQueryConfig",
       "properties": {
         "invalidations": {
           "type": "array",
@@ -2805,10 +2803,15 @@
           "additionalItems": false,
           "description": "Specify which fields should be indexed for specific invalidations."
         }
-      }
+      },
+      "type": "object",
+      "title": "LiveQueryConfig",
+      "additionalProperties": false
     },
     "LiveQueryInvalidation": {
-      "additionalProperties": false,
+      "required": [
+        "invalidate"
+      ],
       "type": "object",
       "title": "LiveQueryInvalidation",
       "properties": {
@@ -2828,12 +2831,13 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "invalidate"
-      ]
+      "additionalProperties": false
     },
     "LiveQueryIndexBy": {
-      "additionalProperties": false,
+      "required": [
+        "field",
+        "args"
+      ],
       "type": "object",
       "title": "LiveQueryIndexBy",
       "properties": {
@@ -2848,15 +2852,9 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "field",
-        "args"
-      ]
+      "additionalProperties": false
     },
     "MockingConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MockingConfig",
       "properties": {
         "if": {
           "type": "boolean",
@@ -2898,10 +2896,15 @@
           ],
           "description": "Set to `'deterministic'` if the default random mock generation behavior causes flakiness.\n\nDefault: 'random' (Allowed values: deterministic, random)"
         }
-      }
+      },
+      "type": "object",
+      "title": "MockingConfig",
+      "additionalProperties": false
     },
     "MockingFieldConfig": {
-      "additionalProperties": false,
+      "required": [
+        "apply"
+      ],
       "type": "object",
       "title": "MockingFieldConfig",
       "properties": {
@@ -2950,14 +2953,9 @@
           "description": "Update the data on the mock store"
         }
       },
-      "required": [
-        "apply"
-      ]
+      "additionalProperties": false
     },
     "GetFromMockStoreConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "GetFromMockStoreConfig",
       "properties": {
         "type": {
           "type": "string"
@@ -2968,12 +2966,12 @@
         "fieldName": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "GetFromMockStoreConfig",
+      "additionalProperties": false
     },
     "UpdateMockStoreConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "UpdateMockStoreConfig",
       "properties": {
         "type": {
           "type": "string"
@@ -2987,12 +2985,12 @@
         "value": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "UpdateMockStoreConfig",
+      "additionalProperties": false
     },
     "NewrelicConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "NewrelicConfig",
       "properties": {
         "includeOperationDocument": {
           "type": "boolean",
@@ -3022,12 +3020,12 @@
           "type": "string",
           "description": "Allows to set a custom operation name to be used as transaction name and attribute\n`extractOperationName: {context.headers['x-operation-name']}`"
         }
-      }
+      },
+      "type": "object",
+      "title": "NewrelicConfig",
+      "additionalProperties": false
     },
     "OperationFieldPermissionsConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "OperationFieldPermissionsConfig",
       "properties": {
         "permissions": {
           "type": "array",
@@ -3036,12 +3034,12 @@
           },
           "additionalItems": false
         }
-      }
+      },
+      "type": "object",
+      "title": "OperationFieldPermissionsConfig",
+      "additionalProperties": false
     },
     "OperationFieldPermission": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "OperationFieldPermission",
       "properties": {
         "if": {
           "type": "string"
@@ -3053,10 +3051,15 @@
           },
           "additionalItems": false
         }
-      }
+      },
+      "type": "object",
+      "title": "OperationFieldPermission",
+      "additionalProperties": false
     },
     "RateLimitPluginConfig": {
-      "additionalProperties": false,
+      "required": [
+        "config"
+      ],
       "type": "object",
       "title": "RateLimitPluginConfig",
       "properties": {
@@ -3068,14 +3071,9 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "config"
-      ]
+      "additionalProperties": false
     },
     "ResponseCacheConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ResponseCacheConfig",
       "properties": {
         "ttl": {
           "type": "number",
@@ -3129,10 +3127,16 @@
           "type": "string",
           "description": "Checks if the result should be cached.\n```yaml\nshouldCacheResult: \"result.errors.length > 0\"\n```"
         }
-      }
+      },
+      "type": "object",
+      "title": "ResponseCacheConfig",
+      "additionalProperties": false
     },
     "ResponseCacheTTLConfig": {
-      "additionalProperties": false,
+      "required": [
+        "coordinate",
+        "ttl"
+      ],
       "type": "object",
       "title": "ResponseCacheTTLConfig",
       "properties": {
@@ -3143,13 +3147,13 @@
           "type": "number"
         }
       },
-      "required": [
-        "coordinate",
-        "ttl"
-      ]
+      "additionalProperties": false
     },
     "SnapshotPluginConfig": {
-      "additionalProperties": false,
+      "required": [
+        "apply",
+        "outputDir"
+      ],
       "type": "object",
       "title": "SnapshotPluginConfig",
       "properties": {
@@ -3177,15 +3181,9 @@
           "description": "Path to the directory of the generated snapshot files"
         }
       },
-      "required": [
-        "apply",
-        "outputDir"
-      ]
+      "additionalProperties": false
     },
     "StatsdPlugin": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "StatsdPlugin",
       "properties": {
         "skipIntrospection": {
           "type": "boolean",
@@ -3199,12 +3197,12 @@
           "$ref": "#/$defs/StatsdClientConfiguration",
           "description": "Client Configuration"
         }
-      }
+      },
+      "type": "object",
+      "title": "StatsdPlugin",
+      "additionalProperties": false
     },
     "StatsdClientConfiguration": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "StatsdClientConfiguration",
       "properties": {
         "bufferFlushInterval": {
           "type": "integer"
@@ -3286,10 +3284,15 @@
         "closingFlushInterval": {
           "type": "integer"
         }
-      }
+      },
+      "type": "object",
+      "title": "StatsdClientConfiguration",
+      "additionalProperties": false
     },
     "StatsdClientBufferHolder": {
-      "additionalProperties": false,
+      "required": [
+        "buffer"
+      ],
       "type": "object",
       "title": "StatsdClientBufferHolder",
       "properties": {
@@ -3297,14 +3300,9 @@
           "type": "string"
         }
       },
-      "required": [
-        "buffer"
-      ]
+      "additionalProperties": false
     },
     "PostGraphileHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PostGraphileHandler",
       "properties": {
         "connectionString": {
           "type": "string",
@@ -3386,10 +3384,15 @@
           ],
           "description": "A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. \"./my-function#pgSettings\"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information."
         }
-      }
+      },
+      "type": "object",
+      "title": "PostGraphileHandler",
+      "additionalProperties": false
     },
     "RAMLHandler": {
-      "additionalProperties": false,
+      "required": [
+        "source"
+      ],
       "type": "object",
       "title": "RAMLHandler",
       "properties": {
@@ -3437,12 +3440,12 @@
           "description": "Timeout for the HTTP request in milliseconds"
         }
       },
-      "required": [
-        "source"
-      ]
+      "additionalProperties": false
     },
     "SoapHandler": {
-      "additionalProperties": false,
+      "required": [
+        "source"
+      ],
       "type": "object",
       "title": "SoapHandler",
       "properties": {
@@ -3484,12 +3487,13 @@
           "description": "The namespace of the SOAP envelope\nBy default, SOAP handler detects the SOAP version and if SOAP version is 1.1,\nit uses `<http://schemas.xmlsoap.org/soap/envelope/>` namespace\nIf SOAP version is 1.2, it uses `<http://www.w3.org/2003/05/soap-envelope>` namespace"
         }
       },
-      "required": [
-        "source"
-      ]
+      "additionalProperties": false
     },
     "SOAPHeaders": {
-      "additionalProperties": false,
+      "required": [
+        "namespace",
+        "headers"
+      ],
       "type": "object",
       "title": "SOAPHeaders",
       "properties": {
@@ -3507,13 +3511,12 @@
           "description": "The content of the SOAP Header\nFor example: { \"key\": \"value\" } then the content will be `<key>value</key>`"
         }
       },
-      "required": [
-        "namespace",
-        "headers"
-      ]
+      "additionalProperties": false
     },
     "SupergraphHandler": {
-      "additionalProperties": false,
+      "required": [
+        "source"
+      ],
       "type": "object",
       "title": "SupergraphHandler",
       "properties": {
@@ -3562,12 +3565,12 @@
           "additionalItems": false
         }
       },
-      "required": [
-        "source"
-      ]
+      "additionalProperties": false
     },
     "SubgraphConfiguration": {
-      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
       "type": "object",
       "title": "SubgraphConfiguration",
       "properties": {
@@ -3639,12 +3642,15 @@
           "description": "JSON object representing the `connectionParams` from a WebSocket connection to add to the runtime of the API calls only for operation during runtime.\nMore information about the WebSocket `connectionParams`:\n  - When using `subscriptionsProtocol=WS` (graphql-ws): <https://github.com/enisdenjo/graphql-ws/blob/master/docs/interfaces/client.ClientOptions.md#connectionparams>\n  - When using `subscriptionsProtocol=LEGACY_WS` (subscriptions-transport-ws): <https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#subscriptionclient>"
         }
       },
-      "required": [
-        "name"
-      ]
+      "additionalProperties": false
     },
     "ThriftHandler": {
-      "additionalProperties": false,
+      "required": [
+        "hostName",
+        "port",
+        "serviceName",
+        "idl"
+      ],
       "type": "object",
       "title": "ThriftHandler",
       "properties": {
@@ -3692,15 +3698,12 @@
           "description": "Path to IDL file"
         }
       },
-      "required": [
-        "hostName",
-        "port",
-        "serviceName",
-        "idl"
-      ]
+      "additionalProperties": false
     },
     "CacheTransformConfig": {
-      "additionalProperties": false,
+      "required": [
+        "field"
+      ],
       "type": "object",
       "title": "CacheTransformConfig",
       "properties": {
@@ -3717,14 +3720,9 @@
           "description": "Invalidation rules"
         }
       },
-      "required": [
-        "field"
-      ]
+      "additionalProperties": false
     },
     "CacheInvalidateConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "CacheInvalidateConfig",
       "properties": {
         "effectingOperations": {
           "type": "array",
@@ -3738,10 +3736,15 @@
           "type": "integer",
           "description": "Specified in seconds, the time-to-live (TTL) value limits the lifespan"
         }
-      }
+      },
+      "type": "object",
+      "title": "CacheInvalidateConfig",
+      "additionalProperties": false
     },
     "CacheEffectingOperationConfig": {
-      "additionalProperties": false,
+      "required": [
+        "operation"
+      ],
       "type": "object",
       "title": "CacheEffectingOperationConfig",
       "properties": {
@@ -3754,14 +3757,9 @@
           "description": "Cache key to invalidate on successful resolver (no error), see `cacheKey` for list of available options in this field."
         }
       },
-      "required": [
-        "operation"
-      ]
+      "additionalProperties": false
     },
     "EncapsulateTransformObject": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "EncapsulateTransformObject",
       "properties": {
         "name": {
           "type": "string",
@@ -3771,12 +3769,12 @@
           "$ref": "#/$defs/EncapsulateTransformApplyTo",
           "description": "Allow you to choose which root operations you would like to apply. By default, it's applied to all root types."
         }
-      }
+      },
+      "type": "object",
+      "title": "EncapsulateTransformObject",
+      "additionalProperties": false
     },
     "EncapsulateTransformApplyTo": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "EncapsulateTransformApplyTo",
       "properties": {
         "query": {
           "type": "boolean"
@@ -3787,12 +3785,12 @@
         "subscription": {
           "type": "boolean"
         }
-      }
+      },
+      "type": "object",
+      "title": "EncapsulateTransformApplyTo",
+      "additionalProperties": false
     },
     "ExtendTransform": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ExtendTransform",
       "properties": {
         "typeDefs": {
           "anyOf": [
@@ -3824,12 +3822,12 @@
             }
           ]
         }
-      }
+      },
+      "type": "object",
+      "title": "ExtendTransform",
+      "additionalProperties": false
     },
     "FederationTransform": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FederationTransform",
       "properties": {
         "types": {
           "type": "array",
@@ -3842,10 +3840,15 @@
           "type": "string",
           "description": "Version of the federation spec\nDefault: v2.0"
         }
-      }
+      },
+      "type": "object",
+      "title": "FederationTransform",
+      "additionalProperties": false
     },
     "FederationTransformType": {
-      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
       "type": "object",
       "title": "FederationTransformType",
       "properties": {
@@ -3856,14 +3859,9 @@
           "$ref": "#/$defs/FederationObjectConfig"
         }
       },
-      "required": [
-        "name"
-      ]
+      "additionalProperties": false
     },
     "FederationObjectConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FederationObjectConfig",
       "properties": {
         "key": {
           "type": "array",
@@ -3896,20 +3894,25 @@
             }
           ]
         }
-      }
+      },
+      "type": "object",
+      "title": "FederationObjectConfig",
+      "additionalProperties": false
     },
     "FederationObjectKeyConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FederationObjectKeyConfig",
       "properties": {
         "fields": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "FederationObjectKeyConfig",
+      "additionalProperties": false
     },
     "ResolveReferenceObject": {
-      "additionalProperties": false,
+      "required": [
+        "queryFieldName"
+      ],
       "type": "object",
       "title": "ResolveReferenceObject",
       "properties": {
@@ -3923,12 +3926,13 @@
           "description": "You need configure the arguments for that field;\n```yaml\nargs:\n  someArg: \"{root.someKeyValue}\"\n```"
         }
       },
-      "required": [
-        "queryFieldName"
-      ]
+      "additionalProperties": false
     },
     "FederationField": {
-      "additionalProperties": false,
+      "required": [
+        "name",
+        "config"
+      ],
       "type": "object",
       "title": "FederationField",
       "properties": {
@@ -3939,15 +3943,9 @@
           "$ref": "#/$defs/FederationFieldConfig"
         }
       },
-      "required": [
-        "name",
-        "config"
-      ]
+      "additionalProperties": false
     },
     "FederationFieldConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FederationFieldConfig",
       "properties": {
         "external": {
           "type": "boolean"
@@ -3967,50 +3965,55 @@
         "override": {
           "$ref": "#/$defs/FederationFieldOverrideConfig"
         }
-      }
+      },
+      "type": "object",
+      "title": "FederationFieldConfig",
+      "additionalProperties": false
     },
     "FederationFieldProvidesConfig": {
-      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "type": "string"
+        }
+      },
       "type": "object",
       "title": "FederationFieldProvidesConfig",
-      "properties": {
-        "fields": {
-          "type": "string"
-        }
-      }
+      "additionalProperties": false
     },
     "FederationFieldRequiresConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FederationFieldRequiresConfig",
       "properties": {
         "fields": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "FederationFieldRequiresConfig",
+      "additionalProperties": false
     },
     "FederationFieldTagConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FederationFieldTagConfig",
       "properties": {
         "name": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "FederationFieldTagConfig",
+      "additionalProperties": false
     },
     "FederationFieldOverrideConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "FederationFieldOverrideConfig",
       "properties": {
         "from": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "FederationFieldOverrideConfig",
+      "additionalProperties": false
     },
     "FilterSchemaTransform": {
-      "additionalProperties": false,
+      "required": [
+        "filters"
+      ],
       "type": "object",
       "title": "FilterSchemaTransform",
       "properties": {
@@ -4039,12 +4042,14 @@
           "description": "Filter deprecated fields"
         }
       },
-      "required": [
-        "filters"
-      ]
+      "additionalProperties": false
     },
     "HoistFieldTransformConfig": {
-      "additionalProperties": false,
+      "required": [
+        "typeName",
+        "pathConfig",
+        "newFieldName"
+      ],
       "type": "object",
       "title": "HoistFieldTransformConfig",
       "properties": {
@@ -4080,14 +4085,13 @@
           "description": "Defines if args in path are filtered (default = false)"
         }
       },
-      "required": [
-        "typeName",
-        "pathConfig",
-        "newFieldName"
-      ]
+      "additionalProperties": false
     },
     "HoistFieldTransformFieldPathConfigObject": {
-      "additionalProperties": false,
+      "required": [
+        "fieldName",
+        "filterArgs"
+      ],
       "type": "object",
       "title": "HoistFieldTransformFieldPathConfigObject",
       "properties": {
@@ -4104,15 +4108,9 @@
           "description": "Match fields based on argument, needs to implement `(arg: GraphQLArgument) => boolean`;"
         }
       },
-      "required": [
-        "fieldName",
-        "filterArgs"
-      ]
+      "additionalProperties": false
     },
     "NamingConventionTransformConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "NamingConventionTransformConfig",
       "properties": {
         "mode": {
           "type": "string",
@@ -4198,12 +4196,12 @@
           ],
           "description": "Allowed values: camelCase, capitalCase, constantCase, dotCase, headerCase, noCase, paramCase, pascalCase, pathCase, sentenceCase, snakeCase, upperCase, lowerCase"
         }
-      }
+      },
+      "type": "object",
+      "title": "NamingConventionTransformConfig",
+      "additionalProperties": false
     },
     "PrefixTransformConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PrefixTransformConfig",
       "properties": {
         "mode": {
           "type": "string",
@@ -4233,12 +4231,12 @@
           "type": "boolean",
           "description": "Changes types (default: true)"
         }
-      }
+      },
+      "type": "object",
+      "title": "PrefixTransformConfig",
+      "additionalProperties": false
     },
     "PruneTransformConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PruneTransformConfig",
       "properties": {
         "skipPruning": {
           "type": "array",
@@ -4264,10 +4262,19 @@
           "type": "boolean",
           "description": "Set to `true` to skip pruning unused types"
         }
-      }
+      },
+      "type": "object",
+      "title": "PruneTransformConfig",
+      "additionalProperties": false
     },
     "RateLimitTransformConfig": {
-      "additionalProperties": false,
+      "required": [
+        "type",
+        "field",
+        "max",
+        "ttl",
+        "identifier"
+      ],
       "type": "object",
       "title": "RateLimitTransformConfig",
       "properties": {
@@ -4292,16 +4299,12 @@
           "description": "The identifier expression that determines the identity of the request (e.g. `{context.req.socket.remoteAddress}`)"
         }
       },
-      "required": [
-        "type",
-        "field",
-        "max",
-        "ttl",
-        "identifier"
-      ]
+      "additionalProperties": false
     },
     "RenameTransform": {
-      "additionalProperties": false,
+      "required": [
+        "renames"
+      ],
       "type": "object",
       "title": "RenameTransform",
       "properties": {
@@ -4322,12 +4325,13 @@
           "description": "Array of rename rules"
         }
       },
-      "required": [
-        "renames"
-      ]
+      "additionalProperties": false
     },
     "RenameTransformObject": {
-      "additionalProperties": false,
+      "required": [
+        "from",
+        "to"
+      ],
       "type": "object",
       "title": "RenameTransformObject",
       "properties": {
@@ -4358,15 +4362,9 @@
           "description": "Flag to indicate whether certain default types (built-ins, scalars and other types specified an exclusion list) should be renamed or not.\n\n@default: false"
         }
       },
-      "required": [
-        "from",
-        "to"
-      ]
+      "additionalProperties": false
     },
     "RenameConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "RenameConfig",
       "properties": {
         "type": {
           "type": "string"
@@ -4377,10 +4375,15 @@
         "argument": {
           "type": "string"
         }
-      }
+      },
+      "type": "object",
+      "title": "RenameConfig",
+      "additionalProperties": false
     },
     "ReplaceFieldTransformConfig": {
-      "additionalProperties": false,
+      "required": [
+        "replacements"
+      ],
       "type": "object",
       "title": "ReplaceFieldTransformConfig",
       "properties": {
@@ -4409,12 +4412,13 @@
           "description": "Array of rules to replace fields"
         }
       },
-      "required": [
-        "replacements"
-      ]
+      "additionalProperties": false
     },
     "ReplaceFieldTransformObject": {
-      "additionalProperties": false,
+      "required": [
+        "from",
+        "to"
+      ],
       "type": "object",
       "title": "ReplaceFieldTransformObject",
       "properties": {
@@ -4451,13 +4455,13 @@
           "type": "string"
         }
       },
-      "required": [
-        "from",
-        "to"
-      ]
+      "additionalProperties": false
     },
     "ReplaceFieldConfig": {
-      "additionalProperties": false,
+      "required": [
+        "type",
+        "field"
+      ],
       "type": "object",
       "title": "ReplaceFieldConfig",
       "properties": {
@@ -4468,13 +4472,12 @@
           "type": "string"
         }
       },
-      "required": [
-        "type",
-        "field"
-      ]
+      "additionalProperties": false
     },
     "ResolversCompositionTransform": {
-      "additionalProperties": false,
+      "required": [
+        "compositions"
+      ],
       "type": "object",
       "title": "ResolversCompositionTransform",
       "properties": {
@@ -4495,12 +4498,13 @@
           "description": "Array of resolver/composer to apply"
         }
       },
-      "required": [
-        "compositions"
-      ]
+      "additionalProperties": false
     },
     "ResolversCompositionTransformObject": {
-      "additionalProperties": false,
+      "required": [
+        "resolver",
+        "composer"
+      ],
       "type": "object",
       "title": "ResolversCompositionTransformObject",
       "properties": {
@@ -4525,13 +4529,12 @@
           "description": "Path to the composer function\nExample: ./src/auth.js#authComposer"
         }
       },
-      "required": [
-        "resolver",
-        "composer"
-      ]
+      "additionalProperties": false
     },
     "TransferSchemaTransformConfig": {
-      "additionalProperties": false,
+      "required": [
+        "transfers"
+      ],
       "type": "object",
       "title": "TransferSchemaTransformConfig",
       "properties": {
@@ -4544,12 +4547,13 @@
           "description": "Array of rules to transfer fields or args"
         }
       },
-      "required": [
-        "transfers"
-      ]
+      "additionalProperties": false
     },
     "TransferSchemaTransformObject": {
-      "additionalProperties": false,
+      "required": [
+        "from",
+        "to"
+      ],
       "type": "object",
       "title": "TransferSchemaTransformObject",
       "properties": {
@@ -4568,15 +4572,9 @@
           "description": "Allowed values: move, copy"
         }
       },
-      "required": [
-        "from",
-        "to"
-      ]
+      "additionalProperties": false
     },
     "TypeMergingConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "TypeMergingConfig",
       "properties": {
         "types": {
           "type": "array",
@@ -4609,10 +4607,15 @@
           ],
           "description": "The path to a code file that has additional type merging configuration"
         }
-      }
+      },
+      "type": "object",
+      "title": "TypeMergingConfig",
+      "additionalProperties": false
     },
     "MergedRootFieldConfig": {
-      "additionalProperties": false,
+      "required": [
+        "queryFieldName"
+      ],
       "type": "object",
       "title": "MergedRootFieldConfig",
       "properties": {
@@ -4644,14 +4647,9 @@
           "description": "Advanced use only; This argument specifies a string expression that allows more customization of the input arguments. Rules for evaluation of this argument are as follows:\n  - basic object parsing of the input key: `\"arg1: $key.arg1, arg2: $key.arg2\"`\n  - any expression enclosed by double brackets will be evaluated once for each of the requested keys, and then sent as a list: `\"input: { keys: [[$key]] }\"`\n  - selections from the key can be referenced by using the $ sign and dot notation: `\"upcs: [[$key.upc]]\"`, so that `$key.upc` refers to the `upc` field of the key."
         }
       },
-      "required": [
-        "queryFieldName"
-      ]
+      "additionalProperties": false
     },
     "MergedTypeConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "MergedTypeConfig",
       "properties": {
         "typeName": {
           "type": "string",
@@ -4672,10 +4670,15 @@
           },
           "additionalItems": false
         }
-      }
+      },
+      "type": "object",
+      "title": "MergedTypeConfig",
+      "additionalProperties": false
     },
     "KeyAnnotation": {
-      "additionalProperties": false,
+      "required": [
+        "selectionSet"
+      ],
       "type": "object",
       "title": "KeyAnnotation",
       "properties": {
@@ -4683,12 +4686,12 @@
           "type": "string"
         }
       },
-      "required": [
-        "selectionSet"
-      ]
+      "additionalProperties": false
     },
     "MergedTypeField": {
-      "additionalProperties": false,
+      "required": [
+        "fieldName"
+      ],
       "type": "object",
       "title": "MergedTypeField",
       "properties": {
@@ -4700,12 +4703,12 @@
           "description": "specifies a selection of fields required from other services to compute the value of this field.\nThese additional fields are only selected when the computed field is requested.\nAnalogous to [computed field](https://www.graphql-tools.com/docs/stitch-type-merging#computed-fields) in merged type configuration.\nComputed field dependencies must be sent into the subservice using an [object key](https://www.graphql-tools.com/docs/stitch-directives-sdl#object-keys)."
         }
       },
-      "required": [
-        "fieldName"
-      ]
+      "additionalProperties": false
     },
     "ComputedAnnotation": {
-      "additionalProperties": false,
+      "required": [
+        "selectionSet"
+      ],
       "type": "object",
       "title": "ComputedAnnotation",
       "properties": {
@@ -4713,14 +4716,9 @@
           "type": "string"
         }
       },
-      "required": [
-        "selectionSet"
-      ]
+      "additionalProperties": false
     },
     "TuqlHandler": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "TuqlHandler",
       "properties": {
         "db": {
           "type": "string",
@@ -4730,12 +4728,12 @@
           "type": "string",
           "description": "Path to the SQL Dump file if you want to build a in-memory database"
         }
-      }
+      },
+      "type": "object",
+      "title": "TuqlHandler",
+      "additionalProperties": false
     },
     "PrometheusConfig": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "PrometheusConfig",
       "properties": {
         "requestCount": {
           "description": "Any of: Boolean, String",
@@ -4915,10 +4913,12 @@
             }
           ]
         }
-      }
+      },
+      "type": "object",
+      "title": "PrometheusConfig",
+      "additionalProperties": false
     }
   },
-  "additionalProperties": false,
   "required": [
     "sources"
   ]

@@ -119,6 +119,11 @@
       "title": "Build-Base"
     },
     "platforms": {
+      "type": "object",
+      "description": "Determines which architectures the project builds and runs on.",
+      "examples": [
+        "{amd64: {build-on: [amd64], build-for: [amd64]}, arm64: {build-on: [amd64, arm64], build-for: [arm64]}}"
+      ],
       "additionalProperties": {
         "oneOf": [
           {
@@ -129,10 +134,20 @@
           }
         ]
       },
-      "description": "Determines which architectures the project builds and runs on.",
-      "examples": [
-        "{amd64: {build-on: [amd64], build-for: [amd64]}, arm64: {build-on: [amd64, arm64], build-for: [arm64]}}"
-      ],
+      "propertyNames": {
+        "description": "The name of this platform. May not contain '/'",
+        "examples": [
+          "riscv64",
+          "my-special-platform"
+        ],
+        "not": {
+          "enum": [
+            "*",
+            "any"
+          ]
+        }
+      },
+      "title": "Platforms",
       "patternProperties": {
         "(amd64|arm64|armhf|i386|ppc64el|riscv64|s390x)": {
           "anyOf": [
@@ -177,22 +192,7 @@
             }
           ]
         }
-      },
-      "propertyNames": {
-        "description": "The name of this platform. May not contain '/'",
-        "examples": [
-          "riscv64",
-          "my-special-platform"
-        ],
-        "not": {
-          "enum": [
-            "*",
-            "any"
-          ]
-        }
-      },
-      "title": "Platforms",
-      "type": "object"
+      }
     },
     "contact": {
       "anyOf": [
@@ -292,22 +292,22 @@
       "title": "Adopt-Info"
     },
     "parts": {
-      "additionalProperties": {
-        "$ref": "#/$defs/Part"
-      },
+      "type": "object",
       "description": "The self-contained software pieces needed to create the final artifact.",
       "examples": [
         "{cloud-init:                 {plugin: python,                 source-type: git,                 source: https://git.launchpad.net/cloud-init}}"
       ],
       "title": "Parts",
-      "type": "object"
+      "additionalProperties": {
+        "$ref": "#/$defs/Part"
+      }
     },
     "package-repositories": {
       "anyOf": [
         {
           "items": {
-            "additionalProperties": true,
-            "type": "object"
+            "type": "object",
+            "additionalProperties": true
           },
           "type": "array"
         },
@@ -325,10 +325,10 @@
     "environment": {
       "anyOf": [
         {
+          "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "type": "object"
+          }
         },
         {
           "type": "null"
@@ -355,10 +355,10 @@
     "services": {
       "anyOf": [
         {
+          "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/Service"
-          },
-          "type": "object"
+          }
         },
         {
           "type": "null"
@@ -371,6 +371,7 @@
     "checks": {
       "anyOf": [
         {
+          "type": "object",
           "additionalProperties": {
             "oneOf": [
               {
@@ -383,8 +384,7 @@
                 "$ref": "#/$defs/ExecCheck"
               }
             ]
-          },
-          "type": "object"
+          }
         },
         {
           "type": "null"
@@ -427,6 +427,7 @@
       "title": "Entrypoint-Command"
     }
   },
+  "additionalProperties": false,
   "required": [
     "name",
     "summary",
@@ -435,10 +436,9 @@
     "platforms",
     "parts"
   ],
-  "additionalProperties": false,
   "$defs": {
     "ExecCheck": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Model for a check that executes a command.",
       "properties": {
         "override": {
@@ -524,10 +524,10 @@
         "exec"
       ],
       "title": "ExecCheck",
-      "type": "object"
+      "additionalProperties": false
     },
     "ExecCheckOptions": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Lightweight schema validation for a Pebble exec check.",
       "properties": {
         "command": {
@@ -554,10 +554,10 @@
         "environment": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "type": "string"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -639,7 +639,7 @@
         "command"
       ],
       "title": "ExecCheckOptions",
-      "type": "object"
+      "additionalProperties": false
     },
     "FailureExitState": {
       "description": "What to do on a failure exit.",
@@ -653,7 +653,7 @@
       "type": "string"
     },
     "HttpCheck": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Model for a check that uses HTTP.",
       "properties": {
         "override": {
@@ -739,10 +739,10 @@
         "http"
       ],
       "title": "HttpCheck",
-      "type": "object"
+      "additionalProperties": false
     },
     "HttpCheckOptions": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Lightweight schema validation for a Pebble HTTP check.",
       "properties": {
         "url": {
@@ -759,10 +759,10 @@
         "headers": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "type": "string"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -782,10 +782,10 @@
         "url"
       ],
       "title": "HttpCheckOptions",
-      "type": "object"
+      "additionalProperties": false
     },
     "Platform": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "A single platform entry in the platforms dictionary.\n\nThis model defines how a single value under the ``platforms`` key works for a project.",
       "properties": {
         "build-on": {
@@ -834,10 +834,10 @@
         "build-for"
       ],
       "title": "Platform",
-      "type": "object"
+      "additionalProperties": false
     },
     "Service": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Lightweight schema validation for a Pebble service.\n\nBased on\n<https://canonical-pebble.readthedocs-hosted.com/en/latest/reference/layer-specification/>",
       "properties": {
         "override": {
@@ -952,10 +952,10 @@
         "environment": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "type": "string"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -1057,10 +1057,10 @@
         "on-check-failure": {
           "anyOf": [
             {
+              "type": "object",
               "additionalProperties": {
                 "$ref": "#/$defs/FailureExitState"
-              },
-              "type": "object"
+              }
             },
             {
               "type": "null"
@@ -1145,7 +1145,7 @@
         "command"
       ],
       "title": "Service",
-      "type": "object"
+      "additionalProperties": false
     },
     "SuccessExitState": {
       "description": "What to do on exit success.",
@@ -1159,7 +1159,7 @@
       "type": "string"
     },
     "TcpCheck": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Model for a check that uses TCP.",
       "properties": {
         "override": {
@@ -1245,10 +1245,10 @@
         "tcp"
       ],
       "title": "TcpCheck",
-      "type": "object"
+      "additionalProperties": false
     },
     "TcpCheckOptions": {
-      "additionalProperties": false,
+      "type": "object",
       "description": "Lightweight schema validation for a Pebble TCP check.",
       "properties": {
         "port": {
@@ -1281,7 +1281,7 @@
         "port"
       ],
       "title": "TcpCheckOptions",
-      "type": "object"
+      "additionalProperties": false
     },
     "Part": {
       "description": "The part specification data.",
@@ -1531,10 +1531,10 @@
             "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
           ],
           "items": {
+            "type": "object",
             "additionalProperties": {
               "type": "string"
-            },
-            "type": "object"
+            }
           },
           "title": "Build-Environment",
           "type": "array"
@@ -1553,15 +1553,15 @@
           "type": "array"
         },
         "organize": {
-          "additionalProperties": {
-            "type": "string"
-          },
+          "type": "object",
           "description": "A map of files from the build directory to their destinations in the stage directory.",
           "examples": [
             "{hello.py: bin/hello}"
           ],
           "title": "Organize",
-          "type": "object"
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "overlay": {
           "description": "The files to copy from the part's layer to the stage directory.",
@@ -1955,10 +1955,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -1977,15 +1977,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -2380,10 +2380,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -2402,15 +2402,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -2640,12 +2640,12 @@
                 "title": "Ant-Build-File"
               },
               "ant-properties": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "default": {},
                 "title": "Ant-Properties",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "source-checksum": {
                 "default": "",
@@ -2833,10 +2833,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -2855,15 +2855,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -3274,10 +3274,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -3296,15 +3296,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -3699,10 +3699,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -3721,15 +3721,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -4137,10 +4137,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -4159,15 +4159,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -4579,10 +4579,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -4601,15 +4601,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -5020,10 +5020,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -5042,15 +5042,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -5445,10 +5445,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -5467,15 +5467,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -5893,10 +5893,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -5915,15 +5915,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -6354,10 +6354,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -6376,15 +6376,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -6787,10 +6787,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -6809,15 +6809,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -7225,10 +7225,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -7247,15 +7247,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -7658,10 +7658,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -7680,15 +7680,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -8091,10 +8091,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -8113,15 +8113,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -8533,10 +8533,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -8555,15 +8555,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -8983,10 +8983,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -9005,15 +9005,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -9436,10 +9436,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -9458,15 +9458,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -9879,10 +9879,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -9901,15 +9901,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -10358,10 +10358,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -10380,15 +10380,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -10841,10 +10841,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -10863,15 +10863,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -11274,10 +11274,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -11296,15 +11296,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
@@ -11717,10 +11717,10 @@
                   "[{MESSAGE: \"Hello world!\"}, {NAME: \"Craft Parts\"}]"
                 ],
                 "items": {
+                  "type": "object",
                   "additionalProperties": {
                     "type": "string"
-                  },
-                  "type": "object"
+                  }
                 },
                 "title": "Build-Environment",
                 "type": "array"
@@ -11739,15 +11739,15 @@
                 "type": "array"
               },
               "organize": {
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "type": "object",
                 "description": "A map of files from the build directory to their destinations in the stage directory.",
                 "examples": [
                   "{hello.py: bin/hello}"
                 ],
                 "title": "Organize",
-                "type": "object"
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "overlay": {
                 "description": "The files to copy from the part's layer to the stage directory.",
