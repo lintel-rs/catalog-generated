@@ -203,10 +203,7 @@ Schema - Lintel Catalog"
   </div>
    <div class="desc-html"><p>Oxlint Configuration File</p>
 <p>This configuration is aligned with ESLint v8's configuration schema (<code>eslintrc.json</code>).</p>
-<p>Usage: <code>oxlint -c oxlintrc.json --import-plugin</code></p>
-<p>::: danger NOTE</p>
-<p>Only the <code>.json</code> format is supported. You can use comments in configuration files.</p>
-<p>:::</p>
+<p>Usage: <code>oxlint -c oxlintrc.json</code></p>
 <p>Example</p>
 <p><code>.oxlintrc.json</code></p>
 <pre><code class="language-json">{
@@ -238,6 +235,39 @@ Schema - Lintel Catalog"
 }
 ]
 }
+</code></pre>
+<p><code>oxlint.config.ts</code></p>
+<pre><code class="language-ts">import { defineConfig } from "oxlint";
+
+export default defineConfig({
+plugins: ["import", "typescript", "unicorn"],
+env: {
+"browser": true
+},
+globals: {
+"foo": "readonly"
+},
+settings: {
+react: {
+version: "18.2.0"
+},
+custom: { option: true }
+},
+rules: {
+"eqeqeq": "warn",
+"import/no-cycle": "error",
+"react/self-closing-comp": ["error", { "html": false }]
+},
+overrides: [
+{
+files: ["*.test.ts", "*.spec.ts"],
+rules: {
+"@typescript-eslint/no-explicit-any": "off"
+}
+}
+]
+}
+});
 </code></pre>
 </div>
    <h2 id="properties">Properties</h2>
@@ -1039,11 +1069,30 @@ you might use this config:</p>
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">reportUnusedDisableDirectives</span>
+    <span class="type-badge"
+      ><a
+        href="#def-AllowWarnDeny"
+        class="type-badge-link"
+        >AllowWarnDeny</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Report unused disable directives (e.g. <code>// oxlint-disable-line</code> or <code>// eslint-disable-line</code>).</p>
+<p>Equivalent to passing <code>--report-unused-disable-directives-severity</code> on the CLI.
+CLI flags take precedence over this value when both are set.
+Only supported in the root configuration file.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">typeAware</span>
     <span class="type-badge">boolean | null</span>
    </div>
   <div class="desc-html"><p>Enable rules that require type information.</p>
 <p>Equivalent to passing <code>--type-aware</code> on the CLI.</p>
+<p>Note that this requires the <code>oxlint-tsgolint</code> package to be installed.</p>
 </div>
        </div>   <div
   class="property-item"
@@ -1054,6 +1103,7 @@ you might use this config:</p>
    </div>
   <div class="desc-html"><p>Enable experimental type checking (includes TypeScript compiler diagnostics).</p>
 <p>Equivalent to passing <code>--type-check</code> on the CLI.</p>
+<p>Note that this requires the <code>oxlint-tsgolint</code> package to be installed.</p>
 </div>
        </div>        </div>
     </div>

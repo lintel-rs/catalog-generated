@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/app-definition-yaml/latest.json",
   "x-lintel": {
     "source": "https://appsemble.app/api.json#/components/schemas/AppDefinition",
-    "sourceSha256": "22e7a217dab39657003c01dd522297432fe0b352e63fbad7c4b8d4b4ece57660",
+    "sourceSha256": "a5771264bcd0352cb920294d4cf316219bf44dd17df87cb6e864f69879acc8c3",
     "fileMatch": [
       "app-definition.yaml"
     ],
@@ -2874,7 +2874,7 @@
       "name": "LGPL",
       "url": "https://gitlab.com/appsemble/appsemble/blob/main/LICENSE.md"
     },
-    "version": "0.36.4"
+    "version": "0.36.5-test.1"
   },
   "paths": {
     "/api/app-collections/{appCollectionId}/apps/{appId}/pinned": {
@@ -7377,6 +7377,72 @@
           {
             "cli": [
               "resources:write"
+            ]
+          },
+          {}
+        ]
+      }
+    },
+    "/api/apps/{appId}/resources/{resourceType}/{resourceId}/group": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/appId"
+        },
+        {
+          "$ref": "#/components/parameters/resourceType"
+        },
+        {
+          "$ref": "#/components/parameters/resourceId"
+        },
+        {
+          "$ref": "#/components/parameters/selectedGroupId",
+          "description": "ID of the group resource belongs to this"
+        }
+      ],
+      "put": {
+        "tags": [
+          "app",
+          "resource",
+          "positioning",
+          "custom-sort"
+        ],
+        "description": "Move a resource from one group to another or from no group to other.",
+        "operationId": "updateAppResourceGroup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "",
+                "required": [
+                  "groupId"
+                ],
+                "properties": {
+                  "groupId": {
+                    "description": "ID of the group the resource should be moved to"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated group ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "number",
+                  "description": "The updated group ID"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "app": [
+              "resources:manage"
             ]
           },
           {}

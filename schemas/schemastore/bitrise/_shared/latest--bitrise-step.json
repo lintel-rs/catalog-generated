@@ -1,0 +1,312 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/bitrise/_shared/latest--bitrise-step.json",
+  "x-lintel": {
+    "source": "https://json.schemastore.org/bitrise-step.json",
+    "sourceSha256": "9466b78283867705d3a04c86c26ff7832257217c72559a2c88cc7e20aa2108ad"
+  },
+  "$ref": "#/$defs/StepModel",
+  "$defs": {
+    "AptGetDepModel": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the package to be installed via apt-get."
+        },
+        "bin_name": {
+          "type": "string",
+          "description": "The name of the binary. This is optional and can be used if the binary name differs from the package name."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "BashStepToolkitModel": {
+      "properties": {
+        "entry_file": {
+          "type": "string",
+          "description": "The path to the bash script file that serves as the entry point for the Step."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "BrewDepModel": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the package to be installed via Homebrew."
+        },
+        "bin_name": {
+          "type": "string",
+          "description": "The name of the binary. This is optional and can be used if the binary name differs from the package name."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "CheckOnlyDepModel": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the binary or tool to check for. If it is not present on the system, the Step will fail before running."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "DependencyModel": {
+      "properties": {
+        "manager": {
+          "type": "string",
+          "description": "The package manager used to handle the dependency."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the dependency."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "DepsModel": {
+      "properties": {
+        "brew": {
+          "items": {
+            "$ref": "#/$defs/BrewDepModel",
+            "description": "A Homebrew dependency required by the Step."
+          },
+          "type": "array",
+          "description": "List of Homebrew dependencies required by the Step."
+        },
+        "apt_get": {
+          "items": {
+            "$ref": "#/$defs/AptGetDepModel",
+            "description": "An apt-get dependency required by the Step."
+          },
+          "type": "array",
+          "description": "List of apt-get dependencies required by the Step."
+        },
+        "check_only": {
+          "items": {
+            "$ref": "#/$defs/CheckOnlyDepModel",
+            "description": "A dependency that is only checked for existence."
+          },
+          "type": "array",
+          "description": "List of dependencies that are only checked for existence."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "ExecutableModel": {
+      "properties": {
+        "storage_uri": {
+          "type": "string",
+          "description": "The URI where the executable binary is stored."
+        },
+        "hash": {
+          "type": "string",
+          "description": "The hash of the executable binary for integrity verification."
+        }
+      },
+      "type": "object",
+      "description": "Platform-specific executable binary."
+    },
+    "GoStepToolkitModel": {
+      "required": [
+        "package_name"
+      ],
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "The name of the Go package that serves as the entry point for the Step."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "StepModel": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The human-readable title of the Step."
+        },
+        "summary": {
+          "type": "string",
+          "description": "A short summary of what the Step does."
+        },
+        "description": {
+          "type": "string",
+          "description": "A more detailed overview of the Step's function and configuration."
+        },
+        "website": {
+          "type": "string",
+          "description": "A web URL where users can find more information about the Step or the tools and services it implements."
+        },
+        "source_code_url": {
+          "type": "string",
+          "description": "The URL of the repository of the Step's source code."
+        },
+        "support_url": {
+          "type": "string",
+          "description": "A URL where users can get support for the Step."
+        },
+        "published_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time when the Step was published to the Step Library. This is auto-generated and should not be set manually."
+        },
+        "source": {
+          "$ref": "#/$defs/StepSourceModel",
+          "description": "The source code repository and commit information of the Step."
+        },
+        "asset_urls": {
+          "description": "URLs of assets associated with the Step, such as icon images. This is auto-generated and only set in the spec.json file in the Step Library.",
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "type": "string",
+              "description": "A URL pointing to a Step asset such as an icon image."
+            }
+          }
+        },
+        "host_os_tags": {
+          "items": {
+            "type": "string",
+            "description": "The host operating system tag."
+          },
+          "type": "array",
+          "description": "This property defines the host operating systems the Step is compatible with. For example, `linux` or `macos`."
+        },
+        "project_type_tags": {
+          "items": {
+            "type": "string",
+            "description": "The project type tag."
+          },
+          "type": "array",
+          "description": "This property defines the project type category of the Step. For example, `flutter` or `ios`."
+        },
+        "type_tags": {
+          "items": {
+            "type": "string",
+            "description": "A functional category tag. For example, `utility`, `test`, or `notification`."
+          },
+          "type": "array",
+          "description": "This property defines the functional category of the Step. For example, `utility`, `test`, or `notification`."
+        },
+        "dependencies": {
+          "items": {
+            "$ref": "#/$defs/DependencyModel"
+          },
+          "type": "array",
+          "description": "The dependencies required by the Step."
+        },
+        "toolkit": {
+          "$ref": "#/$defs/StepToolkitModel",
+          "description": "The toolkit used by the Step."
+        },
+        "deps": {
+          "$ref": "#/$defs/DepsModel",
+          "description": "The dependencies required by the Step."
+        },
+        "is_requires_admin_user": {
+          "type": "boolean",
+          "description": "If this property is true, the Step requires admin user privileges to run."
+        },
+        "is_always_run": {
+          "type": "boolean",
+          "description": "If this property is true, the Step will always run, even if a previous Step in the Workflow failed."
+        },
+        "is_skippable": {
+          "type": "boolean",
+          "description": "If this property is true, the build won't fail even if this Step fails. For example, if a Step restoring a cache archive fails, you might still want to run the build."
+        },
+        "run_if": {
+          "type": "string",
+          "description": "This property sets conditions for running a Step. It requires boolean value or a valid Go template expression."
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "This property defines a time limit for a Step: if the Step runs longer than the defined time, the Step fails. Define the limit in seconds."
+        },
+        "no_output_timeout": {
+          "type": "integer",
+          "description": "This property defines a time limit for a Step that produces no output: if the Step runs for the defined number of seconds without producing any output, the Step fails. Define the limit in seconds."
+        },
+        "meta": {
+          "description": "Additional metadata related to the Step.",
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "additionalProperties": true
+            }
+          }
+        },
+        "inputs": {
+          "items": {
+            "description": "An input parameter of the Step.",
+            "type": "object",
+            "patternProperties": {
+              ".*": {
+                "additionalProperties": true
+              }
+            }
+          },
+          "type": "array",
+          "description": "The inputs of the Step."
+        },
+        "outputs": {
+          "items": {
+            "description": "An output parameter of the Step.",
+            "type": "object",
+            "patternProperties": {
+              ".*": {
+                "additionalProperties": true
+              }
+            }
+          },
+          "type": "array",
+          "description": "The outputs the Step generates."
+        },
+        "executables": {
+          "description": "Platform-specific executable binaries",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ExecutableModel"
+          }
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "StepSourceModel": {
+      "properties": {
+        "git": {
+          "type": "string",
+          "description": "The Git repository URL of the Step's source code."
+        },
+        "commit": {
+          "type": "string",
+          "description": "The commit hash for the version tag of the Step's current version."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "StepToolkitModel": {
+      "properties": {
+        "bash": {
+          "$ref": "#/$defs/BashStepToolkitModel",
+          "description": "The Bash toolkit configuration for the Step."
+        },
+        "go": {
+          "$ref": "#/$defs/GoStepToolkitModel",
+          "description": "The Go toolkit configuration for the Step."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  }
+}

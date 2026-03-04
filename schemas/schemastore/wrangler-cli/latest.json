@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/wrangler-cli/latest.json",
   "x-lintel": {
     "source": "https://www.unpkg.com/wrangler/config-schema.json",
-    "sourceSha256": "8055c8ffbafa52e592179c24f4cc10915f05ae3a7ca5ab8d0884e3c4faa7b6e6",
+    "sourceSha256": "4b4a4d454e84867a6c3d98cfc2acaa2201baad4fa27e403815a88312529a26f9",
     "fileMatch": [
       "wrangler.json",
       "wrangler.jsonc",
@@ -368,11 +368,10 @@
               "items": {
                 "type": "string"
               },
-              "description": "List of secret names that are required by your Worker. When defined, this property:\n- Replaces .dev.vars/.env inference for type generation\n- Enables deploy-time validation to ensure secrets are configured\n- Enables local dev validation with warnings for missing secrets"
+              "description": "List of secret names that are required by your Worker. When defined, this property:\n- Replaces .dev.vars/.env/process.env inference for type generation\n- Enables local dev validation with warnings for missing secrets"
             }
           },
-          "default": "undefined",
-          "description": "Secrets configuration.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
+          "description": "Secrets configuration (experimental).\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
           "additionalProperties": false
         },
         "durable_objects": {
@@ -1633,11 +1632,10 @@
               "items": {
                 "type": "string"
               },
-              "description": "List of secret names that are required by your Worker. When defined, this property:\n- Replaces .dev.vars/.env inference for type generation\n- Enables deploy-time validation to ensure secrets are configured\n- Enables local dev validation with warnings for missing secrets"
+              "description": "List of secret names that are required by your Worker. When defined, this property:\n- Replaces .dev.vars/.env/process.env inference for type generation\n- Enables local dev validation with warnings for missing secrets"
             }
           },
-          "default": "undefined",
-          "description": "Secrets configuration.\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
+          "description": "Secrets configuration (experimental).\n\nNOTE: This field is not automatically inherited from the top level environment, and so must be specified in every named environment.",
           "additionalProperties": false
         },
         "durable_objects": {
@@ -2847,6 +2845,17 @@
         "remote": {
           "type": "boolean",
           "description": "Whether the Workflow should be remote or not in local development"
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "steps": {
+              "type": "number",
+              "description": "Maximum number of steps a Workflow instance can execute"
+            }
+          },
+          "description": "Optional limits for the Workflow",
+          "additionalProperties": false
         }
       },
       "required": [
@@ -3213,6 +3222,10 @@
         "socketPath": {
           "type": "string",
           "description": "Socket used by miniflare to communicate with Docker"
+        },
+        "containerEgressInterceptorImage": {
+          "type": "string",
+          "description": "Docker image name for the container egress interceptor sidecar"
         }
       },
       "required": [
