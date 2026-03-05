@@ -5,7 +5,7 @@
   "description": "Base config deserialized from ~/.codex/config.toml.",
   "x-lintel": {
     "source": "https://developers.openai.com/codex/config-schema.json",
-    "sourceSha256": "a5b90c7cc22f61a963cc282440a1590dbaaa271197b111565b74299646655cd5",
+    "sourceSha256": "831ae191e2dc7fdd3cbc5d0af6172ebd89e7bf4ac32c79f5e2856a47a6ebf292",
     "fileMatch": [
       "**/.codex/config.toml"
     ],
@@ -105,11 +105,15 @@
       "$ref": "#/$defs/AbsolutePathBuf"
     },
     "experimental_realtime_ws_backend_prompt": {
-      "description": "Experimental / do not use. Overrides only the realtime conversation websocket transport backend prompt (the `Op::RealtimeConversation` `/ws` session.create backend_prompt) without changing normal prompts.",
+      "description": "Experimental / do not use. Overrides only the realtime conversation websocket transport instructions (the `Op::RealtimeConversation` `/ws` session.update instructions) without changing normal prompts.",
       "type": "string"
     },
     "experimental_realtime_ws_base_url": {
-      "description": "Experimental / do not use. Overrides only the realtime conversation websocket transport base URL (the `Op::RealtimeConversation` `/ws` connection) without changing normal provider HTTP requests.",
+      "description": "Experimental / do not use. Overrides only the realtime conversation websocket transport base URL (the `Op::RealtimeConversation` `/v1/realtime` connection) without changing normal provider HTTP requests.",
+      "type": "string"
+    },
+    "experimental_realtime_ws_model": {
+      "description": "Experimental / do not use. Selects the realtime websocket model/snapshot used for the `Op::RealtimeConversation` connection.",
       "type": "string"
     },
     "experimental_use_freeform_apply_patch": {
@@ -130,6 +134,9 @@
           "type": "boolean"
         },
         "apps_mcp_gateway": {
+          "type": "boolean"
+        },
+        "artifact": {
           "type": "boolean"
         },
         "child_agents_md": {
@@ -168,6 +175,15 @@
         "experimental_windows_sandbox": {
           "type": "boolean"
         },
+        "fast_mode": {
+          "type": "boolean"
+        },
+        "image_detail_original": {
+          "type": "boolean"
+        },
+        "image_generation": {
+          "type": "boolean"
+        },
         "include_apply_patch_tool": {
           "type": "boolean"
         },
@@ -187,6 +203,9 @@
           "type": "boolean"
         },
         "personality": {
+          "type": "boolean"
+        },
+        "plugins": {
           "type": "boolean"
         },
         "powershell_utf8": {
@@ -486,6 +505,14 @@
     "plan_mode_reasoning_effort": {
       "$ref": "#/$defs/ReasoningEffort"
     },
+    "plugins": {
+      "type": "object",
+      "default": {},
+      "description": "User-level plugin config entries keyed by plugin name.",
+      "additionalProperties": {
+        "$ref": "#/$defs/PluginConfig"
+      }
+    },
     "profile": {
       "description": "Profile to use from the `profiles` map.",
       "type": "string"
@@ -544,6 +571,14 @@
         }
       ],
       "description": "Sandbox configuration to apply if `sandbox` is `WorkspaceWrite`."
+    },
+    "service_tier": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/ServiceTier"
+        }
+      ],
+      "description": "Optional explicit service tier preference for new turns (`fast` or `flex`)."
     },
     "shell_environment_policy": {
       "allOf": [
@@ -656,6 +691,13 @@
         "description": {
           "description": "Human-facing role documentation used in spawn tool guidance.",
           "type": "string"
+        },
+        "nickname_candidates": {
+          "description": "Candidate nicknames for agents spawned with this role.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false
@@ -949,6 +991,9 @@
             "apps_mcp_gateway": {
               "type": "boolean"
             },
+            "artifact": {
+              "type": "boolean"
+            },
             "child_agents_md": {
               "type": "boolean"
             },
@@ -985,6 +1030,15 @@
             "experimental_windows_sandbox": {
               "type": "boolean"
             },
+            "fast_mode": {
+              "type": "boolean"
+            },
+            "image_detail_original": {
+              "type": "boolean"
+            },
+            "image_generation": {
+              "type": "boolean"
+            },
             "include_apply_patch_tool": {
               "type": "boolean"
             },
@@ -1004,6 +1058,9 @@
               "type": "boolean"
             },
             "personality": {
+              "type": "boolean"
+            },
+            "plugins": {
               "type": "boolean"
             },
             "powershell_utf8": {
@@ -1138,6 +1195,9 @@
         "sandbox_mode": {
           "$ref": "#/$defs/SandboxMode"
         },
+        "service_tier": {
+          "$ref": "#/$defs/ServiceTier"
+        },
         "tools_view_image": {
           "type": "boolean"
         },
@@ -1249,11 +1309,19 @@
       "type": "object",
       "description": "Memories settings loaded from config.toml.",
       "properties": {
+        "consolidation_model": {
+          "description": "Model used for memory consolidation.",
+          "type": "string"
+        },
+        "extract_model": {
+          "description": "Model used for thread summarisation.",
+          "type": "string"
+        },
         "generate_memories": {
           "description": "When `false`, newly created threads are stored with `memory_mode = \"disabled\"` in the state DB.",
           "type": "boolean"
         },
-        "max_raw_memories_for_global": {
+        "max_raw_memories_for_consolidation": {
           "description": "Maximum number of recent raw memories retained for global consolidation.",
           "format": "uint",
           "minimum": 0.0,
@@ -1280,13 +1348,9 @@
           "format": "int64",
           "type": "integer"
         },
-        "phase_1_model": {
-          "description": "Model used for thread summarisation.",
-          "type": "string"
-        },
-        "phase_2_model": {
-          "description": "Model used for memory consolidation.",
-          "type": "string"
+        "no_memories_if_mcp_or_web_search": {
+          "description": "When `true`, web searches and MCP tool calls mark the thread `memory_mode` as `\"polluted\"`.",
+          "type": "boolean"
         },
         "use_memories": {
           "description": "When `false`, skip injecting memory usage instructions into developer prompts.",
@@ -1721,6 +1785,16 @@
       ],
       "type": "string"
     },
+    "PluginConfig": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
     "ProjectConfig": {
       "type": "object",
       "properties": {
@@ -1933,6 +2007,13 @@
         }
       },
       "additionalProperties": false
+    },
+    "ServiceTier": {
+      "enum": [
+        "fast",
+        "flex"
+      ],
+      "type": "string"
     },
     "ShellEnvironmentPolicyInherit": {
       "oneOf": [

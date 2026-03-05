@@ -5,7 +5,7 @@
   "description": "User configuration for Jujutsu VCS. See <https://docs.jj-vcs.dev/latest/config/> for details",
   "x-lintel": {
     "source": "https://jj-vcs.github.io/jj/latest/config-schema.json",
-    "sourceSha256": "7ba4ede51d21c8b9eefda07ee3061589ef153932cd7c0fe87cfb5bf28c81c142",
+    "sourceSha256": "82ab9841feb1ba8231766e5050774814b26c941cb51757df39fc4cc983b93a7b",
     "fileMatch": [
       "**/.jj/repo/config.toml",
       "**/jj/config.toml"
@@ -463,6 +463,13 @@
         }
       }
     },
+    "fileset-aliases": {
+      "type": "object",
+      "description": "Custom symbols/function aliases that can be used in fileset expressions",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
     "git": {
       "type": "object",
       "description": "Settings for git behavior (when using git backend)",
@@ -554,6 +561,10 @@
         "default-remote-branch": {
           "type": "string",
           "description": "The default branch to propose changes for"
+        },
+        "review-url": {
+          "type": "string",
+          "description": "Generate Link trailers with this URL instead of Change-Id trailers in `jj gerrit upload`"
         }
       }
     },
@@ -654,6 +665,11 @@
       "type": "object",
       "description": "Revset expressions used by various commands",
       "properties": {
+        "arrange": {
+          "type": "string",
+          "description": "Default set of revisions to open in the TUI when no explicit revset is given for jj arrange",
+          "default": "reachable(@, mutable())"
+        },
         "fix": {
           "type": "string",
           "description": "Default set of revisions to fix when no explicit revset is given for jj fix",
@@ -683,6 +699,16 @@
           "type": "string",
           "description": "Set of revisions to prioritize when rendering the graph for jj log",
           "default": "present(@)"
+        },
+        "bookmark-advance-to": {
+          "type": "string",
+          "description": "Default revision to advance bookmarks to when no explicit revision is given to jj advance `--to`",
+          "default": "@"
+        },
+        "bookmark-advance-from": {
+          "type": "string",
+          "description": "Default set of revisions to advance bookmarks from for jj advance (has access to `to`, the advance destination)",
+          "default": "heads(::to & bookmarks())"
         }
       },
       "additionalProperties": {
@@ -911,6 +937,10 @@
       "type": "object",
       "description": "Definitions for the templates that various jj commands use",
       "properties": {
+        "arrange": {
+          "type": "string",
+          "description": "`jj arrange``'s template for commits in the main view"
+        },
         "bookmark_list": {
           "type": "string",
           "description": "`jj bookmark list`'s output"
@@ -1089,6 +1119,13 @@
               "windows",
               "xous"
             ]
+          }
+        },
+        "environments": {
+          "type": "array",
+          "description": "List of environment conditions, any of which must match (NAME=VALUE) or be present (NAME).",
+          "items": {
+            "type": "string"
           }
         }
       }

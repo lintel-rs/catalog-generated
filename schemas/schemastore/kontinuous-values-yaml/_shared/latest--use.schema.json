@@ -1,69 +1,42 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json",
-  "title": "schema for build-kaniko job usage",
+  "title": "schema for create-db job usage",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/jobs/build-kaniko/use.schema.json",
-    "sourceSha256": "e2b2d1899ed0a3614a728df5fd12bd9c50d333aa781a84870c6dd51be0a6cee9"
+    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/jobs/create-db/use.schema.json",
+    "sourceSha256": "4d05f7e433674f79b85e9834d6ad550597eac607dfa0e19b44aecd1fc1e5d960"
   },
   "type": "object",
   "properties": {
-    "dockerfile": {
-      "description": "Path to the Dockerfile on the repository. Defaults to /Dockerfile",
+    "pgAdminUserSecretRefName": {
+      "description": "Secret with admin credentials to the database server",
       "type": "string"
     },
-    "context": {
-      "description": "Docker context (cwd) when building the image. Defaults to .",
+    "pgSecretName": {
+      "description": "Name of the kubernetes user secret to create. Defaults to pg-user",
       "type": "string"
     },
-    "registrySecretRefName": {
-      "description": "Name of the registry secret if you have a custom docker registry. Should contain CI_REGISTRY_USER, CI_REGISTRY_PASSWORD",
+    "database": {
+      "description": "Name of the Postgres database to create. Defaults to environment",
       "type": "string"
     },
-    "imagePackage": {
-      "description": "Name of the dockerfile on the registry",
+    "pgUser": {
+      "description": "Name of the Postgres user to create",
       "type": "string"
     },
-    "imageProject": {
-      "description": "Optional project name in the docker registry",
+    "extensions": {
+      "description": "List of Postgres extensions to create in the new database. Defaults to `hstore pgcrypto citext uuid-ossp postgis pg_trgm unaccent`",
       "type": "string"
     },
-    "imageRepository": {
-      "description": "Optional sub repository for the docker image",
-      "type": "string"
-    },
-    "buildArgs": {
-      "$ref": "#/$defs/build-args"
-    },
-    "skipExisting": {
-      "description": "Skip build if image already registerd",
-      "type": "boolean"
-    },
-    "buildOptions": {
-      "description": "Build options",
+    "useAzureFlex": {
+      "description": "Use an Azure Flex database. defaults to false",
       "type": "string",
-      "examples": [
-        "-single-snapshot --ignore-path=/product_uuid"
+      "enum": [
+        "true",
+        "false"
       ]
-    },
-    "target": {
-      "description": "Set the target build stage to build.",
-      "type": "string"
-    },
-    "noPush": {
-      "description": "Disable registry push, just build",
-      "type": "boolean"
     }
   },
-  "required": [
-    "imagePackage"
-  ],
-  "additionalProperties": false,
-  "$defs": {
-    "build-args": {
-      "description": "Build args to customize the docker build",
-      "type": "object",
-      "additionalProperties": true
-    }
-  }
+  "required": [],
+  "additionalProperties": false
 }
