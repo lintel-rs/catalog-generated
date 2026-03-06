@@ -164,37 +164,193 @@
     <span class="label">Type:</span>
     <span class="type-badge">object</span>
   </div>
-   <div class="desc-html"><p>All the valid configuration parameters for the Server plugin for RoadRunner.</p>
+   <div class="desc-html"><p>All the valid configuration parameters for the pool plugin for RoadRunner.</p>
 </div>
    <h2 id="properties">Properties</h2>
   <div class="property-list">
   <div
+  class="property-item"
+  id="prop-debug"
+>
+  <div class="property-header">
+    <span class="property-name">debug</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>In debug mode, workers are created immediately before RR passes jobs to them, exiting once the job completes. This defeats the purpose of a worker pool and should only be used during development.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
+       </div>    <div
   class="property-item"
   id="prop-command"
 >
   <div class="property-header">
     <span class="property-name">command</span>
     <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>The command used to start workers, including any required arguments. Any plugins that implement a worker pool will inherit this command if they do not specify an override.</p>
+   </div>
+  <div class="desc-html"><p>The command to use for the pool. If defined, this will override the value in <code>server.command</code> for this pool only.</p>
 </div>
       <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;php psr-worker.php&quot;</code>  </div>
-   <div class="property-constraints">
+    <span class="meta-label">Examples:</span> <code>&quot;php worker.php&quot;</code>  </div>
+   </div>    <div
+  class="property-item"
+  id="prop-num_workers"
+>
+  <div class="property-header">
+    <span class="property-name">num_workers</span>
+    <span class="type-badge">integer</span>
+   </div>
+  <div class="desc-html"><p>The number of worker processes to start. Zero or undefined defaults to the number of logical CPUs.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>0</code>
+  </div>
+       <div class="property-constraints">
 <span class="constraint"
-      >minLength=1</span
+      >min=0</span
     >  </div>
   </div>    <div
   class="property-item"
-  id="prop-on_init"
+  id="prop-max_jobs"
 >
   <div class="property-header">
-    <span class="property-name">on_init</span>
+    <span class="property-name">max_jobs</span>
+    <span class="type-badge">integer</span>
+   </div>
+  <div class="desc-html"><p>The maximum number of executions a worker may perform before it is terminated and a new process is started. Zero or undefined means no limit.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>0</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >min=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+  id="prop-max_queue_size"
+>
+  <div class="property-header">
+    <span class="property-name">max_queue_size</span>
+    <span class="type-badge">integer</span>
+   </div>
+  <div class="desc-html"><p>The maximum size of the internal job queue. This is the limit of pending, incoming jobs that await worker allocation. After the limit is reached, all additional jobs will be rejected with an error. Zero or undefined means no limit.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>0</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >min=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+  id="prop-allocate_timeout"
+>
+  <div class="property-header">
+    <span class="property-name">allocate_timeout</span>
+    <a href="#def-duration" class="type-badge type-badge-link"
+      >Duration</a
+    >
+   </div>
+       </div>    <div
+  class="property-item"
+  id="prop-reset_timeout"
+>
+  <div class="property-header">
+    <span class="property-name">reset_timeout</span>
+    <a href="#def-duration" class="type-badge type-badge-link"
+      >Duration</a
+    >
+   </div>
+       </div>    <div
+  class="property-item"
+  id="prop-stream_timeout"
+>
+  <div class="property-header">
+    <span class="property-name">stream_timeout</span>
+    <a href="#def-duration" class="type-badge type-badge-link"
+      >Duration</a
+    >
+   </div>
+       </div>    <div
+  class="property-item"
+  id="prop-destroy_timeout"
+>
+  <div class="property-header">
+    <span class="property-name">destroy_timeout</span>
+    <a href="#def-duration" class="type-badge type-badge-link"
+      >Duration</a
+    >
+   </div>
+       </div>    <div
+  class="property-item"
+  id="prop-dynamic_allocator"
+>
+  <div class="property-header">
+    <span class="property-name">dynamic_allocator</span>
     <span class="type-badge">object</span>
    </div>
-  <div class="desc-html"><p>Arbitrary command to execute before RR starts allocating workers.</p>
+  <div class="desc-html"><p>Configuration options for auto-scaling/dynamic workers. If not defined, worker auto-scaling is disabled.</p>
+</div>
+         <details class="nested-properties">
+    <summary>3 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">max_workers</span>
+    <span class="type-badge">integer</span>
+   </div>
+  <div class="desc-html"><p>The maximum number of workers that may be dynamically allocated.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>10</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >min=1</span
+    ><span class="constraint"
+      >max=100</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">spawn_rate</span>
+    <span class="type-badge">integer</span>
+   </div>
+  <div class="desc-html"><p>The maximum number of workers that may be spawned per NoFreeWorkers error (limited to <code>max_workers</code>).</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>5</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >min=1</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">idle_timeout</span>
+    <a href="#def-duration" class="type-badge type-badge-link"
+      >Duration</a
+    >
+   </div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+  id="prop-supervisor"
+>
+  <div class="property-header">
+    <span class="property-name">supervisor</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>The pool supervisor is used to control workers. If not defined, the pool has no supervision.</p>
 </div>
          <details class="nested-properties">
     <summary>5 nested properties</summary>
@@ -203,169 +359,66 @@
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">command</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>Command to execute. It can be any script or binary that RoadRunner has access to.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;php not-worker.php&quot;</code>, <code>&quot;sh script.sh&quot;</code>, <code>&quot;start script.bat&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">exec_timeout</span>
-    <a href="/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration/" class="type-badge type-badge-link"
+    <span class="property-name">watch_tick</span>
+    <a href="#def-duration" class="type-badge type-badge-link"
       >Duration</a
     >
    </div>
-  <div class="desc-html"><p>Script execution timeout. Zero or empty defaults to 60s.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;60s&quot;</code>
-  </div>
        </div>    <div
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">exit_on_error</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Exit RR if the <code>on_init</code> command fails.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;false&quot;</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">user</span>
-    <a href="#def-User" class="type-badge type-badge-link"
-      >string</a
+    <span class="property-name">ttl</span>
+    <a href="#def-duration" class="type-badge type-badge-link"
+      >Duration</a
     >
    </div>
-  <div class="desc-html"><p>Username (not UID) of the user from whom the command or process is executed. The RoadRunner process user will be used if not provided. The RoadRunner process must be run as root in order to specify a different user.</p>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">idle_ttl</span>
+    <a href="#def-duration" class="type-badge type-badge-link"
+      >Duration</a
+    >
+   </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">max_worker_memory</span>
+    <span class="type-badge">integer</span>
+   </div>
+  <div class="desc-html"><p>The maximum memory allocation allowed for a worker (soft limit) in MB. If a worker exceeds this value during execution, it will be terminated afterward. This should generally be set to a value lower than your PHP memory_limit, if one is specified. Zero or undefined means no limit.</p>
 </div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;www-data&quot;</code>  </div>
-   <div class="property-constraints">
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>0</code>
+  </div>
+       <div class="property-constraints">
 <span class="constraint"
-      >minLength=1</span
+      >min=0</span
     >  </div>
   </div>    <div
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">env</span>
-    <a href="#def-EnvironmentVariables" class="type-badge type-badge-link"
-      >object</a
+    <span class="property-name">exec_ttl</span>
+    <a href="#def-duration" class="type-badge type-badge-link"
+      >Duration</a
     >
    </div>
-  <div class="desc-html"><p>Environment variables for the process or command.</p>
-</div>
        </div>      </div>
   </details>
-</div>    <div
-  class="property-item"
-  id="prop-user"
->
-  <div class="property-header">
-    <span class="property-name">user</span>
-    <a href="#def-User" class="type-badge type-badge-link"
-      >string</a
-    >
-   </div>
-  <div class="desc-html"><p>Username (not UID) of the user from whom the command or process is executed. The RoadRunner process user will be used if not provided. The RoadRunner process must be run as root in order to specify a different user.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;www-data&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>    <div
-  class="property-item"
-  id="prop-group"
->
-  <div class="property-header">
-    <span class="property-name">group</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Group name (not GID) for the worker processes. The RR process user group will be used if not provided. The RoadRunner process must be run as root for this to work.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;www-data&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>    <div
-  class="property-item"
-  id="prop-env"
->
-  <div class="property-header">
-    <span class="property-name">env</span>
-    <a href="#def-EnvironmentVariables" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Environment variables for the process or command.</p>
-</div>
-       </div>    <div
-  class="property-item"
-  id="prop-relay"
->
-  <div class="property-header">
-    <span class="property-name">relay</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Worker relay method. Can be 'pipes', a TCP address (e.g. tcp://127.0.0.1:6002) or a socket (e.g. unix:///var/run/rr.sock).</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;pipes&quot;</code>
-  </div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;pipes&quot;</code>, <code>&quot;tcp://127.0.0.1:6002&quot;</code>, <code>&quot;unix:///var/run/rr.sock&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>    </div>
+</div>    </div>
      <h2 id="definitions">Definitions</h2>
-  <div class="definition-block" id="def-EnvironmentVariables">
+  <div class="definition-block" id="def-duration">
     <div class="definition-header">
-      <span class="def-name">EnvironmentVariables</span>
+      <span class="def-name">duration</span>
 <span class="type-badge"
-        >object</span
+        >Duration</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>Environment variables for the process or command.</p>
-</div>
       </div>
-  </div>
-  <div class="definition-block" id="def-User">
-    <div class="definition-header">
-      <span class="def-name">User</span>
-<span class="type-badge"
-        >string</span
-      >    </div>
-    <div class="definition-body">
-      <div class="desc-html"><p>Username (not UID) of the user from whom the command or process is executed. The RoadRunner process user will be used if not provided. The RoadRunner process must be run as root in order to specify a different user.</p>
-</div>
-       <div class="definition-examples">
-        <span class="meta-label">Examples:</span>
-        <ul>
-          <li><code>&quot;www-data&quot;</code></li>
-        </ul>
-      </div>
-     </div>
   </div>
   </section>
   </article>

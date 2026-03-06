@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/quali-torque-blueprint-spec-2/latest.json",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/QualiTorque/torque-vs-code-extensions/master/client/schemas/blueprint-spec2-schema.json",
-    "sourceSha256": "fa3d96c404a0b4d1bc7d1be6954a55e4c29d23f0563238a44cda6560cae2213e",
+    "sourceSha256": "d6d1ab7e421d840e07af73de50cbe20ae4232b054c39f11f8636903ed25f0b11",
     "fileMatch": [
       "**/blueprints/**.yaml"
     ],
@@ -314,6 +314,9 @@
             "terragrunt",
             "aws-cdk"
           ]
+        },
+        "condition": {
+          "$ref": "#/$defs/GrainConditions"
         },
         "env-labels": {
           "$ref": "#/$defs/GrainLabels"
@@ -868,6 +871,149 @@
         }
       },
       "additionalProperties": false
+    },
+    "GrainConditions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/GrainConditionObject"
+      },
+      "maxLength": 1,
+      "additionalProperties": false
+    },
+    "GrainConditionObject": {
+      "type": "object",
+      "then": {
+        "required": [
+          "channels"
+        ]
+      },
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "approval"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GrainConditionChannelObject"
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "if": {
+        "properties": {
+          "type": {
+            "const": "approval"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "GrainConditionChannelObject": {
+      "type": "object",
+      "else": {
+        "if": {
+          "properties": {
+            "type": {
+              "const": "user"
+            }
+          }
+        },
+        "then": {
+          "required": [
+            "users"
+          ],
+          "properties": {
+            "groups": false,
+            "users": true,
+            "names": false
+          },
+          "type": "object"
+        },
+        "else": {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "account_channels"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "names"
+            ],
+            "properties": {
+              "groups": false,
+              "users": false,
+              "names": true
+            },
+            "type": "object"
+          }
+        }
+      },
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "group",
+            "user",
+            "account_channels"
+          ]
+        },
+        "groups": {
+          "$ref": "#/$defs/GrainConditionChannelApproversObject"
+        },
+        "users": {
+          "$ref": "#/$defs/GrainConditionChannelApproversObject"
+        },
+        "names": {
+          "$ref": "#/$defs/GrainConditionChannelApproversObject"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "if": {
+        "properties": {
+          "type": {
+            "const": "group"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "groups"
+        ],
+        "properties": {
+          "groups": true,
+          "users": false,
+          "names": false
+        },
+        "type": "object"
+      },
+      "additionalProperties": false
+    },
+    "GrainConditionChannelApproversObject": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 250
+          }
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "EnvironmentLabel": {
       "type": "object",

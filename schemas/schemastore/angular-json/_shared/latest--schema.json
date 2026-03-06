@@ -1,47 +1,74 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Angular Enum Options Schema",
-  "description": "Creates a new enum in your project. Enums (enumerations) are a way to define a set of named constants, making your code more readable and maintainable. This schematic generates a new enum with the specified name and type.",
+  "title": "Library Options Schema",
+  "description": "Creates a new library project in your Angular workspace. Libraries are reusable collections of components, services, and other Angular artifacts that can be shared across multiple applications. This schematic simplifies the process of generating a new library with the necessary files and configurations.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/enum/schema.json",
-    "sourceSha256": "c8b9733eb56e27018e761d3a3eaf10c1591d87e5ba56996aab17a3071b44da31"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/library/schema.json",
+    "sourceSha256": "a26717250707cdc3af457388606e1e90e96d6028f6995c08a9907fbc295549af"
   },
   "type": "object",
   "properties": {
     "name": {
       "type": "string",
-      "description": "The name for the new enum. This will be used to create the enum file (e.g., `my-enum.enum.ts`).",
+      "description": "The name for the new library. This name will be used for the project directory and various identifiers within the library's code.",
+      "pattern": "^(?:@[a-zA-Z0-9-*~][a-zA-Z0-9-*._~]*/)?[a-zA-Z0-9-~][a-zA-Z0-9-._~]*$",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use for the enum?"
+      "x-prompt": "What name would you like to use for the library?"
     },
-    "path": {
+    "entryFile": {
       "type": "string",
       "format": "path",
-      "$default": {
-        "$source": "workingDirectory"
-      },
-      "description": "The path where the enum file should be created, relative to the current workspace. If not specified, the enum will be created in the current directory.",
-      "visible": false
+      "description": "The path to the library's public API file, relative to the workspace root. This file defines what parts of the library are accessible to applications that import it.",
+      "default": "public-api"
     },
-    "project": {
+    "prefix": {
       "type": "string",
-      "description": "The name of the project where the enum should be created. If not specified, the CLI will determine the project from the current directory.",
-      "$default": {
-        "$source": "projectName"
-      }
+      "format": "html-selector",
+      "description": "A prefix to be added to the selectors of components generated within this library. For example, if the prefix is `my-lib` and you generate a component named `my-component`, the selector will be `my-lib-my-component`.",
+      "default": "lib",
+      "alias": "p"
     },
-    "type": {
+    "skipPackageJson": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not automatically add dependencies to the `package.json` file."
+    },
+    "skipInstall": {
+      "description": "Skip the automatic installation of packages. You will need to manually install the dependencies later.",
+      "type": "boolean",
+      "default": false
+    },
+    "skipTsConfig": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not update the workspace `tsconfig.json` file to add a path mapping for the new library. The path mapping is needed to use the library in an application, but can be disabled here to simplify development."
+    },
+    "projectRoot": {
       "type": "string",
-      "description": "Adds a custom type to the filename, allowing you to create more descriptive enum names. For example, if you set the type to `status`, the filename will be `my-enum.status.ts`."
+      "description": "The root directory for the new library, relative to the workspace root. If not specified, the library will be created in a subfolder within the `projects` directory, using the library's name."
+    },
+    "standalone": {
+      "description": "Create a library that utilizes the standalone API, eliminating the need for NgModules. This can simplify the structure of your library and its usage in applications.",
+      "type": "boolean",
+      "default": true,
+      "x-user-analytics": "ep.ng_standalone"
+    },
+    "testRunner": {
+      "description": "The unit testing runner to use.",
+      "type": "string",
+      "enum": [
+        "vitest",
+        "karma"
+      ],
+      "default": "vitest"
     }
   },
   "required": [
-    "name",
-    "project"
+    "name"
   ],
   "additionalProperties": false
 }
