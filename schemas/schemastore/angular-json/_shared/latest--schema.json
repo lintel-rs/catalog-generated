@@ -1,74 +1,67 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Library Options Schema",
-  "description": "Creates a new library project in your Angular workspace. Libraries are reusable collections of components, services, and other Angular artifacts that can be shared across multiple applications. This schematic simplifies the process of generating a new library with the necessary files and configurations.",
+  "title": "Angular Resolver Options Schema",
+  "description": "Creates a new resolver in your project. Resolvers are used to pre-fetch data before a route is activated, ensuring that the necessary data is available before the component is displayed. This can improve the user experience by preventing delays and loading states. This schematic generates a new resolver with the specified name and options.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/library/schema.json",
-    "sourceSha256": "a26717250707cdc3af457388606e1e90e96d6028f6995c08a9907fbc295549af"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/resolver/schema.json",
+    "sourceSha256": "5ff57ade15a12dcb0ef89ada8558dde72b1cb2447584040c50da6b432d363053"
   },
   "type": "object",
   "properties": {
     "name": {
       "type": "string",
-      "description": "The name for the new library. This name will be used for the project directory and various identifiers within the library's code.",
-      "pattern": "^(?:@[a-zA-Z0-9-*~][a-zA-Z0-9-*._~]*/)?[a-zA-Z0-9-~][a-zA-Z0-9-._~]*$",
+      "description": "The name for the new resolver. This will be used to create the resolver's class and spec files (e.g., `my-resolver.resolver.ts` and `my-resolver.resolver.spec.ts`).",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use for the library?"
+      "x-prompt": "What name would you like to use for the resolver?"
     },
-    "entryFile": {
-      "type": "string",
-      "format": "path",
-      "description": "The path to the library's public API file, relative to the workspace root. This file defines what parts of the library are accessible to applications that import it.",
-      "default": "public-api"
-    },
-    "prefix": {
-      "type": "string",
-      "format": "html-selector",
-      "description": "A prefix to be added to the selectors of components generated within this library. For example, if the prefix is `my-lib` and you generate a component named `my-component`, the selector will be `my-lib-my-component`.",
-      "default": "lib",
-      "alias": "p"
-    },
-    "skipPackageJson": {
+    "skipTests": {
       "type": "boolean",
-      "default": false,
-      "description": "Do not automatically add dependencies to the `package.json` file."
-    },
-    "skipInstall": {
-      "description": "Skip the automatic installation of packages. You will need to manually install the dependencies later.",
-      "type": "boolean",
+      "description": "Skip the generation of a unit test file `spec.ts` for the new resolver.",
       "default": false
     },
-    "skipTsConfig": {
+    "flat": {
       "type": "boolean",
-      "default": false,
-      "description": "Do not update the workspace `tsconfig.json` file to add a path mapping for the new library. The path mapping is needed to use the library in an application, but can be disabled here to simplify development."
+      "description": "Creates the new resolver files at the top level of the current project. If set to false, a new folder with the resolver's name will be created to contain the files.",
+      "default": true
     },
-    "projectRoot": {
-      "type": "string",
-      "description": "The root directory for the new library, relative to the workspace root. If not specified, the library will be created in a subfolder within the `projects` directory, using the library's name."
-    },
-    "standalone": {
-      "description": "Create a library that utilizes the standalone API, eliminating the need for NgModules. This can simplify the structure of your library and its usage in applications.",
+    "functional": {
       "type": "boolean",
-      "default": true,
-      "x-user-analytics": "ep.ng_standalone"
+      "description": "Creates the resolver as a function `ResolveFn` instead of a class. Functional resolvers can be simpler for basic scenarios.",
+      "default": true
     },
-    "testRunner": {
-      "description": "The unit testing runner to use.",
+    "path": {
       "type": "string",
+      "format": "path",
+      "$default": {
+        "$source": "workingDirectory"
+      },
+      "description": "The path where the resolver files should be created, relative to the current workspace. If not provided, the resolver will be created in the current directory.",
+      "visible": false
+    },
+    "project": {
+      "type": "string",
+      "description": "The name of the project where the resolver should be created. If not specified, the CLI will determine the project from the current directory.",
+      "$default": {
+        "$source": "projectName"
+      }
+    },
+    "typeSeparator": {
+      "type": "string",
+      "default": "-",
       "enum": [
-        "vitest",
-        "karma"
+        "-",
+        "."
       ],
-      "default": "vitest"
+      "description": "The separator character to use before the type within the generated file's name. For example, if you set the option to `.`, the file will be named `example.resolver.ts`."
     }
   },
   "required": [
-    "name"
+    "name",
+    "project"
   ],
   "additionalProperties": false
 }
