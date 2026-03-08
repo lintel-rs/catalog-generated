@@ -1,101 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json",
-  "title": "schema for build job usage",
+  "title": "schema for deactivate job usage",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/jobs/build/use.schema.json",
-    "sourceSha256": "fe1c9c5e6ed9137afd702de04aa6886ea86ea1d5ebaa970831558f404dd9a267"
+    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/jobs/deactivate/use.schema.json",
+    "sourceSha256": "9474ceec92e908f8b5bea3bbf054d8d3974e4cb327aa7b7c2be7031c76397dfe"
   },
   "type": "object",
   "properties": {
-    "dockerfile": {
-      "description": "Path to the Dockerfile on the repository. Defaults to /Dockerfile",
-      "examples": [
-        "./packages/api/custom.Dockerfile"
-      ],
-      "default": "./Dockerfile",
+    "pgAdminUserSecretRefName": {
+      "description": "Secret with admin credentials to the database server",
       "type": "string"
     },
-    "context": {
-      "description": "Docker context (cwd) when building the image. Defaults to .",
-      "examples": [
-        "./packages/api"
-      ],
-      "default": ".",
+    "database": {
+      "description": "Name of the Postgres database to destroy. Defaults to environment",
       "type": "string"
     },
-    "registrySecretRefName": {
-      "description": "Name of the registry secret if you have a custom docker registry. Should contain CI_REGISTRY_USER, CI_REGISTRY_PASSWORD",
-      "type": "string"
-    },
-    "registry": {
-      "description": "Url of your custom docker registry",
-      "examples": [
-        "ghcr.io"
-      ],
-      "type": "string"
-    },
-    "imagePackage": {
-      "description": "Name of the docker image on the registry",
-      "examples": [
-        "app"
-      ],
-      "type": "string"
-    },
-    "imageProject": {
-      "description": "Optional project name in the docker registry",
-      "examples": [
-        "project"
-      ],
-      "type": "string"
-    },
-    "imageRepository": {
-      "description": "Optional sub repository for the docker image",
-      "type": "string"
-    },
-    "buildArgs": {
-      "$ref": "#/$defs/build-args"
-    },
-    "buildOptions": {
-      "description": "Build options",
-      "type": "string",
-      "examples": [
-        "-single-snapshot --ignore-path=/product_uuid"
-      ]
-    },
-    "target": {
-      "description": "Set the target build stage to build.",
-      "type": "string"
-    },
-    "secrets": {
-      "description": "Use secrets securely at build time that will not be exposed in the image layers, keys are secrets ids, `secretName` and `secretKey` properties can be used to target the kubernetes secret",
-      "type": "object",
-      "properties": {
-        "additionalProperties": true
-      }
-    },
-    "buildkitServiceClientCertsSecretName": {
-      "description": "Use a specific secret for build kit service client cert. default to `buildkit-client-certs`",
-      "type": "string"
-    },
-    "buildkitServiceEnabled": {
-      "description": "Enable buildkit remote service. set to `true` to activate.",
-      "type": "string"
-    },
-    "buildkitServiceAddr": {
-      "description": "Address of the buildkit service. defaults to `tcp://buildkit-service.buildkit-service.svc:1234`",
-      "type": "string",
-      "examples": [
-        "tcp://buildkit-service.buildkit-service.svc:1234"
-      ]
-    }
-  },
-  "$defs": {
-    "build-args": {
-      "title": "Docker image build arguments",
-      "markdownDescription": "Build args to customize the docker, see [docker documentation](https://docs.docker.com/engine/reference/commandline/build/#build-arg)",
-      "type": "object",
-      "additionalProperties": true
+    "db": {
+      "description": "Has a database, and use default database, true by default if `database` filled",
+      "type": "boolean"
     }
   },
   "additionalProperties": false

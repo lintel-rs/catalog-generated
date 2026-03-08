@@ -5,7 +5,7 @@
   "description": "config file for mise version manager (mise.toml)",
   "x-lintel": {
     "source": "https://mise.jdx.dev/schema/mise.json",
-    "sourceSha256": "c97cd9dc458df44cd5f959b711a0f473a6f54398570f5d0601a13701ee54b35b",
+    "sourceSha256": "f942625bae13878d45f41ccc507897227921d283d40ef0b58e86fcdbfc84eac7",
     "fileMatch": [
       ".mise.toml",
       ".mise.*.toml",
@@ -240,6 +240,44 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "task_dependency_item": {
+      "description": "task name and args",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "task": {
+              "type": "string"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "env": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "task"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
     "env_directive": {
       "type": "object",
       "properties": {
@@ -1947,18 +1985,7 @@
                   "description": "task with args to run before this task",
                   "type": "array",
                   "items": {
-                    "description": "task name and args",
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    ]
+                    "$ref": "#/$defs/task_dependency_item"
                   }
                 }
               ]
@@ -1973,18 +2000,7 @@
                   "description": "task with args to run after this task",
                   "type": "array",
                   "items": {
-                    "description": "task name and args",
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    ]
+                    "$ref": "#/$defs/task_dependency_item"
                   }
                 }
               ]
@@ -1998,8 +2014,7 @@
                 {
                   "description": "task with args to wait for completion first",
                   "items": {
-                    "description": "task name and args",
-                    "type": "string"
+                    "$ref": "#/$defs/task_dependency_item"
                   },
                   "type": "array"
                 }
@@ -2124,6 +2139,11 @@
                   "type": "string"
                 }
               ]
+            },
+            "interactive": {
+              "default": false,
+              "description": "mark task as interactive, acquiring exclusive terminal access while allowing other non-interactive tasks to run in parallel",
+              "type": "boolean"
             },
             "raw": {
               "default": false,
@@ -2582,18 +2602,7 @@
               "description": "task with args to run before this task",
               "type": "array",
               "items": {
-                "description": "task name and args",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
+                "$ref": "#/$defs/task_dependency_item"
               }
             }
           ]
@@ -2608,18 +2617,7 @@
               "description": "task with args to run after this task",
               "type": "array",
               "items": {
-                "description": "task name and args",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
+                "$ref": "#/$defs/task_dependency_item"
               }
             }
           ]
@@ -2633,8 +2631,7 @@
             {
               "description": "task with args to wait for completion first",
               "items": {
-                "description": "task name and args",
-                "type": "string"
+                "$ref": "#/$defs/task_dependency_item"
               },
               "type": "array"
             }
@@ -2759,6 +2756,11 @@
               "type": "string"
             }
           ]
+        },
+        "interactive": {
+          "default": false,
+          "description": "mark task as interactive, acquiring exclusive terminal access while allowing other non-interactive tasks to run in parallel",
+          "type": "boolean"
         },
         "raw": {
           "default": false,
@@ -2859,18 +2861,7 @@
               "description": "task with args to run before this task",
               "type": "array",
               "items": {
-                "description": "task name and args",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
+                "$ref": "#/$defs/task_dependency_item"
               }
             }
           ]
@@ -2885,18 +2876,7 @@
               "description": "task with args to run after this task",
               "type": "array",
               "items": {
-                "description": "task name and args",
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                ]
+                "$ref": "#/$defs/task_dependency_item"
               }
             }
           ]
@@ -2910,8 +2890,7 @@
             {
               "description": "task with args to wait for completion first",
               "items": {
-                "description": "task name and args",
-                "type": "string"
+                "$ref": "#/$defs/task_dependency_item"
               },
               "type": "array"
             }
@@ -3036,6 +3015,11 @@
               "type": "string"
             }
           ]
+        },
+        "interactive": {
+          "default": false,
+          "description": "mark task as interactive, acquiring exclusive terminal access while allowing other non-interactive tasks to run in parallel",
+          "type": "boolean"
         },
         "raw": {
           "default": false,
