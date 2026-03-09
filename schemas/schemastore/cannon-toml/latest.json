@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/cannon-toml/latest.json",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/usecannon/cannon/main/packages/lsp/src/schema.json",
-    "sourceSha256": "4e0982301f259aabae4947053d0e91f02f2c610308061cb05a3421f1863dc98b",
+    "sourceSha256": "1686d810c9c3c2ebaf9904adcaf044f890abec3585b2abb0db459c1863f92b6b",
     "fileMatch": [
       "cannonfile.json",
       "*.cannonfile.json",
@@ -32,6 +32,13 @@
     "preset": {
       "type": "string",
       "description": "Preset of the package (Presets are useful for distinguishing multiple deployments of the same protocol on the same chain.) Defaults to \"main\"."
+    },
+    "include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of additional TOML files to include and merge into this cannonfile. Files are merged in order, with later files overriding earlier ones."
     },
     "privateSourceCode": {
       "type": "boolean",
@@ -104,6 +111,12 @@
             "type": "string",
             "description": "Preset label of the package being imported"
           },
+          "chains": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
           "depends": {
             "type": "array",
             "items": {
@@ -175,6 +188,12 @@
               "type": "string"
             },
             "description": "Additional tags to set on the registry for when this provisioned package is published."
+          },
+          "chains": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           },
           "depends": {
             "type": "array",
@@ -310,6 +329,12 @@
             },
             "description": "Override transaction settings",
             "additionalProperties": false
+          },
+          "chains": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           },
           "depends": {
             "type": "array",
@@ -507,6 +532,13 @@
               "additionalProperties": false
             }
           },
+          "chains": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "If specified, this action is only executed on the specified chain IDs."
+          },
           "depends": {
             "type": "array",
             "items": {
@@ -542,6 +574,9 @@
           "includeReceive": {
             "type": "boolean"
           },
+          "includeDiamondCompatibility": {
+            "type": "boolean"
+          },
           "from": {
             "type": "string",
             "description": "Address to pass to the from call"
@@ -549,6 +584,24 @@
           "salt": {
             "type": "string",
             "description": "Used to force new copy of a contract (not actually used)"
+          },
+          "create2": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Determines whether to deploy the contract using create2. If an address is specified, the arachnid create2 contract will be deployed/used from this address."
+          },
+          "ifExists": {
+            "type": "string",
+            "enum": [
+              "continue"
+            ],
+            "description": "When deploying a contract with CREATE2, determines the behavior when the target contract is already deployed (ex. due to same bytecode and salt). Set to continue to allow the build to continue if the contract is found to have already been deployed. By default, an error is thrown and the action is halted."
           },
           "overrides": {
             "type": "object",
@@ -559,6 +612,13 @@
             },
             "description": "Override transaction settings",
             "additionalProperties": false
+          },
+          "chains": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "If specified, this action is only executed on the specified chain IDs."
           },
           "depends": {
             "type": "array",

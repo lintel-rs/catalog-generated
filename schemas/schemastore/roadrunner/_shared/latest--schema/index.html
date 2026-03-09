@@ -146,6 +146,10 @@
 
     <table class="meta-table">
       <tr>
+        <th>Type</th>
+        <td><span class="type-badge">object</span></td>
+      </tr>
+      <tr>
         <th>Schema URL</th>
         <td class="url-cell"><a href="https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json">https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json</a></td>
       </tr>
@@ -156,435 +160,100 @@
     </table>
 
 <section class="schema-doc">
-   <div class="desc-html"><p>The schema contains all the valid configuration parameters for the SQS plugin for the roadrunner job system.</p>
-</div>
-      <h2 id="definitions">Definitions</h2>
-  <div class="definition-block" id="def-pipeline">
-    <div class="definition-header">
-      <span class="def-name">pipeline</span>
-<span class="type-badge"
-        >object</span
-      >    </div>
-    <div class="definition-body">
-        <div class="property-list">
- <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">driver</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;sqs&quot;</code>  </div>
-     </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">config</span>
+  <div class="schema-doc-type">
+    <span class="label">Type:</span>
     <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>Configuration options for the SQS pipeline.</p>
+  </div>
+   <div class="desc-html"><p>All the valid configuration parameters for the jobs plugin for RoadRunner.</p>
 </div>
-         <details class="nested-properties">
-    <summary>12 nested properties</summary>
-    <div class="property-list">
+   <h2 id="properties">Properties</h2>
+  <div class="property-list">
   <div
   class="property-item"
+  id="prop-num_pollers"
 >
   <div class="property-header">
-    <span class="property-name">priority</span>
-    <a href="/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/PipelineProperties/priority/" class="type-badge type-badge-link"
-      >priority</a
-    >
-   </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">prefetch</span>
-    <a href="/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/PipelineProperties/prefetch/" class="type-badge type-badge-link"
-      >prefetch</a
-    >
-   </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">skip_queue_declaration</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to skip creation of the SQS queue. If you set to this to <code>true</code>, the queue must already exist.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">max_messages_in_flight</span>
+    <span class="property-name">num_pollers</span>
     <span class="type-badge">integer</span>
    </div>
-  <div class="desc-html"><p>Maximum number of messages that can be in-flight at any given time. This is useful to limit the number of messages that are being processed concurrently. Default is the same value as <code>prefetch</code>.</p>
+  <div class="desc-html"><p>Number of threads which will try to obtain jobs from the priority queue. Default is the number of workers in the pool +1. <strong>Deprecated:</strong> This will be removed in a future version.</p>
 </div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>10</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">visibility_timeout</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The duration (in seconds) that a message received from a queue (by one consumer) will not be visible to the other message consumers. The visibility timeout begins when Amazon SQS returns a message. If the consumer fails to process and delete the message before the visibility timeout expires, the message becomes visible to other consumers. If a message must be received only once, your consumer must delete it within the duration of the visibility timeout.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>0</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">error_visibility_timeout</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The visibility timeout to set for jobs that fail (NACK). If you set this, you must also set <code>retain_failed_jobs</code> to <code>true</code>.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>0</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">retain_failed_jobs</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to keep failed (NACK'ed) jobs on the queue. By default, RR will delete and requeue failed jobs immediately. If you set this to <code>true</code>, RR does nothing to NACK'ed jobs on the queue and they will be consumed again after <code>visibility_timeout</code> or (<code>error_visibility_timeout</code>, if &gt; 0) has passed. Jobs that are consumed multiple times will increment their receive count, which can be used to configure SQS to automatically move the jobs to a dead-letter queue.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">wait_time_seconds</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The duration (in seconds) the call waits for a message to arrive in the queue before returning. If a message is available, the call returns immediately. If no messages are available and the wait time expires, the call returns with an empty list of messages</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>0</code>
-  </div>
-       <div class="property-constraints">
+      <div class="property-meta">
+    <span class="meta-label">Examples:</span> <code>10</code>, <code>32</code>  </div>
+   <div class="property-constraints">
 <span class="constraint"
-      >max=20</span
+      >min=1</span
     >  </div>
   </div>    <div
   class="property-item"
+  id="prop-timeout"
 >
   <div class="property-header">
-    <span class="property-name">queue</span>
-    <a href="/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/PipelineProperties/queue/" class="type-badge type-badge-link"
-      >queue</a
-    >
+    <span class="property-name">timeout</span>
+    <span class="type-badge">integer</span>
    </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">message_group_id</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Message Group ID. See <a target="_blank" rel="noopener noreferrer" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html#SQS-SendMessage-request-MessageGroupId">https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html#SQS-SendMessage-request-MessageGroupId</a></p>
+  <div class="desc-html"><p>Request timeout (in seconds) when attempting to send jobs to the queue. If zero or omitted, this defaults to 60 seconds.</p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>null</code>
+    <span class="meta-label">Default:</span> <code>60</code>
   </div>
        </div>    <div
   class="property-item"
+  id="prop-pipeline_size"
 >
   <div class="property-header">
-    <span class="property-name">attributes</span>
-    <span class="type-badge">object</span>
-   </div>
-         <details class="nested-properties">
-    <summary>14 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">DelaySeconds</span>
+    <span class="property-name">pipeline_size</span>
     <span class="type-badge">integer</span>
    </div>
-  <div class="desc-html"><p>The length of time, in seconds, for which the delivery of all messages in the queue is delayed.</p>
+  <div class="desc-html"><p>Size of the internal priority queue. If the internal priority queue is full, you cannot send (push) additional jobs to the queue. If you set this value to zero or omit it, it defaults to 1 million.</p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>0</code>
+    <span class="meta-label">Default:</span> <code>1000000</code>
   </div>
        <div class="property-constraints">
 <span class="constraint"
       >min=0</span
-    ><span class="constraint"
-      >max=900</span
     >  </div>
   </div>    <div
   class="property-item"
+  id="prop-consume"
 >
   <div class="property-header">
-    <span class="property-name">MaximumMessageSize</span>
-    <span class="type-badge">integer</span>
+    <span class="property-name">consume</span>
+    <span class="type-badge">string[]</span>
    </div>
-  <div class="desc-html"><p>The limit of how many bytes a message can contain before Amazon SQS rejects it.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>262144</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >min=1024</span
-    ><span class="constraint"
-      >max=262144</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">MessageRetentionPeriod</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The length of time, in seconds, for which Amazon SQS retains a message. When you change a queue's attributes, the change can take up to 60 seconds for most of the attributes to propagate throughout the Amazon SQS system. Changes made to the <code>MessageRetentionPeriod</code> attribute can take up to 15 minutes and will impact existing messages in the queue potentially causing them to be expired and deleted if the <code>MessageRetentionPeriod</code> is reduced below the age of existing messages.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>345600</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >min=60</span
-    ><span class="constraint"
-      >max=1209600</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">Policy</span>
-   </div>
-  <div class="desc-html"><p>A valid AWS policy. See <a target="_blank" rel="noopener noreferrer" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html">https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html</a> for reference of this object structure.</p>
+  <div class="desc-html"><p>A list of pipelines to be consumed by the server automatically when starting. You can omit this list if you want to start consuming manually. Each item in this list must be defined as a key under <code>pipelines</code>.</p>
 </div>
        </div>    <div
   class="property-item"
+  id="prop-pool"
 >
   <div class="property-header">
-    <span class="property-name">ReceiveMessageWaitTimeSeconds</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The length of time, in seconds, for which a <a target="_blank" rel="noopener noreferrer" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ReceiveMessage.html"><code>ReceiveMessage</code></a> action waits for a message to arrive.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>0</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >min=0</span
-    ><span class="constraint"
-      >max=20</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">VisibilityTimeout</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The visibility timeout for the queue, in seconds. For more information about the visibility timeout, see <a target="_blank" rel="noopener noreferrer" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html">Visibility Timeout</a> in the Amazon SQS Developer Guide.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>30</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >min=0</span
-    ><span class="constraint"
-      >max=43200</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">RedrivePolicy</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p><strong>Dead-letter queues only.</strong> The parameters for the dead-letter queue functionality of the source queue as a JSON object.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">RedriveAllowPolicy</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p><strong>Dead-letter queues only.</strong> The parameters for the permissions for the dead-letter queue redrive permission and which source queues can specify dead-letter queues.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">ContentBasedDeduplication</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p><strong>FIFO queues only.</strong> Enables content-based deduplication. For more information, see <a target="_blank" rel="noopener noreferrer" href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html">Exactly-once processing</a> in the Amazon SQS Developer Guide.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">DeduplicationScope</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p><strong>High-throughput FIFO queues only.</strong> Specifies whether message deduplication occurs at the message group or queue level.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;messageGroup&quot;</code> <code class="enum-value">&quot;queue&quot;</code>  </div>
-     </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">FifoThroughputLimit</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p><strong>High-throughput FIFO queues only.</strong> Specifies whether the FIFO queue throughput quota applies to the entire queue or per message group. The <code>perMessageGroupId</code> value is allowed only when the value for <code>DeduplicationScope</code> is <code>messageGroup</code>.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;perQueue&quot;</code> <code class="enum-value">&quot;perMessageGroupId&quot;</code>  </div>
-     </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">KmsMasterKeyId</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p><strong>Applies only to server-side-encryption.</strong> The ID of an AWS managed customer master key (CMK) for Amazon SQS or a custom CMK. While the alias of the AWS-managed CMK for Amazon SQS is always <code>alias/aws/sqs</code>, the alias of a custom CMK can, for example, be <code>alias/MyAlias</code>.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">KmsDataKeyReusePeriodSeconds</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p><strong>Applies only to server-side-encryption.</strong> The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again. An integer representing seconds, between 60 seconds (1 minute) and 86,400 seconds (24 hours).</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>300</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >min=60</span
-    ><span class="constraint"
-      >max=86400</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">SqsManagedSseEnabled</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p><strong>Applies only to server-side-encryption.</strong> Enables server-side queue encryption using SQS owned encryption keys. Only one server-side encryption option is supported per queue.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">tags</span>
-    <span class="type-badge"
-      >Record&lt;string, string&gt;</span
+    <span class="property-name">pool</span>
+    <a href="/schemas/schemastore/roadrunner/_shared/latest--schema/" class="type-badge type-badge-link"
+      >Latest  Schema</a
     >
    </div>
-       </div>      </div>
-  </details>
-</div>        </div>
-    </div>
-  </div>
-  <div class="definition-block" id="def-driver">
+       </div>    <div
+  class="property-item"
+  id="prop-pipelines"
+>
+  <div class="property-header">
+    <span class="property-name">pipelines</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>List of broker pipelines associated with the configured drivers. This option is not required since you can declare pipelines at runtime. The selected pipeline <code>driver</code> must be configured in the root of your configuration file.</p>
+</div>
+       </div>    </div>
+     <h2 id="definitions">Definitions</h2>
+  <div class="definition-block" id="def-PipelineProperties">
     <div class="definition-header">
-      <span class="def-name">driver</span>
-<span class="type-badge"
-        >object</span
-      >    </div>
-    <div class="definition-body">
-      <div class="desc-html"><p>Configuration options for the SQS driver.</p>
-</div>
-        <div class="property-list">
- <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">key</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>This is required unless your environment variables provide AWS credentials.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;ASIAIOSFODNN7EXAMPLE&quot;</code>  </div>
-   </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">secret</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>This is required unless your environment variables provide AWS credentials.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&quot;</code>  </div>
-   </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">region</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The region to connect to. Must be one of the <a target="_blank" rel="noopener noreferrer" href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions">supported regions</a>. This is required unless your environment variables provide an AWS region or you use a self-hosted queue.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;eu-central-1&quot;</code>, <code>&quot;us-west-1&quot;</code>, <code>&quot;ca-central-1&quot;</code>, <code>&quot;ap-northeast-1&quot;</code>  </div>
-   </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">session_token</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The short-lived session token to use. This should not be provided for production and has a maximum duration of 12 hours. In most cases, you don't need to provide this value.</p>
-</div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">endpoint</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The endpoint of your queue. You only need to provide this value if you use a self-hosted queue, as the endpoint will be resolved from the provided AWS Region and queue name otherwise.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;http://127.0.0.1:9324&quot;</code>  </div>
-   </div>        </div>
+      <span class="def-name">PipelineProperties</span>
     </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>Common configuration options for queues/pipelines.</p>
+</div>
+      </div>
   </div>
   </section>
   </article>

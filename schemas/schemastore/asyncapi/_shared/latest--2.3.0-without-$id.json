@@ -1,18 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.0.0-without-$id.json",
-  "title": "AsyncAPI 2.0.0 schema.",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.3.0-without-$id.json",
+  "title": "AsyncAPI 2.3.0 schema.",
   "description": "!!Auto generated!! \n Do not manually edit. ",
   "x-lintel": {
-    "source": "http://asyncapi.com/schema-store/2.0.0-without-$id.json",
-    "sourceSha256": "e1380595bf9b854ce25a66c990c2a8aa7ee0698f0db9cad06d3d9ad590f5f60a"
+    "source": "http://asyncapi.com/schema-store/2.3.0-without-$id.json",
+    "sourceSha256": "c204eeaed92732d8a6bba7f7a7ec5254e59e2ae1227dd16e76b64913d79061f3"
   },
   "type": "object",
   "properties": {
     "asyncapi": {
       "type": "string",
       "enum": [
-        "2.0.0"
+        "2.3.0"
       ],
       "description": "The AsyncAPI specification version of this document."
     },
@@ -25,10 +25,7 @@
       "$ref": "#/$defs/info"
     },
     "servers": {
-      "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/server"
-      }
+      "$ref": "#/$defs/servers"
     },
     "defaultContentType": {
       "type": "string"
@@ -144,6 +141,35 @@
         }
       }
     },
+    "servers": {
+      "description": "An object representing multiple servers.",
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/Reference"
+          },
+          {
+            "$ref": "#/$defs/server"
+          }
+        ]
+      }
+    },
+    "Reference": {
+      "type": "object",
+      "required": [
+        "$ref"
+      ],
+      "properties": {
+        "$ref": {
+          "$ref": "#/$defs/ReferenceObject"
+        }
+      }
+    },
+    "ReferenceObject": {
+      "type": "string",
+      "format": "uri-reference"
+    },
     "server": {
       "type": "object",
       "description": "An object representing a Server.",
@@ -242,12 +268,15 @@
         "mqtt": {},
         "mqtt5": {},
         "kafka": {},
+        "anypointmq": {},
         "nats": {},
         "jms": {},
         "sns": {},
         "sqs": {},
         "stomp": {},
-        "redis": {}
+        "redis": {},
+        "ibmmq": {},
+        "solace": {}
       },
       "additionalProperties": true
     },
@@ -275,6 +304,14 @@
           "type": "string",
           "description": "A description of the channel."
         },
+        "servers": {
+          "type": "array",
+          "description": "The names of the servers on which this channel is available. If absent or empty then this channel must be available on all servers.",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
         "publish": {
           "$ref": "#/$defs/operation"
         },
@@ -296,10 +333,6 @@
         }
       }
     },
-    "ReferenceObject": {
-      "type": "string",
-      "format": "uri-reference"
-    },
     "parameters": {
       "type": "object",
       "description": "JSON objects describing re-usable channel parameters.",
@@ -312,17 +345,6 @@
             "$ref": "#/$defs/parameter"
           }
         ]
-      }
-    },
-    "Reference": {
-      "type": "object",
-      "required": [
-        "$ref"
-      ],
-      "properties": {
-        "$ref": {
-          "$ref": "#/$defs/ReferenceObject"
-        }
       }
     },
     "parameter": {
@@ -869,7 +891,16 @@
                         "enum": [
                           "application/vnd.aai.asyncapi;version=2.0.0",
                           "application/vnd.aai.asyncapi+json;version=2.0.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.0.0"
+                          "application/vnd.aai.asyncapi+yaml;version=2.0.0",
+                          "application/vnd.aai.asyncapi;version=2.1.0",
+                          "application/vnd.aai.asyncapi+json;version=2.1.0",
+                          "application/vnd.aai.asyncapi+yaml;version=2.1.0",
+                          "application/vnd.aai.asyncapi;version=2.2.0",
+                          "application/vnd.aai.asyncapi+json;version=2.2.0",
+                          "application/vnd.aai.asyncapi+yaml;version=2.2.0",
+                          "application/vnd.aai.asyncapi;version=2.3.0",
+                          "application/vnd.aai.asyncapi+json;version=2.3.0",
+                          "application/vnd.aai.asyncapi+yaml;version=2.3.0"
                         ]
                       }
                     },
@@ -1023,11 +1054,31 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Machine readable name of the message example."
+                      },
+                      "summary": {
+                        "type": "string",
+                        "description": "A brief summary of the message example."
+                      },
                       "headers": {
                         "type": "object"
                       },
                       "payload": {}
                     },
+                    "anyOf": [
+                      {
+                        "required": [
+                          "payload"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "headers"
+                        ]
+                      }
+                    ],
                     "additionalProperties": false
                   }
                 },
@@ -1769,6 +1820,12 @@
         "schemas": {
           "$ref": "#/$defs/schemas"
         },
+        "servers": {
+          "$ref": "#/$defs/servers"
+        },
+        "channels": {
+          "$ref": "#/$defs/channels"
+        },
         "messages": {
           "$ref": "#/$defs/messages"
         },
@@ -1888,6 +1945,9 @@
         },
         {
           "$ref": "#/$defs/openIdConnect"
+        },
+        {
+          "$ref": "#/$defs/SaslSecurityScheme"
         }
       ]
     },
@@ -2288,6 +2348,89 @@
         "openIdConnectUrl": {
           "type": "string",
           "format": "uri"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
+    },
+    "SaslSecurityScheme": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SaslPlainSecurityScheme"
+        },
+        {
+          "$ref": "#/$defs/SaslScramSecurityScheme"
+        },
+        {
+          "$ref": "#/$defs/SaslGssapiSecurityScheme"
+        }
+      ]
+    },
+    "SaslPlainSecurityScheme": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "plain"
+          ]
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
+    },
+    "SaslScramSecurityScheme": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "scramSha256",
+            "scramSha512"
+          ]
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
+    },
+    "SaslGssapiSecurityScheme": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "gssapi"
+          ]
+        },
+        "description": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
