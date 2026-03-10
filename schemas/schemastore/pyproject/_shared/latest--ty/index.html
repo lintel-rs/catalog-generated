@@ -708,6 +708,21 @@ class Derived(Base):  # Error: `Derived` does not implement `method`
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">all</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><p>Configure a default severity level for all rules. Individual rule settings override this default.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">ambiguous-protocol-member</span>
     <span class="type-badge"
       ><a
@@ -1859,6 +1874,50 @@ a: str
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;error&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">invalid-enum-member-annotation</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><h2>What it does</h2>
+<p>Checks for enum members that have explicit type annotations.</p>
+<h2>Why is this bad?</h2>
+<p>The <a target="_blank" rel="noopener noreferrer" href="https://typing.python.org/en/latest/spec/enums.html#enum-members">typing spec</a> states that type checkers should infer a literal type
+for all enum members. An explicit type annotation on an enum member is
+misleading because the annotated type will be incorrect — the actual
+runtime type is the enum class itself, not the annotated type.</p>
+<p>In CPython's <code>enum</code> module, annotated assignments with values are still
+treated as members at runtime, but the annotation will confuse readers of the code.</p>
+<h2>Examples</h2>
+<pre><code class="language-python">from enum import Enum
+
+class Pet(Enum):
+    CAT = 1       # OK
+    DOG: int = 2  # Error: enum members should not be annotated
+</code></pre>
+<p>Use instead:</p>
+<pre><code class="language-python">from enum import Enum
+
+class Pet(Enum):
+    CAT = 1
+    DOG = 2
+</code></pre>
+<h2>References</h2>
+<ul>
+<li><a target="_blank" rel="noopener noreferrer" href="https://typing.python.org/en/latest/spec/enums.html#enum-members">Typing spec: Enum members</a></li>
+</ul>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;warn&quot;</code>
   </div>
        </div>   <div
   class="property-item"
@@ -3949,6 +4008,43 @@ class A:
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">unbound-type-variable</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><h2>What it does</h2>
+<p>Checks for type variables that are used in a scope where they are not bound
+to any enclosing generic context.</p>
+<h2>Why is this bad?</h2>
+<p>Using a type variable outside of a scope that binds it has no well-defined meaning.</p>
+<h2>Examples</h2>
+<pre><code class="language-python">from typing import TypeVar, Generic
+
+T = TypeVar("T")
+S = TypeVar("S")
+
+x: T  # error: unbound type variable in module scope
+
+class C(Generic[T]):
+    x: list[S] = []  # error: S is not in this class's generic context
+</code></pre>
+<h2>References</h2>
+<ul>
+<li><a target="_blank" rel="noopener noreferrer" href="https://typing.python.org/en/latest/spec/generics.html#scoping-rules-for-type-variables">Typing spec: Scoping rules for type variables</a></li>
+</ul>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;error&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">undefined-reveal</span>
     <span class="type-badge"
       ><a
@@ -4259,6 +4355,39 @@ A() + A()  # TypeError: unsupported operand type(s) for +: 'A' and 'A'
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;error&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">unused-awaitable</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><h2>What it does</h2>
+<p>Checks for awaitable objects (such as coroutines) used as expression
+statements without being awaited.</p>
+<h2>Why is this bad?</h2>
+<p>Calling an <code>async def</code> function returns a coroutine object. If the
+coroutine is never awaited, the body of the async function will never
+execute, which is almost always a bug. Python emits a
+<code>RuntimeWarning: coroutine was never awaited</code> at runtime in this case.</p>
+<h2>Examples</h2>
+<pre><code class="language-python">async def fetch_data() -&gt; str:
+    return "data"
+
+async def main() -&gt; None:
+    fetch_data()  # Warning: coroutine is not awaited
+    await fetch_data()  # OK
+</code></pre>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;warn&quot;</code>
   </div>
        </div>   <div
   class="property-item"

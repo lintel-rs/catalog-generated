@@ -5,7 +5,7 @@
   "description": "Base config deserialized from ~/.codex/config.toml.",
   "x-lintel": {
     "source": "https://developers.openai.com/codex/config-schema.json",
-    "sourceSha256": "831ae191e2dc7fdd3cbc5d0af6172ebd89e7bf4ac32c79f5e2856a47a6ebf292",
+    "sourceSha256": "151243394839fbcd26130b8e9e2877627e2f89f3ea9e9e57be610b853af38df2",
     "fileMatch": [
       "**/.codex/config.toml"
     ],
@@ -92,6 +92,10 @@
       "description": "Compact prompt used for history compaction.",
       "type": "string"
     },
+    "default_permissions": {
+      "description": "Default named permissions profile to apply from the `[permissions]` table.",
+      "type": "string"
+    },
     "developer_instructions": {
       "default": null,
       "description": "Developer instructions inserted as a `developer` role message.",
@@ -114,6 +118,10 @@
     },
     "experimental_realtime_ws_model": {
       "description": "Experimental / do not use. Selects the realtime websocket model/snapshot used for the `Op::RealtimeConversation` connection.",
+      "type": "string"
+    },
+    "experimental_realtime_ws_startup_context": {
+      "description": "Experimental / do not use. Replaces the synthesized realtime startup context appended to websocket session instructions. An empty string disables startup context injection entirely.",
       "type": "string"
     },
     "experimental_use_freeform_apply_patch": {
@@ -178,6 +186,9 @@
         "fast_mode": {
           "type": "boolean"
         },
+        "guardian_approval": {
+          "type": "boolean"
+        },
         "image_detail_original": {
           "type": "boolean"
         },
@@ -223,6 +234,9 @@
         "request_permissions": {
           "type": "boolean"
         },
+        "request_permissions_tool": {
+          "type": "boolean"
+        },
         "request_rule": {
           "type": "boolean"
         },
@@ -257,6 +271,9 @@
           "type": "boolean"
         },
         "steer": {
+          "type": "boolean"
+        },
+        "tool_call_mcp_elicitation": {
           "type": "boolean"
         },
         "undo": {
@@ -492,7 +509,7 @@
         }
       ],
       "default": null,
-      "description": "Nested permissions settings."
+      "description": "Named permissions profiles."
     },
     "personality": {
       "allOf": [
@@ -1033,6 +1050,9 @@
             "fast_mode": {
               "type": "boolean"
             },
+            "guardian_approval": {
+              "type": "boolean"
+            },
             "image_detail_original": {
               "type": "boolean"
             },
@@ -1078,6 +1098,9 @@
             "request_permissions": {
               "type": "boolean"
             },
+            "request_permissions_tool": {
+              "type": "boolean"
+            },
             "request_rule": {
               "type": "boolean"
             },
@@ -1112,6 +1135,9 @@
               "type": "boolean"
             },
             "steer": {
+              "type": "boolean"
+            },
+            "tool_call_mcp_elicitation": {
               "type": "boolean"
             },
             "undo": {
@@ -1198,10 +1224,10 @@
         "service_tier": {
           "$ref": "#/$defs/ServiceTier"
         },
-        "tools_view_image": {
-          "type": "boolean"
+        "tools": {
+          "$ref": "#/$defs/ToolsToml"
         },
-        "tools_web_search": {
+        "tools_view_image": {
           "type": "boolean"
         },
         "web_search": {
@@ -1235,6 +1261,30 @@
         }
       },
       "additionalProperties": false
+    },
+    "FileSystemAccessMode": {
+      "enum": [
+        "none",
+        "read",
+        "write"
+      ],
+      "type": "string"
+    },
+    "FilesystemPermissionToml": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FileSystemAccessMode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/FileSystemAccessMode"
+          }
+        }
+      ]
+    },
+    "FilesystemPermissionsToml": {
+      "type": "object"
     },
     "ForcedLoginMethod": {
       "enum": [
@@ -1465,9 +1515,6 @@
     "NetworkToml": {
       "type": "object",
       "properties": {
-        "admin_url": {
-          "type": "string"
-        },
         "allow_local_binding": {
           "type": "boolean"
         },
@@ -1487,9 +1534,6 @@
           "type": "array"
         },
         "dangerously_allow_all_unix_sockets": {
-          "type": "boolean"
-        },
-        "dangerously_allow_non_loopback_admin": {
           "type": "boolean"
         },
         "dangerously_allow_non_loopback_proxy": {
@@ -1763,19 +1807,20 @@
       },
       "additionalProperties": false
     },
-    "PermissionsToml": {
+    "PermissionProfileToml": {
       "type": "object",
       "properties": {
+        "filesystem": {
+          "$ref": "#/$defs/FilesystemPermissionsToml"
+        },
         "network": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/NetworkToml"
-            }
-          ],
-          "description": "Network proxy settings from `[permissions.network]`. User config can enable the proxy; managed requirements may still constrain values."
+          "$ref": "#/$defs/NetworkToml"
         }
       },
       "additionalProperties": false
+    },
+    "PermissionsToml": {
+      "type": "object"
     },
     "Personality": {
       "enum": [
@@ -2113,8 +2158,12 @@
           "type": "boolean"
         },
         "web_search": {
-          "default": null,
-          "type": "boolean"
+          "allOf": [
+            {
+              "$ref": "#/$defs/WebSearchToolConfig"
+            }
+          ],
+          "default": null
         }
       },
       "additionalProperties": false
@@ -2222,6 +2271,32 @@
       ],
       "type": "string"
     },
+    "WebSearchContextSize": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "type": "string"
+    },
+    "WebSearchLocation": {
+      "type": "object",
+      "properties": {
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
     "WebSearchMode": {
       "enum": [
         "disabled",
@@ -2229,6 +2304,24 @@
         "live"
       ],
       "type": "string"
+    },
+    "WebSearchToolConfig": {
+      "type": "object",
+      "properties": {
+        "allowed_domains": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "context_size": {
+          "$ref": "#/$defs/WebSearchContextSize"
+        },
+        "location": {
+          "$ref": "#/$defs/WebSearchLocation"
+        }
+      },
+      "additionalProperties": false
     },
     "WindowsSandboxModeToml": {
       "enum": [

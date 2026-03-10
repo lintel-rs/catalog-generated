@@ -570,17 +570,17 @@ Schema - Lintel Catalog"
 </blockquote>
 <p>Besides the default behavior, the user can specify behavior for specific regex patterns. Case insensitive.</p>
 <ol>
-<li><code>"read_write"</code> - List of patterns that should be read/write remotely. 2. <code>"read_only"</code> - List of patterns that should be read only remotely. 3. <code>"local"</code> - List of patterns that should be read locally. 4. <code>"not_found"</code> - List of patters that should never be read nor written. These files should be treated as non-existent. 4. <code>"mapping"</code> - Map of patterns and their corresponding replacers. The replacement happens before any specific behavior as defined above or mode (uses <a target="_blank" rel="noopener noreferrer" href="https://docs.rs/regex/latest/regex/struct.Regex.html#method.replace"><code>Regex::replace</code></a>)</li>
+<li><code>"read_write"</code> - List of patterns that should be read/write remotely. 2. <code>"read_only"</code> - List of patterns that should be read only remotely. 3. <code>"local"</code> - List of patterns that should be read locally. 4. <code>"not_found"</code> - List of patterns that should never be read nor written. These files should be treated as non-existent. 4. <code>"mapping"</code> - Map of patterns and their corresponding replacers. The replacement happens before any specific behavior as defined above or mode (uses <a target="_blank" rel="noopener noreferrer" href="https://docs.rs/regex/latest/regex/struct.Regex.html#method.replace"><code>Regex::replace</code></a>)</li>
 </ol>
 <p>The logic for choosing the behavior is as follows:</p>
 <ol>
-<li>Check agains "mapping" if path needs to be replaced, if matched then continue to next step with new path after replacements otherwise continue as usual. 2. Check if one of the patterns match the file path, do the corresponding action. There's no specified order if two lists match the same path, we will use the first one (and we do not guarantee what is first).</li>
+<li>Check against "mapping" if path needs to be replaced, if matched then continue to next step with new path after replacements otherwise continue as usual. 2. Check if one of the patterns match the file path, do the corresponding action. There's no specified order if two lists match the same path, we will use the first one (and we do not guarantee what is first).</li>
 </ol>
 <p><strong>Warning</strong>: Specifying the same path in two lists is unsupported and can lead to undefined behaviour.</p>
 <ol start="3">
-<li>There are pre-defined exceptions to the set FS mode. 1. Paths that match <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer/src/file/filter/read_local_by_default.rs">the patterns defined here</a> are read locally by default. 2. Paths that match <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer/src/file/filter/read_remote_by_default.rs">the patterns defined here</a> are read remotely by default when the mode is <code>localwithoverrides</code>. 3. Paths that match <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer/src/file/filter/not_found_by_default.rs">the patterns defined here</a> under the running user's home directory will not be found by the application when the mode is not <code>local</code>.</li>
+<li>There are pre-defined exceptions to the set FS mode. 1. Paths that match the pre-defined patterns <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/unix/read_local_by_default.rs">for Linux/MacOS</a> or <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/windows/read_local_by_default.rs">for Windows</a> are read locally by default. 2. Paths that match the pre-defined patterns <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/unix/read_remote_by_default.rs">for Linux/MacOS</a> or <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/windows/read_remote_by_default.rs">for Windows</a> are read remotely by default when the mode is <code>localwithoverrides</code>. 3. Paths that match the pre-defined patterns <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/unix/not_found_by_default.rs">for Linux/MacOS</a> or <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/windows/not_found_by_default.rs">for Windows</a> under the running user's home directory will not be found by the application when the mode is not <code>local</code>.</li>
 </ol>
-<p>In order to override that default setting for a path, or a pattern, include it the appropriate pattern set from above. E.g. in order to read files under <code>/etc/</code> remotely even though it is covered by <a target="_blank" rel="noopener noreferrer" href="https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer/src/file/filter/read_local_by_default.rs">the set of patterns that are read locally by default</a>, add <code>"^/etc/."</code> to the <code>read_only</code> set.</p>
+<p>In order to override that default setting for a path, or a pattern, include it the appropriate pattern set from above. E.g. in order to read files under <code>/etc/</code> remotely even though it is covered by the set of pre-defined patterns that are read locally by default, add <code>"^/etc/."</code> to the <code>read_only</code> set.</p>
 <ol start="4">
 <li>If none of the above match, use the default behavior (mode).</li>
 </ol>
@@ -614,7 +614,7 @@ Schema - Lintel Catalog"
    </div>
   <div class="desc-html"><p>Specify map of patterns that if matched will replace the path according to specification.</p>
 <p><em>Capture groups are allowed.</em></p>
-<p>Example: <code>json { "^/home/(?&lt;user&gt;\\S+)/dev/tomcat": "/etc/tomcat" "^/home/(?&lt;user&gt;\\S+)/dev/config/(?&lt;app&gt;\\S+)": "/mnt/configs/${user}-$app" } </code> Will do the next replacements for any io operaton</p>
+<p>Example: <code>json { "^/home/(?&lt;user&gt;\\S+)/dev/tomcat": "/etc/tomcat" "^/home/(?&lt;user&gt;\\S+)/dev/config/(?&lt;app&gt;\\S+)": "/mnt/configs/${user}-$app" } </code> Will do the next replacements for any io operation</p>
 <p><code>/home/johndoe/dev/tomcat/context.xml</code> =&gt; <code>/etc/tomcat/context.xml</code> <code>/home/johndoe/dev/config/api/app.conf</code> =&gt; <code>/mnt/configs/johndoe-api/app.conf</code></p>
 <ul>
 <li>Relative paths: this feature (currently) does not apply mappings to relative paths, e.g. <code>../dev</code>.</li>
@@ -1476,7 +1476,7 @@ Schema - Lintel Catalog"
 <p><code>json5 { "container": { "override_host_ip": "172.17.0.1" // usual resolution of value from `host.docker.internal` } } </code></p>
 <p>This should be useful if your host machine is exposed with a different IP address than the one bound as host.</p>
 <ul>
-<li>If you're running inside WSL, and encountering problems, try setting <code>external_proxy.host_ip</code> T <code>0.0.0.0</code>, and this to the internal container runtime address (for docker, this  would be what <code>host.docker.internal</code> resolved to, which by default is <code>192.168.65.254</code>). You can find this ip by resolving it from inside a running container, e.g. <code>docker run --rm -it {image-with-nslookup} nslookup host.docker.internal</code></li>
+<li>If you're running inside WSL, and encountering problems, try setting <code>external_proxy.host_ip</code> to <code>0.0.0.0</code>, and this to the internal container runtime address (for docker, this  would be what <code>host.docker.internal</code> resolved to, which by default is <code>192.168.65.254</code>). You can find this ip by resolving it from inside a running container, e.g. <code>docker run --rm -it {image-with-nslookup} nslookup host.docker.internal</code></li>
 </ul>
 </div>
        <div class="property-constraints">
@@ -1686,7 +1686,7 @@ Schema - Lintel Catalog"
 </ul>
 <p><code>json { "remote": ["my-service-in-cluster"] } </code></p>
 <ul>
-<li>Only queries for addresses in subnet <code>1.1.1.0/24</code> with service port `1337`` will go through the remote pod.</li>
+<li>Only queries for addresses in subnet <code>1.1.1.0/24</code> with service port <code>1337</code> will go through the remote pod.</li>
 </ul>
 <p><code>json { "remote": ["1.1.1.0/24:1337"] } </code></p>
 <ul>
@@ -2331,9 +2331,9 @@ Schema - Lintel Catalog"
       >    </div>
     <div class="definition-body">
       <div class="desc-html"><p>Configuration for enabling read-only or read-write file operations.</p>
-<p>These options are overriden by user specified overrides and mirrord default overrides.</p>
+<p>These options are overridden by user specified overrides and mirrord default overrides.</p>
 <p>If you set <a href="#feature-fs-mode-localwithoverrides"><code>"localwithoverrides"</code></a> then some files can be read/write remotely based on our default/user specified. Default option for general file configuration.</p>
-<p>The accepted values are: <code>"local"</code>, <code>"localwithoverrides</code>, <code>"read"</code>, or <code>"write</code>.</p>
+<p>The accepted values are: <code>"local"</code>, <code>"localwithoverrides"</code>, <code>"read"</code>, or <code>"write"</code>.</p>
 </div>
       </div>
   </div>
@@ -2549,7 +2549,7 @@ Schema - Lintel Catalog"
       > | null</span
     >
    </div>
-  <div class="desc-html"><p>Allows selecting between mirrorring or stealing traffic.</p>
+  <div class="desc-html"><p>Allows selecting between mirroring or stealing traffic.</p>
 <p>See <a href="##mode" title="incoming"><code>mode</code></a> for details.</p>
 </div>
        </div>   <div
@@ -2637,7 +2637,7 @@ Schema - Lintel Catalog"
         >string | string | string</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>Allows selecting between mirrorring or stealing traffic.</p>
+      <div class="desc-html"><p>Allows selecting between mirroring or stealing traffic.</p>
 <p>Can be set to either <code>"mirror"</code> (default), <code>"steal"</code> or <code>"off"</code>.</p>
 <ul>
 <li><code>"mirror"</code>: Sniffs on TCP port, and send a copy of the data to listeners. - <code>"off"</code>: Disables the incoming network feature. - <code>"steal"</code>: Supports 2 modes of operation:</li>
@@ -3205,7 +3205,7 @@ Schema - Lintel Catalog"
 <p>Only UDP and TCP traffic on resolved address of <code>google.com</code> on port <code>1337</code> and <code>7331</code> will go through the remote pod. <code>json { "remote": ["google.com:1337", "google.com:7331"] } </code></p>
 </li>
 <li>
-<p>Only TCP traffic on <code>localhost</code> on port 1337 will go through the local app, the rest will be emmited remotely in the cluster.</p>
+<p>Only TCP traffic on <code>localhost</code> on port 1337 will go through the local app, the rest will be emitted remotely in the cluster.</p>
 </li>
 </ul>
 <p><code>json { "local": ["tcp://localhost:1337"] } </code></p>

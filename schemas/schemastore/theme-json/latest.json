@@ -4,7 +4,7 @@
   "title": "JSON schema for WordPress block theme global settings and styles",
   "x-lintel": {
     "source": "https://schemas.wp.org/trunk/theme.json",
-    "sourceSha256": "f4f5400fb7fe9581be996b41e09ba94f4487018270bfe339a0bb7ae42eb2959e",
+    "sourceSha256": "7ff73c20cabab93a7770f6bee36f99e7afb66127396f4e482fb1fc8da6f5c785",
     "fileMatch": [
       "theme.json"
     ],
@@ -2299,6 +2299,31 @@
         }
       ]
     },
+    "stylesBlocksPseudoSelectorsProperties": {
+      "type": "object",
+      "properties": {
+        ":hover": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        },
+        ":focus": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        },
+        ":focus-visible": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        },
+        ":active": {
+          "$ref": "#/$defs/stylesPropertiesComplete"
+        }
+      }
+    },
+    "stylesBlocksPseudoSelectorsPropertyNames": {
+      "enum": [
+        ":hover",
+        ":focus",
+        ":focus-visible",
+        ":active"
+      ]
+    },
     "stylesElementsPseudoSelectorsProperties": {
       "type": "object",
       "properties": {
@@ -2321,23 +2346,6 @@
           "$ref": "#/$defs/stylesPropertiesComplete"
         },
         ":visited": {
-          "$ref": "#/$defs/stylesPropertiesComplete"
-        }
-      }
-    },
-    "stylesBlocksPseudoSelectorsProperties": {
-      "type": "object",
-      "properties": {
-        ":hover": {
-          "$ref": "#/$defs/stylesPropertiesComplete"
-        },
-        ":focus": {
-          "$ref": "#/$defs/stylesPropertiesComplete"
-        },
-        ":focus-visible": {
-          "$ref": "#/$defs/stylesPropertiesComplete"
-        },
-        ":active": {
           "$ref": "#/$defs/stylesPropertiesComplete"
         }
       }
@@ -2473,10 +2481,61 @@
         "core/button": {
           "allOf": [
             {
-              "$ref": "#/$defs/stylesPropertiesAndElementsComplete"
+              "$ref": "#/$defs/stylesProperties"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "variations": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[a-z][a-z0-9-]*$": {
+                      "allOf": [
+                        {
+                          "$ref": "#/$defs/stylesProperties"
+                        },
+                        {
+                          "$ref": "#/$defs/stylesBlocksPseudoSelectorsProperties"
+                        },
+                        {
+                          "type": "object",
+                          "propertyNames": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/$defs/stylesPropertyNames"
+                              },
+                              {
+                                "$ref": "#/$defs/stylesBlocksPseudoSelectorsPropertyNames"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
             },
             {
               "$ref": "#/$defs/stylesBlocksPseudoSelectorsProperties"
+            },
+            {
+              "type": "object",
+              "propertyNames": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/stylesPropertyNames"
+                  },
+                  {
+                    "enum": [
+                      "variations"
+                    ]
+                  },
+                  {
+                    "$ref": "#/$defs/stylesBlocksPseudoSelectorsPropertyNames"
+                  }
+                ]
+              }
             }
           ]
         },
@@ -2937,7 +2996,27 @@
           "$ref": "#/$defs/stylesVariationBlockPropertiesComplete"
         },
         "core/button": {
-          "$ref": "#/$defs/stylesVariationBlockPropertiesComplete"
+          "allOf": [
+            {
+              "$ref": "#/$defs/stylesProperties"
+            },
+            {
+              "$ref": "#/$defs/stylesBlocksPseudoSelectorsProperties"
+            },
+            {
+              "type": "object",
+              "propertyNames": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/stylesPropertyNames"
+                  },
+                  {
+                    "$ref": "#/$defs/stylesBlocksPseudoSelectorsPropertyNames"
+                  }
+                ]
+              }
+            }
+          ]
         },
         "core/buttons": {
           "$ref": "#/$defs/stylesVariationBlockPropertiesComplete"
