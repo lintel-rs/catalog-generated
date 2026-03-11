@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json",
-  "title": "roadrunner-kafka",
-  "description": "The schema contains all the valid configuration parameters for the Kafka plugin for the roadrunner job system.",
+  "title": "roadrunner-nats",
+  "description": "The schema contains all the valid configuration parameters for the NATS plugin for the roadrunner job system.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/roadrunner-server/kafka/refs/heads/master/schema.json",
-    "sourceSha256": "e4a89dd6b7b6fb5e0eec16b8def05a9449febeb8a9c0537532c8efd31860a6c6"
+    "source": "https://raw.githubusercontent.com/roadrunner-server/nats/refs/heads/master/schema.json",
+    "sourceSha256": "d1c727b2142a0a0d2b9e87b39c8db46909ae6353b059761d6d21a68f3f72e858"
   },
   "$defs": {
     "pipeline": {
@@ -17,160 +17,49 @@
         "driver": {
           "type": "string",
           "enum": [
-            "kafka"
+            "nats"
           ]
         },
         "config": {
           "type": "object",
-          "description": "Configuration for the Kafka pipeline.",
+          "description": "Configuration for the NATS driver.",
           "properties": {
             "priority": {
               "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/PipelineProperties/priority"
             },
-            "auto_create_topics_enable": {
-              "description": "Auto create topic for the consumer/producer",
+            "prefetch": {
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/PipelineProperties/prefetch"
+            },
+            "subject": {
+              "description": "NATS subject",
+              "type": "string",
+              "default": "default"
+            },
+            "stream": {
+              "description": "NATS stream",
+              "type": "string",
+              "default": "default-stream"
+            },
+            "deliver_new": {
+              "description": "Whether to only receive messages that were created after the consumer was created.",
               "type": "boolean",
               "default": false
             },
-            "producer_options": {
-              "description": "Kafka producer options.",
-              "type": "object",
-              "properties": {
-                "disable_idempotent": {
-                  "description": "Disables idempotent produce requests, opting out of Kafka server-side deduplication in the face of reissued requests due to transient network problems. Idempotent production is strictly a win, but does require the IDEMPOTENT_WRITE permission on CLUSTER (pre Kafka 3.0), and not all clients can have that permission.",
-                  "type": "boolean",
-                  "default": false
-                },
-                "partitioning_strategy": {
-                  "description": "The partitioning strategy to use for produced records.",
-                  "type": "string",
-                  "enum": [
-                    "Manual",
-                    "Uniform",
-                    "RoundRobin",
-                    "LeastBackup",
-                    "Sticky"
-                  ],
-                  "default": "Uniform"
-                },
-                "required_acks": {
-                  "description": "Sets the required acks for produced records",
-                  "type": "string",
-                  "default": "AllISRAck",
-                  "enum": [
-                    "NoAck",
-                    "LeaderAck",
-                    "AllISRAck"
-                  ]
-                },
-                "max_message_bytes": {
-                  "type": "integer",
-                  "default": 1000012,
-                  "minimum": 0
-                },
-                "request_timeout": {
-                  "description": "The maximum duration in seconds the broker will wait the receipt of the number of required_acks.",
-                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration",
-                  "default": "10s"
-                },
-                "compression_codec": {
-                  "description": "The compression codec to use, if any.",
-                  "type": "string",
-                  "enum": [
-                    "gzip",
-                    "snappy",
-                    "lz4",
-                    "zstd"
-                  ]
-                },
-                "delivery_timeout": {
-                  "description": "A rough duration of how long a record can sit around in a batch before timing out, overriding the unlimited default.",
-                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration"
-                },
-                "transaction_timeout": {
-                  "description": "The allowed duration for a transaction. It is a good idea to keep this less than a group's session timeout.",
-                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration",
-                  "default": "40s"
-                }
-              },
-              "additionalProperties": false
+            "rate_limit": {
+              "description": "Consumer rate-limiter in bytes. See <https://docs.nats.io/jetstream/concepts/consumers#ratelimit>",
+              "type": "integer",
+              "default": 1000,
+              "minimum": 0
             },
-            "group_options": {
-              "type": "object",
-              "required": [
-                "group_id"
-              ],
-              "description": "group_options sets the consumer group for the client to join and consume in. This option is required if using any other group options.",
-              "properties": {
-                "instance_id": {
-                  "description": "InstanceID sets the group consumer's instance ID, switching the group member from 'dynamic' to 'static'.",
-                  "type": "string",
-                  "minLength": 1
-                },
-                "group_id": {
-                  "description": "Kafka Group ID",
-                  "type": "string",
-                  "minLength": 1
-                },
-                "block_rebalance_on_poll": {
-                  "description": "Switches the client to block rebalances whenever you poll.",
-                  "type": "boolean",
-                  "default": false
-                }
-              },
-              "additionalProperties": false
+            "delete_stream_on_stop": {
+              "description": "Whether to delete the stream after the pipeline is stopped.",
+              "type": "boolean",
+              "default": false
             },
-            "consumer_options": {
-              "description": "Kafka consumer options",
-              "type": "object",
-              "properties": {
-                "topics": {
-                  "description": "List of the topics to consume. Regex also supported. At least a `topic` or a partition in `consume_partitions` should be provided.",
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1
-                  }
-                },
-                "consume_regexp": {
-                  "description": "Sets the client to parse all topics passed to `topics` as regular expressions. When consuming via regex, every metadata request loads *all* topics, so that all topics can be passed to any regular expressions. Every topic is evaluated only once ever across all regular expressions; either it permanently is known to match, or is permanently known to not match.",
-                  "type": "boolean",
-                  "default": false
-                },
-                "max_fetch_message_size": {
-                  "type": "integer",
-                  "default": 50000
-                },
-                "min_fetch_message_size": {
-                  "type": "integer",
-                  "default": 1
-                },
-                "consumer_offset": {
-                  "$ref": "#/$defs/Offset"
-                },
-                "consume_partitions": {
-                  "type": "object",
-                  "minProperties": 1,
-                  "additionalProperties": false,
-                  "patternProperties": {
-                    "^[a-zA-Z0-9._-]+$": {
-                      "description": "Topic to consume.",
-                      "type": "object",
-                      "minProperties": 1,
-                      "additionalProperties": false,
-                      "patternProperties": {
-                        "^[0-9]+$": {
-                          "$ref": "#/$defs/Offset"
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "additionalProperties": false
-            },
-            "sasl_options": {
-              "$ref": "#/$defs/SASL"
+            "delete_after_ack": {
+              "description": "Whether to delete messages from the stream after successful acknowledgement.",
+              "type": "boolean",
+              "default": false
             }
           },
           "additionalProperties": false
@@ -181,158 +70,13 @@
     "driver": {
       "type": "object",
       "properties": {
-        "brokers": {
-          "description": "Kafka broker addresses.",
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "examples": [
-              "127.0.0.1:9092",
-              "127.0.0.1:9002"
-            ]
-          }
-        },
-        "tls": {
-          "title": "TLS Configuration",
-          "description": "TLS configuration for TLS for Kafka.",
-          "type": "object",
-          "anyOf": [
-            {
-              "required": [
-                "key",
-                "cert"
-              ]
-            },
-            {
-              "required": [
-                "root_ca"
-              ]
-            }
-          ],
-          "properties": {
-            "timeout": {
-              "description": "Timeout of TLS connections.",
-              "default": "10s",
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration"
-            },
-            "key": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/SSL/properties/key"
-            },
-            "cert": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/SSL/properties/cert"
-            },
-            "root_ca": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/SSL/properties/root_ca"
-            },
-            "client_auth_type": {
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/ClientAuthType"
-            }
-          },
-          "additionalProperties": false
-        },
-        "sasl": {
-          "$ref": "#/$defs/SASL"
-        },
-        "ping": {
-          "$ref": "#/$defs/Ping"
-        }
-      },
-      "description": "Configuration options for the Kafka driver.",
-      "additionalProperties": false
-    },
-    "Offset": {
-      "type": "object",
-      "description": "Sets the offset to start consuming from, or if OffsetOutOfRange is seen while fetching, to restart consuming from.",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "description": "Partition offset type.",
+        "addr": {
+          "description": "NATS server address.",
           "type": "string",
-          "enum": [
-            "AtEnd",
-            "At",
-            "AfterMilli",
-            "AtStart",
-            "Relative",
-            "WithEpoch"
-          ]
-        },
-        "value": {
-          "description": "Value for the: At, AfterMilli, Relative and WithEpoch offsets.",
-          "type": "integer",
-          "default": 0
+          "default": "nats://127.0.0.1:4222"
         }
       },
-      "additionalProperties": false
-    },
-    "SASL": {
-      "title": "SASL Authentication",
-      "type": "object",
-      "description": "SASL configuration for Kafka.",
-      "properties": {
-        "mechanism": {
-          "description": "Mechanism used for the authentication.",
-          "type": "string",
-          "enum": [
-            "aws_msk_iam",
-            "plain",
-            "SCRAM-SHA-256",
-            "SCRAM-SHA-512"
-          ]
-        },
-        "username": {
-          "description": "Username for authentication.",
-          "type": "string"
-        },
-        "password": {
-          "description": "Password for authentication.",
-          "type": "string"
-        },
-        "nonce": {
-          "description": "Optional for the SHA auth types. Empty by default.",
-          "type": "string"
-        },
-        "is_token": {
-          "description": "If true, suffixes the tokenauth=true extra attribute to the initial authentication message. Set this to true if the user and pass are from a delegation token. Optional for the SHA auth types. Defaults to false.",
-          "type": "boolean",
-          "default": false
-        },
-        "zid": {
-          "description": "Zid is an optional authorization ID to use in authentication.",
-          "type": "string"
-        },
-        "access_key": {
-          "description": "AWS Access Key ID",
-          "type": "string"
-        },
-        "secret_key": {
-          "description": "AWS Access Key Secret",
-          "type": "string"
-        },
-        "session_token": {
-          "description": "SessionToken, if non-empty, is a session / security token to use for authentication. See the following link for more details: <https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html>",
-          "type": "string"
-        },
-        "user_agent": {
-          "description": "UserAgent is the user agent to for the client to use when connecting to Kafka, overriding the default franz-go/<runtime.Version()>/<hostname>. Setting a UserAgent allows authorizing based on the aws:UserAgent condition key; see the following link for more details: <https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-useragent>",
-          "type": "string"
-        }
-      },
-      "additionalProperties": false
-    },
-    "Ping": {
-      "type": "object",
-      "properties": {
-        "timeout": {
-          "description": "Timeout when pinging Kafka.",
-          "default": "10s",
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration"
-        }
-      },
+      "description": "Configuration options for the NATS driver.",
       "additionalProperties": false
     }
   }

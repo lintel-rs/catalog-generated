@@ -427,7 +427,7 @@ Schema - Lintel Catalog"
   <div class="desc-html"><p>Settings for controlling API client behavior</p>
 </div>
          <details class="nested-properties">
-    <summary>6 nested properties</summary>
+    <summary>7 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -519,6 +519,23 @@ Schema - Lintel Catalog"
       <div class="property-meta">
     <span class="meta-label">Examples:</span> <code>{&quot;X-Custom-Header&quot;:&quot;value&quot;}</code>, <code>{&quot;Authorization&quot;:&quot;Bearer token&quot;}</code>  </div>
    </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">server_version_check_enabled</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><pre><code>    Whether the client should check the server's API version on startup.
+    When disabled, the client will skip the call to /admin/version that
+    normally runs once per client context entry.  This is useful for worker
+    subprocesses that inherit a known-compatible server configuration and
+    do not need to repeat the version handshake.
+</code></pre>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>true</code>
+  </div>
+       </div>    <div
   class="property-item"
 >
   <div class="property-header">
@@ -822,7 +839,7 @@ Schema - Lintel Catalog"
   <div class="desc-html"><p>Number of seconds between flow run heartbeats. Heartbeats are used to detect crashed flow runs.</p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>null</code>
+    <span class="meta-label">Default:</span> <code>180</code>
   </div>
        </div>    <div
   class="property-item"
@@ -2371,20 +2388,23 @@ using a PostgreSQL database.</p>
   <div class="desc-html"><p>Settings for controlling the database vacuum service</p>
 </div>
          <details class="nested-properties">
-    <summary>4 nested properties</summary>
+    <summary>5 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
 >
   <div class="property-header">
     <span class="property-name">enabled</span>
-    <span class="type-badge">boolean</span>
+    <span class="type-badge"
+      >string[] | boolean | null</span
+    >
    </div>
-  <div class="desc-html"><p>Whether or not to start the database vacuum service in the server application. Disabled by default because it permanently deletes data.</p>
+  <div class="desc-html"><p>Comma-separated set of vacuum types to enable. Valid values: 'events', 'flow_runs'. Defaults to 'events'. For backward compatibility, 'true' maps to 'events,flow_runs' and 'false' maps to 'events'. Event vacuum also requires event_persister.enabled (the default).</p>
 </div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
+    <div class="property-meta"><span class="meta-label">Default:</span></div>
+  <pre class="code-block"><code>[
+  &quot;events&quot;
+]</code></pre>
        </div>    <div
   class="property-item"
 >
@@ -2433,7 +2453,22 @@ using a PostgreSQL database.</p>
 <span class="constraint"
       >exclusiveMin=0</span
     >  </div>
-  </div>      </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">event_retention_overrides</span>
+    <span class="type-badge"
+      >Record&lt;string, string&gt;</span
+    >
+   </div>
+  <div class="desc-html"><p>Per-event-type retention period overrides. Keys are event type strings (e.g. 'prefect.flow-run.heartbeat'), values are retention periods in seconds. Event types not listed fall back to server.events.retention_period. Each override is capped by the global events retention period.</p>
+</div>
+    <div class="property-meta"><span class="meta-label">Default:</span></div>
+  <pre class="code-block"><code>{
+  &quot;prefect.flow-run.heartbeat&quot;: &quot;P7D&quot;
+}</code></pre>
+       </div>      </div>
   </details>
 </div>    <div
   class="property-item"
@@ -2447,7 +2482,7 @@ using a PostgreSQL database.</p>
   <div class="desc-html"><p>Settings for controlling the event persister service</p>
 </div>
          <details class="nested-properties">
-    <summary>7 nested properties</summary>
+    <summary>6 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -2508,22 +2543,6 @@ using a PostgreSQL database.</p>
        <div class="property-constraints">
 <span class="constraint"
       >exclusiveMin=0.0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">batch_size_delete</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The number of expired events and event resources the event persister will attempt to delete in one batch.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>10000</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >exclusiveMin=0</span
     >  </div>
   </div>    <div
   class="property-item"
@@ -4025,6 +4044,23 @@ using a PostgreSQL database.</p>
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">server_version_check_enabled</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><pre><code>    Whether the client should check the server's API version on startup.
+    When disabled, the client will skip the call to /admin/version that
+    normally runs once per client context entry.  This is useful for worker
+    subprocesses that inherit a known-compatible server configuration and
+    do not need to repeat the version handshake.
+</code></pre>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>true</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">metrics</span>
     <a href="#def-ClientMetricsSettings" class="type-badge type-badge-link"
       >object</a
@@ -4309,7 +4345,7 @@ using a PostgreSQL database.</p>
   <div class="desc-html"><p>Number of seconds between flow run heartbeats. Heartbeats are used to detect crashed flow runs.</p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>null</code>
+    <span class="meta-label">Default:</span> <code>180</code>
   </div>
        </div>   <div
   class="property-item"
@@ -6463,13 +6499,16 @@ using a PostgreSQL database.</p>
 >
   <div class="property-header">
     <span class="property-name">enabled</span>
-    <span class="type-badge">boolean</span>
+    <span class="type-badge"
+      >string[] | boolean | null</span
+    >
    </div>
-  <div class="desc-html"><p>Whether or not to start the database vacuum service in the server application. Disabled by default because it permanently deletes data.</p>
+  <div class="desc-html"><p>Comma-separated set of vacuum types to enable. Valid values: 'events', 'flow_runs'. Defaults to 'events'. For backward compatibility, 'true' maps to 'events,flow_runs' and 'false' maps to 'events'. Event vacuum also requires event_persister.enabled (the default).</p>
 </div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
+    <div class="property-meta"><span class="meta-label">Default:</span></div>
+  <pre class="code-block"><code>[
+  &quot;events&quot;
+]</code></pre>
        </div>   <div
   class="property-item"
 >
@@ -6518,7 +6557,22 @@ using a PostgreSQL database.</p>
 <span class="constraint"
       >exclusiveMin=0</span
     >  </div>
-  </div>        </div>
+  </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">event_retention_overrides</span>
+    <span class="type-badge"
+      >Record&lt;string, string&gt;</span
+    >
+   </div>
+  <div class="desc-html"><p>Per-event-type retention period overrides. Keys are event type strings (e.g. 'prefect.flow-run.heartbeat'), values are retention periods in seconds. Event types not listed fall back to server.events.retention_period. Each override is capped by the global events retention period.</p>
+</div>
+    <div class="property-meta"><span class="meta-label">Default:</span></div>
+  <pre class="code-block"><code>{
+  &quot;prefect.flow-run.heartbeat&quot;: &quot;P7D&quot;
+}</code></pre>
+       </div>        </div>
     </div>
   </div>
   <div class="definition-block" id="def-ServerServicesEventLoggerSettings">
@@ -6615,22 +6669,6 @@ using a PostgreSQL database.</p>
        <div class="property-constraints">
 <span class="constraint"
       >exclusiveMin=0.0</span
-    >  </div>
-  </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">batch_size_delete</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The number of expired events and event resources the event persister will attempt to delete in one batch.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>10000</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >exclusiveMin=0</span
     >  </div>
   </div>   <div
   class="property-item"
@@ -7112,20 +7150,23 @@ using a PostgreSQL database.</p>
   <div class="desc-html"><p>Settings for controlling the database vacuum service</p>
 </div>
          <details class="nested-properties">
-    <summary>4 nested properties</summary>
+    <summary>5 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
 >
   <div class="property-header">
     <span class="property-name">enabled</span>
-    <span class="type-badge">boolean</span>
+    <span class="type-badge"
+      >string[] | boolean | null</span
+    >
    </div>
-  <div class="desc-html"><p>Whether or not to start the database vacuum service in the server application. Disabled by default because it permanently deletes data.</p>
+  <div class="desc-html"><p>Comma-separated set of vacuum types to enable. Valid values: 'events', 'flow_runs'. Defaults to 'events'. For backward compatibility, 'true' maps to 'events,flow_runs' and 'false' maps to 'events'. Event vacuum also requires event_persister.enabled (the default).</p>
 </div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
+    <div class="property-meta"><span class="meta-label">Default:</span></div>
+  <pre class="code-block"><code>[
+  &quot;events&quot;
+]</code></pre>
        </div>    <div
   class="property-item"
 >
@@ -7174,7 +7215,22 @@ using a PostgreSQL database.</p>
 <span class="constraint"
       >exclusiveMin=0</span
     >  </div>
-  </div>      </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">event_retention_overrides</span>
+    <span class="type-badge"
+      >Record&lt;string, string&gt;</span
+    >
+   </div>
+  <div class="desc-html"><p>Per-event-type retention period overrides. Keys are event type strings (e.g. 'prefect.flow-run.heartbeat'), values are retention periods in seconds. Event types not listed fall back to server.events.retention_period. Each override is capped by the global events retention period.</p>
+</div>
+    <div class="property-meta"><span class="meta-label">Default:</span></div>
+  <pre class="code-block"><code>{
+  &quot;prefect.flow-run.heartbeat&quot;: &quot;P7D&quot;
+}</code></pre>
+       </div>      </div>
   </details>
 </div>   <div
   class="property-item"
@@ -7188,7 +7244,7 @@ using a PostgreSQL database.</p>
   <div class="desc-html"><p>Settings for controlling the event persister service</p>
 </div>
          <details class="nested-properties">
-    <summary>7 nested properties</summary>
+    <summary>6 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -7249,22 +7305,6 @@ using a PostgreSQL database.</p>
        <div class="property-constraints">
 <span class="constraint"
       >exclusiveMin=0.0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">batch_size_delete</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The number of expired events and event resources the event persister will attempt to delete in one batch.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>10000</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >exclusiveMin=0</span
     >  </div>
   </div>    <div
   class="property-item"
@@ -9114,20 +9154,23 @@ using a PostgreSQL database.</p>
   <div class="desc-html"><p>Settings for controlling the database vacuum service</p>
 </div>
          <details class="nested-properties">
-    <summary>4 nested properties</summary>
+    <summary>5 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
 >
   <div class="property-header">
     <span class="property-name">enabled</span>
-    <span class="type-badge">boolean</span>
+    <span class="type-badge"
+      >string[] | boolean | null</span
+    >
    </div>
-  <div class="desc-html"><p>Whether or not to start the database vacuum service in the server application. Disabled by default because it permanently deletes data.</p>
+  <div class="desc-html"><p>Comma-separated set of vacuum types to enable. Valid values: 'events', 'flow_runs'. Defaults to 'events'. For backward compatibility, 'true' maps to 'events,flow_runs' and 'false' maps to 'events'. Event vacuum also requires event_persister.enabled (the default).</p>
 </div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
+    <div class="property-meta"><span class="meta-label">Default:</span></div>
+  <pre class="code-block"><code>[
+  &quot;events&quot;
+]</code></pre>
        </div>    <div
   class="property-item"
 >
@@ -9176,7 +9219,22 @@ using a PostgreSQL database.</p>
 <span class="constraint"
       >exclusiveMin=0</span
     >  </div>
-  </div>      </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">event_retention_overrides</span>
+    <span class="type-badge"
+      >Record&lt;string, string&gt;</span
+    >
+   </div>
+  <div class="desc-html"><p>Per-event-type retention period overrides. Keys are event type strings (e.g. 'prefect.flow-run.heartbeat'), values are retention periods in seconds. Event types not listed fall back to server.events.retention_period. Each override is capped by the global events retention period.</p>
+</div>
+    <div class="property-meta"><span class="meta-label">Default:</span></div>
+  <pre class="code-block"><code>{
+  &quot;prefect.flow-run.heartbeat&quot;: &quot;P7D&quot;
+}</code></pre>
+       </div>      </div>
   </details>
 </div>    <div
   class="property-item"
@@ -9190,7 +9248,7 @@ using a PostgreSQL database.</p>
   <div class="desc-html"><p>Settings for controlling the event persister service</p>
 </div>
          <details class="nested-properties">
-    <summary>7 nested properties</summary>
+    <summary>6 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -9251,22 +9309,6 @@ using a PostgreSQL database.</p>
        <div class="property-constraints">
 <span class="constraint"
       >exclusiveMin=0.0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">batch_size_delete</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The number of expired events and event resources the event persister will attempt to delete in one batch.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>10000</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >exclusiveMin=0</span
     >  </div>
   </div>    <div
   class="property-item"

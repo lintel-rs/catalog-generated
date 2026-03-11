@@ -5,7 +5,7 @@
   "description": "Configuration schema for ECA (Editor Code Assistant). See <https://eca.dev/config/introduction> for full documentation.",
   "x-lintel": {
     "source": "https://eca.dev/config.json",
-    "sourceSha256": "1b5794b735831e97f129a0730d0e7d69b34be9a0e4bc055bf0df90711369e40e",
+    "sourceSha256": "cd8d8816a36df614ab041a368d6cbe84425c00a2114f5b812ec4bf556dc758fa",
     "fileMatch": [
       "**/eca/config.json",
       "**/.eca/config.json"
@@ -295,6 +295,62 @@
       },
       "additionalProperties": false
     },
+    "plugins": {
+      "type": "object",
+      "description": "Plugin system for loading external configuration from git repos or local paths. Each key (except 'install') is a named plugin source with a 'source' URL or path. 'install' lists plugin names to install from any registered source.",
+      "markdownDescription": "Plugin system for loading external configuration from git repos or local paths. Each key (except `install`) is a named plugin source with a `source` URL or path. `install` lists plugin names to install from any registered source.",
+      "examples": [
+        {
+          "my-org": {
+            "source": "https://github.com/org/ai-plugins.git"
+          },
+          "install": [
+            "plugin-a",
+            "plugin-b"
+          ]
+        }
+      ],
+      "properties": {
+        "install": {
+          "type": "array",
+          "description": "List of plugin names to install from registered sources.",
+          "markdownDescription": "List of plugin names to install from registered sources.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "A named plugin source.",
+            "properties": {
+              "source": {
+                "type": "string",
+                "description": "Git URL or local path to a plugin repository containing .eca-plugin/marketplace.json.",
+                "markdownDescription": "Git URL or local path to a plugin repository containing `.eca-plugin/marketplace.json`.",
+                "examples": [
+                  "https://github.com/org/ai-plugins.git",
+                  "git@github.com:org/ai-plugins.git",
+                  "/home/user/local-plugins"
+                ]
+              }
+            },
+            "required": [
+              "source"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
     "network": {
       "type": "object",
       "description": "Network configuration for custom CA certificates and mTLS client certificates. Values support dynamic string interpolation (e.g. '${env:SSL_CERT_FILE}').",
@@ -438,6 +494,44 @@
             "okhttp"
           ]
         },
+        "retryRules": {
+          "type": "array",
+          "description": "Custom retry rules. Each rule can match by HTTP status code and/or response body regex pattern. When matched, the request is retried with exponential backoff.",
+          "markdownDescription": "Custom retry rules. Each rule can match by HTTP status code and/or response body regex pattern. When matched, the request is retried with exponential backoff.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "integer",
+                "description": "HTTP status code to match.",
+                "markdownDescription": "HTTP status code to match."
+              },
+              "bodyPattern": {
+                "type": "string",
+                "description": "Regex pattern to match against the response body (case-insensitive).",
+                "markdownDescription": "Regex pattern to match against the response body (case-insensitive)."
+              },
+              "label": {
+                "type": "string",
+                "description": "Human-readable label shown in the retry progress message (e.g. 'Rate limited').",
+                "markdownDescription": "Human-readable label shown in the retry progress message (e.g. 'Rate limited')."
+              }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "status"
+                ]
+              },
+              {
+                "required": [
+                  "bodyPattern"
+                ]
+              }
+            ],
+            "additionalProperties": false
+          }
+        },
         "models": {
           "type": "object",
           "description": "Available models for this provider. Each key is the model alias.",
@@ -500,6 +594,16 @@
       "description": "A named agent configuration.",
       "markdownDescription": "A named agent configuration.",
       "properties": {
+        "inherit": {
+          "type": "string",
+          "description": "Name of another agent to inherit configuration from. The current agent's settings are deep-merged on top of the inherited agent's settings.",
+          "markdownDescription": "Name of another agent to inherit configuration from. The current agent's settings are deep-merged on top of the inherited agent's settings.",
+          "examples": [
+            "code",
+            "plan",
+            "explorer"
+          ]
+        },
         "mode": {
           "type": "string",
           "description": "Agent mode. 'primary' for standalone agents, 'subagent' for agent-spawnable agents.",
