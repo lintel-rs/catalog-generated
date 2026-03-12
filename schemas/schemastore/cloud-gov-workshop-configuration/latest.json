@@ -5,7 +5,7 @@
   "description": "Schema for the Cloud.gov Workshop configuration files. Top level keys `subgroups` and `projects` are valid for Customer configs. Top level keys `namespaces` and `users` are valid for the Workshop-controlled configurations.",
   "x-lintel": {
     "source": "https://workshop.cloud.gov/workshop/workshop-schemas/-/raw/main/cg-workshop.schema.json",
-    "sourceSha256": "16d891f30fbb457a422ad77620520dfe58d997b60153edca2dec41775532108e",
+    "sourceSha256": "d62d96ee82044dad45435277e0ffdff13f5df21c61cd07998d8cbac64fee8eeb",
     "fileMatch": [
       "cg-workshop.yml",
       "**/cg-workshop/*.yml"
@@ -43,6 +43,16 @@
       "patternProperties": {
         "^([\\w\\-\\.]+)$": {
           "$ref": "#/$defs/subgroup"
+        }
+      }
+    },
+    "teams": {
+      "description": "Team groups to provision. These groups are used specifically for role management.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^([\\w\\-\\.]+)$": {
+          "$ref": "#/$defs/team"
         }
       }
     },
@@ -445,6 +455,33 @@
           "description": "",
           "type": "boolean"
         },
+        "protected_tags": {
+          "description": "Project tags that are protected",
+          "type": "array",
+          "items": {
+            "description": "List of protected tags for the project",
+            "type": "object",
+            "properties": {
+              "tag": {
+                "description": "Wildcard pattern or tag name",
+                "type": "string"
+              },
+              "create_access_level": {
+                "description": "Access levels allowed to create. Default is set to maintainer",
+                "type": "string",
+                "enum": [
+                  "no one",
+                  "developer",
+                  "maintainer"
+                ]
+              }
+            },
+            "required": [
+              "tag"
+            ],
+            "additionalProperties": false
+          }
+        },
         "public_jobs": {
           "description": "",
           "type": "boolean"
@@ -463,7 +500,7 @@
           "additionalProperties": false,
           "patternProperties": {
             "^\\w+s$": {
-              "description": "List of group paths to assign as role project members, e.g. 'subgroup/roles/developers",
+              "description": "List of group paths to assign as role project members, e.g. 'subgroup/roles/developers'",
               "type": "array",
               "items": {
                 "type": "string",
@@ -589,6 +626,7 @@
       "description": "Subgroup (any group other than a top level namespace) - The key can use any sequence of letters, numbers, underscores, hypens, and dots",
       "type": "object",
       "required": [
+        "name",
         "visibility"
       ],
       "properties": {
@@ -615,12 +653,27 @@
           "type": "number"
         },
         "members": {
-          "description": "Roles and thier memberships under the subgroup - Supports both default roles docs.gitlab.com/user/permissions/#default-roles and custom roles <https://docs.gitlab.com/user/custom_roles/> with a key of lower cased plural role name (e.g. The key developers will create a group Developers that give members the developer role)",
+          "description": "Roles and their memberships under the subgroup - Supports both default roles docs.gitlab.com/user/permissions/#default-roles and custom roles <https://docs.gitlab.com/user/custom_roles/> with a key of lower cased plural role name (e.g. The key developers will create a group Developers that give members the developer role)",
           "type": "object",
           "patternProperties": {
             "^[\\w\\-\\.\\/]+$": {
               "description": "List of users to assign as role group members",
               "type": "array"
+            }
+          }
+        },
+        "group_roles": {
+          "description": "Additional groups outside of the inheritance structure to grant a role on the subgroup. This gives the group's members access to the subgroup and all of its projects. Supports default roles <https://docs.gitlab.com/user/permissions/#default-roles> by matching the key to lowercased and pluralized role names (e.g. The key 'developers' will share the project with the group and give members the `developer` role)",
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^\\w+s$": {
+              "description": "List of group paths to assign as role project members, e.g. 'teams/platform-developers'",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^([\\w\\-\\.\\/]+)$"
+              }
             }
           }
         },
@@ -641,6 +694,44 @@
             "enabled",
             "private"
           ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "team": {
+      "description": "Team group - used to create groups for easy @mentions and group-based assignments — not necessarily for role-based access control. The key can use any sequence of letters, numbers, underscores, hyphens, and dots.",
+      "type": "object",
+      "required": [
+        "name",
+        "members"
+      ],
+      "properties": {
+        "name": {
+          "description": "Friendly name for the team",
+          "type": "string"
+        },
+        "description": {
+          "description": "Friendly description of the team",
+          "type": "string"
+        },
+        "namespace_role": {
+          "description": "Role to assign the team on the full namespace. Defaults to none (no access)",
+          "type": "string"
+        },
+        "managed_projects_role": {
+          "description": "Role to assign the team for Workshop's configuration projects — i.e., the configuration project this schema applies to, the templates project, and other Workshop-generated config projects. Defaults to `developer`, set to `none` to remove access",
+          "type": "string"
+        },
+        "members": {
+          "description": "List of users to assign as team members.",
+          "type": "array",
+          "items": {
+            "description": "Each item is a Workshop username",
+            "type": "string",
+            "pattern": "^([a-z0-9_\\-\\.\\+]+)$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
         }
       },
       "additionalProperties": false

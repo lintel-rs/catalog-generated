@@ -4,7 +4,7 @@
   "title": "Nitro Modules Configuration",
   "x-lintel": {
     "source": "https://nitro.margelo.com/nitro.schema.json",
-    "sourceSha256": "bc5d6f30a8e2aed7e53dde7b45afafa9c2d6c0e743e74d73dbb4fe6166eed7ac"
+    "sourceSha256": "15c14b31fbeda24809fe6cd8dc0f8b340a7b0d732b4f2d7b5de952846d618479"
   },
   "type": "object",
   "properties": {
@@ -61,29 +61,107 @@
           "type": "object",
           "oneOf": [
             {
+              "required": [
+                "all"
+              ],
               "properties": {
-                "cpp": {
-                  "type": "string"
+                "all": {
+                  "type": "object",
+                  "required": [
+                    "language",
+                    "implementationClassName"
+                  ],
+                  "properties": {
+                    "language": {
+                      "type": "string",
+                      "enum": [
+                        "c++"
+                      ]
+                    },
+                    "implementationClassName": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
                 }
               },
-              "required": [
-                "cpp"
-              ],
               "additionalProperties": false,
               "type": "object"
             },
             {
-              "properties": {
-                "swift": {
-                  "type": "string"
-                },
-                "kotlin": {
-                  "type": "string"
-                }
+              "type": "object",
+              "not": {
+                "required": [
+                  "all"
+                ]
               },
               "minProperties": 1,
+              "properties": {
+                "ios": {
+                  "type": "object",
+                  "required": [
+                    "language",
+                    "implementationClassName"
+                  ],
+                  "properties": {
+                    "language": {
+                      "type": "string",
+                      "enum": [
+                        "c++",
+                        "swift"
+                      ]
+                    },
+                    "implementationClassName": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "android": {
+                  "type": "object",
+                  "required": [
+                    "language",
+                    "implementationClassName"
+                  ],
+                  "properties": {
+                    "language": {
+                      "type": "string",
+                      "enum": [
+                        "c++",
+                        "kotlin"
+                      ]
+                    },
+                    "implementationClassName": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
               "additionalProperties": false,
-              "type": "object"
+              "patternProperties": {
+                "^(?!all$|ios$|android$).+$": {
+                  "type": "object",
+                  "required": [
+                    "language",
+                    "implementationClassName"
+                  ],
+                  "properties": {
+                    "language": {
+                      "type": "string",
+                      "enum": [
+                        "c++",
+                        "swift",
+                        "kotlin"
+                      ]
+                    },
+                    "implementationClassName": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
             }
           ]
         }

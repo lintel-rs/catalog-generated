@@ -4,7 +4,7 @@
   "title": "SAP JSON schema for Web Application Manifest File",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/UI5/manifest/main/schema.json",
-    "sourceSha256": "f715f505f96c5398e6e2e6de0d1509c1175ee54791c97114681a11b9d0a61587",
+    "sourceSha256": "9da70ad90d43001fdd783b669795c0e7c44fae6302d2b2f46a32ca640a5f484b",
     "fileMatch": [
       "**/webapp/manifest.json",
       "**/src/main/webapp/manifest.json",
@@ -109,7 +109,8 @@
         "1.81.1",
         "1.82.0",
         "1.83.0",
-        "1.83.1"
+        "1.83.1",
+        "1.84.0"
       ]
     },
     "start_url": {
@@ -2238,7 +2239,8 @@
             "1.57.0",
             "1.58.0",
             "1.59.0",
-            "1.60.0"
+            "1.60.0",
+            "1.61.0"
           ]
         },
         "designtime": {
@@ -4193,6 +4195,36 @@
       },
       "additionalProperties": false
     },
+    "ContentType.Object.Item.RadioButtonItemTemplate": {
+      "description": "Template for radio button group items",
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "The title of the radio button option",
+          "type": "string"
+        },
+        "key": {
+          "description": "The unique key of the radio button option",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Whether the radio button option is enabled",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
     "ContentType.Object.Item.ComboBoxItemTemplate": {
       "description": "Template for combo box items",
       "type": "object",
@@ -4363,6 +4395,7 @@
                 "Duration",
                 "DateRange",
                 "RatingIndicator",
+                "RadioButtonGroup",
                 "phone",
                 "email",
                 "link",
@@ -4511,8 +4544,19 @@
           "type": "string"
         },
         "selectedKey": {
-          "description": "Defines the initially selected key from the given options for combo box",
+          "description": "Defines the initially selected key from the given options for combo box or radio button group",
           "type": "string"
+        },
+        "selectedIndex": {
+          "description": "Defines the initially selected index for radio button group",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
         },
         "placeholder": {
           "description": "Placeholder for items of type 'Input', 'TextArea', 'ComboBox', 'Duration' and 'DateRange'",
@@ -4524,13 +4568,20 @@
         },
         "item": {
           "type": "object",
-          "description": "Binding info for combo box items",
+          "description": "Binding info for combo box or radio button group items",
           "required": [
             "template"
           ],
           "properties": {
             "template": {
-              "$ref": "#/$defs/ContentType.Object.Item.ComboBoxItemTemplate"
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/ContentType.Object.Item.ComboBoxItemTemplate"
+                },
+                {
+                  "$ref": "#/$defs/ContentType.Object.Item.RadioButtonItemTemplate"
+                }
+              ]
             },
             "path": {
               "description": "Defines the path to the structure holding the data about the items",
