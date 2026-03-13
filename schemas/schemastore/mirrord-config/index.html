@@ -3118,9 +3118,9 @@ Schema - Lintel Catalog"
     <div class="definition-body">
       <div class="desc-html"><p>Tunnel outgoing network operations through mirrord.</p>
 <p>See the outgoing <a target="_blank" rel="noopener noreferrer" href="https://metalbear.com/mirrord/docs/reference/traffic/#outgoing">reference</a> for more details.</p>
-<p>You can use either the <code>remote</code> or <code>local</code> value to turn outgoing traffic tunneling on or off.</p>
-<p><code>json { "feature": { "network": { "outgoing": "remote" } } } </code></p>
-<p>Alternatively, you can use more fine-grained configuration. The <code>remote</code> and <code>local</code> config for this feature are <strong>mutually</strong> exclusive.</p>
+<p>You can use either the <code>true</code> or <code>false</code> values to turn outgoing traffic tunneling on or off.</p>
+<p><code>json { "feature": { "network": { "outgoing": true } } } </code></p>
+<p>Alternatively, you can use more fine-grained configuration.</p>
 <p><code>json { "feature": { "network": { "outgoing": { "tcp": true, "udp": true, "ignore_localhost": false, "filter": { "local": ["tcp://1.1.1.0/24:1337", "1.1.5.0/24", "google.com", ":53"] }, "unix_streams": "bear.+" } } } } </code></p>
 </div>
         <div class="property-list">
@@ -3394,8 +3394,9 @@ Schema - Lintel Catalog"
         >object | object</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>Amazon Simple Queue Service and Kafka are supported.</p>
-<p>More queue types might be added in the future.</p>
+      <div class="desc-html"><p>For each queue, <code>message_filter</code> is a mapping between message attribute names and regexes they should match. The local application will only receive messages that match <strong>all</strong> of the given patterns. This means, only messages that have <strong>all</strong> of the attributes in the filter, with values of those attributes matching the respective patterns.</p>
+<h3>feature.split_queues.{}.queue_type {#feature-split_queues-queue_id-queue_type}</h3>
+<p>The type of queue to be split, currently <code>SQS</code> and <code>Kafka</code> are supported. More queue types might be added in the future.</p>
 </div>
       </div>
   </div>
@@ -3932,7 +3933,9 @@ Schema - Lintel Catalog"
         >&gt;</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p><code>json { "feature": { "split_queues": { "first-queue": { "queue_type": "SQS", "message_filter": { "wows": "so wows", "coolz": "^very" } }, "second-queue": { "queue_type": "SQS", "message_filter": { "who": "you$" } }, "third-queue": { "queue_type": "Kafka", "message_filter": { "who": "you$" } }, "fourth-queue": { "queue_type": "Kafka", "message_filter": { "wows": "so wows", "coolz": "^very" } }, } } } </code></p>
+      <div class="desc-html"><p>A mapping from queue ids to their filters. Each queue filter defines which messages from the original queue will be made available to the local application, based on message attributes or headers, and possibly on jq filters (for SQS).</p>
+<p>The queue-ids have to match those defined in the <code>MirrordWorkloadQueueRegistry</code> or <code>MirrordKafkaTopicsConsumer</code> for SQS or Kafka respectively.</p>
+<p><code>json { "feature": { "split_queues": { "first-queue": { "queue_type": "SQS", "message_filter": { "wows": "so wows", "coolz": "^very" } }, "second-queue": { "queue_type": "SQS", "jq_filter": ".Body | fromjson | .customer_email | test(\"metalbear\\\\.com\")" }, "third-queue": { "queue_type": "Kafka", "message_filter": { "who": "you$" } }, "fourth-queue": { "queue_type": "Kafka", "message_filter": { "wows": "so wows", "coolz": "^very" } }, } } } </code></p>
 </div>
       </div>
   </div>
