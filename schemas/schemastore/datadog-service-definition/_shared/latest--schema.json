@@ -1,150 +1,114 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/datadog-service-definition/_shared/latest--schema.json",
-  "title": "Service Definition Schema v2.1",
-  "description": "A service definition for providing additional service metadata and integrations v2.1",
+  "title": "[Deprecated] Service Definition Schema",
+  "description": "[Deprecated] A service definition for providing additional service metadata and integrations v1",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/DataDog/schema/main/service-catalog/v2.1/schema.json",
-    "sourceSha256": "410502b510d252fb08c26d7c275931dc108301097ad55a6b2eaacacba3eb55b7"
+    "source": "https://raw.githubusercontent.com/DataDog/schema/main/service-catalog/v1/schema.json",
+    "sourceSha256": "4706bdaf65661b5dcc689cf6a0bf9268b9f85ee00878d214589a8a5d588aec3d"
   },
   "type": "object",
   "properties": {
     "schema-version": {
       "description": "Schema version being used",
-      "examples": [
-        "v2.1"
-      ],
       "type": "string",
-      "default": "v2.1",
+      "default": "v1",
       "enum": [
-        "v2.1"
+        "v1"
       ]
     },
-    "dd-service": {
-      "description": "Unique identifier of the service. Must be unique across all services, and is used to match with a service in Datadog",
-      "examples": [
-        "my-service"
+    "info": {
+      "description": "Basic information about a service",
+      "type": "object",
+      "properties": {
+        "dd-service": {
+          "description": "unique identifier of the service. Must be unique across all services and it used to match with a service in Datadog",
+          "type": "string"
+        },
+        "description": {
+          "description": "A short description of the service",
+          "type": "string"
+        },
+        "display-name": {
+          "description": "A friendly name of the service",
+          "type": "string"
+        },
+        "service-tier": {
+          "description": "Service tier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dd-service"
       ],
-      "type": "string"
+      "additionalProperties": false
     },
-    "team": {
-      "description": "Team that owns the service. It is used to locate a team defined in Datadog Teams if it exists",
-      "examples": [
-        "my-team"
-      ],
-      "type": "string"
+    "org": {
+      "description": "Org related information about the service.",
+      "type": "object",
+      "properties": {
+        "team": {
+          "description": "Team that owns the service",
+          "type": "string"
+        },
+        "application": {
+          "description": "App feature for which this service supports",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
     },
-    "application": {
-      "description": "Identifier for a group of related services serving a product feature, which the service is a part of",
-      "examples": [
-        "my-app"
-      ],
-      "type": "string"
+    "contact": {
+      "description": "Contact information about the service. ",
+      "type": "object",
+      "properties": {
+        "email": {
+          "description": "Service owner’s email",
+          "type": "string",
+          "format": "email"
+        },
+        "slack": {
+          "description": "Service owner’s slack channel",
+          "type": "string",
+          "pattern": "^https://.+"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
     },
-    "description": {
-      "description": "A short description of the service",
-      "examples": [
-        "My app description"
-      ],
-      "type": "string"
-    },
-    "tier": {
-      "description": "Importance of the service",
-      "examples": [
-        "1",
-        "High"
-      ],
-      "type": "string"
-    },
-    "lifecycle": {
-      "description": "The current life cycle phase of the service.",
-      "examples": [
-        "sandbox",
-        "staging",
-        "production",
-        "deprecated"
-      ],
-      "type": "string"
-    },
-    "contacts": {
-      "description": "A list of contacts related to the services. ",
+    "external-resources": {
+      "description": "A list of external links related to the services. ",
       "type": "array",
       "items": {
-        "$ref": "#/$defs/contact"
-      }
-    },
-    "links": {
-      "description": "A list of links related to the services. ",
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/link"
-      }
+        "$ref": "#/$defs/resource"
+      },
+      "additionalProperties": false
     },
     "tags": {
       "description": "A set of custom tags",
-      "examples": [
-        [
-          "my:tag"
-        ]
-      ],
       "type": "array",
       "items": {
         "type": "string"
-      }
+      },
+      "additionalProperties": false
     },
     "integrations": {
       "description": "Third party integrations that Datadog supports",
       "type": "object",
       "properties": {
         "pagerduty": {
-          "description": "Pagerduty integration for the service",
-          "type": "object",
-          "properties": {
-            "service-url": {
-              "description": "Pagerduty Service URL",
-              "examples": [
-                "https://my-org.pagerduty.com/service-directory/PMyService"
-              ],
-              "type": "string",
-              "pattern": "^(https?://)?[a-zA-Z0-9_\\-.]+\\.pagerduty\\.com/service-directory/(P[a-zA-Z0-9_\\-]+)/?$"
-            }
-          },
-          "required": [
-            "service-url"
-          ],
-          "additionalProperties": false
+          "description": "pagerduty service url for the service",
+          "type": "string",
+          "pattern": "https://[a-zA-Z0-9_\\-]+.pagerduty\\.com/service-directory/P[a-zA-Z0-9_\\-]+"
         },
-        "opsgenie": {
-          "description": "Opsgenie integration for the service",
-          "type": "object",
-          "properties": {
-            "service-url": {
-              "description": "Opsgenie Service URL",
-              "examples": [
-                "https://www.opsgenie.com/service/123e4567-e89b-12d3-a456-426614174000"
-              ],
-              "type": "string",
-              "pattern": "^(https?://)?[a-zA-Z0-9_\\-.]+\\.opsgenie\\.com/service/([a-zA-Z0-9_\\-]+)/?$"
-            },
-            "region": {
-              "description": "Opsgenie Instance Region",
-              "type": "string",
-              "examples": [
-                "US",
-                "EU"
-              ],
-              "enum": [
-                "US",
-                "EU"
-              ]
-            }
-          },
-          "required": [
-            "service-url"
-          ],
-          "additionalProperties": false
+        "github": {
+          "description": "The location of service’s github repo ",
+          "type": "string",
+          "format": "uri"
         }
       },
+      "required": [],
       "additionalProperties": false
     },
     "extensions": {
@@ -154,7 +118,7 @@
     }
   },
   "$defs": {
-    "link": {
+    "resource": {
       "required": [
         "name",
         "type",
@@ -163,126 +127,35 @@
       "type": "object",
       "properties": {
         "name": {
-          "description": "Link name",
-          "examples": [
-            "Runbook",
-            "Dashboard"
-          ],
+          "description": "Resource name",
           "type": "string"
         },
         "type": {
-          "description": "Link type",
-          "examples": [
-            "runbook",
-            "doc"
-          ],
+          "description": "Resource type",
           "type": "string",
           "enum": [
             "doc",
+            "wiki",
             "runbook",
+            "url",
             "repo",
             "dashboard",
-            "other"
+            "oncall",
+            "code",
+            "link"
           ]
         },
         "url": {
-          "description": "Link url",
-          "examples": [
-            "https://my-runbook"
-          ],
+          "description": "Resource link",
           "type": "string",
           "format": "uri"
-        },
-        "provider": {
-          "description": "Link provider",
-          "examples": [
-            "Github",
-            "Confluence"
-          ],
-          "type": "string"
         }
       },
-      "additionalProperties": false
-    },
-    "contact": {
-      "required": [
-        "type",
-        "contact"
-      ],
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Contact name",
-          "examples": [
-            "Oncall Slack",
-            "Team Email"
-          ],
-          "type": "string",
-          "minLength": 2
-        },
-        "type": {
-          "description": "Contact type",
-          "examples": [
-            "email",
-            "slack",
-            "microsoft-teams"
-          ],
-          "type": "string",
-          "enum": [
-            "email",
-            "slack",
-            "microsoft-teams"
-          ]
-        },
-        "contact": {
-          "description": "Contact value",
-          "examples": [
-            "contact@datadoghq.com",
-            "https://my-org.slack.com/archives/my-channel"
-          ],
-          "type": "string"
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "email"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "contact": {
-                "format": "email"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "slack"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "contact": {
-                "pattern": "^https://.+"
-              }
-            }
-          }
-        }
-      ],
       "additionalProperties": false
     }
   },
   "additionalProperties": false,
   "required": [
-    "schema-version",
-    "dd-service"
+    "info"
   ]
 }

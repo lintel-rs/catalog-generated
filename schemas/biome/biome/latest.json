@@ -5,7 +5,7 @@
   "description": "The configuration that is contained inside the file `biome.json`",
   "x-lintel": {
     "source": "https://biomejs.dev/schemas/latest/schema.json",
-    "sourceSha256": "c4c9af319089f0be7af562a618317b66c10bf053c3e4c7140f8b78f9166ea35f",
+    "sourceSha256": "f175037aaf18e0910127e036827088f8a517249f0f7b742428d391783ac2a4a8",
     "fileMatch": [
       "biome.json",
       "biome.jsonc",
@@ -700,6 +700,37 @@
       "enum": [
         "auto",
         "multiline"
+      ]
+    },
+    "AvailabilityNamed": {
+      "description": "Named Baseline availability tiers.",
+      "oneOf": [
+        {
+          "description": "Warn on anything not Baseline widely available (default).",
+          "type": "string",
+          "const": "widely"
+        },
+        {
+          "description": "Warn on anything not at least Baseline newly available.",
+          "type": "string",
+          "const": "newly"
+        }
+      ]
+    },
+    "AvailabilityTarget": {
+      "description": "The Baseline availability level to target.\n\n- `\"widely\"` – warn on anything not Baseline widely available.\n- `\"newly\"` – warn on anything not at least Baseline newly available.\n- A year (e.g. `2023`) – warn on anything whose `baseline_low_date` is after\n  that year (i.e. became newly available after that year).",
+      "anyOf": [
+        {
+          "description": "A named tier: `\"widely\"` or `\"newly\"`.",
+          "$ref": "#/$defs/AvailabilityNamed"
+        },
+        {
+          "description": "A year cutoff (e.g. `2023`).",
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        }
       ]
     },
     "Bool": {
@@ -5581,6 +5612,20 @@
       "type": "object",
       "additionalProperties": false
     },
+    "NoEmptyObjectKeysConfiguration": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RulePlainConfiguration"
+        },
+        {
+          "$ref": "#/$defs/RuleWithNoEmptyObjectKeysOptions"
+        }
+      ]
+    },
+    "NoEmptyObjectKeysOptions": {
+      "type": "object",
+      "additionalProperties": false
+    },
     "NoEmptyPatternConfiguration": {
       "oneOf": [
         {
@@ -7877,6 +7922,20 @@
       "type": "object",
       "additionalProperties": false
     },
+    "NoTopLevelLiteralsConfiguration": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RulePlainConfiguration"
+        },
+        {
+          "$ref": "#/$defs/RuleWithNoTopLevelLiteralsOptions"
+        }
+      ]
+    },
+    "NoTopLevelLiteralsOptions": {
+      "type": "object",
+      "additionalProperties": false
+    },
     "NoTsIgnoreConfiguration": {
       "oneOf": [
         {
@@ -9147,6 +9206,17 @@
             }
           ]
         },
+        "noEmptyObjectKeys": {
+          "description": "Disallow empty keys in JSON objects.\nSee <https://biomejs.dev/linter/rules/no-empty-object-keys>",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NoEmptyObjectKeysConfiguration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "noEqualsToNull": {
           "description": "Require the use of === or !== for comparison with null.\nSee <https://biomejs.dev/linter/rules/no-equals-to-null>",
           "anyOf": [
@@ -9510,6 +9580,17 @@
             }
           ]
         },
+        "noTopLevelLiterals": {
+          "description": "Require the JSON top-level value to be an array or object.\nSee <https://biomejs.dev/linter/rules/no-top-level-literals>",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NoTopLevelLiteralsConfiguration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "noUndeclaredEnvVars": {
           "description": "Disallow the use of undeclared environment variables.\nSee <https://biomejs.dev/linter/rules/no-undeclared-env-vars>",
           "anyOf": [
@@ -9638,6 +9719,17 @@
             }
           ]
         },
+        "useBaseline": {
+          "description": "Disallow CSS properties, values, at-rules, functions, and selectors that are not part of the configured Baseline.\nSee <https://biomejs.dev/linter/rules/use-baseline>",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UseBaselineConfiguration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "useConsistentEnumValueType": {
           "description": "Disallow enums from having both number and string members.\nSee <https://biomejs.dev/linter/rules/use-consistent-enum-value-type>",
           "anyOf": [
@@ -9742,6 +9834,17 @@
           "anyOf": [
             {
               "$ref": "#/$defs/UseGlobalThisConfiguration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "useImportsFirst": {
+          "description": "Enforce that all imports appear at the top of the module.\nSee <https://biomejs.dev/linter/rules/use-imports-first>",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UseImportsFirstConfiguration"
             },
             {
               "type": "null"
@@ -12472,6 +12575,21 @@
       ],
       "additionalProperties": false
     },
+    "RuleWithNoEmptyObjectKeysOptions": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "$ref": "#/$defs/RulePlainConfiguration"
+        },
+        "options": {
+          "$ref": "#/$defs/NoEmptyObjectKeysOptions"
+        }
+      },
+      "required": [
+        "level"
+      ],
+      "additionalProperties": false
+    },
     "RuleWithNoEmptyPatternOptions": {
       "type": "object",
       "properties": {
@@ -15092,6 +15210,21 @@
       ],
       "additionalProperties": false
     },
+    "RuleWithNoTopLevelLiteralsOptions": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "$ref": "#/$defs/RulePlainConfiguration"
+        },
+        "options": {
+          "$ref": "#/$defs/NoTopLevelLiteralsOptions"
+        }
+      },
+      "required": [
+        "level"
+      ],
+      "additionalProperties": false
+    },
     "RuleWithNoTsIgnoreOptions": {
       "type": "object",
       "properties": {
@@ -16737,6 +16870,21 @@
       ],
       "additionalProperties": false
     },
+    "RuleWithUseBaselineOptions": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "$ref": "#/$defs/RulePlainConfiguration"
+        },
+        "options": {
+          "$ref": "#/$defs/UseBaselineOptions"
+        }
+      },
+      "required": [
+        "level"
+      ],
+      "additionalProperties": false
+    },
     "RuleWithUseBiomeIgnoreFolderOptions": {
       "type": "object",
       "properties": {
@@ -17835,6 +17983,21 @@
         },
         "options": {
           "$ref": "#/$defs/UseImportTypeOptions"
+        }
+      },
+      "required": [
+        "level"
+      ],
+      "additionalProperties": false
+    },
+    "RuleWithUseImportsFirstOptions": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "$ref": "#/$defs/RulePlainConfiguration"
+        },
+        "options": {
+          "$ref": "#/$defs/UseImportsFirstOptions"
         }
       },
       "required": [
@@ -22285,6 +22448,72 @@
       "type": "object",
       "additionalProperties": false
     },
+    "UseBaselineConfiguration": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RulePlainConfiguration"
+        },
+        {
+          "$ref": "#/$defs/RuleWithUseBaselineOptions"
+        }
+      ]
+    },
+    "UseBaselineOptions": {
+      "description": "Options for the `useBaseline` rule.",
+      "type": "object",
+      "properties": {
+        "allowAtRules": {
+          "description": "CSS at-rules to exclude from checking (without `@`, case-insensitive).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowFunctions": {
+          "description": "CSS value functions to exclude from checking (case-insensitive).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowMediaConditions": {
+          "description": "CSS media conditions to exclude from checking (case-insensitive).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowProperties": {
+          "description": "CSS properties to exclude from checking (case-insensitive).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowPropertyValues": {
+          "description": "CSS property values to exclude from checking (maps property name to allowed values, case-insensitive).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "allowSelectors": {
+          "description": "CSS pseudo-selectors to exclude from checking (without `:` or `::`, case-insensitive).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "available": {
+          "description": "The availability level to target. Defaults to `\"widely\"`.",
+          "$ref": "#/$defs/AvailabilityTarget"
+        }
+      },
+      "additionalProperties": false
+    },
     "UseBiomeIgnoreFolderConfiguration": {
       "oneOf": [
         {
@@ -23361,6 +23590,20 @@
         "inlineType",
         "separatedType"
       ]
+    },
+    "UseImportsFirstConfiguration": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RulePlainConfiguration"
+        },
+        {
+          "$ref": "#/$defs/RuleWithUseImportsFirstOptions"
+        }
+      ]
+    },
+    "UseImportsFirstOptions": {
+      "type": "object",
+      "additionalProperties": false
     },
     "UseIndexOfConfiguration": {
       "oneOf": [
