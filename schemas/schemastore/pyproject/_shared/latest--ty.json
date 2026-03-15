@@ -4,7 +4,7 @@
   "title": "Options",
   "x-lintel": {
     "source": "https://json.schemastore.org/ty.json",
-    "sourceSha256": "1daf83c4e889d1fc97bc4696f99f1d4d361d789a4ad63eceb1d1d21c81f727eb"
+    "sourceSha256": "e11d40ef70285e731aaaa30c9a5ba3e9d3ff05b15262449a531d021f006b6698"
   },
   "type": "object",
   "properties": {
@@ -1210,8 +1210,8 @@
         },
         "possibly-missing-attribute": {
           "title": "detects references to possibly missing attributes",
-          "description": "## What it does\nChecks for possibly missing attributes.\n\n## Why is this bad?\nAttempting to access a missing attribute will raise an `AttributeError` at runtime.\n\n## Examples\n```python\nclass A:\n    if b:\n        c = 0\n\nA.c  # AttributeError: type object 'A' has no attribute 'c'\n```",
-          "default": "warn",
+          "description": "## What it does\nChecks for possibly missing attributes.\n\n## Why is this bad?\nAttempting to access a missing attribute will raise an `AttributeError` at runtime.\n\n## Rule status\nThis rule is currently disabled by default because of the number of\nfalse positives it can produce.\n\n## Examples\n```python\nclass A:\n    if b:\n        c = 0\n\nA.c  # AttributeError: type object 'A' has no attribute 'c'\n```",
+          "default": "ignore",
           "oneOf": [
             {
               "$ref": "#/$defs/Level"
@@ -1232,6 +1232,16 @@
           "title": "detects possibly missing imports",
           "description": "## What it does\nChecks for imports of symbols that may be missing.\n\n## Why is this bad?\nImporting a missing module or name will raise a `ModuleNotFoundError`\nor `ImportError` at runtime.\n\n## Rule status\nThis rule is currently disabled by default because of the number of\nfalse positives it can produce.\n\n## Examples\n```python\n# module.py\nimport datetime\n\nif datetime.date.today().weekday() != 6:\n    a = 1\n\n# main.py\nfrom module import a  # ImportError: cannot import name 'a' from 'module'\n```",
           "default": "ignore",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Level"
+            }
+          ]
+        },
+        "possibly-missing-submodule": {
+          "title": "detects accesses of submodules that may not be available as attributes on their parent module",
+          "description": "## What it does\nChecks for accesses of submodules that might not've been imported.\n\n## Why is this bad?\nWhen module `a` has a submodule `b`, `import a` isn't generally enough to let you access\n`a.b.` You either need to explicitly `import a.b`, or else you need the `__init__.py` file\nof `a` to include `from . import b`. Without one of those, `a.b` is an `AttributeError`.\n\n## Examples\n```python\nimport html\nhtml.parser  # AttributeError: module 'html' has no attribute 'parser'\n```",
+          "default": "warn",
           "oneOf": [
             {
               "$ref": "#/$defs/Level"

@@ -3584,6 +3584,9 @@ f(x=1)  # Error raised here
 <p>Checks for possibly missing attributes.</p>
 <h2>Why is this bad?</h2>
 <p>Attempting to access a missing attribute will raise an <code>AttributeError</code> at runtime.</p>
+<h2>Rule status</h2>
+<p>This rule is currently disabled by default because of the number of
+false positives it can produce.</p>
 <h2>Examples</h2>
 <pre><code class="language-python">class A:
     if b:
@@ -3593,7 +3596,7 @@ A.c  # AttributeError: type object 'A' has no attribute 'c'
 </code></pre>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;warn&quot;</code>
+    <span class="meta-label">Default:</span> <code>&quot;ignore&quot;</code>
   </div>
        </div>   <div
   class="property-item"
@@ -3661,6 +3664,33 @@ from module import a  # ImportError: cannot import name 'a' from 'module'
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;ignore&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">possibly-missing-submodule</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><h2>What it does</h2>
+<p>Checks for accesses of submodules that might not've been imported.</p>
+<h2>Why is this bad?</h2>
+<p>When module <code>a</code> has a submodule <code>b</code>, <code>import a</code> isn't generally enough to let you access
+<code>a.b.</code> You either need to explicitly <code>import a.b</code>, or else you need the <code>__init__.py</code> file
+of <code>a</code> to include <code>from . import b</code>. Without one of those, <code>a.b</code> is an <code>AttributeError</code>.</p>
+<h2>Examples</h2>
+<pre><code class="language-python">import html
+html.parser  # AttributeError: module 'html' has no attribute 'parser'
+</code></pre>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;warn&quot;</code>
   </div>
        </div>   <div
   class="property-item"

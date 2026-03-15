@@ -4,7 +4,7 @@
   "description": "Minecraft Resource/Data Pack Metadata\n<https://minecraft.wiki/w/Pack.mcmeta#Format>",
   "x-lintel": {
     "source": "https://www.schemastore.org/minecraft-pack-mcmeta.json",
-    "sourceSha256": "050fe920700fff2be6c97c252354bc9f690386b10012da1b4521f3a020942c13",
+    "sourceSha256": "c238764f221e8eac1275f684698984c771730003938289889167e37cc810291c",
     "fileMatch": [
       "**/pack.mcmeta"
     ]
@@ -16,22 +16,51 @@
       "type": "object",
       "properties": {
         "description": {
+          "$ref": "#/$defs/textComponent",
           "title": "description",
-          "description": "A text component that appears when hovering over the pack's name in the list given by the `/datapack list` command, or when viewing the pack in the Create World screen.",
-          "type": "string"
+          "description": "A text component that appears when hovering over the pack's name in the list given by the `/datapack list` command, or when viewing the pack in the Create World screen."
         },
         "pack_format": {
           "$ref": "#/$defs/packFormat",
-          "description": "Determines the version(s) of Minecraft that this pack is compatible with."
+          "description": "Determines the version(s) of Minecraft that this pack is compatible with. Optional when supported formats do not include 82 (data pack) or 65 (resource pack) or below, but required otherwise."
+        },
+        "min_format": {
+          "$ref": "#/$defs/packFormatMajorMinor",
+          "description": "Describes the minimum supported pack format version. Can be an integer or an array of one or two integers ([major] or [major, minor])."
+        },
+        "max_format": {
+          "$ref": "#/$defs/packFormatMajorMinor",
+          "description": "Describes the maximum supported pack format version. Can be an integer or an array of one or two integers ([major] or [major, minor])."
         },
         "supported_formats": {
           "$ref": "#/$defs/packFormatRange",
-          "description": "Describes a range for pack formats that this pack supports. The range has to include the value of `pack.pack_format`."
+          "description": "DEPRECATED. The major versions this pack supports. Has to match the major versions specified in min_format and max_format.\nRequired when the pack declares support for versions either below data pack format 82 or resource pack format 65.\nMust be absent otherwise."
         }
       },
+      "anyOf": [
+        {
+          "properties": {
+            "pack_format": {}
+          },
+          "required": [
+            "pack_format"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "min_format": {},
+            "max_format": {}
+          },
+          "required": [
+            "min_format",
+            "max_format"
+          ],
+          "type": "object"
+        }
+      ],
       "required": [
-        "description",
-        "pack_format"
+        "description"
       ],
       "additionalProperties": false
     },
@@ -92,18 +121,47 @@
             "description": "An overlay.",
             "type": "object",
             "properties": {
-              "formats": {
-                "$ref": "#/$defs/packFormatRange",
-                "description": "A range of pack formats when this overlay should be active."
-              },
               "directory": {
                 "description": "The directory to overlay for the respective versions.",
                 "type": "string",
                 "pattern": "[a-z0-9_-]+"
+              },
+              "min_format": {
+                "$ref": "#/$defs/packFormatMajorMinor",
+                "description": "Describes the minimum pack format version to which this overlay applies. As integer or one or two element integer array."
+              },
+              "max_format": {
+                "$ref": "#/$defs/packFormatMajorMinor",
+                "description": "Describes the minimum pack format version to which this overlay applies. As integer or one or two element integer array."
+              },
+              "formats": {
+                "$ref": "#/$defs/packFormatRange",
+                "description": "DEPRECATED. A range of major pack format versions to which this overlay applies. Has to match the major versions specified in min_format and max_format.\nRequired when the pack declares support for versions either below data pack format 82 or resource pack format 65.\nMust be absent otherwise."
               }
             },
+            "anyOf": [
+              {
+                "properties": {
+                  "formats": {}
+                },
+                "required": [
+                  "formats"
+                ],
+                "type": "object"
+              },
+              {
+                "properties": {
+                  "min_format": {},
+                  "max_format": {}
+                },
+                "required": [
+                  "min_format",
+                  "max_format"
+                ],
+                "type": "object"
+              }
+            ],
             "required": [
-              "formats",
               "directory"
             ],
             "additionalProperties": false
@@ -155,7 +213,27 @@
       "description": "<https://minecraft.wiki/w/Pack_format>",
       "type": "integer",
       "minimum": 1,
-      "maximum": 81
+      "maximum": 101
+    },
+    "packFormatMajorMinor": {
+      "description": "A pack format version, specified as a single integer (major version) or an array of one or two integers ([major] or [major, minor]). Omitting the minor version is equal to specifying minor version 0.\n<https://minecraft.wiki/w/Pack_format>",
+      "oneOf": [
+        {
+          "type": "integer",
+          "description": "Major version as an integer. Interpreted as [major, 0].",
+          "minimum": 1
+        },
+        {
+          "type": "array",
+          "description": "An array of [major] or [major, minor] version integers. The minor version is optional and assumed to be 0 if not specified.",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1,
+          "maxItems": 2
+        }
+      ]
     },
     "packFormatRange": {
       "anyOf": [
@@ -185,6 +263,17 @@
             "max_inclusive"
           ],
           "additionalProperties": false
+        }
+      ]
+    },
+    "textComponent": {
+      "description": "A Minecraft text component (raw JSON text).\n<https://minecraft.wiki/w/Raw_JSON_text_format>",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
         }
       ]
     },
