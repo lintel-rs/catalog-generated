@@ -1,25 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json",
-  "title": "roadrunner-boltdb",
-  "description": "The schema contains all the valid configuration parameters for the BoltDB plugin for the roadrunner job system.",
+  "title": "roadrunner-beanstalk",
+  "description": "The schema contains all the valid configuration parameters for the Beanstalk plugin for the roadrunner job system.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/roadrunner-server/boltdb/refs/heads/master/schema.json",
-    "sourceSha256": "918820e58d84e386c17c7251ff4109619ff84bd051c35c93f95984d40e1fee58"
+    "source": "https://raw.githubusercontent.com/roadrunner-server/beanstalk/refs/heads/master/schema.json",
+    "sourceSha256": "02d85b0424f63655f58d4e7c654b9e62b0af420c942e63d71613eddf2fccc6a7"
   },
   "$defs": {
-    "permissions": {
-      "description": "Permissions for the BoltDB database file, if created by RR.",
-      "type": "integer",
-      "default": 755,
-      "minimum": 0,
-      "maximum": 777
-    },
-    "file": {
-      "description": "BoltDB database file to create or use.",
-      "type": "string",
-      "default": "rr.db"
-    },
     "pipeline": {
       "type": "object",
       "required": [
@@ -29,12 +17,12 @@
         "driver": {
           "type": "string",
           "enum": [
-            "boltdb"
+            "beanstalk"
           ]
         },
         "config": {
           "type": "object",
-          "description": "Configuration for the BoltDB pipeline.",
+          "description": "Configuration options for the Beanstalk pipeline.",
           "properties": {
             "priority": {
               "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/PipelineProperties/priority"
@@ -42,11 +30,20 @@
             "prefetch": {
               "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json#/$defs/PipelineProperties/prefetch"
             },
-            "permissions": {
-              "$ref": "#/$defs/permissions"
+            "tube_priority": {
+              "description": "Beanstalk internal tube priority",
+              "type": "integer",
+              "default": 1
             },
-            "file": {
-              "$ref": "#/$defs/file"
+            "tube": {
+              "description": "Tube name",
+              "type": "string",
+              "default": "default"
+            },
+            "reserve_timeout": {
+              "description": "If no job is available before this timeout has passed, Reserve returns a ConnError recording ErrTimeout",
+              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration",
+              "default": "5s"
             }
           },
           "additionalProperties": false
@@ -57,20 +54,20 @@
     "driver": {
       "type": "object",
       "properties": {
-        "file": {
-          "$ref": "#/$defs/file"
+        "addr": {
+          "title": "Beanstalk Server Address",
+          "description": "The address of the Beanstalk server.",
+          "type": "string",
+          "default": "tcp://127.0.0.1:11300"
         },
-        "permissions": {
-          "$ref": "#/$defs/permissions"
-        },
-        "interval": {
-          "description": "TTL keys check interval in seconds. It's safe to use 1 second here, but can be a little costly to performance. If you set this to zero, 60 will be used.",
-          "type": "integer",
-          "minimum": 1,
-          "default": 60
+        "timeout": {
+          "title": "Connection Timeout",
+          "description": "Connection timeout for the Beanstalk server.",
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration",
+          "default": "30s"
         }
       },
-      "description": "Configuration options for the BoltDB driver.",
+      "description": "Configuration options for the Beanstalk driver.",
       "additionalProperties": false
     }
   }

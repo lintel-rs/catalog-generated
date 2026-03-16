@@ -5,7 +5,7 @@
   "description": "Used for global rules, rewriters, and pyo3/napi",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/ast-grep/ast-grep/main/schemas/rule.json",
-    "sourceSha256": "4cb13dc10dcb82cbb04d7b0145e878ada663e18bb66cba6133bbe326dcf25841"
+    "sourceSha256": "6166f4c59761332dba5c1a1eacbcb6dc5ce58a41b3c69d5183910feb41f14d0e"
   },
   "type": "object",
   "properties": {
@@ -203,8 +203,8 @@
           "$ref": "#/$defs/SerializableRule"
         },
         "matches": {
-          "description": "A utility rule id and matches a node if the utility rule matches.",
-          "type": "string"
+          "description": "A utility rule id or parameterized utility call object.\nWhen multiple utility calls are present, they are combined with logical `all`.",
+          "$ref": "#/$defs/SerializableMatches"
         }
       },
       "additionalProperties": false
@@ -436,8 +436,8 @@
           "$ref": "#/$defs/SerializableRule"
         },
         "matches": {
-          "description": "A utility rule id and matches a node if the utility rule matches.",
-          "type": "string"
+          "description": "A utility rule id or parameterized utility call object.\nWhen multiple utility calls are present, they are combined with logical `all`.",
+          "$ref": "#/$defs/SerializableMatches"
         },
         "stopBy": {
           "$ref": "#/$defs/SerializableStopBy",
@@ -450,6 +450,22 @@
           ]
         }
       }
+    },
+    "SerializableMatches": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/$defs/SerializableRule"
+            }
+          }
+        }
+      ]
     },
     "SerializableStopBy": {
       "description": "Control how the relational rule search should stop",
