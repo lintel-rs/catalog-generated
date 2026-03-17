@@ -221,7 +221,7 @@ Schema - Lintel Catalog"
 <h3>Basic <code>config.json</code> with templating {#root-basic-templating}</h3>
 <p><code>json { "target": "{{ get_env(name="TARGET", default="pod/fallback") }}", "feature": { "env": true, "fs": "read", "network": true } } </code></p>
 <h3>Complete <code>config.json</code> {#root-complete}</h3>
-<p>Don't use this example as a starting point, it's just here to show you all the available options. <code>json { "accept_invalid_certificates": false, "skip_processes": "ide-debugger", "target": { "path": "pod/bear-pod", "namespace": "default" }, "connect_tcp": null, "agent": { "log_level": "info", "json_log": false, "labels": { "user": "meow" }, "annotations": { "cats.io/inject": "enabled" }, "namespace": "default", "image": "ghcr.io/metalbear-co/mirrord:latest", "image_pull_policy": "IfNotPresent", "image_pull_secrets": [ { "secret-key": "secret" } ], "ttl": 30, "ephemeral": false, "communication_timeout": 30, "startup_timeout": 360, "flush_connections": true, "metrics": "0.0.0.0:9000", }, "feature": { "env": { "include": "DATABASE_USER;PUBLIC_ENV", "exclude": "DATABASE_PASSWORD;SECRET_ENV", "override": { "DATABASE_CONNECTION": "db://localhost:7777/my-db", "LOCAL_BEAR": "panda" }, "mapping": { ".+_TIMEOUT": "1000" } }, "fs": { "mode": "write", "read_write": ".+\\.json" , "read_only": [ ".+\\.yaml", ".+important-file\\.txt" ], "local": [ ".+\\.js", ".+\\.mjs" ] }, "network": { "incoming": { "mode": "steal", "http_filter": { "header_filter": "host: api\\..+" }, "port_mapping": [[ 7777, 8888 ]], "ignore_localhost": false, "ignore_ports": [9999, 10000] }, "outgoing": { "tcp": true, "udp": true, "filter": { "local": ["tcp://1.1.1.0/24:1337", "1.1.5.0/24", "google.com", ":53"] }, "ignore_localhost": false, "unix_streams": "bear.+" }, "dns": { "enabled": true, "filter": { "local": ["1.1.1.0/24:1337", "1.1.5.0/24", "google.com"] } } }, "copy_target": { "scale_down": false } }, "operator": true, "kubeconfig": "~/.kube/config", "sip_binaries": "bash", "telemetry": true, "kube_context": "my-cluster" } </code></p>
+<p>Don't use this example as a starting point, it's just here to show you all the available options. <code>json { "accept_invalid_certificates": false, "skip_processes": "ide-debugger", "target": { "path": "pod/bear-pod", "namespace": "default" }, "connect_tcp": null, "agent": { "log_level": "info", "json_log": false, "labels": { "user": "meow" }, "annotations": { "cats.io/inject": "enabled" }, "namespace": "default", "image": "ghcr.io/metalbear-co/mirrord:latest", "image_pull_policy": "IfNotPresent", "image_pull_secrets": [ { "secret-key": "secret" } ], "ttl": 30, "ephemeral": false, "communication_timeout": 30, "startup_timeout": 360, "flush_connections": true, "metrics": "0.0.0.0:9000", }, "feature": { "env": { "include": "DATABASE_USER;PUBLIC_ENV", "exclude": "DATABASE_PASSWORD;SECRET_ENV", "override": { "DATABASE_CONNECTION": "db://localhost:7777/my-db", "LOCAL_BEAR": "panda" }, "mapping": { ".+_TIMEOUT": "1000" } }, "fs": { "mode": "write", "read_write": ".+\\.json" , "read_only": [ ".+\\.yaml", ".+important-file\\.txt" ], "local": [ ".+\\.js", ".+\\.mjs" ] }, "network": { "incoming": { "mode": "steal", "http_filter": { "header_filter": "^baggage: .*mirrord-session={{ key }}.*$" }, "port_mapping": [[ 7777, 8888 ]], "ignore_localhost": false, "ignore_ports": [9999, 10000] }, "outgoing": { "tcp": true, "udp": true, "filter": { "local": ["tcp://1.1.1.0/24:1337", "1.1.5.0/24", "google.com", ":53"] }, "ignore_localhost": false, "unix_streams": "bear.+" }, "dns": { "enabled": true, "filter": { "local": ["1.1.1.0/24:1337", "1.1.5.0/24", "google.com"] } } }, "copy_target": { "scale_down": false } }, "operator": true, "kubeconfig": "~/.kube/config", "sip_binaries": "bash", "telemetry": true, "kube_context": "my-cluster" } </code></p>
 <h1>Options {#root-options}</h1>
 </div>
    <h2 id="properties">Properties</h2>
@@ -355,9 +355,9 @@ Schema - Lintel Catalog"
     <span class="type-badge">string | null</span>
    </div>
   <div class="desc-html"><p>An identifier for a mirrord session.</p>
-<p>This key can be referenced in your configuration using the <code>{{ key }}</code> template variable. For example, you can use it in HTTP filters: <code>"header_filter": "x-session: key-{{ key }}"</code>.</p>
+<p>This key can be referenced in your configuration using the <code>{{ key }}</code> template variable. The recommended use is to propagate it in W3C <code>baggage</code> or <code>tracestate</code>, then filter on <code>mirrord-session={{ key }}</code> in <code>feature.network.incoming.http_filter</code>.</p>
 <p>Priority (highest to lowest): 1. CLI argument: <code>mirrord exec --key my-key</code> 2. Config file: <code>{ "key": "my-key" }</code> 3. Fallback: A unique key is randomly generated if neither option is provided</p>
-<p><code>json { "key": "my-session-key", "feature": { "network": { "incoming": { "http_filter": { "header_filter": "x-session: key-{{ key }}" } } } } } </code></p>
+<p><code>json { "key": "my-session-key", "feature": { "network": { "incoming": { "http_filter": { "header_filter": "^baggage: .*mirrord-session={{ key }}.*$" } } } } } </code></p>
 </div>
        </div>    <div
   class="property-item"
@@ -2150,7 +2150,7 @@ Schema - Lintel Catalog"
       <div class="desc-html"><p>Controls mirrord features.</p>
 <p>See the <a target="_blank" rel="noopener noreferrer" href="https://metalbear.com/mirrord/docs/reference/">technical reference, Technical Reference</a> to learn more about what each feature does.</p>
 <p>The <a href="#feature-env"><code>env</code></a>, <a href="#feature-fs"><code>fs</code></a> and <a href="#feature-network"><code>network</code></a> options have support for a shortened version, that you can see <a href="#root-shortened">here</a>.</p>
-<p><code>json { "feature": { "env": { "include": "DATABASE_USER;PUBLIC_ENV", "exclude": "DATABASE_PASSWORD;SECRET_ENV", "override": { "DATABASE_CONNECTION": "db://localhost:7777/my-db", "LOCAL_BEAR": "panda" } }, "fs": { "mode": "write", "read_write": ".+\\.json" , "read_only": [ ".+\\.yaml", ".+important-file\\.txt" ], "local": [ ".+\\.js", ".+\\.mjs" ] }, "network": { "incoming": { "mode": "steal", "http_filter": { "header_filter": "host: api\\..+" }, "port_mapping": [[ 7777, 8888 ]], "ignore_localhost": false, "ignore_ports": [9999, 10000] }, "outgoing": { "tcp": true, "udp": true, "filter": { "local": ["tcp://1.1.1.0/24:1337", "1.1.5.0/24", "google.com", ":53"] }, "ignore_localhost": false, "unix_streams": "bear.+" }, "dns": false }, "copy_target": false, "hostname": true } } </code></p>
+<p><code>json { "feature": { "env": { "include": "DATABASE_USER;PUBLIC_ENV", "exclude": "DATABASE_PASSWORD;SECRET_ENV", "override": { "DATABASE_CONNECTION": "db://localhost:7777/my-db", "LOCAL_BEAR": "panda" } }, "fs": { "mode": "write", "read_write": ".+\\.json" , "read_only": [ ".+\\.yaml", ".+important-file\\.txt" ], "local": [ ".+\\.js", ".+\\.mjs" ] }, "network": { "incoming": { "mode": "steal", "http_filter": { "header_filter": "^baggage: .*mirrord-session={{ key }}.*$" }, "port_mapping": [[ 7777, 8888 ]], "ignore_localhost": false, "ignore_ports": [9999, 10000] }, "outgoing": { "tcp": true, "udp": true, "filter": { "local": ["tcp://1.1.1.0/24:1337", "1.1.5.0/24", "google.com", ":53"] }, "ignore_localhost": false, "unix_streams": "bear.+" }, "dns": false }, "copy_target": false, "hostname": true } } </code></p>
 </div>
         <div class="property-list">
  <div
@@ -2361,13 +2361,15 @@ Schema - Lintel Catalog"
       <div class="desc-html"><p>Filter configuration for the HTTP traffic stealer feature.</p>
 <p>Allows the user to set a filter (regex) for the HTTP headers, so that the stealer traffic feature only captures HTTP requests that match the specified filter, forwarding unmatched requests to their original destinations.</p>
 <p>Only does something when <a href="#feature-network-incoming-mode"><code>feature.network.incoming.mode</code></a> is set as <code>"steal"</code>, ignored otherwise.</p>
-<p>For example, to filter based on header: <code>json { "header_filter": "host: api\\..+" } </code> Setting that filter will make mirrord only steal requests with the <code>host</code> header set to hosts that start with "api", followed by a dot, and then at least one more character.</p>
+<p>The recommended way to filter a single developer session is to propagate a W3C <code>baggage</code> or <code>tracestate</code> entry such as <code>mirrord-session={{ key }}</code> from the caller, and match that value here. This works well across proxies, service meshes, and tracing-aware clients.</p>
+<p>For example, to filter on a <code>baggage</code> header: <code>json { "header_filter": "^baggage: .*mirrord-session={{ key }}.*$" } </code> Setting that filter will make mirrord only steal requests whose <code>baggage</code> header contains <code>mirrord-session={{ key }}</code>.</p>
+<p>If your traffic already propagates <code>tracestate</code>, you can filter on it the same way: <code>json { "header_filter": "^tracestate: .*mirrord-session={{ key }}.*$" } </code></p>
 <p>For example, to filter based on path: <code>json { "path_filter": "^/api/" } </code> Setting this filter will make mirrord only steal requests to URIs starting with "/api/".</p>
 <p>This can be useful for filtering out Kubernetes liveness, readiness and startup probes. For example, for avoiding stealing any probe sent by kubernetes, you can set this filter: <code>json { "header_filter": "^User-Agent: (?!kube-probe)" } </code> Setting this filter will make mirrord only steal requests that <strong>do</strong> have a user agent that <strong>does not</strong> begin with "kube-probe".</p>
 <p>Similarly, you can exclude certain paths using a negative look-ahead: <code>json { "path_filter": "^(?!/health/)" } </code> Setting this filter will make mirrord only steal requests to URIs that do not start with "/health/".</p>
 <p>With <code>all_of</code> and <code>any_of</code>, you can use multiple HTTP filters at the same time.</p>
-<p>If you want to steal HTTP requests that match <strong>every</strong> pattern specified, use <code>all_of</code>. For example, this filter steals only HTTP requests to endpoint <code>/api/my-endpoint</code> that contain header <code>x-debug-session</code> with value <code>121212</code>. <code>json { "all_of": [ { "header": "^x-debug-session: 121212$" }, { "path": "^/api/my-endpoint$" } ] } </code></p>
-<p>If you want to steal HTTP requests that match <strong>any</strong> of the patterns specified, use <code>any_of</code>. For example, this filter steals HTTP requests to endpoint <code>/api/my-endpoint</code> <strong>and</strong> HTTP requests that contain header <code>x-debug-session</code> with value <code>121212</code>. <code>json { "any_of": [ { "path": "^/api/my-endpoint$"}, { "header": "^x-debug-session: 121212$" } ] } </code></p>
+<p>If you want to steal HTTP requests that match <strong>every</strong> pattern specified, use <code>all_of</code>. For example, this filter steals only <code>POST</code> requests to endpoint <code>/api/my-endpoint</code> whose <code>baggage</code> header contains <code>mirrord-session={{ key }}</code>. <code>json { "all_of": [ { "header": "^baggage: .*mirrord-session={{ key }}.*$" }, { "path": "^/api/my-endpoint$" }, { "method": "POST" } ] } </code></p>
+<p>If you want to steal HTTP requests that match <strong>any</strong> of the patterns specified, use <code>any_of</code>. For example, this filter steals HTTP requests to <code>/api/my-endpoint</code>, or requests whose <code>baggage</code> header contains <code>mirrord-session={{ key }}</code>. <code>json { "any_of": [ { "header": "^baggage: .*mirrord-session={{ key }}.*$" }, { "path": "^/api/my-endpoint$" } ] } </code></p>
 </div>
         <div class="property-list">
  <div
@@ -2378,9 +2380,9 @@ Schema - Lintel Catalog"
     <span class="type-badge">array | null</span>
    </div>
   <div class="desc-html"><p>An array of HTTP filters.</p>
-<p>Each inner filter specifies either header or path regex. Requests must match all of the filters to be stolen.</p>
+<p>Each inner filter specifies a header, path, method, body, or jq filter. Requests must match all of the filters to be stolen.</p>
 <p>Cannot be an empty list.</p>
-<p>Example: <code>json { "all_of": [ { "header": "x-user: my-user$" }, { "path": "^/api/v1/my-endpoint" } { "method": "post" } ] } </code></p>
+<p>Example: <code>json { "all_of": [ { "header": "^baggage: .*mirrord-session={{ key }}.*$" }, { "path": "^/api/v1/my-endpoint$" }, { "method": "POST" } ] } </code></p>
 </div>
        </div>   <div
   class="property-item"
@@ -2390,9 +2392,9 @@ Schema - Lintel Catalog"
     <span class="type-badge">array | null</span>
    </div>
   <div class="desc-html"><p>An array of HTTP filters.</p>
-<p>Each inner filter specifies either header or path regex. Requests must match at least one of the filters to be stolen.</p>
+<p>Each inner filter specifies a header, path, method, body, or jq filter. Requests must match at least one of the filters to be stolen.</p>
 <p>Cannot be an empty list.</p>
-<p>Example: <code>json { "any_of": [ { "header": "^x-user: my-user$" }, { "path": "^/api/v1/my-endpoint" } { "method": "post" } ] } </code></p>
+<p>Example: <code>json { "any_of": [ { "header": "^baggage: .*mirrord-session={{ key }}.*$" }, { "header": "^tracestate: .*mirrord-session={{ key }}.*$" }, { "path": "^/api/v1/my-endpoint$" } ] } </code></p>
 </div>
        </div>   <div
   class="property-item"
@@ -2418,6 +2420,7 @@ Schema - Lintel Catalog"
    </div>
   <div class="desc-html"><p>Supports regexes validated by the <a target="_blank" rel="noopener noreferrer" href="https://docs.rs/fancy-regex/latest/fancy_regex/"><code>fancy-regex</code></a> crate.</p>
 <p>The HTTP traffic feature converts the HTTP headers to <code>HeaderKey: HeaderValue</code>, case-insensitive.</p>
+<p>The recommended pattern is to match a W3C <code>baggage</code> or <code>tracestate</code> entry such as <code>mirrord-session={{ key }}</code>.</p>
 </div>
        </div>   <div
   class="property-item"
@@ -2626,7 +2629,7 @@ Schema - Lintel Catalog"
 <h3>Minimal <code>incoming</code> config</h3>
 <p><code>json { "feature": { "network": { "incoming": "steal" } } } </code></p>
 <h3>Advanced <code>incoming</code> config</h3>
-<p><code>json { "feature": { "network": { "incoming": { "mode": "steal", "http_filter": { "header_filter": "host: api\\..+" }, "port_mapping": [[ 7777, 8888 ]], "ignore_localhost": false, "ignore_ports": [9999, 10000], "listen_ports": [[80, 8111]] } } } } </code></p>
+<p><code>json { "feature": { "network": { "incoming": { "mode": "steal", "http_filter": { "header_filter": "^baggage: .*mirrord-session={{ key }}.*$" }, "port_mapping": [[ 7777, 8888 ]], "ignore_localhost": false, "ignore_ports": [9999, 10000], "listen_ports": [[80, 8111]] } } } } </code></p>
 </div>
       </div>
   </div>
@@ -3055,7 +3058,7 @@ Schema - Lintel Catalog"
     <div class="definition-body">
       <div class="desc-html"><p>Controls mirrord network operations.</p>
 <p>See the network traffic <a target="_blank" rel="noopener noreferrer" href="https://metalbear.com/mirrord/docs/reference/traffic/">reference</a> for more details.</p>
-<p><code>json { "feature": { "network": { "incoming": { "mode": "steal", "http_filter": { "header_filter": "host: api\\..+" }, "port_mapping": [[ 7777, 8888 ]], "ignore_localhost": false, "ignore_ports": [9999, 10000] }, "outgoing": { "tcp": true, "udp": true, "filter": { "local": ["tcp://1.1.1.0/24:1337", "1.1.5.0/24", "google.com", ":53"] }, "ignore_localhost": false, "unix_streams": "bear.+" }, "dns": { "enabled": true, "filter": { "local": ["1.1.1.0/24:1337", "1.1.5.0/24", "google.com"] } } } } } </code></p>
+<p><code>json { "feature": { "network": { "incoming": { "mode": "steal", "http_filter": { "header_filter": "^baggage: .*mirrord-session={{ key }}.*$" }, "port_mapping": [[ 7777, 8888 ]], "ignore_localhost": false, "ignore_ports": [9999, 10000] }, "outgoing": { "tcp": true, "udp": true, "filter": { "local": ["tcp://1.1.1.0/24:1337", "1.1.5.0/24", "google.com", ":53"] }, "ignore_localhost": false, "unix_streams": "bear.+" }, "dns": { "enabled": true, "filter": { "local": ["1.1.1.0/24:1337", "1.1.5.0/24", "google.com"] } } } } } </code></p>
 </div>
         <div class="property-list">
  <div
