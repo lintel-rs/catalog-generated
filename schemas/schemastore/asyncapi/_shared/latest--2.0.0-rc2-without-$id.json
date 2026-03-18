@@ -1,18 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.5.0-without-$id.json",
-  "title": "AsyncAPI 2.5.0 schema.",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.0.0-rc2-without-$id.json",
+  "title": "AsyncAPI 2.0.0-rc2 schema.",
   "description": "!!Auto generated!! \n Do not manually edit. ",
   "x-lintel": {
-    "source": "http://asyncapi.com/schema-store/2.5.0-without-$id.json",
-    "sourceSha256": "58982e6b2d2ad0cf51515c34d15c445941905b70cff0783d865ada0cf06d507f"
+    "source": "http://asyncapi.com/schema-store/2.0.0-rc2-without-$id.json",
+    "sourceSha256": "185894f187b2de94cfe698e289756fba3e88348279c23c28e38ad8be318e0ae3"
   },
   "type": "object",
   "properties": {
     "asyncapi": {
       "type": "string",
       "enum": [
-        "2.5.0"
+        "2.0.0-rc2"
       ],
       "description": "The AsyncAPI specification version of this document."
     },
@@ -25,7 +25,10 @@
       "$ref": "#/$defs/info"
     },
     "servers": {
-      "$ref": "#/$defs/servers"
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/server"
+      }
     },
     "defaultContentType": {
       "type": "string"
@@ -141,35 +144,6 @@
         }
       }
     },
-    "servers": {
-      "description": "An object representing multiple servers.",
-      "type": "object",
-      "additionalProperties": {
-        "oneOf": [
-          {
-            "$ref": "#/$defs/Reference"
-          },
-          {
-            "$ref": "#/$defs/server"
-          }
-        ]
-      }
-    },
-    "Reference": {
-      "type": "object",
-      "required": [
-        "$ref"
-      ],
-      "properties": {
-        "$ref": {
-          "$ref": "#/$defs/ReferenceObject"
-        }
-      }
-    },
-    "ReferenceObject": {
-      "type": "string",
-      "format": "uri-reference"
-    },
     "server": {
       "type": "object",
       "description": "An object representing a Server.",
@@ -202,13 +176,6 @@
         },
         "bindings": {
           "$ref": "#/$defs/bindingsObject"
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/tag"
-          },
-          "uniqueItems": true
         }
       },
       "additionalProperties": false,
@@ -221,19 +188,13 @@
     "serverVariables": {
       "type": "object",
       "additionalProperties": {
-        "oneOf": [
-          {
-            "$ref": "#/$defs/Reference"
-          },
-          {
-            "$ref": "#/$defs/serverVariable"
-          }
-        ]
+        "$ref": "#/$defs/serverVariable"
       }
     },
     "serverVariable": {
       "type": "object",
       "description": "An object representing a Server Variable for server URL template substitution.",
+      "minProperties": 1,
       "properties": {
         "enum": {
           "type": "array",
@@ -282,62 +243,14 @@
         "mqtt": {},
         "mqtt5": {},
         "kafka": {},
-        "anypointmq": {},
         "nats": {},
         "jms": {},
         "sns": {},
         "sqs": {},
         "stomp": {},
-        "redis": {},
-        "ibmmq": {},
-        "solace": {}
+        "redis": {}
       },
       "additionalProperties": true
-    },
-    "tag": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "externalDocs": {
-          "$ref": "#/$defs/externalDocs"
-        }
-      },
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
-    "externalDocs": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "information about external documentation",
-      "required": [
-        "url"
-      ],
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
     },
     "channels": {
       "type": "object",
@@ -363,14 +276,6 @@
           "type": "string",
           "description": "A description of the channel."
         },
-        "servers": {
-          "type": "array",
-          "description": "The names of the servers on which this channel is available. If absent or empty then this channel must be available on all servers.",
-          "items": {
-            "type": "string"
-          },
-          "uniqueItems": true
-        },
         "publish": {
           "$ref": "#/$defs/operation"
         },
@@ -386,11 +291,16 @@
         }
       },
       "additionalProperties": false,
+      "minProperties": 1,
       "patternProperties": {
         "^x-[\\w0-9\\.\\x2d_]+$": {
           "$ref": "#/$defs/specificationExtension"
         }
       }
+    },
+    "ReferenceObject": {
+      "type": "string",
+      "format": "uri-reference"
     },
     "parameters": {
       "type": "object",
@@ -406,6 +316,17 @@
         ]
       }
     },
+    "Reference": {
+      "type": "object",
+      "required": [
+        "$ref"
+      ],
+      "properties": {
+        "$ref": {
+          "$ref": "#/$defs/ReferenceObject"
+        }
+      }
+    },
     "parameter": {
       "properties": {
         "description": {
@@ -419,6 +340,9 @@
           "type": "string",
           "description": "A runtime expression that specifies the location of the parameter value",
           "pattern": "^\\$message\\.(header|payload)#(\\/(([^\\/~])|(~[01]))*)*"
+        },
+        "$ref": {
+          "$ref": "#/$defs/ReferenceObject"
         }
       },
       "additionalProperties": false,
@@ -435,17 +359,10 @@
           "$ref": "#/$defs/json-schema-draft-07-schema"
         },
         {
+          "type": "object",
           "properties": {
             "additionalProperties": {
-              "anyOf": [
-                {
-                  "$ref": "#/$defs/schema"
-                },
-                {
-                  "type": "boolean"
-                }
-              ],
-              "default": {}
+              "$ref": "#/$defs/schema"
             },
             "items": {
               "anyOf": [
@@ -471,14 +388,14 @@
             },
             "oneOf": {
               "type": "array",
-              "minItems": 1,
+              "minItems": 2,
               "items": {
                 "$ref": "#/$defs/schema"
               }
             },
             "anyOf": {
               "type": "array",
-              "minItems": 1,
+              "minItems": 2,
               "items": {
                 "$ref": "#/$defs/schema"
               }
@@ -521,8 +438,7 @@
             "^x-[\\w0-9\\.\\x2d_]+$": {
               "$ref": "#/$defs/specificationExtension"
             }
-          },
-          "type": "object"
+          }
         }
       ]
     },
@@ -769,6 +685,28 @@
         }
       }
     },
+    "externalDocs": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "information about external documentation",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
+    },
     "operation": {
       "type": "object",
       "properties": {
@@ -790,12 +728,6 @@
         },
         "description": {
           "type": "string"
-        },
-        "security": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/SecurityRequirement"
-          }
         },
         "tags": {
           "type": "array",
@@ -846,17 +778,34 @@
         "operationId": {
           "type": "string"
         },
-        "security": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/SecurityRequirement"
-          }
-        },
         "bindings": {
           "$ref": "#/$defs/bindingsObject"
         }
       },
       "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
+    },
+    "tag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "externalDocs": {
+          "$ref": "#/$defs/externalDocs"
+        }
+      },
       "patternProperties": {
         "^x-[\\w0-9\\.\\x2d_]+$": {
           "$ref": "#/$defs/specificationExtension"
@@ -887,135 +836,6 @@
             },
             {
               "type": "object",
-              "allOf": [
-                {
-                  "if": {
-                    "not": {
-                      "required": [
-                        "schemaFormat"
-                      ]
-                    }
-                  },
-                  "then": {
-                    "properties": {
-                      "payload": {
-                        "$ref": "#/$defs/schema"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "required": [
-                      "schemaFormat"
-                    ],
-                    "properties": {
-                      "schemaFormat": {
-                        "enum": [
-                          "application/vnd.aai.asyncapi;version=2.0.0",
-                          "application/vnd.aai.asyncapi+json;version=2.0.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.0.0",
-                          "application/vnd.aai.asyncapi;version=2.1.0",
-                          "application/vnd.aai.asyncapi+json;version=2.1.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.1.0",
-                          "application/vnd.aai.asyncapi;version=2.2.0",
-                          "application/vnd.aai.asyncapi+json;version=2.2.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.2.0",
-                          "application/vnd.aai.asyncapi;version=2.3.0",
-                          "application/vnd.aai.asyncapi+json;version=2.3.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.3.0",
-                          "application/vnd.aai.asyncapi;version=2.4.0",
-                          "application/vnd.aai.asyncapi+json;version=2.4.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.4.0",
-                          "application/vnd.aai.asyncapi;version=2.5.0",
-                          "application/vnd.aai.asyncapi+json;version=2.5.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.5.0"
-                        ]
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "then": {
-                    "properties": {
-                      "payload": {
-                        "$ref": "#/$defs/schema"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "required": [
-                      "schemaFormat"
-                    ],
-                    "properties": {
-                      "schemaFormat": {
-                        "enum": [
-                          "application/schema+json;version=draft-07",
-                          "application/schema+yaml;version=draft-07"
-                        ]
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "then": {
-                    "properties": {
-                      "payload": {
-                        "$ref": "#/$defs/json-schema-draft-07-schema"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "required": [
-                      "schemaFormat"
-                    ],
-                    "properties": {
-                      "schemaFormat": {
-                        "enum": [
-                          "application/vnd.oai.openapi;version=3.0.0",
-                          "application/vnd.oai.openapi+json;version=3.0.0",
-                          "application/vnd.oai.openapi+yaml;version=3.0.0"
-                        ]
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "then": {
-                    "properties": {
-                      "payload": {
-                        "$ref": "#/$defs/openapiSchema_3_0"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "required": [
-                      "schemaFormat"
-                    ],
-                    "properties": {
-                      "schemaFormat": {
-                        "enum": [
-                          "application/vnd.apache.avro;version=1.9.0",
-                          "application/vnd.apache.avro+json;version=1.9.0",
-                          "application/vnd.apache.avro+yaml;version=1.9.0"
-                        ]
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "then": {
-                    "properties": {
-                      "payload": {
-                        "$ref": "#/$defs/avroSchema_v1"
-                      }
-                    }
-                  }
-                }
-              ],
-              "additionalProperties": false,
               "properties": {
                 "schemaFormat": {
                   "type": "string"
@@ -1024,21 +844,7 @@
                   "type": "string"
                 },
                 "headers": {
-                  "allOf": [
-                    {
-                      "$ref": "#/$defs/schema"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "const": "object"
-                        }
-                      }
-                    }
-                  ]
-                },
-                "messageId": {
-                  "type": "string"
+                  "$ref": "#/$defs/schema"
                 },
                 "payload": {},
                 "correlationId": {
@@ -1084,34 +890,7 @@
                 "examples": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Machine readable name of the message example."
-                      },
-                      "summary": {
-                        "type": "string",
-                        "description": "A brief summary of the message example."
-                      },
-                      "headers": {
-                        "type": "object"
-                      },
-                      "payload": {}
-                    },
-                    "anyOf": [
-                      {
-                        "required": [
-                          "payload"
-                        ]
-                      },
-                      {
-                        "required": [
-                          "headers"
-                        ]
-                      }
-                    ],
-                    "additionalProperties": false
+                    "type": "object"
                   }
                 },
                 "bindings": {
@@ -1131,6 +910,7 @@
                   }
                 }
               },
+              "additionalProperties": false,
               "patternProperties": {
                 "^x-[\\w0-9\\.\\x2d_]+$": {
                   "$ref": "#/$defs/specificationExtension"
@@ -1174,21 +954,14 @@
           "type": "string"
         },
         "headers": {
-          "allOf": [
+          "oneOf": [
             {
-              "$ref": "#/$defs/schema"
+              "$ref": "#/$defs/Reference"
             },
             {
-              "properties": {
-                "type": {
-                  "const": "object"
-                }
-              }
+              "$ref": "#/$defs/schema"
             }
           ]
-        },
-        "messageId": {
-          "type": "string"
         },
         "correlationId": {
           "oneOf": [
@@ -1247,622 +1020,12 @@
         }
       }
     },
-    "openapiSchema_3_0": {
-      "type": "object",
-      "$defs": {
-        "ExternalDocumentation": {
-          "type": "object",
-          "required": [
-            "url"
-          ],
-          "properties": {
-            "description": {
-              "type": "string"
-            },
-            "url": {
-              "type": "string",
-              "format": "uri-reference"
-            }
-          },
-          "additionalProperties": false,
-          "patternProperties": {
-            "^x-": {}
-          }
-        },
-        "Discriminator": {
-          "type": "object",
-          "required": [
-            "propertyName"
-          ],
-          "properties": {
-            "propertyName": {
-              "type": "string"
-            },
-            "mapping": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "Reference": {
-          "type": "object",
-          "required": [
-            "$ref"
-          ],
-          "patternProperties": {
-            "^\\$ref$": {
-              "type": "string",
-              "format": "uri-reference"
-            }
-          }
-        },
-        "XML": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "namespace": {
-              "type": "string",
-              "format": "uri"
-            },
-            "prefix": {
-              "type": "string"
-            },
-            "attribute": {
-              "type": "boolean",
-              "default": false
-            },
-            "wrapped": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          "additionalProperties": false,
-          "patternProperties": {
-            "^x-": {}
-          }
-        }
-      },
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "multipleOf": {
-          "type": "number",
-          "exclusiveMinimum": 0
-        },
-        "maximum": {
-          "type": "number"
-        },
-        "exclusiveMaximum": {
-          "type": "boolean",
-          "default": false
-        },
-        "minimum": {
-          "type": "number"
-        },
-        "exclusiveMinimum": {
-          "type": "boolean",
-          "default": false
-        },
-        "maxLength": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "minLength": {
-          "type": "integer",
-          "minimum": 0,
-          "default": 0
-        },
-        "pattern": {
-          "type": "string",
-          "format": "regex"
-        },
-        "maxItems": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "minItems": {
-          "type": "integer",
-          "minimum": 0,
-          "default": 0
-        },
-        "uniqueItems": {
-          "type": "boolean",
-          "default": false
-        },
-        "maxProperties": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "minProperties": {
-          "type": "integer",
-          "minimum": 0,
-          "default": 0
-        },
-        "required": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "minItems": 1,
-          "uniqueItems": true
-        },
-        "enum": {
-          "type": "array",
-          "items": true,
-          "minItems": 1,
-          "uniqueItems": false
-        },
-        "type": {
-          "type": "string",
-          "enum": [
-            "array",
-            "boolean",
-            "integer",
-            "number",
-            "object",
-            "string"
-          ]
-        },
-        "not": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/openapiSchema_3_0"
-            },
-            {
-              "$ref": "#/$defs/openapiSchema_3_0/$defs/Reference"
-            }
-          ]
-        },
-        "allOf": {
-          "type": "array",
-          "items": {
-            "oneOf": [
-              {
-                "$ref": "#/$defs/openapiSchema_3_0"
-              },
-              {
-                "$ref": "#/$defs/openapiSchema_3_0/$defs/Reference"
-              }
-            ]
-          }
-        },
-        "oneOf": {
-          "type": "array",
-          "items": {
-            "oneOf": [
-              {
-                "$ref": "#/$defs/openapiSchema_3_0"
-              },
-              {
-                "$ref": "#/$defs/openapiSchema_3_0/$defs/Reference"
-              }
-            ]
-          }
-        },
-        "anyOf": {
-          "type": "array",
-          "items": {
-            "oneOf": [
-              {
-                "$ref": "#/$defs/openapiSchema_3_0"
-              },
-              {
-                "$ref": "#/$defs/openapiSchema_3_0/$defs/Reference"
-              }
-            ]
-          }
-        },
-        "items": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/openapiSchema_3_0"
-            },
-            {
-              "$ref": "#/$defs/openapiSchema_3_0/$defs/Reference"
-            }
-          ]
-        },
-        "properties": {
-          "type": "object",
-          "additionalProperties": {
-            "oneOf": [
-              {
-                "$ref": "#/$defs/openapiSchema_3_0"
-              },
-              {
-                "$ref": "#/$defs/openapiSchema_3_0/$defs/Reference"
-              }
-            ]
-          }
-        },
-        "additionalProperties": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/openapiSchema_3_0"
-            },
-            {
-              "$ref": "#/$defs/openapiSchema_3_0/$defs/Reference"
-            },
-            {
-              "type": "boolean"
-            }
-          ],
-          "default": true
-        },
-        "description": {
-          "type": "string"
-        },
-        "format": {
-          "type": "string"
-        },
-        "default": true,
-        "nullable": {
-          "type": "boolean",
-          "default": false
-        },
-        "discriminator": {
-          "$ref": "#/$defs/openapiSchema_3_0/$defs/Discriminator"
-        },
-        "readOnly": {
-          "type": "boolean",
-          "default": false
-        },
-        "writeOnly": {
-          "type": "boolean",
-          "default": false
-        },
-        "example": true,
-        "externalDocs": {
-          "$ref": "#/$defs/openapiSchema_3_0/$defs/ExternalDocumentation"
-        },
-        "deprecated": {
-          "type": "boolean",
-          "default": false
-        },
-        "xml": {
-          "$ref": "#/$defs/openapiSchema_3_0/$defs/XML"
-        }
-      },
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-": true
-      }
-    },
-    "avroSchema_v1": {
-      "title": "Avro Schema Definition",
-      "description": "Json-Schema definition for Avro AVSC files.",
-      "oneOf": [
-        {
-          "$ref": "#/$defs/avroSchema_v1/$defs/avroSchema"
-        }
-      ],
-      "$defs": {
-        "avroSchema": {
-          "title": "Avro Schema",
-          "description": "Root Schema",
-          "oneOf": [
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/types"
-            }
-          ]
-        },
-        "types": {
-          "title": "Avro Types",
-          "description": "Allowed Avro types",
-          "oneOf": [
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/primitiveType"
-            },
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/primitiveTypeWithMetadata"
-            },
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/customTypeReference"
-            },
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/avroRecord"
-            },
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/avroEnum"
-            },
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/avroArray"
-            },
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/avroMap"
-            },
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/avroFixed"
-            },
-            {
-              "$ref": "#/$defs/avroSchema_v1/$defs/avroUnion"
-            }
-          ]
-        },
-        "primitiveType": {
-          "title": "Primitive Type",
-          "description": "Basic type primitives.",
-          "type": "string",
-          "enum": [
-            "null",
-            "boolean",
-            "int",
-            "long",
-            "float",
-            "double",
-            "bytes",
-            "string"
-          ]
-        },
-        "primitiveTypeWithMetadata": {
-          "title": "Primitive Type With Metadata",
-          "description": "A primitive type with metadata attached.",
-          "type": "object",
-          "properties": {
-            "type": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/primitiveType"
-            }
-          },
-          "required": [
-            "type"
-          ]
-        },
-        "customTypeReference": {
-          "title": "Custom Type",
-          "description": "Reference to a ComplexType",
-          "not": {
-            "$ref": "#/$defs/avroSchema_v1/$defs/primitiveType"
-          },
-          "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*$"
-        },
-        "avroUnion": {
-          "title": "Union",
-          "description": "A Union of types",
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/avroSchema_v1/$defs/avroSchema"
-          },
-          "minItems": 1
-        },
-        "avroField": {
-          "title": "Field",
-          "description": "A field within a Record",
-          "type": "object",
-          "properties": {
-            "name": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/name"
-            },
-            "type": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/types"
-            },
-            "doc": {
-              "type": "string"
-            },
-            "default": true,
-            "order": {
-              "enum": [
-                "ascending",
-                "descending",
-                "ignore"
-              ]
-            },
-            "aliases": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/avroSchema_v1/$defs/name"
-              }
-            }
-          },
-          "required": [
-            "name",
-            "type"
-          ]
-        },
-        "avroRecord": {
-          "title": "Record",
-          "description": "A Record",
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string",
-              "const": "record"
-            },
-            "name": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/name"
-            },
-            "namespace": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/namespace"
-            },
-            "doc": {
-              "type": "string"
-            },
-            "aliases": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/avroSchema_v1/$defs/name"
-              }
-            },
-            "fields": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/avroSchema_v1/$defs/avroField"
-              }
-            }
-          },
-          "required": [
-            "type",
-            "name",
-            "fields"
-          ]
-        },
-        "avroEnum": {
-          "title": "Enum",
-          "description": "An enumeration",
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string",
-              "const": "enum"
-            },
-            "name": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/name"
-            },
-            "namespace": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/namespace"
-            },
-            "doc": {
-              "type": "string"
-            },
-            "aliases": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/avroSchema_v1/$defs/name"
-              }
-            },
-            "symbols": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/avroSchema_v1/$defs/name"
-              }
-            }
-          },
-          "required": [
-            "type",
-            "name",
-            "symbols"
-          ]
-        },
-        "avroArray": {
-          "title": "Array",
-          "description": "An array",
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string",
-              "const": "array"
-            },
-            "name": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/name"
-            },
-            "namespace": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/namespace"
-            },
-            "doc": {
-              "type": "string"
-            },
-            "aliases": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/avroSchema_v1/$defs/name"
-              }
-            },
-            "items": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/types"
-            }
-          },
-          "required": [
-            "type",
-            "items"
-          ]
-        },
-        "avroMap": {
-          "title": "Map",
-          "description": "A map of values",
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string",
-              "const": "map"
-            },
-            "name": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/name"
-            },
-            "namespace": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/namespace"
-            },
-            "doc": {
-              "type": "string"
-            },
-            "aliases": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/avroSchema_v1/$defs/name"
-              }
-            },
-            "values": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/types"
-            }
-          },
-          "required": [
-            "type",
-            "values"
-          ]
-        },
-        "avroFixed": {
-          "title": "Fixed",
-          "description": "A fixed sized array of bytes",
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string",
-              "const": "fixed"
-            },
-            "name": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/name"
-            },
-            "namespace": {
-              "$ref": "#/$defs/avroSchema_v1/$defs/namespace"
-            },
-            "doc": {
-              "type": "string"
-            },
-            "aliases": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/avroSchema_v1/$defs/name"
-              }
-            },
-            "size": {
-              "type": "number"
-            }
-          },
-          "required": [
-            "type",
-            "name",
-            "size"
-          ]
-        },
-        "name": {
-          "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-        },
-        "namespace": {
-          "type": "string",
-          "pattern": "^([A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*)*$"
-        }
-      }
-    },
     "components": {
       "type": "object",
       "description": "An object to hold a set of reusable objects for different aspects of the AsyncAPI Specification.",
       "properties": {
         "schemas": {
           "$ref": "#/$defs/schemas"
-        },
-        "servers": {
-          "$ref": "#/$defs/servers"
-        },
-        "channels": {
-          "$ref": "#/$defs/channels"
-        },
-        "serverVariables": {
-          "$ref": "#/$defs/serverVariables"
         },
         "messages": {
           "$ref": "#/$defs/messages"
@@ -1937,12 +1100,7 @@
           }
         }
       },
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
+      "additionalProperties": false
     },
     "schemas": {
       "type": "object",
@@ -1983,9 +1141,6 @@
         },
         {
           "$ref": "#/$defs/openIdConnect"
-        },
-        {
-          "$ref": "#/$defs/SaslSecurityScheme"
         }
       ]
     },
@@ -2326,6 +1481,7 @@
               ]
             }
           },
+          "minProperties": 1,
           "additionalProperties": false
         }
       },
@@ -2386,89 +1542,6 @@
         "openIdConnectUrl": {
           "type": "string",
           "format": "uri"
-        }
-      },
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
-    "SaslSecurityScheme": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/SaslPlainSecurityScheme"
-        },
-        {
-          "$ref": "#/$defs/SaslScramSecurityScheme"
-        },
-        {
-          "$ref": "#/$defs/SaslGssapiSecurityScheme"
-        }
-      ]
-    },
-    "SaslPlainSecurityScheme": {
-      "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "plain"
-          ]
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
-    "SaslScramSecurityScheme": {
-      "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "scramSha256",
-            "scramSha512"
-          ]
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
-    "SaslGssapiSecurityScheme": {
-      "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "gssapi"
-          ]
-        },
-        "description": {
-          "type": "string"
         }
       },
       "additionalProperties": false,

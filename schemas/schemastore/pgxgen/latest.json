@@ -2,9 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/pgxgen/latest.json",
   "title": "pgxgen configuration",
+  "description": "Configuration file for pgxgen code generator",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/tkcrm/pgxgen/refs/heads/master/schemas/pgxgen-schema.json",
-    "sourceSha256": "4bff81d939d072c8469506368a5d9872f7b7aba8c4e6016df4e51808602dbe87",
+    "sourceSha256": "56ee3746e065b5c7d265c29d5fdcf727bd39f328d80afc48e362a71ca8455b0f",
     "fileMatch": [
       "pgxgen.yml",
       "pgxgen.yaml"
@@ -17,750 +18,442 @@
   "properties": {
     "version": {
       "type": "string",
-      "enum": [
-        "1"
-      ],
-      "description": "Configuration version"
+      "const": "2",
+      "description": "Config version (must be '2')"
     },
-    "sqlc": {
+    "schemas": {
       "type": "array",
+      "minItems": 1,
+      "description": "Array of schema configurations, each with its own engine and tables",
       "items": {
-        "$ref": "#/$defs/sqlcConfig"
+        "$ref": "#/$defs/schema"
       }
     },
-    "gen_models": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/genModelsConfig"
-      }
-    },
-    "gen_keystone_models": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/genKeystoneModelsConfig"
-      }
-    },
-    "gen_typescript_from_structs": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/genTypescriptConfig"
+    "templates": {
+      "type": "object",
+      "description": "User-provided template directories",
+      "properties": {
+        "crud_dir": {
+          "type": "string",
+          "description": "Directory with custom CRUD SQL templates"
+        },
+        "models_dir": {
+          "type": "string",
+          "description": "Directory with custom Go model templates"
+        }
       }
     }
   },
+  "required": [
+    "version",
+    "schemas"
+  ],
   "$defs": {
-    "sqlcConfig": {
+    "schema": {
       "type": "object",
+      "required": [
+        "name",
+        "engine",
+        "schema_dir"
+      ],
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable schema name"
+        },
+        "engine": {
+          "type": "string",
+          "enum": [
+            "postgresql",
+            "mysql",
+            "sqlite"
+          ],
+          "description": "Database engine"
+        },
         "schema_dir": {
           "type": "string",
-          "description": "Directory with migrations. Required."
+          "description": "Path to SQL migration/schema files"
         },
         "models": {
-          "$ref": "#/$defs/modelsConfig"
+          "$ref": "#/$defs/models"
         },
-        "crud": {
-          "$ref": "#/$defs/crudConfig"
+        "sqlc": {
+          "$ref": "#/$defs/sqlc"
         },
-        "constants": {
-          "$ref": "#/$defs/constantsConfig"
-        }
-      },
-      "required": [
-        "schema_dir"
-      ]
-    },
-    "modelsConfig": {
-      "type": "object",
-      "properties": {
-        "replace_sqlc_nullable_types": {
-          "type": "boolean",
-          "description": "Replace nullable types. Ex: sql.NullInt32 -> *int32"
+        "defaults": {
+          "$ref": "#/$defs/defaults"
         },
-        "include_struct_comments": {
-          "type": "boolean",
-          "description": "Include comments for structs. Useful for swagger generation"
-        },
-        "move": {
+        "tables": {
           "type": "object",
-          "properties": {
-            "output_dir": {
-              "type": "string",
-              "description": "Output directory for models"
-            },
-            "output_file_name": {
-              "type": "string",
-              "description": "Output file name. Default: models.go"
-            },
-            "package_name": {
-              "type": "string",
-              "description": "New package name. By default based on output_dir"
-            },
-            "package_path": {
-              "type": "string",
-              "description": "Full path to new models directory. Required."
-            },
-            "imports": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "path": {
-                    "type": "string",
-                    "description": "Import path. Required."
-                  },
-                  "go_type": {
-                    "type": "string",
-                    "description": "Use path if this type detected in file"
-                  }
-                },
-                "required": [
-                  "path"
-                ]
-              }
-            }
+          "description": "Per-table configuration (crud + constants + sqlc)",
+          "additionalProperties": {
+            "$ref": "#/$defs/table"
+          }
+        },
+        "custom_queries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/custom_query"
+          }
+        }
+      }
+    },
+    "models": {
+      "type": "object",
+      "required": [
+        "output_dir",
+        "package_name"
+      ],
+      "properties": {
+        "output_dir": {
+          "type": "string"
+        },
+        "output_file_name": {
+          "type": "string",
+          "default": "models.go"
+        },
+        "package_name": {
+          "type": "string"
+        },
+        "package_path": {
+          "type": "string",
+          "description": "Full Go import path for the models package"
+        },
+        "custom_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "required": [
-            "output_dir",
-            "package_path"
+          "description": "Custom types defined in the models package"
+        },
+        "emit_json_tags": {
+          "type": "boolean",
+          "default": false
+        },
+        "emit_db_tags": {
+          "type": "boolean",
+          "default": false
+        },
+        "emit_pointers_for_null": {
+          "type": "boolean",
+          "default": false
+        },
+        "sql_package": {
+          "type": "string",
+          "enum": [
+            "pgx/v5",
+            "pgx/v4",
+            "database/sql"
           ]
         }
       }
     },
-    "crudConfig": {
+    "sqlc": {
       "type": "object",
       "properties": {
-        "auto_remove_generated_files": {
-          "type": "boolean",
-          "description": "Auto remove generated files ending with _gen.sql"
-        },
-        "exclude_table_name_from_methods": {
-          "type": "boolean",
-          "description": "Instead [ActionName][TableName] will be [ActionName]. Example: GetUser -> Get"
-        },
-        "tables": {
+        "defaults": {
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/tableConfig"
+          "description": "Default sqlc gen.go options applied to all repos",
+          "properties": {
+            "sql_package": {
+              "type": "string",
+              "enum": [
+                "pgx/v5",
+                "pgx/v4",
+                "database/sql"
+              ]
+            },
+            "emit_prepared_queries": {
+              "type": "boolean"
+            },
+            "emit_interface": {
+              "type": "boolean"
+            },
+            "emit_json_tags": {
+              "type": "boolean"
+            },
+            "emit_db_tags": {
+              "type": "boolean"
+            },
+            "emit_exported_queries": {
+              "type": "boolean"
+            },
+            "emit_exact_table_names": {
+              "type": "boolean"
+            },
+            "emit_empty_slices": {
+              "type": "boolean"
+            },
+            "emit_result_struct_pointers": {
+              "type": "boolean"
+            },
+            "emit_params_struct_pointers": {
+              "type": "boolean"
+            },
+            "emit_enum_valid_method": {
+              "type": "boolean"
+            },
+            "emit_all_enum_values": {
+              "type": "boolean"
+            },
+            "query_parameter_limit": {
+              "type": "integer"
+            },
+            "json_tags_case_style": {
+              "type": "string"
+            }
           }
-        }
-      }
-    },
-    "tableConfig": {
-      "type": "object",
-      "properties": {
-        "output_dir": {
-          "type": "string",
-          "description": "Output directory for generated SQL"
         },
-        "primary_column": {
-          "type": "string",
-          "description": "Primary key column name"
-        },
-        "methods": {
+        "overrides": {
           "type": "object",
           "properties": {
-            "get": {
-              "$ref": "#/$defs/getMethodConfig"
+            "rename": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
             },
-            "find": {
-              "$ref": "#/$defs/findMethodConfig"
+            "types": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "db_type",
+                  "go_type"
+                ],
+                "properties": {
+                  "db_type": {
+                    "type": "string"
+                  },
+                  "go_type": {},
+                  "nullable": {
+                    "type": "boolean"
+                  }
+                }
+              }
             },
-            "create": {
-              "$ref": "#/$defs/createMethodConfig"
-            },
-            "update": {
-              "$ref": "#/$defs/updateMethodConfig"
-            },
-            "delete": {
-              "$ref": "#/$defs/deleteMethodConfig"
-            },
-            "total": {
-              "$ref": "#/$defs/totalMethodConfig"
-            },
-            "exists": {
-              "$ref": "#/$defs/existsMethodConfig"
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "column"
+                ],
+                "properties": {
+                  "column": {
+                    "type": "string"
+                  },
+                  "go_type": {},
+                  "go_struct_tag": {
+                    "type": "string"
+                  }
+                }
+              }
             }
-          },
-          "additionalProperties": {
-            "$ref": "#/$defs/customMethodConfig"
           }
         }
       }
     },
-    "getMethodConfig": {
-      "type": [
-        "object",
-        "null"
-      ],
+    "defaults": {
+      "type": "object",
       "properties": {
-        "name": {
+        "queries_dir_prefix": {
           "type": "string",
-          "description": "Custom method name"
-        }
-      }
-    },
-    "findMethodConfig": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "name": {
+          "description": "Per-table repos: queries_dir = {prefix}/{table_name}"
+        },
+        "output_dir_prefix": {
           "type": "string",
-          "description": "Custom method name"
+          "description": "Per-table repos: output_dir = {prefix}/repo_{table_name}"
         },
-        "skip_columns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Columns to skip in result"
-        },
-        "where": {
-          "$ref": "#/$defs/whereConfig"
-        },
-        "where_additional": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Additional WHERE clauses"
-        },
-        "order": {
-          "$ref": "#/$defs/orderConfig"
-        },
-        "limit": {
-          "type": "boolean",
-          "description": "Enable LIMIT parameter"
-        },
-        "offset": {
-          "type": "boolean",
-          "description": "Enable OFFSET parameter"
-        }
-      }
-    },
-    "createMethodConfig": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "name": {
+        "queries_dir": {
           "type": "string",
-          "description": "Custom method name"
+          "description": "Single repo: all queries in one directory"
         },
-        "skip_columns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Columns to skip in INSERT"
+        "output_dir": {
+          "type": "string",
+          "description": "Single repo: all output in one directory"
         },
-        "column_values": {
+        "crud": {
           "type": "object",
-          "description": "Default column values. Ex: created_at: now()",
-          "additionalProperties": {
-            "type": "string"
+          "properties": {
+            "auto_clean": {
+              "type": "boolean"
+            },
+            "exclude_table_name": {
+              "type": "boolean"
+            },
+            "methods": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/method"
+              }
+            }
           }
         },
-        "returning": {
-          "type": "string",
-          "description": "RETURNING clause. Use '*' for all columns"
-        }
-      }
-    },
-    "updateMethodConfig": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Custom method name"
-        },
-        "skip_columns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Columns to skip in UPDATE"
-        },
-        "column_values": {
+        "constants": {
           "type": "object",
-          "description": "Default column values. Ex: updated_at: now()",
-          "additionalProperties": {
-            "type": "string"
+          "properties": {
+            "include_column_names": {
+              "type": "boolean"
+            }
           }
-        },
-        "returning": {
-          "type": "string",
-          "description": "RETURNING clause. Use '*' for all columns"
         }
       }
     },
-    "deleteMethodConfig": {
-      "type": [
-        "object",
-        "null"
-      ],
+    "table": {
+      "type": "object",
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Custom method name"
-        }
-      }
-    },
-    "totalMethodConfig": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Custom method name"
-        }
-      }
-    },
-    "existsMethodConfig": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Custom method name"
-        },
-        "where": {
-          "$ref": "#/$defs/whereConfig"
-        }
-      }
-    },
-    "customMethodConfig": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Custom method name"
-        },
-        "skip_columns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "where": {
-          "$ref": "#/$defs/whereConfig"
-        },
-        "where_additional": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "order": {
-          "$ref": "#/$defs/orderConfig"
-        },
-        "limit": {
-          "type": "boolean"
-        },
-        "offset": {
-          "type": "boolean"
-        },
-        "column_values": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "returning": {
+        "primary_column": {
           "type": "string"
-        }
-      }
-    },
-    "whereConfig": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "operator": {
-            "type": "string",
-            "description": "Comparison operator. Ex: '!=', '>', '<'"
-          },
-          "value": {
-            "type": "string",
-            "description": "Value or expression. Ex: 'IS NULL', '= $1'"
+        },
+        "queries_dir": {
+          "type": "string",
+          "description": "Override queries directory"
+        },
+        "output_dir": {
+          "type": "string",
+          "description": "Override output directory"
+        },
+        "sqlc": {
+          "type": "object",
+          "properties": {
+            "query_parameter_limit": {
+              "type": "integer"
+            }
+          }
+        },
+        "crud": {
+          "type": "object",
+          "properties": {
+            "methods": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/method"
+              }
+            }
+          }
+        },
+        "constants": {
+          "type": "object",
+          "properties": {
+            "include_column_names": {
+              "type": "boolean"
+            }
+          }
+        },
+        "soft_delete": {
+          "type": "object",
+          "required": [
+            "column"
+          ],
+          "properties": {
+            "column": {
+              "type": "string"
+            }
           }
         }
       }
     },
-    "orderConfig": {
-      "type": "object",
+    "method": {
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
-        "by": {
+        "name": {
           "type": "string",
-          "description": "Column to order by"
+          "description": "Override method name"
         },
-        "direction": {
+        "returning": {
+          "type": "string",
+          "description": "RETURNING clause (PostgreSQL)"
+        },
+        "where": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "operator": {
+                "type": "string",
+                "default": "="
+              }
+            }
+          }
+        },
+        "where_additional": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skip_columns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "column_values": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "limit": {
+          "type": "boolean"
+        },
+        "order": {
+          "type": "object",
+          "required": [
+            "by"
+          ],
+          "properties": {
+            "by": {
+              "type": "string"
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "default": "DESC"
+            }
+          }
+        }
+      }
+    },
+    "custom_query": {
+      "type": "object",
+      "required": [
+        "name",
+        "type",
+        "sql"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
           "type": "string",
           "enum": [
-            "ASC",
-            "DESC"
-          ],
-          "description": "Sort direction"
-        }
-      }
-    },
-    "constantsConfig": {
-      "type": "object",
-      "properties": {
-        "tables": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "object",
-            "properties": {
-              "output_dir": {
-                "type": "string"
-              },
-              "include_column_names": {
-                "type": "boolean"
-              }
-            }
-          }
-        }
-      }
-    },
-    "genModelsConfig": {
-      "type": "object",
-      "properties": {
-        "input_file_path": {
+            "one",
+            "many",
+            "exec",
+            "copyfrom"
+          ]
+        },
+        "table": {
           "type": "string",
-          "description": "Path to a specific file"
-        },
-        "input_dir": {
-          "type": "string",
-          "description": "Input directory. Will process all .go files"
-        },
-        "delete_original_files": {
-          "type": "boolean",
-          "description": "Delete specific file or all files in dir. Default: false"
-        },
-        "output_dir": {
-          "type": "string",
-          "description": "Output directory. Required."
-        },
-        "output_file_name": {
-          "type": "string",
-          "description": "Output file name. Required."
-        },
-        "package_name": {
-          "type": "string",
-          "description": "Package name. Default: last item in output_dir"
-        },
-        "imports": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Additional imports"
-        },
-        "use_uint_for_ids": {
-          "type": "boolean",
-          "description": "Use uint64 instead int64 for all fields ending with ID"
-        },
-        "use_uint_for_ids_exceptions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "struct_name": {
-                "type": "string"
-              },
-              "field_names": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "add_fields": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "struct_name": {
-                "type": "string"
-              },
-              "position": {
-                "type": "string",
-                "description": "Position: start, end, or 'after FieldName'"
-              },
-              "field_name": {
-                "type": "string"
-              },
-              "type": {
-                "type": "string"
-              },
-              "tags": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "update_all_struct_fields": {
-          "type": "object",
-          "properties": {
-            "by_field": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/fieldUpdateConfig"
-              }
-            },
-            "by_type": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/typeUpdateConfig"
-              }
-            }
-          }
-        },
-        "update_fields": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "struct_name": {
-                "type": "string"
-              },
-              "field_name": {
-                "type": "string"
-              },
-              "new_parameters": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "string"
-                  },
-                  "match_with_current_tags": {
-                    "type": "boolean"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "value": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "delete_fields": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "struct_name": {
-                "type": "string"
-              },
-              "field_names": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "rename": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "exclude_structs": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "struct_name": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "include_structs": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "struct_name": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "required": [
-        "output_dir",
-        "output_file_name"
-      ]
-    },
-    "fieldUpdateConfig": {
-      "type": "object",
-      "properties": {
-        "field_name": {
-          "type": "string"
-        },
-        "new_field_name": {
-          "type": "string"
-        },
-        "new_type": {
-          "type": "string"
-        },
-        "match_with_current_tags": {
-          "type": "boolean"
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "value": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
-    "typeUpdateConfig": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "new_type": {
-          "type": "string"
-        },
-        "match_with_current_tags": {
-          "type": "boolean"
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "value": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
-    "genKeystoneModelsConfig": {
-      "type": "object",
-      "properties": {
-        "input_file_path": {
-          "type": "string"
+          "description": "Output to this table's queries_dir"
         },
         "output_dir": {
           "type": "string"
         },
-        "output_file_name": {
+        "sql": {
           "type": "string"
-        },
-        "decorator_model_name_prefix": {
-          "type": "string"
-        },
-        "with_setter": {
-          "type": "boolean"
-        },
-        "export_model_suffix": {
-          "type": "string"
-        },
-        "prettier_code": {
-          "type": "boolean"
-        },
-        "sort": {
-          "type": "string"
-        },
-        "skip_models": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "genTypescriptConfig": {
-      "type": "object",
-      "properties": {
-        "path": {
-          "type": "string"
-        },
-        "output_dir": {
-          "type": "string"
-        },
-        "output_file_name": {
-          "type": "string"
-        },
-        "prettier_code": {
-          "type": "boolean"
-        },
-        "export_type_prefix": {
-          "type": "string"
-        },
-        "export_type_suffix": {
-          "type": "string"
-        },
-        "include_struct_names_regexp": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "exclude_struct_names_regexp": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     }

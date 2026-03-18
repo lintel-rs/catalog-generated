@@ -4,7 +4,7 @@
   "description": "Config is the vCluster config.",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/loft-sh/vcluster/main/chart/values.schema.json",
-    "sourceSha256": "a3238ef7c2982e31f18047a4ea923ada3d3d738a31a3f336ac76f10ae474a43f",
+    "sourceSha256": "57607037dd45624bbb81a6463b2cb280fc0817fa4875371c3537e1db5765cf48",
     "fileMatch": [
       "vCluster.yml",
       "vCluster.yaml",
@@ -516,6 +516,10 @@
           "$ref": "#/$defs/ControlPlaneIngress",
           "description": "Ingress defines options for vCluster ingress deployed by Helm."
         },
+        "tlsRoute": {
+          "$ref": "#/$defs/ControlPlaneTLSRoute",
+          "description": "TLSRoute defines options for vCluster TLS route deployed by Helm."
+        },
         "service": {
           "$ref": "#/$defs/ControlPlaneService",
           "description": "Service defines options for vCluster service deployed by Helm."
@@ -985,6 +989,45 @@
           },
           "type": "array",
           "description": "HostAliases allows you to add custom entries to the /etc/hosts file of each Pod created."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "ControlPlaneTLSRoute": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled defines if the control plane should be exposed via a gateway api tls route. Make sure to enable tls passthrough in the gateway via tls.mode to \"Passthrough\""
+        },
+        "host": {
+          "type": "string",
+          "description": "Host is the host where vCluster will be reachable"
+        },
+        "parentRefs": {
+          "items": {
+            "type": "object"
+          },
+          "type": "array",
+          "description": "ParentRefs are the parent references for the TLS route"
+        },
+        "spec": {
+          "type": "object",
+          "description": "Spec allows you to configure extra tls route options."
+        },
+        "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "type": "object",
