@@ -1,18 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.5.0-without-$id.json",
-  "title": "AsyncAPI 2.5.0 schema.",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.0.0-without-$id.json",
+  "title": "AsyncAPI 2.0.0 schema.",
   "description": "!!Auto generated!! \n Do not manually edit. ",
   "x-lintel": {
-    "source": "http://asyncapi.com/schema-store/2.5.0-without-$id.json",
-    "sourceSha256": "58982e6b2d2ad0cf51515c34d15c445941905b70cff0783d865ada0cf06d507f"
+    "source": "http://asyncapi.com/schema-store/2.0.0-without-$id.json",
+    "sourceSha256": "e1380595bf9b854ce25a66c990c2a8aa7ee0698f0db9cad06d3d9ad590f5f60a"
   },
   "type": "object",
   "properties": {
     "asyncapi": {
       "type": "string",
       "enum": [
-        "2.5.0"
+        "2.0.0"
       ],
       "description": "The AsyncAPI specification version of this document."
     },
@@ -25,7 +25,10 @@
       "$ref": "#/$defs/info"
     },
     "servers": {
-      "$ref": "#/$defs/servers"
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/server"
+      }
     },
     "defaultContentType": {
       "type": "string"
@@ -141,35 +144,6 @@
         }
       }
     },
-    "servers": {
-      "description": "An object representing multiple servers.",
-      "type": "object",
-      "additionalProperties": {
-        "oneOf": [
-          {
-            "$ref": "#/$defs/Reference"
-          },
-          {
-            "$ref": "#/$defs/server"
-          }
-        ]
-      }
-    },
-    "Reference": {
-      "type": "object",
-      "required": [
-        "$ref"
-      ],
-      "properties": {
-        "$ref": {
-          "$ref": "#/$defs/ReferenceObject"
-        }
-      }
-    },
-    "ReferenceObject": {
-      "type": "string",
-      "format": "uri-reference"
-    },
     "server": {
       "type": "object",
       "description": "An object representing a Server.",
@@ -202,13 +176,6 @@
         },
         "bindings": {
           "$ref": "#/$defs/bindingsObject"
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/tag"
-          },
-          "uniqueItems": true
         }
       },
       "additionalProperties": false,
@@ -221,14 +188,7 @@
     "serverVariables": {
       "type": "object",
       "additionalProperties": {
-        "oneOf": [
-          {
-            "$ref": "#/$defs/Reference"
-          },
-          {
-            "$ref": "#/$defs/serverVariable"
-          }
-        ]
+        "$ref": "#/$defs/serverVariable"
       }
     },
     "serverVariable": {
@@ -282,62 +242,14 @@
         "mqtt": {},
         "mqtt5": {},
         "kafka": {},
-        "anypointmq": {},
         "nats": {},
         "jms": {},
         "sns": {},
         "sqs": {},
         "stomp": {},
-        "redis": {},
-        "ibmmq": {},
-        "solace": {}
+        "redis": {}
       },
       "additionalProperties": true
-    },
-    "tag": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "externalDocs": {
-          "$ref": "#/$defs/externalDocs"
-        }
-      },
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
-    "externalDocs": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "information about external documentation",
-      "required": [
-        "url"
-      ],
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
     },
     "channels": {
       "type": "object",
@@ -363,14 +275,6 @@
           "type": "string",
           "description": "A description of the channel."
         },
-        "servers": {
-          "type": "array",
-          "description": "The names of the servers on which this channel is available. If absent or empty then this channel must be available on all servers.",
-          "items": {
-            "type": "string"
-          },
-          "uniqueItems": true
-        },
         "publish": {
           "$ref": "#/$defs/operation"
         },
@@ -392,6 +296,10 @@
         }
       }
     },
+    "ReferenceObject": {
+      "type": "string",
+      "format": "uri-reference"
+    },
     "parameters": {
       "type": "object",
       "description": "JSON objects describing re-usable channel parameters.",
@@ -404,6 +312,17 @@
             "$ref": "#/$defs/parameter"
           }
         ]
+      }
+    },
+    "Reference": {
+      "type": "object",
+      "required": [
+        "$ref"
+      ],
+      "properties": {
+        "$ref": {
+          "$ref": "#/$defs/ReferenceObject"
+        }
       }
     },
     "parameter": {
@@ -419,6 +338,9 @@
           "type": "string",
           "description": "A runtime expression that specifies the location of the parameter value",
           "pattern": "^\\$message\\.(header|payload)#(\\/(([^\\/~])|(~[01]))*)*"
+        },
+        "$ref": {
+          "$ref": "#/$defs/ReferenceObject"
         }
       },
       "additionalProperties": false,
@@ -769,6 +691,28 @@
         }
       }
     },
+    "externalDocs": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "information about external documentation",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
+    },
     "operation": {
       "type": "object",
       "properties": {
@@ -790,12 +734,6 @@
         },
         "description": {
           "type": "string"
-        },
-        "security": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/SecurityRequirement"
-          }
         },
         "tags": {
           "type": "array",
@@ -846,17 +784,34 @@
         "operationId": {
           "type": "string"
         },
-        "security": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/SecurityRequirement"
-          }
-        },
         "bindings": {
           "$ref": "#/$defs/bindingsObject"
         }
       },
       "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
+    },
+    "tag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "externalDocs": {
+          "$ref": "#/$defs/externalDocs"
+        }
+      },
       "patternProperties": {
         "^x-[\\w0-9\\.\\x2d_]+$": {
           "$ref": "#/$defs/specificationExtension"
@@ -914,22 +869,7 @@
                         "enum": [
                           "application/vnd.aai.asyncapi;version=2.0.0",
                           "application/vnd.aai.asyncapi+json;version=2.0.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.0.0",
-                          "application/vnd.aai.asyncapi;version=2.1.0",
-                          "application/vnd.aai.asyncapi+json;version=2.1.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.1.0",
-                          "application/vnd.aai.asyncapi;version=2.2.0",
-                          "application/vnd.aai.asyncapi+json;version=2.2.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.2.0",
-                          "application/vnd.aai.asyncapi;version=2.3.0",
-                          "application/vnd.aai.asyncapi+json;version=2.3.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.3.0",
-                          "application/vnd.aai.asyncapi;version=2.4.0",
-                          "application/vnd.aai.asyncapi+json;version=2.4.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.4.0",
-                          "application/vnd.aai.asyncapi;version=2.5.0",
-                          "application/vnd.aai.asyncapi+json;version=2.5.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.5.0"
+                          "application/vnd.aai.asyncapi+yaml;version=2.0.0"
                         ]
                       }
                     },
@@ -1037,9 +977,6 @@
                     }
                   ]
                 },
-                "messageId": {
-                  "type": "string"
-                },
                 "payload": {},
                 "correlationId": {
                   "oneOf": [
@@ -1086,31 +1023,11 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Machine readable name of the message example."
-                      },
-                      "summary": {
-                        "type": "string",
-                        "description": "A brief summary of the message example."
-                      },
                       "headers": {
                         "type": "object"
                       },
                       "payload": {}
                     },
-                    "anyOf": [
-                      {
-                        "required": [
-                          "payload"
-                        ]
-                      },
-                      {
-                        "required": [
-                          "headers"
-                        ]
-                      }
-                    ],
                     "additionalProperties": false
                   }
                 },
@@ -1186,9 +1103,6 @@
               }
             }
           ]
-        },
-        "messageId": {
-          "type": "string"
         },
         "correlationId": {
           "oneOf": [
@@ -1855,15 +1769,6 @@
         "schemas": {
           "$ref": "#/$defs/schemas"
         },
-        "servers": {
-          "$ref": "#/$defs/servers"
-        },
-        "channels": {
-          "$ref": "#/$defs/channels"
-        },
-        "serverVariables": {
-          "$ref": "#/$defs/serverVariables"
-        },
         "messages": {
           "$ref": "#/$defs/messages"
         },
@@ -1983,9 +1888,6 @@
         },
         {
           "$ref": "#/$defs/openIdConnect"
-        },
-        {
-          "$ref": "#/$defs/SaslSecurityScheme"
         }
       ]
     },
@@ -2386,89 +2288,6 @@
         "openIdConnectUrl": {
           "type": "string",
           "format": "uri"
-        }
-      },
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
-    "SaslSecurityScheme": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/SaslPlainSecurityScheme"
-        },
-        {
-          "$ref": "#/$defs/SaslScramSecurityScheme"
-        },
-        {
-          "$ref": "#/$defs/SaslGssapiSecurityScheme"
-        }
-      ]
-    },
-    "SaslPlainSecurityScheme": {
-      "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "plain"
-          ]
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
-    "SaslScramSecurityScheme": {
-      "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "scramSha256",
-            "scramSha512"
-          ]
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
-    "SaslGssapiSecurityScheme": {
-      "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "gssapi"
-          ]
-        },
-        "description": {
-          "type": "string"
         }
       },
       "additionalProperties": false,

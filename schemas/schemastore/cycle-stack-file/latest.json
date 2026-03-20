@@ -5,7 +5,7 @@
   "description": "A Cycle stack file is an \"environment as code\". This allows an environment to be generated consistently based on a fixed specification. \nStack files can describe multiple containers and their configurations, environment service settings, scoped variables, and important metadata.\n",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/cycleplatform/api-spec/main/stackspec/stackspec.json",
-    "sourceSha256": "fda3d4016ae83304835b410cae581e87475cb009d0d214ea9a00485c9e546969",
+    "sourceSha256": "94cff2f3cd6bc1d8fe73bf620c93df05b3af2315551d24f34cbcc9d1420b8c60",
     "fileMatch": [
       "cycle.json",
       "cycle.yml",
@@ -5800,13 +5800,14 @@
                                                                 ]
                                                               },
                                                               "type": {
-                                                                "description": "A string that describes if the role should allow or deny traffic based on the conditions.",
+                                                                "description": "A string that describes if the role should allow, deny, or block traffic based on the conditions.\n- block = http 403\n- deny = connection disconnect\n",
                                                                 "oneOf": [
                                                                   {
                                                                     "type": "string",
                                                                     "enum": [
                                                                       "allow",
-                                                                      "deny"
+                                                                      "deny",
+                                                                      "block"
                                                                     ]
                                                                   },
                                                                   {
@@ -5847,6 +5848,20 @@
                                                                   }
                                                                 ]
                                                               },
+                                                              "sample": {
+                                                                "description": "Percentage range from 0 to 100\nSample = 100 => the rule is applied to 100% of requests\nSample = 0 => the rule applies to 0% of requests\n",
+                                                                "oneOf": [
+                                                                  {
+                                                                    "type": "integer"
+                                                                  },
+                                                                  {
+                                                                    "type": "null"
+                                                                  },
+                                                                  {
+                                                                    "$ref": "#/properties/about/oneOf/1"
+                                                                  }
+                                                                ]
+                                                              },
                                                               "conditions": {
                                                                 "description": "An array of the specific conditions for the rule.",
                                                                 "oneOf": [
@@ -5870,9 +5885,10 @@
                                                                                   "enum": [
                                                                                     "ip-match",
                                                                                     "geo-match",
-                                                                                    "url-match",
-                                                                                    "method-match",
-                                                                                    "header-match"
+                                                                                    "http-url-match",
+                                                                                    "http-method-match",
+                                                                                    "http-header-match",
+                                                                                    "http-body-match"
                                                                                   ]
                                                                                 },
                                                                                 {
@@ -5881,17 +5897,33 @@
                                                                               ]
                                                                             },
                                                                             "operator": {
-                                                                              "description": "A string that indicates the range of values relative to the value property.",
+                                                                              "description": "Defines the comparison operator used to evaluate the rule condition\nagainst the provided `value`.\n",
                                                                               "oneOf": [
                                                                                 {
                                                                                   "type": "string",
                                                                                   "enum": [
                                                                                     "==",
                                                                                     "!=",
+                                                                                    "*=",
+                                                                                    "!*=",
+                                                                                    "^=",
+                                                                                    "!^=",
                                                                                     ">",
                                                                                     "<",
                                                                                     ">=",
                                                                                     "<="
+                                                                                  ],
+                                                                                  "x-enum-descriptions": [
+                                                                                    "Equal to — the condition value must exactly match.",
+                                                                                    "Not equal to — the condition value must differ.",
+                                                                                    "Contains — the request value must contain the provided substring.",
+                                                                                    "Does not contain — the request value must not contain the substring.",
+                                                                                    "Starts with — the request value must begin with the provided prefix.",
+                                                                                    "Does not start with — the request value must not begin with the prefix.",
+                                                                                    "Greater than — numeric comparison.",
+                                                                                    "Less than — numeric comparison.",
+                                                                                    "Greater than or equal — numeric comparison.",
+                                                                                    "Less than or equal — numeric comparison."
                                                                                   ]
                                                                                 },
                                                                                 {
@@ -5907,6 +5939,31 @@
                                                                               "oneOf": [
                                                                                 {
                                                                                   "type": "string"
+                                                                                },
+                                                                                {
+                                                                                  "$ref": "#/properties/about/oneOf/1"
+                                                                                }
+                                                                              ]
+                                                                            },
+                                                                            "key": {
+                                                                              "description": "An optional key used to target a specific attribute within the condition type.\nFor example, when using `http-header-match`, the key would be the header name (e.g., `X-Forwarded-For`).\n",
+                                                                              "oneOf": [
+                                                                                {
+                                                                                  "type": "string"
+                                                                                },
+                                                                                {
+                                                                                  "type": "null"
+                                                                                },
+                                                                                {
+                                                                                  "$ref": "#/properties/about/oneOf/1"
+                                                                                }
+                                                                              ]
+                                                                            },
+                                                                            "regex": {
+                                                                              "description": "When `true`, the `value` field is interpreted as a regular expression pattern\nrather than a literal string. Allows for advanced pattern matching on condition values.\n",
+                                                                              "oneOf": [
+                                                                                {
+                                                                                  "type": "boolean"
                                                                                 },
                                                                                 {
                                                                                   "$ref": "#/properties/about/oneOf/1"

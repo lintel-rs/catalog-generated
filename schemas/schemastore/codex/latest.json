@@ -5,7 +5,7 @@
   "description": "Base config deserialized from ~/.codex/config.toml.",
   "x-lintel": {
     "source": "https://developers.openai.com/codex/config-schema.json",
-    "sourceSha256": "8ce2f18b29971395fd209b0e142ec58887ac0fee085f69c8420c5f5c5d233d12",
+    "sourceSha256": "f277d7551fbaa2e7a87839f3cf1f7b8cec4980d3ad3b84de39a362cf46184b55",
     "fileMatch": [
       "**/.codex/config.toml"
     ],
@@ -301,6 +301,9 @@
           "type": "boolean"
         },
         "tool_suggest": {
+          "type": "boolean"
+        },
+        "tui_app_server": {
           "type": "boolean"
         },
         "undo": {
@@ -684,6 +687,14 @@
       "format": "uint",
       "minimum": 0.0,
       "type": "integer"
+    },
+    "tool_suggest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/ToolSuggestConfig"
+        }
+      ],
+      "description": "Additional discoverable tools that can be suggested for installation."
     },
     "tools": {
       "allOf": [
@@ -1219,6 +1230,9 @@
             "tool_suggest": {
               "type": "boolean"
             },
+            "tui_app_server": {
+              "type": "boolean"
+            },
             "undo": {
               "type": "boolean"
             },
@@ -1604,6 +1618,12 @@
           "default": false,
           "description": "Whether this provider supports the Responses API WebSocket transport.",
           "type": "boolean"
+        },
+        "websocket_connect_timeout_ms": {
+          "description": "Maximum time (in milliseconds) to wait for a websocket connection attempt before treating it as failed.",
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
         },
         "wire_api": {
           "allOf": [
@@ -2081,6 +2101,13 @@
       },
       "additionalProperties": false
     },
+    "RealtimeConversationVersion": {
+      "enum": [
+        "v1",
+        "v2"
+      ],
+      "type": "string"
+    },
     "RealtimeToml": {
       "type": "object",
       "properties": {
@@ -2088,7 +2115,7 @@
           "$ref": "#/$defs/RealtimeWsMode"
         },
         "version": {
-          "$ref": "#/$defs/RealtimeWsVersion"
+          "$ref": "#/$defs/RealtimeConversationVersion"
         }
       },
       "additionalProperties": false
@@ -2097,13 +2124,6 @@
       "enum": [
         "conversational",
         "transcription"
-      ],
-      "type": "string"
-    },
-    "RealtimeWsVersion": {
-      "enum": [
-        "v1",
-        "v2"
       ],
       "type": "string"
     },
@@ -2270,6 +2290,42 @@
         }
       },
       "additionalProperties": false
+    },
+    "ToolSuggestConfig": {
+      "type": "object",
+      "properties": {
+        "discoverables": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ToolSuggestDiscoverable"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ToolSuggestDiscoverable": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/ToolSuggestDiscoverableType"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "ToolSuggestDiscoverableType": {
+      "enum": [
+        "connector",
+        "plugin"
+      ],
+      "type": "string"
     },
     "ToolsToml": {
       "type": "object",

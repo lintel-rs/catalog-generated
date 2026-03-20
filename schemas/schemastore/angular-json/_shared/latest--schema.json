@@ -1,170 +1,311 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Angular Component Options Schema",
-  "description": "Creates a new Angular component. Components are the basic building blocks of Angular applications. Each component consists of a TypeScript class, an HTML template, and an optional CSS stylesheet. Use this schematic to generate a new component in your project.",
+  "title": "Unit testing",
+  "description": "Unit testing options for Angular applications.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/component/schema.json",
-    "sourceSha256": "a40fd23351135446c744c5b8ec51880f66a7f89d7c61017a89ec629f5a322ac7"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/angular/build/src/builders/unit-test/schema.json",
+    "sourceSha256": "aa9fefbb4d08af4ee4825b7ebc9191d195c3add679ed60648f69aedad239c013"
   },
   "type": "object",
   "properties": {
-    "path": {
+    "buildTarget": {
       "type": "string",
-      "format": "path",
-      "$default": {
-        "$source": "workingDirectory"
-      },
-      "description": "The path where the component files should be created, relative to the current workspace. If not provided, a folder with the same name as the component will be created in the project's `src/app` directory.",
-      "visible": false
+      "description": "Specifies the build target to use for the unit test build in the format `project:target[:configuration]`. This defaults to the `build` target of the current project with the `development` configuration. You can also pass a comma-separated list of configurations. Example: `project:target:production,staging`.",
+      "pattern": "^[^:\\s]*:[^:\\s]*(:[^\\s]+)?$"
     },
-    "project": {
+    "tsConfig": {
       "type": "string",
-      "description": "The name of the project where the component should be added. If not specified, the CLI will determine the project from the current directory.",
-      "$default": {
-        "$source": "projectName"
-      }
+      "description": "The path to the TypeScript configuration file, relative to the workspace root. Defaults to `tsconfig.spec.json` in the project root if it exists. If not specified and the default does not exist, the `tsConfig` from the specified `buildTarget` will be used."
     },
-    "name": {
+    "runner": {
       "type": "string",
-      "description": "The name for the new component. This will be used to create the component's class, template, and stylesheet files. For example, if you provide `my-component`, the files will be named `my-component.ts`, `my-component.html`, and `my-component.css`.",
-      "$default": {
-        "$source": "argv",
-        "index": 0
-      },
-      "x-prompt": "What name would you like to use for the component?"
-    },
-    "displayBlock": {
-      "description": "Adds `:host { display: block; }` to the component's stylesheet, ensuring the component renders as a block-level element. This is useful for layout purposes.",
-      "type": "boolean",
-      "default": false,
-      "alias": "b"
-    },
-    "inlineStyle": {
-      "description": "Include the component's styles directly in the `component.ts` file. By default, a separate stylesheet file (e.g., `my-component.css`) is created.",
-      "type": "boolean",
-      "default": false,
-      "alias": "s",
-      "x-user-analytics": "ep.ng_inline_style"
-    },
-    "inlineTemplate": {
-      "description": "Include the component's HTML template directly in the `component.ts` file. By default, a separate template file (e.g., `my-component.html`) is created.",
-      "type": "boolean",
-      "default": false,
-      "alias": "t",
-      "x-user-analytics": "ep.ng_inline_template"
-    },
-    "standalone": {
-      "description": "Generate a standalone component. Standalone components are self-contained and don't need to be declared in an NgModule. They can be used independently or imported directly into other standalone components.",
-      "type": "boolean",
-      "default": true,
-      "x-user-analytics": "ep.ng_standalone"
-    },
-    "viewEncapsulation": {
-      "description": "Sets the view encapsulation mode for the component. This determines how the component's styles are scoped and applied.",
+      "description": "Specifies the test runner to use for test execution.",
+      "default": "vitest",
       "enum": [
-        "Emulated",
-        "None",
-        "ShadowDom"
-      ],
-      "type": "string",
-      "alias": "v"
-    },
-    "changeDetection": {
-      "description": "Configures the change detection strategy for the component.",
-      "enum": [
-        "Eager",
-        "OnPush"
-      ],
-      "type": "string",
-      "default": "OnPush",
-      "alias": "c"
-    },
-    "prefix": {
-      "type": "string",
-      "description": "A prefix to be added to the component's selector. For example, if the prefix is `app` and the component name is `my-component`, the selector will be `app-my-component`.",
-      "alias": "p",
-      "oneOf": [
-        {
-          "maxLength": 0
-        },
-        {
-          "minLength": 1,
-          "format": "html-selector"
-        }
+        "karma",
+        "vitest"
       ]
     },
-    "style": {
-      "description": "Specify the type of stylesheet to be created for the component, or `none` to skip creating a stylesheet.",
-      "type": "string",
-      "default": "css",
-      "enum": [
-        "css",
-        "scss",
-        "sass",
-        "less",
-        "none"
+    "runnerConfig": {
+      "type": [
+        "string",
+        "boolean"
       ],
-      "x-user-analytics": "ep.ng_style"
-    },
-    "type": {
-      "type": "string",
-      "description": "Append a custom type to the component's filename. For example, if you set the type to `container`, the file will be named `my-component.container.ts`."
-    },
-    "addTypeToClassName": {
-      "type": "boolean",
-      "default": true,
-      "description": "When true, the 'type' option will be appended to the generated class name. When false, only the file name will include the type."
-    },
-    "skipTests": {
-      "type": "boolean",
-      "description": "Skip the generation of unit test files `spec.ts`.",
+      "description": "Specifies the configuration file for the selected test runner. If a string is provided, it will be used as the path to the configuration file. If `true`, the builder will search for a default configuration file (e.g., `vitest.config.ts` or `karma.conf.js`). If `false`, no external configuration file will be used.\\nFor Vitest, this enables advanced options and the use of custom plugins. Please note that while the file is loaded, the Angular team does not provide direct support for its specific contents or any third-party plugins used within it.",
       "default": false
     },
-    "flat": {
+    "browsers": {
+      "description": "Specifies the browsers to use for test execution. When not specified, tests are run in a Node.js environment using jsdom. For both Vitest and Karma, browser names ending with 'Headless' (e.g., 'ChromeHeadless') will enable headless mode.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "browserViewport": {
+      "description": "Specifies the browser viewport dimensions for browser-based tests in the format `widthxheight`.",
+      "type": "string",
+      "pattern": "^\\d+x\\d+$"
+    },
+    "include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "**/*.spec.ts",
+        "**/*.test.ts"
+      ],
+      "description": "Specifies glob patterns of files to include for testing, relative to the project root. This option also has special handling for directory paths (includes all test files within) and file paths (includes the corresponding test file if one exists)."
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specifies glob patterns of files to exclude from testing, relative to the project root."
+    },
+    "filter": {
+      "type": "string",
+      "description": "Specifies a regular expression pattern to match against test suite and test names. Only tests with a name matching the pattern will be executed. For example, `^App` will run only tests in suites beginning with 'App'."
+    },
+    "watch": {
       "type": "boolean",
-      "description": "Create the component files directly in the project's `src/app` directory instead of creating a new folder for them.",
+      "description": "Enables watch mode, which re-runs tests when source files change. Defaults to `true` in TTY environments and `false` otherwise."
+    },
+    "headless": {
+      "type": "boolean",
+      "description": "Forces all configured browsers to run in headless mode. When using the Vitest runner, this option is ignored if no browsers are configured. The Karma runner does not support this option."
+    },
+    "debug": {
+      "type": "boolean",
+      "description": "Enables debugging mode for tests, allowing the use of the Node Inspector.",
       "default": false
     },
-    "skipImport": {
+    "ui": {
       "type": "boolean",
-      "description": "Do not automatically import the new component into its closest NgModule.",
+      "description": "Enables the Vitest UI for interactive test execution. This option is only available for the Vitest runner."
+    },
+    "coverage": {
+      "type": "boolean",
+      "description": "Enables coverage reporting for tests.",
       "default": false
     },
-    "selector": {
+    "coverageInclude": {
+      "type": "array",
+      "description": "Specifies glob patterns of files to include in the coverage report.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "coverageExclude": {
+      "type": "array",
+      "description": "Specifies glob patterns of files to exclude from the coverage report.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "coverageReporters": {
+      "type": "array",
+      "description": "Specifies the reporters to use for coverage results. Each reporter can be a string representing its name, or a tuple containing the name and an options object. Built-in reporters include 'html', 'lcov', 'lcovonly', 'text', 'text-summary', 'cobertura', 'json', and 'json-summary'.",
+      "items": {
+        "oneOf": [
+          {
+            "enum": [
+              "html",
+              "lcov",
+              "lcovonly",
+              "text",
+              "text-summary",
+              "cobertura",
+              "json",
+              "json-summary"
+            ]
+          },
+          {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "prefixItems": [
+              {
+                "enum": [
+                  "html",
+                  "lcov",
+                  "lcovonly",
+                  "text",
+                  "text-summary",
+                  "cobertura",
+                  "json",
+                  "json-summary"
+                ]
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "coverageThresholds": {
+      "type": "object",
+      "description": "Specifies minimum coverage thresholds that must be met. If thresholds are not met, the builder will exit with an error.",
+      "properties": {
+        "perFile": {
+          "type": "boolean",
+          "description": "When true, thresholds are enforced for each file individually."
+        },
+        "statements": {
+          "type": "number",
+          "description": "Minimum percentage of statements covered."
+        },
+        "branches": {
+          "type": "number",
+          "description": "Minimum percentage of branches covered."
+        },
+        "functions": {
+          "type": "number",
+          "description": "Minimum percentage of functions covered."
+        },
+        "lines": {
+          "type": "number",
+          "description": "Minimum percentage of lines covered."
+        }
+      },
+      "additionalProperties": false
+    },
+    "coverageWatermarks": {
+      "type": "object",
+      "description": "Specifies coverage watermarks for the HTML reporter. These determine the color coding for high, medium, and low coverage.",
+      "properties": {
+        "statements": {
+          "type": "array",
+          "description": "The high and low watermarks for statements coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "branches": {
+          "type": "array",
+          "description": "The high and low watermarks for branches coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "functions": {
+          "type": "array",
+          "description": "The high and low watermarks for functions coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "lines": {
+          "type": "array",
+          "description": "The high and low watermarks for lines coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "additionalProperties": false
+    },
+    "reporters": {
+      "type": "array",
+      "description": "Specifies the reporters to use during test execution. Each reporter can be a string representing its name, or a tuple containing the name and an options object. Built-in reporters include 'default', 'verbose', 'dots', 'json', 'junit', 'tap', 'tap-flat', and 'html'. You can also provide a path to a custom reporter.",
+      "items": {
+        "oneOf": [
+          {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "enum": [
+                  "default",
+                  "verbose",
+                  "dots",
+                  "json",
+                  "junit",
+                  "tap",
+                  "tap-flat",
+                  "html"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "prefixItems": [
+              {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "default",
+                      "verbose",
+                      "dots",
+                      "json",
+                      "junit",
+                      "tap",
+                      "tap-flat",
+                      "html"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "outputFile": {
       "type": "string",
-      "format": "html-selector",
-      "description": "The HTML selector to use for this component. If not provided, a selector will be generated based on the component name (e.g., `app-my-component`)."
+      "description": "Specifies a file path for the test report, applying only to the first reporter. To configure output files for multiple reporters, use the tuple format `['reporter-name', { outputFile: '...' }]` within the `reporters` option. When not provided, output is written to the console."
     },
-    "skipSelector": {
-      "type": "boolean",
-      "default": false,
-      "description": "Skip the generation of an HTML selector for the component."
-    },
-    "module": {
+    "providersFile": {
       "type": "string",
-      "description": "Specify the NgModule where the component should be declared. If not provided, the CLI will attempt to find the closest NgModule in the component's path.",
-      "alias": "m"
+      "description": "Specifies the path to a TypeScript file that provides an array of Angular providers for the test environment. The file must contain a default export of the provider array.",
+      "minLength": 1
     },
-    "export": {
-      "type": "boolean",
-      "default": false,
-      "description": "Automatically export the component from the specified NgModule, making it accessible to other modules in the application."
+    "setupFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "A list of paths to global setup files that are executed before the test files. The application's polyfills and the Angular TestBed are always initialized before these files."
     },
-    "exportDefault": {
+    "progress": {
       "type": "boolean",
-      "default": false,
-      "description": "Use a default export for the component in its TypeScript file instead of a named export."
+      "description": "Shows build progress information in the console. Defaults to the `progress` setting of the specified `buildTarget`."
     },
-    "ngHtml": {
+    "listTests": {
       "type": "boolean",
+      "description": "Lists all discovered test files and exits the process without building or executing the tests.",
+      "default": false
+    },
+    "dumpVirtualFiles": {
+      "type": "boolean",
+      "description": "Dumps build output files to the `.angular/cache` directory for debugging purposes.",
       "default": false,
-      "description": "Generate component template files with an '.ng.html' file extension instead of '.html'."
+      "visible": false
     }
   },
-  "required": [
-    "name",
-    "project"
-  ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "required": []
 }

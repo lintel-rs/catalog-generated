@@ -209,7 +209,8 @@ Schema - Lintel Catalog"
         >string</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>AWS Account ID</p>
+      <div class="desc-html"><h2>AWS Account ID Type</h2>
+<p>Represents a valid AWS account identifier. AWS account IDs are unique 12-digit numbers assigned to each AWS account when it's created.</p>
 </div>
       </div>
   </div>
@@ -220,7 +221,16 @@ Schema - Lintel Catalog"
         >string</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>An email address</p>
+      <div class="desc-html"><h2>Email Address Type</h2>
+<p>Represents a valid email address with AWS-compatible formatting requirements. Used throughout the Landing Zone Accelerator for account creation, notifications, and contact information.</p>
+<h3>Format Requirements</h3>
+<ul>
+<li><strong>Length</strong>: 6-64 characters</li>
+<li><strong>Pattern</strong>: Must match standard email format</li>
+<li><strong>Domain</strong>: Must contain at least one dot in the domain portion</li>
+</ul>
+<h3>Examples</h3>
+<p><code>typescript const email1: EmailAddress = "admin@example.com"; </code></p>
 </div>
       </div>
   </div>
@@ -231,7 +241,19 @@ Schema - Lintel Catalog"
         >object</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>Account configuration</p>
+      <div class="desc-html"><h2>Standard Account Configuration</h2>
+<p>Standard account configuration for commercial AWS partition accounts. Extends the base account configuration with account warming capabilities.</p>
+<h3>Key Features</h3>
+<ul>
+<li><strong>Account Warming</strong>: Optional EC2 instance pre-provisioning for immediate workload readiness</li>
+<li><strong>Commercial Partition</strong>: Designed for standard AWS commercial regions</li>
+<li><strong>Full Feature Support</strong>: Supports all base account configuration options</li>
+</ul>
+<h3>Usage Example</h3>
+<pre><code class="language-yaml">- name: Production   description: Production environment for customer applications   email: aws+production@example.com   organizationalUnit: Workloads   warm: true                    # Pre-warm for immediate EC2 usage   accountAlias: company-prod
+
+# Development account
+- name: Development   description: Development and testing environment   email: aws+development@example.com   organizationalUnit: Workloads   warm: false                   # No warming needed   accountAlias: company-dev ```</code></pre>
 </div>
         <div class="property-list">
  <div
@@ -245,7 +267,16 @@ Schema - Lintel Catalog"
  <span class="required-badge"
       >required</span
     >  </div>
-  <div class="desc-html"><p>An email address</p>
+  <div class="desc-html"><h2>Email Address Type</h2>
+<p>Represents a valid email address with AWS-compatible formatting requirements. Used throughout the Landing Zone Accelerator for account creation, notifications, and contact information.</p>
+<h3>Format Requirements</h3>
+<ul>
+<li><strong>Length</strong>: 6-64 characters</li>
+<li><strong>Pattern</strong>: Must match standard email format</li>
+<li><strong>Domain</strong>: Must contain at least one dot in the domain portion</li>
+</ul>
+<h3>Examples</h3>
+<p><code>typescript const email1: EmailAddress = "admin@example.com"; </code></p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -266,7 +297,16 @@ Schema - Lintel Catalog"
  <span class="required-badge"
       >required</span
     >  </div>
-  <div class="desc-html"><p>A string that contains no spaces</p>
+  <div class="desc-html"><h2>Non-Empty No-Space String Type</h2>
+<p>Represents a string that must contain at least one character and cannot contain any whitespace characters.</p>
+<h3>Common Use Cases</h3>
+<ul>
+<li>AWS account names</li>
+<li>Account aliases</li>
+<li>Resource identifiers</li>
+<li>Configuration keys</li>
+<li>File names and paths</li>
+</ul>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -283,7 +323,16 @@ Schema - Lintel Catalog"
       >string</a
     >
    </div>
-  <div class="desc-html"><p>A string that contains no spaces</p>
+  <div class="desc-html"><h2>Non-Empty No-Space String Type</h2>
+<p>Represents a string that must contain at least one character and cannot contain any whitespace characters.</p>
+<h3>Common Use Cases</h3>
+<ul>
+<li>AWS account names</li>
+<li>Account aliases</li>
+<li>Resource identifiers</li>
+<li>Configuration keys</li>
+<li>File names and paths</li>
+</ul>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -300,7 +349,9 @@ Schema - Lintel Catalog"
       >string</a
     >
    </div>
-  <div class="desc-html"><p>A string that has at least 1 character</p>
+  <div class="desc-html"><h2>Non-Empty String Type</h2>
+<p>Represents a string that must contain at least one character. Used for required text fields throughout the Landing Zone Accelerator configuration where empty values are not permitted.</p>
+<pre><code></code></pre>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -315,7 +366,9 @@ Schema - Lintel Catalog"
       >string</a
     >
    </div>
-  <div class="desc-html"><p>A string that has at least 1 character</p>
+  <div class="desc-html"><h2>Non-Empty String Type</h2>
+<p>Represents a string that must contain at least one character. Used for required text fields throughout the Landing Zone Accelerator configuration where empty values are not permitted.</p>
+<pre><code></code></pre>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -328,8 +381,32 @@ Schema - Lintel Catalog"
     <span class="property-name">warm</span>
     <span class="type-badge">boolean</span>
    </div>
-  <div class="desc-html"><p>'Warm' the account by creating an EC2 instance that runs for 15 minutes Use for new accounts that will need to have ec2 instance provisioned as part of the solution The 'warming' will take place in the operations stack This property may be removed after the account has been provisioned</p>
+  <div class="desc-html"><p><strong>Account Warming</strong> <em>(Optional)</em></p>
+<p>Pre-provision the account by creating a temporary EC2 instance that runs for 15 minutes. This prepares the account's EC2 service for immediate production workload deployment.</p>
+<h3>When to Enable</h3>
+<ul>
+<li><strong>Enable</strong> for accounts that will immediately deploy EC2-based workloads</li>
+<li><strong>Enable</strong> for production accounts requiring rapid deployment capabilities</li>
+<li><strong>Disable</strong> for accounts primarily using serverless or managed services</li>
+<li><strong>Disable</strong> for cost-sensitive development/testing environments</li>
+</ul>
+<h3>Process Details</h3>
+<ul>
+<li>Warming occurs during the operations stack deployment phase</li>
+<li>Creates a minimal EC2 instance in the default VPC</li>
+<li>Instance automatically terminates after 15 minutes</li>
+<li>No additional charges beyond the brief EC2 usage</li>
+<li>Can be safely removed from configuration after initial deployment</li>
+</ul>
+<h3>Best Practices</h3>
+<pre><code class="language-yaml">
+# Development/testing - typically disable warm: false
+
+# Serverless-only accounts - disable warm: false ```</code></pre>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
        </div>        </div>
     </div>
   </div>
@@ -340,6 +417,34 @@ Schema - Lintel Catalog"
         >object</span
       >    </div>
     <div class="definition-body">
+      <div class="desc-html"><h2>Account ID Mapping Configuration</h2>
+<p>Provides static account ID to email mappings to bypass AWS Organizations account lookups. Used exclusively when LZA cannot or should not perform automatic account ID resolution.</p>
+<h3>Use Cases</h3>
+<ul>
+<li><strong>AWS Organizations Unavailable</strong>: When deploying in partitions without Organizations support</li>
+<li><strong>Restricted API Access</strong>: When Organizations APIs are restricted or unavailable</li>
+<li><strong>Static Account References</strong>: When dynamic lookups are not desired or possible</li>
+<li><strong>GovCloud Usage</strong>: Adding account ids allows the LZA to add the account to the Organization in GovCloud automatically</li>
+</ul>
+<h3>Usage Example</h3>
+<pre><code class="language-yaml">
+  # Account in partition without Organizations   - email: isolated-account@example.com     accountId: "444455556666"
+
+  # Static reference when API lookups are restricted   - email: restricted-env@example.com     accountId: "444455556666" ```
+
+### When to Use
+
+**Most customers will not need this section.** Only populate when:
+
+1. **Organizations API Unavailable**: Deploying in partitions without AWS Organizations 2. **API Restrictions**: When Organizations lookup APIs are blocked or restricted 3. **Static Configuration**: When dynamic account resolution is not desired 4. **GovCloud Usage**: Adding account ids allows the LZA to add the account to the Organization in GovCloud automatically
+
+### Important Considerations
+
+- Only use when automatic account ID lookup is not possible
+- Email addresses should match the account references in your configuration
+- Account IDs must be valid 12-digit AWS account identifiers
+- This bypasses automatic account discovery mechanisms</code></pre>
+</div>
         <div class="property-list">
  <div
   class="property-item"
@@ -352,7 +457,8 @@ Schema - Lintel Catalog"
  <span class="required-badge"
       >required</span
     >  </div>
-  <div class="desc-html"><p>AWS Account ID</p>
+  <div class="desc-html"><h2>AWS Account ID Type</h2>
+<p>Represents a valid AWS account identifier. AWS account IDs are unique 12-digit numbers assigned to each AWS account when it's created.</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -371,7 +477,16 @@ Schema - Lintel Catalog"
  <span class="required-badge"
       >required</span
     >  </div>
-  <div class="desc-html"><p>An email address</p>
+  <div class="desc-html"><h2>Email Address Type</h2>
+<p>Represents a valid email address with AWS-compatible formatting requirements. Used throughout the Landing Zone Accelerator for account creation, notifications, and contact information.</p>
+<h3>Format Requirements</h3>
+<ul>
+<li><strong>Length</strong>: 6-64 characters</li>
+<li><strong>Pattern</strong>: Must match standard email format</li>
+<li><strong>Domain</strong>: Must contain at least one dot in the domain portion</li>
+</ul>
+<h3>Examples</h3>
+<p><code>typescript const email1: EmailAddress = "admin@example.com"; </code></p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -391,6 +506,19 @@ Schema - Lintel Catalog"
         >object</span
       >    </div>
     <div class="definition-body">
+      <div class="desc-html"><h2>Main Accounts Configuration Interface</h2>
+<p>Root configuration interface that defines all accounts to be managed by the Landing Zone Accelerator. This interface serves as the entry point for account configuration and supports both commercial and GovCloud partitions.</p>
+<h3>Configuration Sections</h3>
+<p>The accounts configuration is organized into three main sections:</p>
+<ol>
+<li><strong>Mandatory Accounts</strong> - Required core accounts (Management, Audit, Log Archive) 2. <strong>Workload Accounts</strong> - Application and business-specific accounts 3. <strong>Account IDs</strong> - Pre-existing account mappings (optional)</li>
+</ol>
+<h3>Usage Example</h3>
+<pre><code class="language-yaml">
+workloadAccounts:   - name: Production     email: prod@example.com     organizationalUnit: Workloads     warm: true   - name: Staging     email: staging@example.com     organizationalUnit: Workloads
+
+accountIds:   - email: existing@example.com     accountId: "123456789012" ```</code></pre>
+</div>
         <div class="property-list">
  <div
   class="property-item"
@@ -411,6 +539,15 @@ Schema - Lintel Catalog"
  <span class="required-badge"
       >required</span
     >  </div>
+  <div class="desc-html"><p><strong>Mandatory Accounts Configuration</strong></p>
+<p>Required accounts that provide core Landing Zone Accelerator functionality. These accounts are essential for security, compliance, and operational management.</p>
+<p><strong>Required Accounts:</strong></p>
+<ul>
+<li><code>Management</code>: Primary account for organizational management and billing</li>
+<li><code>LogArchive</code>: Centralized logging and log retention account</li>
+<li><code>Audit</code>: Security auditing and compliance account</li>
+</ul>
+</div>
        </div>   <div
   class="property-item"
 >
@@ -430,6 +567,17 @@ Schema - Lintel Catalog"
  <span class="required-badge"
       >required</span
     >  </div>
+  <div class="desc-html"><p><strong>Workload Accounts Configuration</strong></p>
+<p>Application-specific and business workload accounts. These accounts host your applications, databases, and other business workloads, isolated by environment, business unit, or application.</p>
+<p><strong>Common Workload Account Types:</strong></p>
+<ul>
+<li>Production environments</li>
+<li>Development/testing environments</li>
+<li>Shared services (networking, monitoring)</li>
+<li>Business unit specific accounts</li>
+<li>Sandbox accounts for experimentation</li>
+</ul>
+</div>
        </div>   <div
   class="property-item"
 >
@@ -439,6 +587,15 @@ Schema - Lintel Catalog"
       >IAccountIdConfig[]</a
     >
    </div>
+  <div class="desc-html"><p><strong>Pre-existing Account IDs (Optional)</strong></p>
+<p>Map existing AWS accounts IDs to email addresses to skip dynamic lookups by the Landing Zone Accelerator. Use this section when you have existing accounts that need to be managed by the accelerator.</p>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Migrating existing AWS accounts into the Landing Zone Accelerator</li>
+<li>Integrating with accounts created outside the accelerator</li>
+<li>Mapping legacy account structures</li>
+</ul>
+</div>
        </div>        </div>
     </div>
   </div>
@@ -449,9 +606,27 @@ Schema - Lintel Catalog"
         >object</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>GovCloud Account configuration
-Used instead of the account configuration in the commercial
-partition when creating GovCloud partition linked accounts.</p>
+      <div class="desc-html"><h2>GovCloud Account Configuration</h2>
+<p>Specialized account configuration for AWS GovCloud partition accounts. Used when deploying Landing Zone Accelerator in AWS GovCloud regions that require compliance with government security and regulatory requirements.</p>
+<h3>Key Features</h3>
+<ul>
+<li><strong>GovCloud Partition Support</strong>: Creates accounts in the isolated AWS GovCloud partition</li>
+<li><strong>Linked Account Creation</strong>: Automatically creates paired commercial partition accounts</li>
+<li><strong>Compliance Ready</strong>: Designed for government and regulated workloads</li>
+<li><strong>Account Warming</strong>: Optional EC2 pre-provisioning for immediate readiness</li>
+</ul>
+<h3>Usage Example</h3>
+<pre><code class="language-yaml">- name: GovCloud-Production   description: GovCloud production environment for regulated workloads   email: aws+govcloud-prod@agency.gov   organizationalUnit: GovCloud-Workloads   enableGovCloud: true   warm: true   accountAlias: agency-govcloud-prod
+
+# GovCloud development account
+- name: GovCloud-Development   description: GovCloud development and testing environment   email: aws+govcloud-dev@agency.gov   organizationalUnit: GovCloud-Workloads   enableGovCloud: true   warm: false ```
+
+### GovCloud Considerations
+
+- GovCloud accounts require separate email addresses from commercial accounts
+- Account creation process involves additional verification steps
+- Some AWS services have different availability in GovCloud
+- Enhanced logging and monitoring requirements typically apply</code></pre>
 </div>
         <div class="property-list">
  <div
@@ -465,7 +640,16 @@ partition when creating GovCloud partition linked accounts.</p>
  <span class="required-badge"
       >required</span
     >  </div>
-  <div class="desc-html"><p>An email address</p>
+  <div class="desc-html"><h2>Email Address Type</h2>
+<p>Represents a valid email address with AWS-compatible formatting requirements. Used throughout the Landing Zone Accelerator for account creation, notifications, and contact information.</p>
+<h3>Format Requirements</h3>
+<ul>
+<li><strong>Length</strong>: 6-64 characters</li>
+<li><strong>Pattern</strong>: Must match standard email format</li>
+<li><strong>Domain</strong>: Must contain at least one dot in the domain portion</li>
+</ul>
+<h3>Examples</h3>
+<p><code>typescript const email1: EmailAddress = "admin@example.com"; </code></p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -486,7 +670,16 @@ partition when creating GovCloud partition linked accounts.</p>
  <span class="required-badge"
       >required</span
     >  </div>
-  <div class="desc-html"><p>A string that contains no spaces</p>
+  <div class="desc-html"><h2>Non-Empty No-Space String Type</h2>
+<p>Represents a string that must contain at least one character and cannot contain any whitespace characters.</p>
+<h3>Common Use Cases</h3>
+<ul>
+<li>AWS account names</li>
+<li>Account aliases</li>
+<li>Resource identifiers</li>
+<li>Configuration keys</li>
+<li>File names and paths</li>
+</ul>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -503,7 +696,16 @@ partition when creating GovCloud partition linked accounts.</p>
       >string</a
     >
    </div>
-  <div class="desc-html"><p>A string that contains no spaces</p>
+  <div class="desc-html"><h2>Non-Empty No-Space String Type</h2>
+<p>Represents a string that must contain at least one character and cannot contain any whitespace characters.</p>
+<h3>Common Use Cases</h3>
+<ul>
+<li>AWS account names</li>
+<li>Account aliases</li>
+<li>Resource identifiers</li>
+<li>Configuration keys</li>
+<li>File names and paths</li>
+</ul>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -520,7 +722,9 @@ partition when creating GovCloud partition linked accounts.</p>
       >string</a
     >
    </div>
-  <div class="desc-html"><p>A string that has at least 1 character</p>
+  <div class="desc-html"><h2>Non-Empty String Type</h2>
+<p>Represents a string that must contain at least one character. Used for required text fields throughout the Landing Zone Accelerator configuration where empty values are not permitted.</p>
+<pre><code></code></pre>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -533,8 +737,28 @@ partition when creating GovCloud partition linked accounts.</p>
     <span class="property-name">enableGovCloud</span>
     <span class="type-badge">boolean</span>
    </div>
-  <div class="desc-html"><p>Indicates whether or not a GovCloud partition account should be created.</p>
+  <div class="desc-html"><p><strong>Enable GovCloud Account Creation</strong> <em>(Optional)</em></p>
+<p>Controls whether a GovCloud partition account should be created alongside the standard commercial partition account. When enabled, creates a linked account pair across both AWS partitions.</p>
+<h3>When to Enable</h3>
+<ul>
+<li><strong>Enable</strong> for workloads requiring FedRAMP compliance</li>
+<li><strong>Enable</strong> for government agency workloads</li>
+<li><strong>Enable</strong> for regulated industries requiring GovCloud</li>
+<li><strong>Disable</strong> for standard commercial workloads</li>
+</ul>
+<h3>Account Linking</h3>
+<ul>
+<li>Creates paired accounts in both GovCloud and commercial partitions</li>
+<li>Maintains separate identity and access management per partition</li>
+<li>Requires separate email addresses for each partition account</li>
+</ul>
+<h3>Compliance Benefits</h3>
+<pre><code class="language-yaml">
+# Commercial deployment only enableGovCloud: false   # Creates only commercial partition account ```</code></pre>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
        </div>   <div
   class="property-item"
 >
@@ -544,7 +768,9 @@ partition when creating GovCloud partition linked accounts.</p>
       >string</a
     >
    </div>
-  <div class="desc-html"><p>A string that has at least 1 character</p>
+  <div class="desc-html"><h2>Non-Empty String Type</h2>
+<p>Represents a string that must contain at least one character. Used for required text fields throughout the Landing Zone Accelerator configuration where empty values are not permitted.</p>
+<pre><code></code></pre>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -557,8 +783,24 @@ partition when creating GovCloud partition linked accounts.</p>
     <span class="property-name">warm</span>
     <span class="type-badge">boolean</span>
    </div>
-  <div class="desc-html"><p>'Warm' the account by creating an EC2 instance that runs for 15 minutes Use for new accounts that will need to have ec2 instance provisioned as part of the solution The 'warming' will take place in the operations stack This property may be removed after the account has been provisioned</p>
+  <div class="desc-html"><p><strong>Account Warming</strong> <em>(Optional)</em></p>
+<p>Pre-provision the account by creating a temporary EC2 instance that runs for 15 minutes. This prepares the account's EC2 service for immediate production workload deployment in the GovCloud partition.</p>
+<h3>GovCloud Warming Considerations</h3>
+<ul>
+<li>Warming occurs in the GovCloud partition specifically</li>
+<li>May take longer due to additional GovCloud provisioning requirements</li>
+<li>Helps establish baseline EC2 service readiness for compliance workloads</li>
+<li>Particularly beneficial for time-sensitive government deployments</li>
+</ul>
+<h3>Best Practices</h3>
+<pre><code class="language-yaml">
+# Development/testing in GovCloud - typically disable warm: false
+
+# Serverless-only GovCloud accounts - disable warm: false ```</code></pre>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
        </div>        </div>
     </div>
   </div>
@@ -569,7 +811,16 @@ partition when creating GovCloud partition linked accounts.</p>
         >string</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>A string that contains no spaces</p>
+      <div class="desc-html"><h2>Non-Empty No-Space String Type</h2>
+<p>Represents a string that must contain at least one character and cannot contain any whitespace characters.</p>
+<h3>Common Use Cases</h3>
+<ul>
+<li>AWS account names</li>
+<li>Account aliases</li>
+<li>Resource identifiers</li>
+<li>Configuration keys</li>
+<li>File names and paths</li>
+</ul>
 </div>
       </div>
   </div>
@@ -580,7 +831,9 @@ partition when creating GovCloud partition linked accounts.</p>
         >string</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>A string that has at least 1 character</p>
+      <div class="desc-html"><h2>Non-Empty String Type</h2>
+<p>Represents a string that must contain at least one character. Used for required text fields throughout the Landing Zone Accelerator configuration where empty values are not permitted.</p>
+<pre><code></code></pre>
 </div>
       </div>
   </div>

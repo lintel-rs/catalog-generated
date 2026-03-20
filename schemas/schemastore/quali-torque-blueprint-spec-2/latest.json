@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/quali-torque-blueprint-spec-2/latest.json",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/QualiTorque/torque-vs-code-extensions/master/client/schemas/blueprint-spec2-schema.json",
-    "sourceSha256": "d6d1ab7e421d840e07af73de50cbe20ae4232b054c39f11f8636903ed25f0b11",
+    "sourceSha256": "2d22505e382179d6afc0de957ee6d764dc9caabf9f9d9f7b0407fd2b65447808",
     "fileMatch": [
       "**/blueprints/**.yaml"
     ],
@@ -1499,6 +1499,9 @@
       "type": "object",
       "title": "LaunchForm Object",
       "properties": {
+        "steps": {
+          "$ref": "#/$defs/LaunchFormStepsObject"
+        },
         "inputs": {
           "type": "array",
           "items": {
@@ -1535,13 +1538,52 @@
           "description": "The name of the input field"
         },
         "visible": {
-          "type": "string",
-          "description": "Conditional visibility expression using Jinja2 template syntax"
+          "type": [
+            "string",
+            "boolean"
+          ],
+          "description": "Conditional visibility expression using Liquid template syntax"
         }
       },
       "required": [
         "name"
       ],
+      "additionalProperties": false
+    },
+    "LaunchFormStepObject": {
+      "type": "object",
+      "title": "Launch Form Step Object",
+      "properties": {
+        "visible": {
+          "type": [
+            "string",
+            "boolean"
+          ],
+          "description": "Step visibility flag or Liquid expression"
+        }
+      },
+      "required": [
+        "visible"
+      ],
+      "additionalProperties": false
+    },
+    "LaunchFormStepsObject": {
+      "type": "object",
+      "title": "Launch Form Steps Object",
+      "properties": {
+        "title": {
+          "$ref": "#/$defs/LaunchFormStepObject"
+        },
+        "ownersAndCollaborators": {
+          "$ref": "#/$defs/LaunchFormStepObject"
+        },
+        "tags": {
+          "$ref": "#/$defs/LaunchFormStepObject"
+        },
+        "workflows": {
+          "$ref": "#/$defs/LaunchFormStepObject"
+        }
+      },
       "additionalProperties": false
     },
     "BlueprintLabelObject": {
@@ -1581,6 +1623,27 @@
           }
         },
         "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LaunchFormSectionObject"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    "LaunchFormSectionObject": {
+      "type": "object",
+      "title": "Launch Form Section Object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The display name of the section"
+        },
+        "inputs": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/LaunchFormInputObject"
