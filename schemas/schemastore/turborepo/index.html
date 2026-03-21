@@ -361,6 +361,23 @@ Schema - Lintel Catalog"
 </div>
        </div>    <div
   class="property-item"
+  id="prop-global"
+>
+  <div class="property-header">
+    <span class="property-name">global</span>
+    <span class="type-badge"
+      ><a
+        href="#def-GlobalConfig"
+        class="type-badge-link"
+        >GlobalConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Global configuration block.</p>
+<p>When <code>futureFlags.globalConfiguration</code> is enabled, global settings like <code>inputs</code>, <code>env</code>, <code>ui</code>, etc. are placed here instead of at the top level.</p>
+</div>
+       </div>    <div
+  class="property-item"
   id="prop-globalDependencies"
 >
   <div class="property-header">
@@ -657,6 +674,19 @@ Schema - Lintel Catalog"
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">globalConfiguration</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Move global configuration keys (like <code>globalDependencies</code>, <code>ui</code>, <code>envMode</code>, etc.) under a top-level <code>global</code> key for clarity.</p>
+<p>When enabled, keys are renamed: <code>globalDependencies</code> becomes <code>global.inputs</code>, <code>globalEnv</code> becomes <code>global.env</code>, and <code>globalPassThroughEnv</code> becomes <code>global.passThroughEnv</code>.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">longerSignatureKey</span>
     <span class="type-badge">boolean</span>
    </div>
@@ -689,6 +719,170 @@ Schema - Lintel Catalog"
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
   </div>
+       </div>        </div>
+    </div>
+  </div>
+  <div class="definition-block" id="def-GlobalConfig">
+    <div class="definition-header">
+      <span class="def-name">GlobalConfig</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>Global configuration that applies to all tasks in the monorepo.</p>
+<p>When <code>futureFlags.globalConfiguration</code> is enabled, these fields live under the top-level <code>"global"</code> key instead of being scattered across the root of turbo.json.</p>
+<p>When adding a new field, also update: 1. The corresponding top-level field on <code>RawTurboJson</code> 2. <code>resolve_global_config()</code> on <code>RawTurboJson</code> 3. <code>validate_no_top_level_global_keys()</code> in this file 4. <code>WithMetadata</code> impl in <code>parser.rs</code> 5. <code>GlobalConfig</code> in <code>config-v2.ts</code> and <code>generate_global_config_interface()</code> in schema-gen</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">cacheDir</span>
+    <span class="type-badge"
+      ><a
+        href="#def-String"
+        class="type-badge-link"
+        >String</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Specify the filesystem cache directory.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">concurrency</span>
+    <span class="type-badge"
+      ><a
+        href="#def-String"
+        class="type-badge-link"
+        >String</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Set/limit the maximum concurrency for task execution.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">daemon</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Boolean"
+        class="type-badge-link"
+        >Boolean</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Deprecated: The daemon is no longer used for <code>turbo run</code>.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">dangerouslyDisablePackageManagerCheck</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Boolean"
+        class="type-badge-link"
+        >Boolean</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Disable check for <code>packageManager</code> in root <code>package.json</code>.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">env</span>
+    <span class="type-badge">array | null</span>
+   </div>
+  <div class="desc-html"><p>A list of environment variables for implicit global hash dependencies.</p>
+<p>Unlike <code>inputs</code> (which become per-task inputs), these variables are included in the global hash and affect all task hashes uniformly.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">envMode</span>
+    <span class="type-badge"
+      ><a
+        href="#def-EnvMode"
+        class="type-badge-link"
+        >EnvMode</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Turborepo's Environment Modes allow you to control which environment variables are available to a task at runtime.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">inputs</span>
+    <span class="type-badge">array | null</span>
+   </div>
+  <div class="desc-html"><p>A list of globs for files that implicitly affect all tasks.</p>
+<p>These files are prepended to every task's <code>inputs</code> during engine construction rather than being folded into the global hash. This allows individual tasks to exclude specific global files via negation globs.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">noUpdateNotifier</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Boolean"
+        class="type-badge-link"
+        >Boolean</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>When set to <code>true</code>, disables the update notification that appears when a new version of <code>turbo</code> is available.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">passThroughEnv</span>
+    <span class="type-badge">array | null</span>
+   </div>
+  <div class="desc-html"><p>An allowlist of environment variables that should be made to all tasks, but should not contribute to the task's cache key.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">remoteCache</span>
+    <span class="type-badge"
+      ><a
+        href="#def-RemoteCache"
+        class="type-badge-link"
+        >RemoteCache</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Configuration options when interfacing with the remote cache.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">ui</span>
+    <span class="type-badge"
+      ><a
+        href="#def-UI"
+        class="type-badge-link"
+        >UI</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Enable use of the UI for <code>turbo</code>.</p>
+</div>
        </div>        </div>
     </div>
   </div>

@@ -4,7 +4,7 @@
   "description": "nFPM configuration definition file",
   "x-lintel": {
     "source": "https://nfpm.goreleaser.com/static/schema.json",
-    "sourceSha256": "0e8964d596e3528156b26d2c6e5994ba774aa68482b97d0165a5dc1d01a3b672",
+    "sourceSha256": "02dc50b8b09d7684613141e1d16c637567f0c2ef5c386b0c2db07a88b837c54d",
     "fileMatch": [
       "nfpm.yaml"
     ],
@@ -206,6 +206,10 @@
         "ipk": {
           "$ref": "#/$defs/IPK",
           "title": "ipk-specific settings"
+        },
+        "msix": {
+          "$ref": "#/$defs/MSIX",
+          "title": "msix-specific settings"
         },
         "name": {
           "type": "string",
@@ -659,6 +663,209 @@
       "type": "object",
       "additionalProperties": false
     },
+    "MSIX": {
+      "properties": {
+        "arch": {
+          "type": "string",
+          "title": "architecture in msix nomenclature"
+        },
+        "publisher": {
+          "type": "string",
+          "title": "publisher identity",
+          "examples": [
+            "CN=MyCompany, O=MyCompany, C=US"
+          ]
+        },
+        "identity": {
+          "$ref": "#/$defs/MSIXIdentity",
+          "title": "package identity"
+        },
+        "properties": {
+          "$ref": "#/$defs/MSIXProperties",
+          "title": "package properties"
+        },
+        "applications": {
+          "items": {
+            "$ref": "#/$defs/MSIXApplication"
+          },
+          "type": "array",
+          "title": "applications in the package"
+        },
+        "dependencies": {
+          "$ref": "#/$defs/MSIXDependencies",
+          "title": "target device families"
+        },
+        "capabilities": {
+          "$ref": "#/$defs/MSIXCapabilities",
+          "title": "package capabilities"
+        },
+        "signature": {
+          "$ref": "#/$defs/MSIXSignature",
+          "title": "msix signature"
+        }
+      },
+      "required": [
+        "publisher",
+        "applications"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "MSIXApplication": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "application ID"
+        },
+        "executable": {
+          "type": "string",
+          "title": "executable path in package"
+        },
+        "entry_point": {
+          "type": "string",
+          "title": "entry point",
+          "default": "Windows.FullTrustApplication"
+        },
+        "visual_elements": {
+          "$ref": "#/$defs/MSIXVisualElements",
+          "title": "visual elements"
+        }
+      },
+      "required": [
+        "id",
+        "executable"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "MSIXCapabilities": {
+      "properties": {
+        "capabilities": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "device_capabilities": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "restricted": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "MSIXDependencies": {
+      "properties": {
+        "target_device_families": {
+          "items": {
+            "$ref": "#/$defs/MSIXTargetDeviceFamily"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "MSIXIdentity": {
+      "properties": {
+        "resource_id": {
+          "type": "string",
+          "title": "resource identifier"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "MSIXProperties": {
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "title": "display name"
+        },
+        "publisher_display_name": {
+          "type": "string",
+          "title": "publisher display name"
+        },
+        "logo": {
+          "type": "string",
+          "title": "package logo path"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "MSIXSignature": {
+      "properties": {
+        "pfx_file": {
+          "type": "string",
+          "title": "PFX certificate file"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "MSIXTargetDeviceFamily": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "device family name",
+          "examples": [
+            "Windows.Desktop"
+          ]
+        },
+        "min_version": {
+          "type": "string",
+          "title": "minimum OS version",
+          "examples": [
+            "10.0.17763.0"
+          ]
+        },
+        "max_version_tested": {
+          "type": "string",
+          "title": "max tested version",
+          "examples": [
+            "10.0.22621.0"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "min_version",
+        "max_version_tested"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "MSIXVisualElements": {
+      "properties": {
+        "display_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "background_color": {
+          "type": "string",
+          "default": "transparent"
+        },
+        "square150x150_logo": {
+          "type": "string"
+        },
+        "square44x44_logo": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
     "Overridables": {
       "properties": {
         "replaces": {
@@ -755,6 +962,10 @@
         "ipk": {
           "$ref": "#/$defs/IPK",
           "title": "ipk-specific settings"
+        },
+        "msix": {
+          "$ref": "#/$defs/MSIX",
+          "title": "msix-specific settings"
         }
       },
       "type": "object",
