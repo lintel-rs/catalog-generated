@@ -1,34 +1,35 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.0.0-rc2-without-$id.json",
-  "title": "AsyncAPI 2.0.0-rc2 schema.",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.0.0-rc1-without-$id.json",
+  "title": "AsyncAPI 2.0.0-rc1 schema.",
   "description": "!!Auto generated!! \n Do not manually edit. ",
   "x-lintel": {
-    "source": "http://asyncapi.com/schema-store/2.0.0-rc2-without-$id.json",
-    "sourceSha256": "185894f187b2de94cfe698e289756fba3e88348279c23c28e38ad8be318e0ae3"
+    "source": "http://asyncapi.com/schema-store/2.0.0-rc1-without-$id.json",
+    "sourceSha256": "a1b3be05f35276904e5a3a994aeb6903c41fea66a9fd15d24b2a700c831c01f5"
   },
   "type": "object",
   "properties": {
     "asyncapi": {
       "type": "string",
       "enum": [
-        "2.0.0-rc2"
+        "2.0.0-rc1"
       ],
       "description": "The AsyncAPI specification version of this document."
     },
     "id": {
       "type": "string",
       "description": "A unique id representing the application.",
-      "format": "uri"
+      "format": "uri-reference"
     },
     "info": {
       "$ref": "#/$defs/info"
     },
     "servers": {
-      "type": "object",
-      "additionalProperties": {
+      "type": "array",
+      "items": {
         "$ref": "#/$defs/server"
-      }
+      },
+      "uniqueItems": true
     },
     "defaultContentType": {
       "type": "string"
@@ -168,14 +169,15 @@
         "variables": {
           "$ref": "#/$defs/serverVariables"
         },
+        "baseChannel": {
+          "type": "string",
+          "x-format": "uri-path"
+        },
         "security": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/SecurityRequirement"
           }
-        },
-        "bindings": {
-          "$ref": "#/$defs/bindingsObject"
         }
       },
       "additionalProperties": false,
@@ -233,25 +235,6 @@
         "uniqueItems": true
       }
     },
-    "bindingsObject": {
-      "type": "object",
-      "properties": {
-        "http": {},
-        "ws": {},
-        "amqp": {},
-        "amqp1": {},
-        "mqtt": {},
-        "mqtt5": {},
-        "kafka": {},
-        "nats": {},
-        "jms": {},
-        "sns": {},
-        "sqs": {},
-        "stomp": {},
-        "redis": {}
-      },
-      "additionalProperties": true
-    },
     "channels": {
       "type": "object",
       "propertyNames": {
@@ -272,10 +255,6 @@
         "parameters": {
           "$ref": "#/$defs/parameters"
         },
-        "description": {
-          "type": "string",
-          "description": "A description of the channel."
-        },
         "publish": {
           "$ref": "#/$defs/operation"
         },
@@ -286,8 +265,11 @@
           "type": "boolean",
           "default": false
         },
-        "bindings": {
-          "$ref": "#/$defs/bindingsObject"
+        "protocolInfo": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
         }
       },
       "additionalProperties": false,
@@ -300,7 +282,7 @@
     },
     "ReferenceObject": {
       "type": "string",
-      "format": "uri-reference"
+      "format": "uri"
     },
     "parameters": {
       "type": "object",
@@ -333,13 +315,12 @@
           "type": "string",
           "description": "A brief description of the parameter. This could contain examples of use. GitHub Flavored Markdown is allowed."
         },
+        "name": {
+          "type": "string",
+          "description": "The name of the parameter."
+        },
         "schema": {
           "$ref": "#/$defs/schema"
-        },
-        "location": {
-          "type": "string",
-          "description": "A runtime expression that specifies the location of the parameter value",
-          "pattern": "^\\$message\\.(header|payload)#(\\/(([^\\/~])|(~[01]))*)*"
         },
         "$ref": {
           "$ref": "#/$defs/ReferenceObject"
@@ -354,115 +335,170 @@
       "type": "object"
     },
     "schema": {
-      "allOf": [
-        {
+      "type": "object",
+      "description": "A deterministic version of a JSON Schema object.",
+      "additionalProperties": false,
+      "properties": {
+        "$ref": {
+          "$ref": "#/$defs/ReferenceObject"
+        },
+        "format": {
+          "type": "string"
+        },
+        "title": {
           "$ref": "#/$defs/json-schema-draft-07-schema"
         },
-        {
-          "type": "object",
-          "properties": {
-            "additionalProperties": {
+        "description": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "default": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "multipleOf": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "maximum": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "exclusiveMaximum": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "minimum": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "exclusiveMinimum": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "maxLength": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "minLength": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "pattern": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "maxItems": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "minItems": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "uniqueItems": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "maxProperties": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "minProperties": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "required": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "enum": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "deprecated": {
+          "type": "boolean",
+          "default": false
+        },
+        "additionalProperties": {
+          "anyOf": [
+            {
               "$ref": "#/$defs/schema"
             },
-            "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/$defs/schema"
-                },
-                {
-                  "type": "array",
-                  "minItems": 1,
-                  "items": {
-                    "$ref": "#/$defs/schema"
-                  }
-                }
-              ],
-              "default": {}
+            {
+              "type": "boolean"
+            }
+          ],
+          "default": {}
+        },
+        "type": {
+          "$ref": "#/$defs/json-schema-draft-07-schema"
+        },
+        "items": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/schema"
             },
-            "allOf": {
+            {
               "type": "array",
               "minItems": 1,
               "items": {
                 "$ref": "#/$defs/schema"
               }
-            },
-            "oneOf": {
-              "type": "array",
-              "minItems": 2,
-              "items": {
-                "$ref": "#/$defs/schema"
-              }
-            },
-            "anyOf": {
-              "type": "array",
-              "minItems": 2,
-              "items": {
-                "$ref": "#/$defs/schema"
-              }
-            },
-            "not": {
-              "$ref": "#/$defs/schema"
-            },
-            "properties": {
-              "type": "object",
-              "default": {},
-              "additionalProperties": {
-                "$ref": "#/$defs/schema"
-              }
-            },
-            "patternProperties": {
-              "type": "object",
-              "default": {},
-              "additionalProperties": {
-                "$ref": "#/$defs/schema"
-              }
-            },
-            "propertyNames": {
-              "$ref": "#/$defs/schema"
-            },
-            "contains": {
-              "$ref": "#/$defs/schema"
-            },
-            "discriminator": {
-              "type": "string"
-            },
-            "externalDocs": {
-              "$ref": "#/$defs/externalDocs"
-            },
-            "deprecated": {
-              "type": "boolean",
-              "default": false
             }
-          },
-          "patternProperties": {
-            "^x-[\\w0-9\\.\\x2d_]+$": {
-              "$ref": "#/$defs/specificationExtension"
-            }
+          ],
+          "default": {}
+        },
+        "allOf": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/schema"
           }
+        },
+        "oneOf": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/schema"
+          }
+        },
+        "anyOf": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/schema"
+          }
+        },
+        "not": {
+          "$ref": "#/$defs/schema"
+        },
+        "properties": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "$ref": "#/$defs/schema"
+          }
+        },
+        "discriminator": {
+          "type": "string"
+        },
+        "readOnly": {
+          "type": "boolean",
+          "default": false
+        },
+        "xml": {
+          "$ref": "#/$defs/xml"
+        },
+        "externalDocs": {
+          "$ref": "#/$defs/externalDocs"
+        },
+        "example": {},
+        "examples": {
+          "type": "array",
+          "items": {}
         }
-      ]
+      },
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
     },
     "json-schema-draft-07-schema": {
-      "title": "Core schema meta-schema",
-      "default": true,
-      "type": [
-        "object",
-        "boolean"
-      ],
+      "default": {},
+      "$schema": "http://json-schema.org/draft-04/schema",
+      "description": "Core schema meta-schema",
+      "$id": "http://json-schema.org/draft-04/schema",
+      "type": "object",
       "properties": {
-        "$id": {
-          "type": "string",
-          "format": "uri-reference"
+        "id": {
+          "type": "string"
         },
         "$schema": {
-          "type": "string",
-          "format": "uri"
-        },
-        "$ref": {
-          "type": "string",
-          "format": "uri-reference"
-        },
-        "$comment": {
           "type": "string"
         },
         "title": {
@@ -471,19 +507,7 @@
         "description": {
           "type": "string"
         },
-        "default": true,
-        "readOnly": {
-          "type": "boolean",
-          "default": false
-        },
-        "writeOnly": {
-          "type": "boolean",
-          "default": false
-        },
-        "examples": {
-          "type": "array",
-          "items": true
-        },
+        "default": {},
         "multipleOf": {
           "type": "number",
           "exclusiveMinimum": 0
@@ -492,26 +516,36 @@
           "type": "number"
         },
         "exclusiveMaximum": {
-          "type": "number"
+          "type": "boolean",
+          "default": false
         },
         "minimum": {
           "type": "number"
         },
         "exclusiveMinimum": {
-          "type": "number"
+          "type": "boolean",
+          "default": false
         },
         "maxLength": {
-          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/nonNegativeInteger"
+          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/positiveInteger"
         },
         "minLength": {
-          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/nonNegativeIntegerDefault0"
+          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/positiveIntegerDefault0"
         },
         "pattern": {
           "type": "string",
           "format": "regex"
         },
         "additionalItems": {
-          "$ref": "#/$defs/json-schema-draft-07-schema"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/json-schema-draft-07-schema"
+            }
+          ],
+          "default": {}
         },
         "items": {
           "anyOf": [
@@ -522,32 +556,37 @@
               "$ref": "#/$defs/json-schema-draft-07-schema/$defs/schemaArray"
             }
           ],
-          "default": true
+          "default": {}
         },
         "maxItems": {
-          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/nonNegativeInteger"
+          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/positiveInteger"
         },
         "minItems": {
-          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/nonNegativeIntegerDefault0"
+          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/positiveIntegerDefault0"
         },
         "uniqueItems": {
           "type": "boolean",
           "default": false
         },
-        "contains": {
-          "$ref": "#/$defs/json-schema-draft-07-schema"
-        },
         "maxProperties": {
-          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/nonNegativeInteger"
+          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/positiveInteger"
         },
         "minProperties": {
-          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/nonNegativeIntegerDefault0"
+          "$ref": "#/$defs/json-schema-draft-07-schema/$defs/positiveIntegerDefault0"
         },
         "required": {
           "$ref": "#/$defs/json-schema-draft-07-schema/$defs/stringArray"
         },
         "additionalProperties": {
-          "$ref": "#/$defs/json-schema-draft-07-schema"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/json-schema-draft-07-schema"
+            }
+          ],
+          "default": {}
         },
         "definitions": {
           "type": "object",
@@ -566,9 +605,6 @@
         "patternProperties": {
           "type": "object",
           "default": {},
-          "propertyNames": {
-            "format": "regex"
-          },
           "additionalProperties": {
             "$ref": "#/$defs/json-schema-draft-07-schema"
           }
@@ -586,13 +622,8 @@
             ]
           }
         },
-        "propertyNames": {
-          "$ref": "#/$defs/json-schema-draft-07-schema"
-        },
-        "const": true,
         "enum": {
           "type": "array",
-          "items": true,
           "minItems": 1,
           "uniqueItems": true
         },
@@ -613,21 +644,6 @@
         },
         "format": {
           "type": "string"
-        },
-        "contentMediaType": {
-          "type": "string"
-        },
-        "contentEncoding": {
-          "type": "string"
-        },
-        "if": {
-          "$ref": "#/$defs/json-schema-draft-07-schema"
-        },
-        "then": {
-          "$ref": "#/$defs/json-schema-draft-07-schema"
-        },
-        "else": {
-          "$ref": "#/$defs/json-schema-draft-07-schema"
         },
         "allOf": {
           "$ref": "#/$defs/json-schema-draft-07-schema/$defs/schemaArray"
@@ -650,14 +666,14 @@
             "$ref": "#/$defs/json-schema-draft-07-schema"
           }
         },
-        "nonNegativeInteger": {
+        "positiveInteger": {
           "type": "integer",
           "minimum": 0
         },
-        "nonNegativeIntegerDefault0": {
+        "positiveIntegerDefault0": {
           "allOf": [
             {
-              "$ref": "#/$defs/json-schema-draft-07-schema/$defs/nonNegativeInteger"
+              "$ref": "#/$defs/json-schema-draft-07-schema/$defs/positiveInteger"
             },
             {
               "default": 0
@@ -680,10 +696,41 @@
           "items": {
             "type": "string"
           },
-          "uniqueItems": true,
-          "default": []
+          "minItems": 1,
+          "uniqueItems": true
         }
+      },
+      "dependentRequired": {
+        "exclusiveMaximum": [
+          "maximum"
+        ],
+        "exclusiveMinimum": [
+          "minimum"
+        ]
       }
+    },
+    "xml": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "attribute": {
+          "type": "boolean",
+          "default": false
+        },
+        "wrapped": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
     },
     "externalDocs": {
       "type": "object",
@@ -742,11 +789,39 @@
         "operationId": {
           "type": "string"
         },
-        "bindings": {
-          "$ref": "#/$defs/bindingsObject"
+        "protocolInfo": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "message": {
-          "$ref": "#/$defs/message"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/message"
+            },
+            {
+              "type": "object",
+              "required": [
+                "oneOf"
+              ],
+              "properties": {
+                "oneOf": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "$ref": "#/$defs/message"
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "patternProperties": {
+                "^x-[\\w0-9\\.\\x2d_]+$": {
+                  "$ref": "#/$defs/specificationExtension"
+                }
+              }
+            }
+          ]
         }
       },
       "additionalProperties": false,
@@ -778,8 +853,11 @@
         "operationId": {
           "type": "string"
         },
-        "bindings": {
-          "$ref": "#/$defs/bindingsObject"
+        "protocolInfo": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
         }
       },
       "additionalProperties": false,
@@ -813,113 +891,100 @@
       }
     },
     "message": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/Reference"
+      "type": "object",
+      "properties": {
+        "schemaFormat": {
+          "type": "string"
         },
-        {
+        "contentType": {
+          "type": "string"
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Reference"
+              },
+              {
+                "$ref": "#/$defs/schema"
+              }
+            ]
+          }
+        },
+        "payload": {},
+        "correlationId": {
           "oneOf": [
             {
-              "type": "object",
-              "required": [
-                "oneOf"
-              ],
-              "properties": {
-                "oneOf": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/$defs/message"
-                  }
-                }
-              },
-              "additionalProperties": false
+              "$ref": "#/$defs/Reference"
             },
             {
-              "type": "object",
-              "properties": {
-                "schemaFormat": {
-                  "type": "string"
-                },
-                "contentType": {
-                  "type": "string"
-                },
-                "headers": {
-                  "$ref": "#/$defs/schema"
-                },
-                "payload": {},
-                "correlationId": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/$defs/Reference"
-                    },
-                    {
-                      "$ref": "#/$defs/correlationId"
-                    }
-                  ]
-                },
-                "tags": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/$defs/tag"
-                  },
-                  "uniqueItems": true
-                },
-                "summary": {
-                  "type": "string",
-                  "description": "A brief summary of the message."
-                },
-                "name": {
-                  "type": "string",
-                  "description": "Name of the message."
-                },
-                "title": {
-                  "type": "string",
-                  "description": "A human-friendly title for the message."
-                },
-                "description": {
-                  "type": "string",
-                  "description": "A longer description of the message. CommonMark is allowed."
-                },
-                "externalDocs": {
-                  "$ref": "#/$defs/externalDocs"
-                },
-                "deprecated": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "examples": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                },
-                "bindings": {
-                  "$ref": "#/$defs/bindingsObject"
-                },
-                "traits": {
-                  "type": "array",
-                  "items": {
-                    "oneOf": [
-                      {
-                        "$ref": "#/$defs/Reference"
-                      },
-                      {
-                        "$ref": "#/$defs/messageTrait"
-                      }
-                    ]
-                  }
-                }
-              },
-              "additionalProperties": false,
-              "patternProperties": {
-                "^x-[\\w0-9\\.\\x2d_]+$": {
-                  "$ref": "#/$defs/specificationExtension"
-                }
-              }
+              "$ref": "#/$defs/correlationId"
             }
           ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tag"
+          },
+          "uniqueItems": true
+        },
+        "summary": {
+          "type": "string",
+          "description": "A brief summary of the message."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the message."
+        },
+        "title": {
+          "type": "string",
+          "description": "A human-friendly title for the message."
+        },
+        "description": {
+          "type": "string",
+          "description": "A longer description of the message. CommonMark is allowed."
+        },
+        "externalDocs": {
+          "$ref": "#/$defs/externalDocs"
+        },
+        "deprecated": {
+          "type": "boolean",
+          "default": false
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "protocolInfo": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Reference"
+              },
+              {
+                "$ref": "#/$defs/messageTrait"
+              }
+            ]
+          }
         }
-      ]
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
     },
     "correlationId": {
       "type": "object",
@@ -934,7 +999,7 @@
         "location": {
           "type": "string",
           "description": "A runtime expression that specifies the location of the correlation ID",
-          "pattern": "^\\$message\\.(header|payload)#(\\/(([^\\/~])|(~[01]))*)*"
+          "pattern": "^\\$message\\.(header|payload)#(/\\w+)+"
         }
       },
       "additionalProperties": false,
@@ -954,14 +1019,17 @@
           "type": "string"
         },
         "headers": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/Reference"
-            },
-            {
-              "$ref": "#/$defs/schema"
-            }
-          ]
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Reference"
+              },
+              {
+                "$ref": "#/$defs/schema"
+              }
+            ]
+          }
         },
         "correlationId": {
           "oneOf": [
@@ -1009,8 +1077,11 @@
             "type": "object"
           }
         },
-        "bindings": {
-          "$ref": "#/$defs/bindingsObject"
+        "protocolInfo": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
         }
       },
       "additionalProperties": false,
@@ -1063,41 +1134,8 @@
             }
           }
         },
-        "operationTraits": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/operationTrait"
-          }
-        },
-        "messageTraits": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/messageTrait"
-          }
-        },
-        "serverBindings": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/bindingsObject"
-          }
-        },
-        "channelBindings": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/bindingsObject"
-          }
-        },
-        "operationBindings": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/bindingsObject"
-          }
-        },
-        "messageBindings": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/bindingsObject"
-          }
+        "traits": {
+          "$ref": "#/$defs/traits"
         }
       },
       "additionalProperties": false
@@ -1550,6 +1588,19 @@
           "$ref": "#/$defs/specificationExtension"
         }
       }
+    },
+    "traits": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/operationTrait"
+          },
+          {
+            "$ref": "#/$defs/messageTrait"
+          }
+        ]
+      }
     }
   },
   "patternProperties": {
@@ -1560,6 +1611,7 @@
   "additionalProperties": false,
   "required": [
     "asyncapi",
+    "id",
     "info",
     "channels"
   ]
