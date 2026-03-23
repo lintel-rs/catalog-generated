@@ -5,7 +5,7 @@
   "description": "Configuration file for zizmor, a static analysis tool for GitHub Actions.\n\nSee: <https://docs.zizmor.sh/configuration/>",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/woodruffw/zizmor/main/support/zizmor.schema.json",
-    "sourceSha256": "c2cbdeec23ec3e244268600de133ab7d55f2841603daa3fdc0a605dcf5061b86",
+    "sourceSha256": "76ef11f3bf2a71455bcbb8ea9b9fe72dcdf9b370ecc6c77756bd34c8f0e29426",
     "fileMatch": [
       "**/zizmor.yml",
       "**/zizmor.yaml",
@@ -211,7 +211,7 @@
           "$ref": "#/$defs/BaseRuleConfig"
         },
         "secrets-outside-env": {
-          "$ref": "#/$defs/BaseRuleConfig"
+          "$ref": "#/$defs/SecretsOutsideEnvRuleConfig"
         },
         "self-hosted-runner": {
           "$ref": "#/$defs/BaseRuleConfig"
@@ -245,6 +245,48 @@
         },
         "use-trusted-publishing": {
           "$ref": "#/$defs/BaseRuleConfig"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SecretsOutsideEnvConfig": {
+      "description": "Configuration for the `secrets-outside-env` audit.",
+      "type": "object",
+      "properties": {
+        "allow": {
+          "description": "List of secret names excluded from the audit",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "SecretsOutsideEnvRuleConfig": {
+      "description": "Configuration for the `secrets-outside-env` audit.",
+      "type": "object",
+      "properties": {
+        "config": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretsOutsideEnvConfig"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "disable": {
+          "type": "boolean",
+          "default": false
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WorkflowRule"
+          }
         }
       },
       "additionalProperties": false

@@ -1,23 +1,23 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/datadog-software-catalog/_shared/latest--schema.json",
-  "title": "Service Definition Schema v2.2",
-  "description": "A service definition for providing additional service metadata and integrations v2.2",
+  "title": "Service Definition Schema v2.1",
+  "description": "A service definition for providing additional service metadata and integrations v2.1",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/DataDog/schema/main/service-catalog/v2.2/schema.json",
-    "sourceSha256": "8506b24f6380466a3001cb3e9be137f633f26da5e6541a84e13043021ac5225c"
+    "source": "https://raw.githubusercontent.com/DataDog/schema/main/service-catalog/v2.1/schema.json",
+    "sourceSha256": "410502b510d252fb08c26d7c275931dc108301097ad55a6b2eaacacba3eb55b7"
   },
   "type": "object",
   "properties": {
     "schema-version": {
       "description": "Schema version being used",
       "examples": [
-        "v2.2"
+        "v2.1"
       ],
       "type": "string",
-      "default": "v2.2",
+      "default": "v2.1",
       "enum": [
-        "v2.2"
+        "v2.1"
       ]
     },
     "dd-service": {
@@ -65,47 +65,6 @@
         "deprecated"
       ],
       "type": "string"
-    },
-    "type": {
-      "description": "The type of service",
-      "examples": [
-        "web",
-        "db",
-        "cache",
-        "function",
-        "browser",
-        "mobile",
-        "custom"
-      ],
-      "type": "string",
-      "enum": [
-        "web",
-        "db",
-        "cache",
-        "function",
-        "browser",
-        "mobile",
-        "custom"
-      ]
-    },
-    "languages": {
-      "description": "The service's programming language. See examples for a list of recognizable languages",
-      "examples": [
-        [
-          "dotnet",
-          "go",
-          "java",
-          "js",
-          "php",
-          "python",
-          "ruby",
-          "c++"
-        ]
-      ],
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
     },
     "contacts": {
       "description": "A list of contacts related to the services. ",
@@ -192,19 +151,6 @@
       "description": "Custom extensions",
       "type": "object",
       "additionalProperties": true
-    },
-    "ci-pipeline-fingerprints": {
-      "description": "A set of CI pipeline fingerprints related to the service",
-      "examples": [
-        [
-          "j88xdEy0J5lc",
-          "eZ7LMljCk8vo"
-        ]
-      ],
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
     }
   },
   "$defs": {
@@ -225,16 +171,19 @@
           "type": "string"
         },
         "type": {
-          "description": "Link type. See examples for a list of recognizable types",
+          "description": "Link type",
           "examples": [
             "runbook",
+            "doc"
+          ],
+          "type": "string",
+          "enum": [
             "doc",
+            "runbook",
             "repo",
             "dashboard",
             "other"
-          ],
-          "type": "string",
-          "default": "other"
+          ]
         },
         "url": {
           "description": "Link url",
@@ -245,7 +194,7 @@
           "format": "uri"
         },
         "provider": {
-          "description": "Link provider. See examples for a list of recognizable providers",
+          "description": "Link provider",
           "examples": [
             "Github",
             "Confluence"
@@ -272,13 +221,18 @@
           "minLength": 2
         },
         "type": {
-          "description": "Contact type. See examples for a list of recognizable types",
+          "description": "Contact type",
           "examples": [
             "email",
             "slack",
             "microsoft-teams"
           ],
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "email",
+            "slack",
+            "microsoft-teams"
+          ]
         },
         "contact": {
           "description": "Contact value",
@@ -289,27 +243,40 @@
           "type": "string"
         }
       },
-      "if": {
-        "properties": {
-          "type": {
-            "const": "email"
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "email"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "contact": {
+                "format": "email"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "slack"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "contact": {
+                "pattern": "^https://.+"
+              }
+            }
           }
         }
-      },
-      "then": {
-        "properties": {
-          "contact": {
-            "format": "email"
-          }
-        }
-      },
-      "else": {
-        "properties": {
-          "contact": {
-            "format": "uri"
-          }
-        }
-      },
+      ],
       "additionalProperties": false
     }
   },
