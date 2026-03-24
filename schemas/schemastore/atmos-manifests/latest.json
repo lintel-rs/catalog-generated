@@ -4,7 +4,7 @@
   "title": "JSON Schema for Atmos Stack Manifest files. Version 1.0. https://atmos.tools",
   "x-lintel": {
     "source": "https://atmos.tools/schemas/atmos/atmos-manifest/1.0/atmos-manifest.json",
-    "sourceSha256": "913f0d8e707f2e937c51e7c33b18f7fbcc73c5b997c674d0ff746edc58ace959"
+    "sourceSha256": "2f0322bbb9da8e7e83149432a181d00754000f99230682e80f1037166b31675c"
   },
   "type": "object",
   "properties": {
@@ -1504,13 +1504,30 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
+          "additionalProperties": true,
           "properties": {
+            "needs": {
+              "type": "array",
+              "description": "List of identity names this component requires. The first identity is primary (sets AWS_PROFILE, etc.). Additional identities have their profiles written to the shared credentials file for multi-account components.",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "realm": {
+              "type": "string",
+              "description": "Credential isolation realm. Different realms provide isolated credentials even for identities with the same name."
+            },
             "providers": {
               "$ref": "#/definitions/auth_providers"
             },
             "identities": {
               "$ref": "#/definitions/auth_identities"
+            },
+            "integrations": {
+              "type": "object",
+              "description": "Client-only credential materializations (e.g., ECR, EKS).",
+              "additionalProperties": true
             }
           },
           "required": []
@@ -1528,7 +1545,7 @@
         {
           "type": "object",
           "patternProperties": {
-            "^[a-zA-Z0-9-_]+$": {
+            "^[a-zA-Z0-9/_-]+$": {
               "$ref": "#/definitions/auth_provider"
             }
           },
@@ -1601,7 +1618,7 @@
         {
           "type": "object",
           "patternProperties": {
-            "^[a-zA-Z0-9-_]+$": {
+            "^[a-zA-Z0-9/_-]+$": {
               "$ref": "#/definitions/auth_identity"
             }
           },

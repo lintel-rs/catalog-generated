@@ -4,7 +4,7 @@
   "description": "Config is the vCluster config.",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/loft-sh/vcluster/main/chart/values.schema.json",
-    "sourceSha256": "57607037dd45624bbb81a6463b2cb280fc0817fa4875371c3537e1db5765cf48",
+    "sourceSha256": "009e74335efbc547e3b87699bc7511f7587c04fe0aee8c9ac1cb892b66cdde04",
     "fileMatch": [
       "vCluster.yml",
       "vCluster.yaml",
@@ -1000,6 +1000,10 @@
           "type": "boolean",
           "description": "Enabled defines if the control plane should be exposed via a gateway api tls route. Make sure to enable tls passthrough in the gateway via tls.mode to \"Passthrough\""
         },
+        "apiVersion": {
+          "type": "string",
+          "description": "APIVersion is the version of the gateway api tls route."
+        },
         "host": {
           "type": "string",
           "description": "Host is the host where vCluster will be reachable"
@@ -1927,6 +1931,13 @@
         "docker": {
           "$ref": "#/$defs/ExperimentalDocker",
           "description": "Docker allows you to configure Docker related settings when deploying a vCluster using Docker."
+        },
+        "nodeMonitors": {
+          "items": {
+            "$ref": "#/$defs/ExperimentalNodeMonitor"
+          },
+          "type": "array",
+          "description": "NodeMonitors allows you to create a service monitor for each node."
         }
       },
       "type": "object",
@@ -2157,6 +2168,90 @@
         "name": {
           "type": "string",
           "description": "Name defines the name of the node. If not specified, a random name will be generated."
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "ExperimentalNodeMonitor": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name is the name of the monitor. It will be suffixed with the node name."
+        },
+        "nodeSelector": {
+          "description": "NodeSelector defines the node selector for the service monitor.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "endpoints": {
+          "items": {
+            "$ref": "#/$defs/ExperimentalNodeServiceMonitorEndpoint"
+          },
+          "type": "array",
+          "description": "Endpoints is a list of endpoints to add to the service monitor. By default, vCluster will relabel the node and instance label to the node name."
+        },
+        "spec": {
+          "type": "object",
+          "description": "Spec allows you to configure extra service monitor options that will be merged into the spec."
+        },
+        "annotations": {
+          "description": "Annotations are extra annotations for this resource.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "description": "Labels are extra labels for this resource.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "ExperimentalNodeServiceMonitorEndpoint": {
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path is the kubelet path of the endpoint. vCluster will prepend /api/v1/nodes/NODE_NAME to the path."
+        },
+        "params": {
+          "description": "Params allows you to configure extra parameters to add to the endpoint.",
+          "type": "object",
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "extraRelabelings": {
+          "items": {
+            "type": "object"
+          },
+          "type": "array",
+          "description": "ExtraRelabelings allows you to configure extra relabelings to add to the endpoint. By default, vCluster will relabel the node and instance label to the node name."
+        },
+        "metricsRelabelings": {
+          "items": {
+            "type": "object"
+          },
+          "type": "array",
+          "description": "MetricsRelabelings allows you to configure extra metrics relabelings to add to the endpoint."
+        },
+        "interval": {
+          "type": "string",
+          "description": "Interval is the interval at which to scrape the endpoint."
+        },
+        "scrapeTimeout": {
+          "type": "string",
+          "description": "ScrapeTimeout is the timeout for the scrape of the endpoint."
         }
       },
       "type": "object",

@@ -1,69 +1,40 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/kontinuous-values-yaml/_shared/latest--use.schema.json",
-  "title": "schema for build-kaniko job usage",
+  "title": "schema for pg-restore job usage",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/jobs/build-kaniko/use.schema.json",
-    "sourceSha256": "e2b2d1899ed0a3614a728df5fd12bd9c50d333aa781a84870c6dd51be0a6cee9"
+    "source": "https://raw.githubusercontent.com/socialgouv/kontinuous/v1/plugins/contrib/jobs/pg-restore/use.schema.json",
+    "sourceSha256": "81ffe0e10bd9907b0394b15c635f6adbee7a98a3b9b2b64120bfdb8b3d6c13eb"
   },
   "type": "object",
   "properties": {
-    "dockerfile": {
-      "description": "Path to the Dockerfile on the repository. Defaults to /Dockerfile",
+    "pgAdminUserSecretRefName": {
+      "description": "Secret with admin credentials to the database server",
       "type": "string"
     },
-    "context": {
-      "description": "Docker context (cwd) when building the image. Defaults to .",
+    "restorePath": {
+      "description": "Path to .sql file in the repo",
       "type": "string"
     },
-    "registrySecretRefName": {
-      "description": "Name of the registry secret if you have a custom docker registry. Should contain CI_REGISTRY_USER, CI_REGISTRY_PASSWORD",
+    "filterPath": {
+      "description": "filter for the latest file lookup",
       "type": "string"
     },
-    "imagePackage": {
-      "description": "Name of the dockerfile on the registry",
+    "mountPath": {
+      "description": "Path to the backup storage mount",
       "type": "string"
     },
-    "imageProject": {
-      "description": "Optional project name in the docker registry",
+    "owner": {
+      "description": "Change restored database owner",
       "type": "string"
     },
-    "imageRepository": {
-      "description": "Optional sub repository for the docker image",
+    "database": {
+      "description": "Name of the Postgres database to restore to",
       "type": "string"
-    },
-    "buildArgs": {
-      "$ref": "#/$defs/build-args"
-    },
-    "skipExisting": {
-      "description": "Skip build if image already registerd",
-      "type": "boolean"
-    },
-    "buildOptions": {
-      "description": "Build options",
-      "type": "string",
-      "examples": [
-        "-single-snapshot --ignore-path=/product_uuid"
-      ]
-    },
-    "target": {
-      "description": "Set the target build stage to build.",
-      "type": "string"
-    },
-    "noPush": {
-      "description": "Disable registry push, just build",
-      "type": "boolean"
     }
   },
   "required": [
-    "imagePackage"
+    "restorePath"
   ],
-  "additionalProperties": false,
-  "$defs": {
-    "build-args": {
-      "description": "Build args to customize the docker build",
-      "type": "object",
-      "additionalProperties": true
-    }
-  }
+  "additionalProperties": false
 }
