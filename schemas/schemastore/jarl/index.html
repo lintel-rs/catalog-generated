@@ -219,6 +219,105 @@ Schema - Lintel Catalog"
    </div>
        </div>    </div>
      <h2 id="definitions">Definitions</h2>
+  <div class="definition-block" id="def-AssignmentConfig">
+    <div class="definition-header">
+      <span class="def-name">AssignmentConfig</span>
+<span class="type-badge"
+        >object | object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>Accepts either the legacy top-level string (<code>assignment = "&lt;-"</code>) or the new
+table form (<code>[lint.assignment]</code> with an <code>operator</code> field).</p>
+<p>TOML doesn't allow a key to be both a string and a table, but by trying the
+table form first we can surface clear errors (like "unknown field") while
+still falling back to the legacy string form.</p>
+</div>
+      </div>
+  </div>
+  <div class="definition-block" id="def-AssignmentOptions">
+    <div class="definition-header">
+      <span class="def-name">AssignmentOptions</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>TOML options for <code>[lint.assignment]</code>.</p>
+<p>Use <code>operator</code> to specify which assignment operator to enforce.
+Valid values are <code>"&lt;-"</code> (the default) and <code>"="</code>.</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">operator</span>
+    <span class="type-badge">string | null</span>
+   </div>
+       </div>        </div>
+    </div>
+  </div>
+  <div class="definition-block" id="def-DuplicatedArgumentsOptions">
+    <div class="definition-header">
+      <span class="def-name">DuplicatedArgumentsOptions</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>TOML options for <code>[lint.duplicated_arguments]</code>.</p>
+<p>Use <code>skipped-functions</code> to fully replace the default list of functions
+that are allowed to have duplicated arguments. Use
+<code>extend-skipped-functions</code> to add to the default list.
+Specifying both is an error.</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">extend-skipped-functions</span>
+    <span class="type-badge">array | null</span>
+   </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">skipped-functions</span>
+    <span class="type-badge">array | null</span>
+   </div>
+       </div>        </div>
+    </div>
+  </div>
+  <div class="definition-block" id="def-ImplicitAssignmentOptions">
+    <div class="definition-header">
+      <span class="def-name">ImplicitAssignmentOptions</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>TOML options for <code>[lint.implicit_assignment]</code>.</p>
+<p>Use <code>skipped-functions</code> to fully replace the default list of functions
+where implicit assignments are allowed. Use
+<code>extend-skipped-functions</code> to add to the default list.
+Specifying both is an error.</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">extend-skipped-functions</span>
+    <span class="type-badge">array | null</span>
+   </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">skipped-functions</span>
+    <span class="type-badge">array | null</span>
+   </div>
+       </div>        </div>
+    </div>
+  </div>
   <div class="definition-block" id="def-LinterTomlOptions">
     <div class="definition-header">
       <span class="def-name">LinterTomlOptions</span>
@@ -232,10 +331,29 @@ Schema - Lintel Catalog"
 >
   <div class="property-header">
     <span class="property-name">assignment</span>
-    <span class="type-badge">string | null</span>
+    <span class="type-badge"
+      ><a
+        href="#def-AssignmentConfig"
+        class="type-badge-link"
+        >AssignmentConfig</a
+      > | null</span
+    >
    </div>
-  <div class="desc-html"><p>This can be either <code>"&lt;-"</code> or <code>"="</code>. Both are valid in R, so this
-option is useful to ensure consistency in a project.</p>
+  <div class="desc-html"><p>Accepts either the legacy form <code>assignment = "&lt;-"</code> (deprecated) or the
+new table form <code>[lint.assignment]</code> with an <code>operator</code> field.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">check-roxygen</span>
+    <span class="type-badge">boolean | null</span>
+   </div>
+  <div class="desc-html"><p>When enabled, Jarl parses and checks R code found in roxygen2
+<code>@examples</code> and <code>@examplesIf</code> documentation sections. Only applies to
+files inside an R package (i.e. in the <code>R/</code> directory with a
+<code>DESCRIPTION</code> file in the parent).</p>
+<p>Defaults to <code>true</code>.</p>
 </div>
        </div>   <div
   class="property-item"
@@ -244,7 +362,7 @@ option is useful to ensure consistency in a project.</p>
     <span class="property-name">default-exclude</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>jarl automatically excludes a default set of folders and files. If this option is
+  <div class="desc-html"><p>Jarl automatically excludes a default set of folders and files. If this option is
 set to <code>false</code>, these files will be formatted as well.</p>
 <p>The default set of excluded patterns are:</p>
 <ul>
@@ -256,6 +374,24 @@ set to <code>false</code>, these files will be formatted as well.</p>
 <li><code>extendr-wrappers.R</code></li>
 <li><code>import-standalone-*.R</code></li>
 </ul>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">duplicated_arguments</span>
+    <span class="type-badge"
+      ><a
+        href="#def-DuplicatedArgumentsOptions"
+        class="type-badge-link"
+        >DuplicatedArgumentsOptions</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Use <code>skipped-functions</code> to fully replace the default list of functions
+that are allowed to have duplicated arguments. Use
+<code>extend-skipped-functions</code> to add to the default list.
+Specifying both is an error.</p>
 </div>
        </div>   <div
   class="property-item"
@@ -327,6 +463,18 @@ default rule names.</p>
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">fix-roxygen</span>
+    <span class="type-badge">boolean | null</span>
+   </div>
+  <div class="desc-html"><p>When enabled, Jarl will attempt to apply fixes to R code inside
+roxygen2 <code>@examples</code> and <code>@examplesIf</code> sections. Since Air does not
+currently support formatting roxygen examples, this is opt-in.</p>
+<p>Defaults to <code>false</code>.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">fixable</span>
     <span class="type-badge">array | null</span>
    </div>
@@ -344,6 +492,53 @@ This only matters if you pass <code>--fix</code> in the CLI.</p>
   <div class="desc-html"><p>If this is empty, then no rules are excluded. This field has higher
 importance than <code>select</code>, so if a rule name appears by mistake in both
 <code>select</code> and <code>ignore</code>, it is ignored.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">implicit_assignment</span>
+    <span class="type-badge"
+      ><a
+        href="#def-ImplicitAssignmentOptions"
+        class="type-badge-link"
+        >ImplicitAssignmentOptions</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Use <code>skipped-functions</code> to fully replace the default list of functions
+that are allowed to contain implicit assignment. Use
+<code>extend-skipped-functions</code> to add to the default list.
+Specifying both is an error.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">include</span>
+    <span class="type-badge">array | null</span>
+   </div>
+  <div class="desc-html"><p>By default, jarl checks all files with a <code>.R</code>, <code>.qmd</code>, <code>.Rmd</code>, or <code>.rmd</code>
+extension discovered in the provided paths. Use this option to restrict
+checking to files that match at least one of the supplied patterns. An
+empty list or a missing option means no restriction, i.e. all discovered
+files are checked.</p>
+<p>Include patterns follow the same format as <code>exclude</code> patterns (gitignore
+style, resolved relative to the <code>jarl.toml</code> directory). For example:</p>
+<ul>
+<li>
+<p><code>R/</code> only checks files inside the <code>R/</code> directory.</p>
+</li>
+<li>
+<p><code>test-*.R</code> only checks files whose name matches <code>test-*.R</code>.</p>
+</li>
+<li>
+<p><code>**/*.{Rmd,qmd}</code> only checks Rmd and qmd files.</p>
+</li>
+</ul>
+<p>When both <code>include</code> and <code>exclude</code> are specified, a file is checked only
+if it matches at least one <code>include</code> pattern and does not match any
+<code>exclude</code> pattern.</p>
 </div>
        </div>   <div
   class="property-item"
@@ -372,13 +567,167 @@ minimum R version in the <code>Depends</code> field sometimes present in the
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">undesirable_function</span>
+    <span class="type-badge"
+      ><a
+        href="#def-UndesirableFunctionOptions"
+        class="type-badge-link"
+        >UndesirableFunctionOptions</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Use <code>functions</code> to fully replace the default list of undesirable functions.
+Use <code>extend-functions</code> to add to the default list.
+Specifying both is an error.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">unfixable</span>
     <span class="type-badge">array | null</span>
    </div>
   <div class="desc-html"><p>A list of rules that are never fixed. This only matters if you pass
 <code>--fix</code> in the CLI.</p>
 </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">unreachable_code</span>
+    <span class="type-badge"
+      ><a
+        href="#def-UnreachableCodeOptions"
+        class="type-badge-link"
+        >UnreachableCodeOptions</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Use <code>stopping-functions</code> to fully replace the default list of functions
+that are considered to stop execution (never return). Use
+<code>extend-stopping-functions</code> to add to the default list.
+Specifying both is an error.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">unused_function</span>
+    <span class="type-badge"
+      ><a
+        href="#def-UnusedFunctionOptions"
+        class="type-badge-link"
+        >UnusedFunctionOptions</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Use <code>threshold-ignore</code> to control how many <code>unused_function</code>
+violations are allowed before they are all hidden (likely false
+positives).</p>
+<p>Use <code>skipped-functions</code> to determine which functions won't be reported
+even if Jarl considers them unused.</p>
+</div>
        </div>        </div>
+    </div>
+  </div>
+  <div class="definition-block" id="def-UndesirableFunctionOptions">
+    <div class="definition-header">
+      <span class="def-name">UndesirableFunctionOptions</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>TOML options for <code>[lint.undesirable_function]</code>.</p>
+<p>Use <code>functions</code> to fully replace the default list of undesirable functions.
+Use <code>extend-functions</code> to add to the default list.
+Specifying both is an error.</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">extend-functions</span>
+    <span class="type-badge">array | null</span>
+   </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">functions</span>
+    <span class="type-badge">array | null</span>
+   </div>
+       </div>        </div>
+    </div>
+  </div>
+  <div class="definition-block" id="def-UnreachableCodeOptions">
+    <div class="definition-header">
+      <span class="def-name">UnreachableCodeOptions</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>TOML options for <code>[lint.unreachable_code]</code>.</p>
+<p>Use <code>stopping-functions</code> to fully replace the default list of functions
+that are considered to stop execution (never return). Use
+<code>extend-stopping-functions</code> to add to the default list.
+Specifying both is an error.</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">extend-stopping-functions</span>
+    <span class="type-badge">array | null</span>
+   </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">stopping-functions</span>
+    <span class="type-badge">array | null</span>
+   </div>
+       </div>        </div>
+    </div>
+  </div>
+  <div class="definition-block" id="def-UnusedFunctionOptions">
+    <div class="definition-header">
+      <span class="def-name">UnusedFunctionOptions</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>TOML options for <code>[lint.unused_function]</code>.</p>
+<p>Use <code>threshold-ignore</code> to control when <code>unused_function</code>
+diagnostics are hidden. When the number of violations exceeds this
+threshold, they are suppressed with an informative note (likely false
+positives).</p>
+<p>Use <code>skipped-functions</code> to provide a list of regex patterns for
+functions that should be skipped by this rule.</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">skipped-functions</span>
+    <span class="type-badge">array | null</span>
+   </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">threshold-ignore</span>
+    <span class="type-badge">integer | null</span>
+   </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >format=uint</span
+    ><span class="constraint"
+      >min=0</span
+    >  </div>
+  </div>        </div>
     </div>
   </div>
   </section>
