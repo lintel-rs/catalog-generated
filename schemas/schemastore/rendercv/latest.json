@@ -5,7 +5,7 @@
   "description": "Resume builder for academics and engineers",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/sinaatalay/rendercv/main/schema.json",
-    "sourceSha256": "e2c22ee5bde4b2f3c7f0c05885a8025bc8f26b94b460552c59affa9df865d573",
+    "sourceSha256": "6fcb9753f1079e7b34800465a402164f9d9037bdbd02347736fd6b271a553cce",
     "fileMatch": [
       "*_CV.yml",
       "*_CV.yaml",
@@ -281,6 +281,7 @@
     },
     "CustomConnection": {
       "type": "object",
+      "description": "User-defined contact method with custom icon and URL.\n\nWhy:\n    Built-in social networks cover common platforms, but users need\n    arbitrary contact methods (personal websites, custom platforms).\n    CustomConnection provides a FontAwesome icon, display text, and\n    optional URL for any contact channel.",
       "properties": {
         "fontawesome_icon": {
           "title": "Fontawesome Icon",
@@ -690,6 +691,169 @@
       "title": "DutchLocale",
       "additionalProperties": false
     },
+    "EducationEntry": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "institution": {
+          "examples": [
+            "Boğaziçi University",
+            "MIT",
+            "Harvard University"
+          ],
+          "title": "Institution",
+          "type": "string"
+        },
+        "area": {
+          "description": "Field of study or major.",
+          "examples": [
+            "Mechanical Engineering",
+            "Computer Science",
+            "Electrical Engineering"
+          ],
+          "title": "Area",
+          "type": "string"
+        },
+        "degree": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "BS",
+            "BA",
+            "PhD",
+            "MS"
+          ],
+          "title": "Degree"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArbitraryDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date of this event in YYYY-MM-DD, YYYY-MM, or YYYY format, or any custom text like 'Fall 2023'. Use this for single-day or imprecise dates. For date ranges, use `start_date` and `end_date` instead.",
+          "examples": [
+            "2020-09-24",
+            "2020-09",
+            "2020",
+            "Fall 2023",
+            "Summer 2020"
+          ]
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExactDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start date in YYYY-MM-DD, YYYY-MM, or YYYY format.",
+          "examples": [
+            "2020-09-24",
+            "2020-09",
+            "2020"
+          ]
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExactDate"
+            },
+            {
+              "const": "present",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end date in YYYY-MM-DD, YYYY-MM, or YYYY format. Use \"present\" for ongoing events, or omit it to indicate the event is ongoing.",
+          "examples": [
+            "2024-05-20",
+            "2024-05",
+            "2024",
+            "present"
+          ],
+          "title": "End Date"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Istanbul, Türkiye",
+            "New York, NY",
+            "Remote"
+          ],
+          "title": "Location"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Led a team of 5 engineers to develop innovative solutions.",
+            "Completed advanced coursework in machine learning and artificial intelligence."
+          ],
+          "title": "Summary"
+        },
+        "highlights": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bullet points for key achievements, responsibilities, or contributions.",
+          "examples": [
+            [
+              "Increased system performance by 40% through optimization.",
+              "Mentored 3 junior developers and conducted code reviews.",
+              "Implemented CI/CD pipeline reducing deployment time by 60%."
+            ]
+          ],
+          "title": "Highlights"
+        }
+      },
+      "required": [
+        "institution",
+        "area"
+      ],
+      "title": "EducationEntry"
+    },
     "EmberTheme": {
       "type": "object",
       "properties": {
@@ -925,6 +1089,150 @@
     "ExistingPathRelativeToInput": {
       "format": "path",
       "type": "string"
+    },
+    "ExperienceEntry": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "company": {
+          "examples": [
+            "Microsoft",
+            "Google",
+            "Princeton Plasma Physics Laboratory"
+          ],
+          "title": "Company",
+          "type": "string"
+        },
+        "position": {
+          "examples": [
+            "Software Engineer",
+            "Research Assistant",
+            "Project Manager"
+          ],
+          "title": "Position",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArbitraryDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date of this event in YYYY-MM-DD, YYYY-MM, or YYYY format, or any custom text like 'Fall 2023'. Use this for single-day or imprecise dates. For date ranges, use `start_date` and `end_date` instead.",
+          "examples": [
+            "2020-09-24",
+            "2020-09",
+            "2020",
+            "Fall 2023",
+            "Summer 2020"
+          ]
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExactDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start date in YYYY-MM-DD, YYYY-MM, or YYYY format.",
+          "examples": [
+            "2020-09-24",
+            "2020-09",
+            "2020"
+          ]
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExactDate"
+            },
+            {
+              "const": "present",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end date in YYYY-MM-DD, YYYY-MM, or YYYY format. Use \"present\" for ongoing events, or omit it to indicate the event is ongoing.",
+          "examples": [
+            "2024-05-20",
+            "2024-05",
+            "2024",
+            "present"
+          ],
+          "title": "End Date"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Istanbul, Türkiye",
+            "New York, NY",
+            "Remote"
+          ],
+          "title": "Location"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Led a team of 5 engineers to develop innovative solutions.",
+            "Completed advanced coursework in machine learning and artificial intelligence."
+          ],
+          "title": "Summary"
+        },
+        "highlights": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bullet points for key achievements, responsibilities, or contributions.",
+          "examples": [
+            [
+              "Increased system performance by 40% through optimization.",
+              "Mentored 3 junior developers and conducted code reviews.",
+              "Implemented CI/CD pipeline reducing deployment time by 60%."
+            ]
+          ],
+          "title": "Highlights"
+        }
+      },
+      "required": [
+        "company",
+        "position"
+      ],
+      "title": "ExperienceEntry"
     },
     "FrenchLocale": {
       "type": "object",
@@ -1898,31 +2206,31 @@
         },
         {
           "items": {
-            "$ref": "#/$defs/rendercv__schema__models__cv__entries__one_line__OneLineEntry"
+            "$ref": "#/$defs/OneLineEntry"
           },
           "type": "array"
         },
         {
           "items": {
-            "$ref": "#/$defs/rendercv__schema__models__cv__entries__normal__NormalEntry"
+            "$ref": "#/$defs/NormalEntry"
           },
           "type": "array"
         },
         {
           "items": {
-            "$ref": "#/$defs/rendercv__schema__models__cv__entries__experience__ExperienceEntry"
+            "$ref": "#/$defs/ExperienceEntry"
           },
           "type": "array"
         },
         {
           "items": {
-            "$ref": "#/$defs/rendercv__schema__models__cv__entries__education__EducationEntry"
+            "$ref": "#/$defs/EducationEntry"
           },
           "type": "array"
         },
         {
           "items": {
-            "$ref": "#/$defs/rendercv__schema__models__cv__entries__publication__PublicationEntry"
+            "$ref": "#/$defs/PublicationEntry"
           },
           "type": "array"
         },
@@ -2181,6 +2489,140 @@
       "title": "ModerncvTheme",
       "additionalProperties": false
     },
+    "NormalEntry": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "examples": [
+            "Some Project",
+            "Some Event",
+            "Some Award"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArbitraryDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date of this event in YYYY-MM-DD, YYYY-MM, or YYYY format, or any custom text like 'Fall 2023'. Use this for single-day or imprecise dates. For date ranges, use `start_date` and `end_date` instead.",
+          "examples": [
+            "2020-09-24",
+            "2020-09",
+            "2020",
+            "Fall 2023",
+            "Summer 2020"
+          ]
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExactDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start date in YYYY-MM-DD, YYYY-MM, or YYYY format.",
+          "examples": [
+            "2020-09-24",
+            "2020-09",
+            "2020"
+          ]
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExactDate"
+            },
+            {
+              "const": "present",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end date in YYYY-MM-DD, YYYY-MM, or YYYY format. Use \"present\" for ongoing events, or omit it to indicate the event is ongoing.",
+          "examples": [
+            "2024-05-20",
+            "2024-05",
+            "2024",
+            "present"
+          ],
+          "title": "End Date"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Istanbul, Türkiye",
+            "New York, NY",
+            "Remote"
+          ],
+          "title": "Location"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Led a team of 5 engineers to develop innovative solutions.",
+            "Completed advanced coursework in machine learning and artificial intelligence."
+          ],
+          "title": "Summary"
+        },
+        "highlights": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bullet points for key achievements, responsibilities, or contributions.",
+          "examples": [
+            [
+              "Increased system performance by 40% through optimization.",
+              "Mentored 3 junior developers and conducted code reviews.",
+              "Implemented CI/CD pipeline reducing deployment time by 60%."
+            ]
+          ],
+          "title": "Highlights"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "NormalEntry"
+    },
     "NorwegianBokm_lLocale": {
       "type": "object",
       "properties": {
@@ -2394,6 +2836,48 @@
         "number"
       ],
       "title": "NumberedEntry"
+    },
+    "OneLineEntry": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "label": {
+          "examples": [
+            "Languages",
+            "Citizenship",
+            "Security Clearance"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "details": {
+          "examples": [
+            "English (native), Spanish (fluent)",
+            "US Citizen",
+            "Top Secret"
+          ],
+          "title": "Details",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "details"
+      ],
+      "title": "OneLineEntry"
+    },
+    "OneLineEntryTemplate": {
+      "type": "object",
+      "properties": {
+        "main_column": {
+          "default": "**LABEL:** DETAILS",
+          "description": "Template for one-line entries. Available placeholders:\n- `LABEL`: The label text (e.g., \"Languages\", \"Citizenship\")\n- `DETAILS`: The details text (e.g., \"English (native), Spanish (fluent)\")\n\nYou can also add arbitrary keys to entries and use them as UPPERCASE placeholders.\n\nThe default value is `**LABEL:** DETAILS`.",
+          "title": "Main Column",
+          "type": "string"
+        }
+      },
+      "title": "OneLineEntryTemplate",
+      "additionalProperties": false
     },
     "OpalTheme": {
       "type": "object",
@@ -2650,6 +3134,144 @@
         }
       },
       "title": "PortugueseLocale",
+      "additionalProperties": false
+    },
+    "PublicationEntry": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "title": {
+          "examples": [
+            "Deep Learning for Computer Vision",
+            "Advances in Quantum Computing"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "authors": {
+          "description": "You can bold your name with **double asterisks**.",
+          "examples": [
+            [
+              "John Doe",
+              "**Jane Smith**",
+              "Bob Johnson"
+            ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Authors",
+          "type": "array"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "This paper presents a new method for computer vision."
+          ],
+          "title": "Summary"
+        },
+        "doi": {
+          "anyOf": [
+            {
+              "pattern": "\\b10\\..*",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The DOI (Digital Object Identifier). If provided, it will be used as the link instead of the URL.",
+          "examples": [
+            "10.48550/arXiv.2310.03138"
+          ],
+          "title": "Doi"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A URL link to the publication. Ignored if DOI is provided.",
+          "title": "Url"
+        },
+        "journal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The journal, conference, or venue where it was published.",
+          "examples": [
+            "Nature",
+            "IEEE Conference on Computer Vision",
+            "arXiv preprint"
+          ],
+          "title": "Journal"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArbitraryDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date of this event in YYYY-MM-DD, YYYY-MM, or YYYY format, or any custom text like 'Fall 2023'. Use this for single-day or imprecise dates. For date ranges, use `start_date` and `end_date` instead.",
+          "examples": [
+            "2020-09-24",
+            "2020-09",
+            "2020",
+            "Fall 2023",
+            "Summer 2020"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "authors"
+      ],
+      "title": "PublicationEntry"
+    },
+    "PublicationEntryTemplate": {
+      "type": "object",
+      "properties": {
+        "main_column": {
+          "default": "**TITLE**\nSUMMARY\nAUTHORS\nURL (JOURNAL)",
+          "description": "Template for publication entry main column. Available placeholders:\n- `TITLE`: Publication title\n- `AUTHORS`: List of authors (formatted as comma-separated string)\n- `SUMMARY`: Summary/abstract text\n- `DOI`: Digital Object Identifier\n- `URL`: Publication URL (if DOI not provided)\n- `JOURNAL`: Journal/conference/venue name\n- `DATE`: Formatted date\n\nYou can also add arbitrary keys to entries and use them as UPPERCASE placeholders.\n\nThe default value is `**TITLE**\\nSUMMARY\\nAUTHORS\\nURL (JOURNAL)`.",
+          "title": "Main Column",
+          "type": "string"
+        },
+        "date_and_location_column": {
+          "default": "DATE",
+          "description": "Template for publication entry date column. Available placeholders:\n- `TITLE`: Publication title\n- `AUTHORS`: List of authors (formatted as comma-separated string)\n- `SUMMARY`: Summary/abstract text\n- `DOI`: Digital Object Identifier\n- `URL`: Publication URL (if DOI not provided)\n- `JOURNAL`: Journal/conference/venue name\n- `DATE`: Formatted date\n\nYou can also add arbitrary keys to entries and use them as UPPERCASE placeholders.\n\nThe default value is `DATE`.",
+          "title": "Date And Location Column",
+          "type": "string"
+        }
+      },
+      "title": "PublicationEntryTemplate",
       "additionalProperties": false
     },
     "RenderCommand": {
@@ -3300,595 +3922,6 @@
       },
       "title": "VietnameseLocale",
       "additionalProperties": false
-    },
-    "rendercv__schema__models__cv__entries__education__EducationEntry": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "institution": {
-          "examples": [
-            "Boğaziçi University",
-            "MIT",
-            "Harvard University"
-          ],
-          "title": "Institution",
-          "type": "string"
-        },
-        "area": {
-          "description": "Field of study or major.",
-          "examples": [
-            "Mechanical Engineering",
-            "Computer Science",
-            "Electrical Engineering"
-          ],
-          "title": "Area",
-          "type": "string"
-        },
-        "degree": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "examples": [
-            "BS",
-            "BA",
-            "PhD",
-            "MS"
-          ],
-          "title": "Degree"
-        },
-        "date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ArbitraryDate"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The date of this event in YYYY-MM-DD, YYYY-MM, or YYYY format, or any custom text like 'Fall 2023'. Use this for single-day or imprecise dates. For date ranges, use `start_date` and `end_date` instead.",
-          "examples": [
-            "2020-09-24",
-            "2020-09",
-            "2020",
-            "Fall 2023",
-            "Summer 2020"
-          ]
-        },
-        "start_date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ExactDate"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The start date in YYYY-MM-DD, YYYY-MM, or YYYY format.",
-          "examples": [
-            "2020-09-24",
-            "2020-09",
-            "2020"
-          ]
-        },
-        "end_date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ExactDate"
-            },
-            {
-              "const": "present",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The end date in YYYY-MM-DD, YYYY-MM, or YYYY format. Use \"present\" for ongoing events, or omit it to indicate the event is ongoing.",
-          "examples": [
-            "2024-05-20",
-            "2024-05",
-            "2024",
-            "present"
-          ],
-          "title": "End Date"
-        },
-        "location": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "examples": [
-            "Istanbul, Türkiye",
-            "New York, NY",
-            "Remote"
-          ],
-          "title": "Location"
-        },
-        "summary": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "examples": [
-            "Led a team of 5 engineers to develop innovative solutions.",
-            "Completed advanced coursework in machine learning and artificial intelligence."
-          ],
-          "title": "Summary"
-        },
-        "highlights": {
-          "anyOf": [
-            {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Bullet points for key achievements, responsibilities, or contributions.",
-          "examples": [
-            [
-              "Increased system performance by 40% through optimization.",
-              "Mentored 3 junior developers and conducted code reviews.",
-              "Implemented CI/CD pipeline reducing deployment time by 60%."
-            ]
-          ],
-          "title": "Highlights"
-        }
-      },
-      "required": [
-        "institution",
-        "area"
-      ],
-      "title": "EducationEntry"
-    },
-    "rendercv__schema__models__cv__entries__experience__ExperienceEntry": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "company": {
-          "examples": [
-            "Microsoft",
-            "Google",
-            "Princeton Plasma Physics Laboratory"
-          ],
-          "title": "Company",
-          "type": "string"
-        },
-        "position": {
-          "examples": [
-            "Software Engineer",
-            "Research Assistant",
-            "Project Manager"
-          ],
-          "title": "Position",
-          "type": "string"
-        },
-        "date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ArbitraryDate"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The date of this event in YYYY-MM-DD, YYYY-MM, or YYYY format, or any custom text like 'Fall 2023'. Use this for single-day or imprecise dates. For date ranges, use `start_date` and `end_date` instead.",
-          "examples": [
-            "2020-09-24",
-            "2020-09",
-            "2020",
-            "Fall 2023",
-            "Summer 2020"
-          ]
-        },
-        "start_date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ExactDate"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The start date in YYYY-MM-DD, YYYY-MM, or YYYY format.",
-          "examples": [
-            "2020-09-24",
-            "2020-09",
-            "2020"
-          ]
-        },
-        "end_date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ExactDate"
-            },
-            {
-              "const": "present",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The end date in YYYY-MM-DD, YYYY-MM, or YYYY format. Use \"present\" for ongoing events, or omit it to indicate the event is ongoing.",
-          "examples": [
-            "2024-05-20",
-            "2024-05",
-            "2024",
-            "present"
-          ],
-          "title": "End Date"
-        },
-        "location": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "examples": [
-            "Istanbul, Türkiye",
-            "New York, NY",
-            "Remote"
-          ],
-          "title": "Location"
-        },
-        "summary": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "examples": [
-            "Led a team of 5 engineers to develop innovative solutions.",
-            "Completed advanced coursework in machine learning and artificial intelligence."
-          ],
-          "title": "Summary"
-        },
-        "highlights": {
-          "anyOf": [
-            {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Bullet points for key achievements, responsibilities, or contributions.",
-          "examples": [
-            [
-              "Increased system performance by 40% through optimization.",
-              "Mentored 3 junior developers and conducted code reviews.",
-              "Implemented CI/CD pipeline reducing deployment time by 60%."
-            ]
-          ],
-          "title": "Highlights"
-        }
-      },
-      "required": [
-        "company",
-        "position"
-      ],
-      "title": "ExperienceEntry"
-    },
-    "rendercv__schema__models__cv__entries__normal__NormalEntry": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "name": {
-          "examples": [
-            "Some Project",
-            "Some Event",
-            "Some Award"
-          ],
-          "title": "Name",
-          "type": "string"
-        },
-        "date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ArbitraryDate"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The date of this event in YYYY-MM-DD, YYYY-MM, or YYYY format, or any custom text like 'Fall 2023'. Use this for single-day or imprecise dates. For date ranges, use `start_date` and `end_date` instead.",
-          "examples": [
-            "2020-09-24",
-            "2020-09",
-            "2020",
-            "Fall 2023",
-            "Summer 2020"
-          ]
-        },
-        "start_date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ExactDate"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The start date in YYYY-MM-DD, YYYY-MM, or YYYY format.",
-          "examples": [
-            "2020-09-24",
-            "2020-09",
-            "2020"
-          ]
-        },
-        "end_date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ExactDate"
-            },
-            {
-              "const": "present",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The end date in YYYY-MM-DD, YYYY-MM, or YYYY format. Use \"present\" for ongoing events, or omit it to indicate the event is ongoing.",
-          "examples": [
-            "2024-05-20",
-            "2024-05",
-            "2024",
-            "present"
-          ],
-          "title": "End Date"
-        },
-        "location": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "examples": [
-            "Istanbul, Türkiye",
-            "New York, NY",
-            "Remote"
-          ],
-          "title": "Location"
-        },
-        "summary": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "examples": [
-            "Led a team of 5 engineers to develop innovative solutions.",
-            "Completed advanced coursework in machine learning and artificial intelligence."
-          ],
-          "title": "Summary"
-        },
-        "highlights": {
-          "anyOf": [
-            {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Bullet points for key achievements, responsibilities, or contributions.",
-          "examples": [
-            [
-              "Increased system performance by 40% through optimization.",
-              "Mentored 3 junior developers and conducted code reviews.",
-              "Implemented CI/CD pipeline reducing deployment time by 60%."
-            ]
-          ],
-          "title": "Highlights"
-        }
-      },
-      "required": [
-        "name"
-      ],
-      "title": "NormalEntry"
-    },
-    "rendercv__schema__models__cv__entries__one_line__OneLineEntry": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "label": {
-          "examples": [
-            "Languages",
-            "Citizenship",
-            "Security Clearance"
-          ],
-          "title": "Label",
-          "type": "string"
-        },
-        "details": {
-          "examples": [
-            "English (native), Spanish (fluent)",
-            "US Citizen",
-            "Top Secret"
-          ],
-          "title": "Details",
-          "type": "string"
-        }
-      },
-      "required": [
-        "label",
-        "details"
-      ],
-      "title": "OneLineEntry"
-    },
-    "rendercv__schema__models__cv__entries__publication__PublicationEntry": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "title": {
-          "examples": [
-            "Deep Learning for Computer Vision",
-            "Advances in Quantum Computing"
-          ],
-          "title": "Title",
-          "type": "string"
-        },
-        "authors": {
-          "description": "You can bold your name with **double asterisks**.",
-          "examples": [
-            [
-              "John Doe",
-              "**Jane Smith**",
-              "Bob Johnson"
-            ]
-          ],
-          "items": {
-            "type": "string"
-          },
-          "title": "Authors",
-          "type": "array"
-        },
-        "summary": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "examples": [
-            "This paper presents a new method for computer vision."
-          ],
-          "title": "Summary"
-        },
-        "doi": {
-          "anyOf": [
-            {
-              "pattern": "\\b10\\..*",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The DOI (Digital Object Identifier). If provided, it will be used as the link instead of the URL.",
-          "examples": [
-            "10.48550/arXiv.2310.03138"
-          ],
-          "title": "Doi"
-        },
-        "url": {
-          "anyOf": [
-            {
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "A URL link to the publication. Ignored if DOI is provided.",
-          "title": "Url"
-        },
-        "journal": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The journal, conference, or venue where it was published.",
-          "examples": [
-            "Nature",
-            "IEEE Conference on Computer Vision",
-            "arXiv preprint"
-          ],
-          "title": "Journal"
-        },
-        "date": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ArbitraryDate"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The date of this event in YYYY-MM-DD, YYYY-MM, or YYYY format, or any custom text like 'Fall 2023'. Use this for single-day or imprecise dates. For date ranges, use `start_date` and `end_date` instead.",
-          "examples": [
-            "2020-09-24",
-            "2020-09",
-            "2020",
-            "Fall 2023",
-            "Summer 2020"
-          ]
-        }
-      },
-      "required": [
-        "title",
-        "authors"
-      ],
-      "title": "PublicationEntry"
     },
     "rendercv__schema__models__design__classic_theme__Bold__1": {
       "type": "object",
@@ -4949,7 +4982,7 @@
       "title": "Connections",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__EducationEntry__1": {
+    "rendercv__schema__models__design__classic_theme__EducationEntryTemplate__1": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -4978,10 +5011,10 @@
           "type": "string"
         }
       },
-      "title": "EducationEntry",
+      "title": "EducationEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__EducationEntry__2": {
+    "rendercv__schema__models__design__classic_theme__EducationEntryTemplate__2": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5010,10 +5043,10 @@
           "type": "string"
         }
       },
-      "title": "EducationEntry",
+      "title": "EducationEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__EducationEntry__3": {
+    "rendercv__schema__models__design__classic_theme__EducationEntryTemplate__3": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5042,10 +5075,10 @@
           "type": "string"
         }
       },
-      "title": "EducationEntry",
+      "title": "EducationEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__EducationEntry__4": {
+    "rendercv__schema__models__design__classic_theme__EducationEntryTemplate__4": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5074,10 +5107,10 @@
           "type": "string"
         }
       },
-      "title": "EducationEntry",
+      "title": "EducationEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__EducationEntry__5": {
+    "rendercv__schema__models__design__classic_theme__EducationEntryTemplate__5": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5106,10 +5139,10 @@
           "type": "string"
         }
       },
-      "title": "EducationEntry",
+      "title": "EducationEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__EducationEntry__6": {
+    "rendercv__schema__models__design__classic_theme__EducationEntryTemplate__6": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5138,10 +5171,10 @@
           "type": "string"
         }
       },
-      "title": "EducationEntry",
+      "title": "EducationEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__EducationEntry__7": {
+    "rendercv__schema__models__design__classic_theme__EducationEntryTemplate__7": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5170,10 +5203,10 @@
           "type": "string"
         }
       },
-      "title": "EducationEntry",
+      "title": "EducationEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__EducationEntry__8": {
+    "rendercv__schema__models__design__classic_theme__EducationEntryTemplate__8": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5202,10 +5235,10 @@
           "type": "string"
         }
       },
-      "title": "EducationEntry",
+      "title": "EducationEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__EducationEntry__9": {
+    "rendercv__schema__models__design__classic_theme__EducationEntryTemplate__9": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5234,7 +5267,7 @@
           "type": "string"
         }
       },
-      "title": "EducationEntry",
+      "title": "EducationEntryTemplate",
       "additionalProperties": false
     },
     "rendercv__schema__models__design__classic_theme__Entries__1": {
@@ -5660,7 +5693,7 @@
       "title": "Entries",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__ExperienceEntry__1": {
+    "rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__1": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5676,10 +5709,10 @@
           "type": "string"
         }
       },
-      "title": "ExperienceEntry",
+      "title": "ExperienceEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__ExperienceEntry__2": {
+    "rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__2": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5695,10 +5728,10 @@
           "type": "string"
         }
       },
-      "title": "ExperienceEntry",
+      "title": "ExperienceEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__ExperienceEntry__3": {
+    "rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__3": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5714,10 +5747,10 @@
           "type": "string"
         }
       },
-      "title": "ExperienceEntry",
+      "title": "ExperienceEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__ExperienceEntry__4": {
+    "rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__4": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5733,10 +5766,10 @@
           "type": "string"
         }
       },
-      "title": "ExperienceEntry",
+      "title": "ExperienceEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__ExperienceEntry__5": {
+    "rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__5": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5752,10 +5785,10 @@
           "type": "string"
         }
       },
-      "title": "ExperienceEntry",
+      "title": "ExperienceEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__ExperienceEntry__6": {
+    "rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__6": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5771,10 +5804,10 @@
           "type": "string"
         }
       },
-      "title": "ExperienceEntry",
+      "title": "ExperienceEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__ExperienceEntry__7": {
+    "rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__7": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5790,10 +5823,10 @@
           "type": "string"
         }
       },
-      "title": "ExperienceEntry",
+      "title": "ExperienceEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__ExperienceEntry__8": {
+    "rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__8": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5809,10 +5842,10 @@
           "type": "string"
         }
       },
-      "title": "ExperienceEntry",
+      "title": "ExperienceEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__ExperienceEntry__9": {
+    "rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__9": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -5828,7 +5861,7 @@
           "type": "string"
         }
       },
-      "title": "ExperienceEntry",
+      "title": "ExperienceEntryTemplate",
       "additionalProperties": false
     },
     "rendercv__schema__models__design__classic_theme__FontFamily": {
@@ -7039,7 +7072,7 @@
       "title": "Links",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__NormalEntry__1": {
+    "rendercv__schema__models__design__classic_theme__NormalEntryTemplate__1": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -7055,10 +7088,10 @@
           "type": "string"
         }
       },
-      "title": "NormalEntry",
+      "title": "NormalEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__NormalEntry__2": {
+    "rendercv__schema__models__design__classic_theme__NormalEntryTemplate__2": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -7074,10 +7107,10 @@
           "type": "string"
         }
       },
-      "title": "NormalEntry",
+      "title": "NormalEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__NormalEntry__3": {
+    "rendercv__schema__models__design__classic_theme__NormalEntryTemplate__3": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -7093,10 +7126,10 @@
           "type": "string"
         }
       },
-      "title": "NormalEntry",
+      "title": "NormalEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__NormalEntry__4": {
+    "rendercv__schema__models__design__classic_theme__NormalEntryTemplate__4": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -7112,10 +7145,10 @@
           "type": "string"
         }
       },
-      "title": "NormalEntry",
+      "title": "NormalEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__NormalEntry__5": {
+    "rendercv__schema__models__design__classic_theme__NormalEntryTemplate__5": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -7131,10 +7164,10 @@
           "type": "string"
         }
       },
-      "title": "NormalEntry",
+      "title": "NormalEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__NormalEntry__6": {
+    "rendercv__schema__models__design__classic_theme__NormalEntryTemplate__6": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -7150,10 +7183,10 @@
           "type": "string"
         }
       },
-      "title": "NormalEntry",
+      "title": "NormalEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__NormalEntry__7": {
+    "rendercv__schema__models__design__classic_theme__NormalEntryTemplate__7": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -7169,10 +7202,10 @@
           "type": "string"
         }
       },
-      "title": "NormalEntry",
+      "title": "NormalEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__NormalEntry__8": {
+    "rendercv__schema__models__design__classic_theme__NormalEntryTemplate__8": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -7188,10 +7221,10 @@
           "type": "string"
         }
       },
-      "title": "NormalEntry",
+      "title": "NormalEntryTemplate",
       "additionalProperties": false
     },
-    "rendercv__schema__models__design__classic_theme__NormalEntry__9": {
+    "rendercv__schema__models__design__classic_theme__NormalEntryTemplate__9": {
       "type": "object",
       "properties": {
         "main_column": {
@@ -7207,20 +7240,7 @@
           "type": "string"
         }
       },
-      "title": "NormalEntry",
-      "additionalProperties": false
-    },
-    "rendercv__schema__models__design__classic_theme__OneLineEntry": {
-      "type": "object",
-      "properties": {
-        "main_column": {
-          "default": "**LABEL:** DETAILS",
-          "description": "Template for one-line entries. Available placeholders:\n- `LABEL`: The label text (e.g., \"Languages\", \"Citizenship\")\n- `DETAILS`: The details text (e.g., \"English (native), Spanish (fluent)\")\n\nYou can also add arbitrary keys to entries and use them as UPPERCASE placeholders.\n\nThe default value is `**LABEL:** DETAILS`.",
-          "title": "Main Column",
-          "type": "string"
-        }
-      },
-      "title": "OneLineEntry",
+      "title": "NormalEntryTemplate",
       "additionalProperties": false
     },
     "rendercv__schema__models__design__classic_theme__Page__1": {
@@ -7485,25 +7505,6 @@
         }
       },
       "title": "Page",
-      "additionalProperties": false
-    },
-    "rendercv__schema__models__design__classic_theme__PublicationEntry": {
-      "type": "object",
-      "properties": {
-        "main_column": {
-          "default": "**TITLE**\nSUMMARY\nAUTHORS\nURL (JOURNAL)",
-          "description": "Template for publication entry main column. Available placeholders:\n- `TITLE`: Publication title\n- `AUTHORS`: List of authors (formatted as comma-separated string)\n- `SUMMARY`: Summary/abstract text\n- `DOI`: Digital Object Identifier\n- `URL`: Publication URL (if DOI not provided)\n- `JOURNAL`: Journal/conference/venue name\n- `DATE`: Formatted date\n\nYou can also add arbitrary keys to entries and use them as UPPERCASE placeholders.\n\nThe default value is `**TITLE**\\nSUMMARY\\nAUTHORS\\nURL (JOURNAL)`.",
-          "title": "Main Column",
-          "type": "string"
-        },
-        "date_and_location_column": {
-          "default": "DATE",
-          "description": "Template for publication entry date column. Available placeholders:\n- `TITLE`: Publication title\n- `AUTHORS`: List of authors (formatted as comma-separated string)\n- `SUMMARY`: Summary/abstract text\n- `DOI`: Digital Object Identifier\n- `URL`: Publication URL (if DOI not provided)\n- `JOURNAL`: Journal/conference/venue name\n- `DATE`: Formatted date\n\nYou can also add arbitrary keys to entries and use them as UPPERCASE placeholders.\n\nThe default value is `DATE`.",
-          "title": "Date And Location Column",
-          "type": "string"
-        }
-      },
-      "title": "PublicationEntry",
       "additionalProperties": false
     },
     "rendercv__schema__models__design__classic_theme__SectionTitles__1": {
@@ -8325,23 +8326,23 @@
           "type": "string"
         },
         "one_line_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__OneLineEntry",
+          "$ref": "#/$defs/OneLineEntryTemplate",
           "description": "Template for one-line entries."
         },
         "education_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntry__1",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntryTemplate__1",
           "description": "Template for education entries."
         },
         "normal_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntry__1",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntryTemplate__1",
           "description": "Template for normal entries."
         },
         "experience_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntry__1",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__1",
           "description": "Template for experience entries."
         },
         "publication_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__PublicationEntry",
+          "$ref": "#/$defs/PublicationEntryTemplate",
           "description": "Template for publication entries."
         }
       },
@@ -8382,23 +8383,23 @@
           "type": "string"
         },
         "one_line_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__OneLineEntry",
+          "$ref": "#/$defs/OneLineEntryTemplate",
           "description": "Template for one-line entries."
         },
         "education_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntry__2",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntryTemplate__2",
           "description": "Template for education entries."
         },
         "normal_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntry__2",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntryTemplate__2",
           "description": "Template for normal entries."
         },
         "experience_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntry__2",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__2",
           "description": "Template for experience entries."
         },
         "publication_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__PublicationEntry",
+          "$ref": "#/$defs/PublicationEntryTemplate",
           "description": "Template for publication entries."
         }
       },
@@ -8439,23 +8440,23 @@
           "type": "string"
         },
         "one_line_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__OneLineEntry",
+          "$ref": "#/$defs/OneLineEntryTemplate",
           "description": "Template for one-line entries."
         },
         "education_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntry__3",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntryTemplate__3",
           "description": "Template for education entries."
         },
         "normal_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntry__3",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntryTemplate__3",
           "description": "Template for normal entries."
         },
         "experience_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntry__3",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__3",
           "description": "Template for experience entries."
         },
         "publication_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__PublicationEntry",
+          "$ref": "#/$defs/PublicationEntryTemplate",
           "description": "Template for publication entries."
         }
       },
@@ -8496,23 +8497,23 @@
           "type": "string"
         },
         "one_line_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__OneLineEntry",
+          "$ref": "#/$defs/OneLineEntryTemplate",
           "description": "Template for one-line entries."
         },
         "education_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntry__4",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntryTemplate__4",
           "description": "Template for education entries."
         },
         "normal_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntry__4",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntryTemplate__4",
           "description": "Template for normal entries."
         },
         "experience_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntry__4",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__4",
           "description": "Template for experience entries."
         },
         "publication_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__PublicationEntry",
+          "$ref": "#/$defs/PublicationEntryTemplate",
           "description": "Template for publication entries."
         }
       },
@@ -8553,23 +8554,23 @@
           "type": "string"
         },
         "one_line_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__OneLineEntry",
+          "$ref": "#/$defs/OneLineEntryTemplate",
           "description": "Template for one-line entries."
         },
         "education_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntry__5",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntryTemplate__5",
           "description": "Template for education entries."
         },
         "normal_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntry__5",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntryTemplate__5",
           "description": "Template for normal entries."
         },
         "experience_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntry__5",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__5",
           "description": "Template for experience entries."
         },
         "publication_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__PublicationEntry",
+          "$ref": "#/$defs/PublicationEntryTemplate",
           "description": "Template for publication entries."
         }
       },
@@ -8610,23 +8611,23 @@
           "type": "string"
         },
         "one_line_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__OneLineEntry",
+          "$ref": "#/$defs/OneLineEntryTemplate",
           "description": "Template for one-line entries."
         },
         "education_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntry__6",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntryTemplate__6",
           "description": "Template for education entries."
         },
         "normal_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntry__6",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntryTemplate__6",
           "description": "Template for normal entries."
         },
         "experience_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntry__6",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__6",
           "description": "Template for experience entries."
         },
         "publication_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__PublicationEntry",
+          "$ref": "#/$defs/PublicationEntryTemplate",
           "description": "Template for publication entries."
         }
       },
@@ -8667,23 +8668,23 @@
           "type": "string"
         },
         "one_line_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__OneLineEntry",
+          "$ref": "#/$defs/OneLineEntryTemplate",
           "description": "Template for one-line entries."
         },
         "education_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntry__7",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntryTemplate__7",
           "description": "Template for education entries."
         },
         "normal_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntry__7",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntryTemplate__7",
           "description": "Template for normal entries."
         },
         "experience_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntry__7",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__7",
           "description": "Template for experience entries."
         },
         "publication_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__PublicationEntry",
+          "$ref": "#/$defs/PublicationEntryTemplate",
           "description": "Template for publication entries."
         }
       },
@@ -8724,23 +8725,23 @@
           "type": "string"
         },
         "one_line_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__OneLineEntry",
+          "$ref": "#/$defs/OneLineEntryTemplate",
           "description": "Template for one-line entries."
         },
         "education_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntry__8",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntryTemplate__8",
           "description": "Template for education entries."
         },
         "normal_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntry__8",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntryTemplate__8",
           "description": "Template for normal entries."
         },
         "experience_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntry__8",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__8",
           "description": "Template for experience entries."
         },
         "publication_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__PublicationEntry",
+          "$ref": "#/$defs/PublicationEntryTemplate",
           "description": "Template for publication entries."
         }
       },
@@ -8781,23 +8782,23 @@
           "type": "string"
         },
         "one_line_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__OneLineEntry",
+          "$ref": "#/$defs/OneLineEntryTemplate",
           "description": "Template for one-line entries."
         },
         "education_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntry__9",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__EducationEntryTemplate__9",
           "description": "Template for education entries."
         },
         "normal_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntry__9",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__NormalEntryTemplate__9",
           "description": "Template for normal entries."
         },
         "experience_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntry__9",
+          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__ExperienceEntryTemplate__9",
           "description": "Template for experience entries."
         },
         "publication_entry": {
-          "$ref": "#/$defs/rendercv__schema__models__design__classic_theme__PublicationEntry",
+          "$ref": "#/$defs/PublicationEntryTemplate",
           "description": "Template for publication entries."
         }
       },
