@@ -5,7 +5,7 @@
   "description": "Base config deserialized from ~/.codex/config.toml.",
   "x-lintel": {
     "source": "https://developers.openai.com/codex/config-schema.json",
-    "sourceSha256": "f277d7551fbaa2e7a87839f3cf1f7b8cec4980d3ad3b84de39a362cf46184b55",
+    "sourceSha256": "ddcf43e0a8dcc41f263e01b0c92801b039301263bd71d2352d6e18df0554840d",
     "fileMatch": [
       "**/.codex/config.toml"
     ],
@@ -153,9 +153,6 @@
         "apps": {
           "type": "boolean"
         },
-        "artifact": {
-          "type": "boolean"
-        },
         "child_agents_md": {
           "type": "boolean"
         },
@@ -237,13 +234,13 @@
         "multi_agent": {
           "type": "boolean"
         },
+        "multi_agent_v2": {
+          "type": "boolean"
+        },
         "personality": {
           "type": "boolean"
         },
         "plugins": {
-          "type": "boolean"
-        },
-        "powershell_utf8": {
           "type": "boolean"
         },
         "prevent_idle_sleep": {
@@ -298,6 +295,9 @@
           "type": "boolean"
         },
         "tool_call_mcp_elicitation": {
+          "type": "boolean"
+        },
+        "tool_search": {
           "type": "boolean"
         },
         "tool_suggest": {
@@ -1080,9 +1080,6 @@
             "apps": {
               "type": "boolean"
             },
-            "artifact": {
-              "type": "boolean"
-            },
             "child_agents_md": {
               "type": "boolean"
             },
@@ -1164,13 +1161,13 @@
             "multi_agent": {
               "type": "boolean"
             },
+            "multi_agent_v2": {
+              "type": "boolean"
+            },
             "personality": {
               "type": "boolean"
             },
             "plugins": {
-              "type": "boolean"
-            },
-            "powershell_utf8": {
               "type": "boolean"
             },
             "prevent_idle_sleep": {
@@ -1225,6 +1222,9 @@
               "type": "boolean"
             },
             "tool_call_mcp_elicitation": {
+              "type": "boolean"
+            },
+            "tool_search": {
               "type": "boolean"
             },
             "tool_suggest": {
@@ -1483,6 +1483,21 @@
           "type": "string"
         }
       ]
+    },
+    "McpServerToolConfig": {
+      "type": "object",
+      "description": "Per-tool approval settings for a single MCP server tool.",
+      "properties": {
+        "approval_mode": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AppToolApproval"
+            }
+          ],
+          "description": "Approval mode for this tool."
+        }
+      },
+      "additionalProperties": false
     },
     "MemoriesToml": {
       "type": "object",
@@ -2052,6 +2067,11 @@
             "type": "string"
           }
         },
+        "name": {
+          "default": null,
+          "description": "Legacy display-name field accepted for backward compatibility.",
+          "type": "string"
+        },
         "oauth_resource": {
           "default": null,
           "type": "string"
@@ -2082,6 +2102,13 @@
           "default": null,
           "format": "double",
           "type": "number"
+        },
+        "tools": {
+          "type": "object",
+          "default": null,
+          "additionalProperties": {
+            "$ref": "#/$defs/McpServerToolConfig"
+          }
         },
         "url": {
           "type": "string"
@@ -2266,13 +2293,21 @@
         "enabled": {
           "type": "boolean"
         },
+        "name": {
+          "description": "Name-based selector.",
+          "type": "string"
+        },
         "path": {
-          "$ref": "#/$defs/AbsolutePathBuf"
+          "allOf": [
+            {
+              "$ref": "#/$defs/AbsolutePathBuf"
+            }
+          ],
+          "description": "Path-based selector."
         }
       },
       "required": [
-        "enabled",
-        "path"
+        "enabled"
       ],
       "additionalProperties": false
     },
@@ -2407,6 +2442,14 @@
         "status_line": {
           "default": null,
           "description": "Ordered list of status line item identifiers.\n\nWhen set, the TUI renders the selected items as the status line. When unset, the TUI defaults to: `model-with-reasoning`, `context-remaining`, and `current-dir`.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "terminal_title": {
+          "default": null,
+          "description": "Ordered list of terminal title item identifiers.\n\nWhen set, the TUI renders the selected items into the terminal window/tab title. When unset, the TUI defaults to: `spinner` and `project`.",
           "items": {
             "type": "string"
           },

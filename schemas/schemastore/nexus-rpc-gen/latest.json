@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/nexus-rpc-gen/latest.json",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/nexus-rpc/nexus-rpc-gen/main/schemas/nexus-rpc-gen.json",
+    "sourceSha256": "edc3f166c44cb156db1be2bd1fbe145dcf7cc874b09e425fd2b2fb9a44df1e2f",
+    "fileMatch": [
+      "*.nexusrpc.yaml",
+      "*.nexusrpc.yml"
+    ],
+    "parsers": [
+      "yaml"
+    ]
+  },
+  "$defs": {
+    "DefinitionFile": {
+      "title": "Nexus RPC Definition Schema",
+      "description": "Definition for Nexus RPC services and operations",
+      "type": "object",
+      "required": [
+        "nexusrpc"
+      ],
+      "properties": {
+        "nexusrpc": {
+          "type": "string",
+          "pattern": "^1\\.\\d+\\.\\d+$"
+        },
+        "services": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Service"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/DataType"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Service": {
+      "type": "object",
+      "required": [
+        "operations"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "operations": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Operation"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Operation": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "input": {
+          "$ref": "#/$defs/DataType"
+        },
+        "output": {
+          "$ref": "#/$defs/DataType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "DataType": {
+      "allOf": [
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/nexus-rpc-gen/_shared/latest--schema.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "$csharpRef": {
+              "type": "string",
+              "description": ".NET type name, fully qualified unless in the same namespace as the service.\n"
+            },
+            "$goRef": {
+              "type": "string",
+              "description": "Go type name, fully qualified unless in the same package as the service. For example, \"github.com/my-org/my-repo/my-package.MyType\".\n"
+            },
+            "$javaRef": {
+              "type": "string",
+              "description": "Java type name, fully qualified unless in the same package as the service.\n"
+            },
+            "$pythonRef": {
+              "type": "string",
+              "description": "Fully qualified Python type name.\n"
+            },
+            "$typescriptRef": {
+              "type": "string",
+              "description": "TypeScript type name. Can be prepended with the import + \"#\" to fully qualify it and have the \"import type\" emitted. For example, \"MyType\" would be no import, but \"node:url#URL\" would import that from \"node:url\". Similarly, it may be local and suffixed with a file extension, e.g. \"./my-types.js#MyType\". There is currently no way to represent an \"import * from\".\n"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$ref": "#/$defs/DefinitionFile"
+}

@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/bitrise-step/latest.json",
   "x-lintel": {
     "source": "https://www.schemastore.org/bitrise-step.json",
-    "sourceSha256": "9466b78283867705d3a04c86c26ff7832257217c72559a2c88cc7e20aa2108ad",
+    "sourceSha256": "45449f9eb6ece533128da9f0e1ffe754064dda7dcbeaa14f61c61a650b471ceb",
     "fileMatch": [
       "step.yml"
     ],
@@ -132,6 +132,38 @@
       "type": "object",
       "additionalProperties": false
     },
+    "ContainerReferenceConfigModel": {
+      "type": "object",
+      "description": "Additional configuration for a container reference.",
+      "properties": {
+        "recreate": {
+          "type": "boolean",
+          "description": "If true, the current container instance is discarded and a fresh one is started for this Step."
+        }
+      },
+      "additionalProperties": false
+    },
+    "ContainerReferenceModel": {
+      "description": "A reference to a container. Can be specified as a container ID string or as an object with the container ID as the key and optional configuration as the value.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "The ID of the container as defined in the top-level `containers` map."
+        },
+        {
+          "type": "object",
+          "description": "The container ID with optional configuration.",
+          "additionalProperties": false,
+          "maxProperties": 1,
+          "minProperties": 1,
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/$defs/ContainerReferenceConfigModel"
+            }
+          }
+        }
+      ]
+    },
     "StepModel": {
       "properties": {
         "title": {
@@ -247,6 +279,17 @@
             ".*": {
               "additionalProperties": true
             }
+          }
+        },
+        "execution_container": {
+          "$ref": "#/$defs/ContainerReferenceModel",
+          "description": "The execution container for this Step. The Step runs inside the specified Docker container."
+        },
+        "service_containers": {
+          "type": "array",
+          "description": "Service containers to run alongside this Step as background services.",
+          "items": {
+            "$ref": "#/$defs/ContainerReferenceModel"
           }
         },
         "inputs": {
