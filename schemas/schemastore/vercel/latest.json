@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/vercel/latest.json",
   "x-lintel": {
     "source": "https://openapi.vercel.sh/vercel.json",
-    "sourceSha256": "a491945473bc47549c4ca009abc0972cd9c4f57af6121670222a177dc1026b9e",
+    "sourceSha256": "0880004fdf8f257864f8638aabb0e88183cab7bb79354b5feca13a4703adc549",
     "fileMatch": [
       "vercel.json"
     ],
@@ -3026,6 +3026,270 @@
       "description": "Enables Bun for the project and specifies the version to use.",
       "type": "string"
     },
+    "experimentalApplications": {
+      "private": true,
+      "description": "Enables configuration of multiple applications in a single repository. Map of application name to application configuration.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "description": "Optional Vercel project identifier for this application.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "entrypoint": {
+            "description": "Application entrypoint, relative to the project root. Prefer this field for now.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "root": {
+            "description": "Root path to the application, relative to the project root. This is used to locate the app manifest.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "framework": {
+            "description": "Framework to use for single-service applications.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "deps": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "projectId": {
+                  "description": "Optional Vercel project identifier for the dependency target named by the map key.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "env": {
+                  "description": "Optional environment variable name to inject for this dependency.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256,
+                  "pattern": "^[A-Z][A-Z0-9_]*$"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "services": {
+            "description": "Nested services belonging to this application. Map of service name to service configuration.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "description": "Service type: web, cron, or worker. Defaults to web.",
+                  "enum": [
+                    "web",
+                    "cron",
+                    "worker"
+                  ]
+                },
+                "entrypoint": {
+                  "description": "Entry file for the service, relative to the workspace directory.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "root": {
+                  "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "workspace": {
+                  "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "routePrefix": {
+                  "description": "URL prefix for routing (web services only).",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "subdomain": {
+                  "description": "Subdomain for host-based routing (web services only).",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 63
+                },
+                "framework": {
+                  "description": "Framework to use.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "builder": {
+                  "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "runtime": {
+                  "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "buildCommand": {
+                  "description": "Build command for the service.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                },
+                "installCommand": {
+                  "description": "Install command for the service.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                },
+                "memory": {
+                  "description": "Memory allocation in MB (128-10240).",
+                  "type": "integer",
+                  "minimum": 128,
+                  "maximum": 10240
+                },
+                "maxDuration": {
+                  "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 900
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        "max"
+                      ]
+                    }
+                  ]
+                },
+                "includeFiles": {
+                  "description": "Files to include in bundle.",
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  ]
+                },
+                "excludeFiles": {
+                  "description": "Files to exclude from bundle.",
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  ]
+                },
+                "schedule": {
+                  "description": "Cron schedule expression (e.g., \"0 0 * * *\"). Required for cron services.",
+                  "type": "string",
+                  "minLength": 9,
+                  "maxLength": 256
+                },
+                "topic": {
+                  "description": "Topic name for worker subscription.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "topics": {
+                  "description": "Multiple topic names for worker subscription.",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "minItems": 1
+                },
+                "consumer": {
+                  "description": "Consumer group name for worker subscription.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "deps": {
+                  "description": "Map of dependency key to dependency configuration. Keys may target an application (for example \"backend\") or an application service (for example \"backend.api\").",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "projectId": {
+                        "description": "Optional Vercel project identifier for the dependency target named by the map key.",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256
+                      },
+                      "env": {
+                        "description": "Optional environment variable name to inject for this dependency.",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256,
+                        "pattern": "^[A-Z][A-Z0-9_]*$"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "experimentalDeps": {
+      "private": true,
+      "description": "Defines dependencies for single-service projects. Map of dependency key to dependency configuration.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "description": "Optional Vercel project identifier for the dependency target named by the map key.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "env": {
+            "description": "Optional environment variable name to inject for this dependency.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[A-Z][A-Z0-9_]*$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "experimentalServices": {
       "private": true,
       "description": "Enables configuration of multiple services in a single deployment. Map of service name to service configuration.",
@@ -3043,6 +3307,12 @@
           },
           "entrypoint": {
             "description": "Entry file for the service, relative to the workspace directory.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "root": {
+            "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
             "type": "string",
             "minLength": 1,
             "maxLength": 512
@@ -3176,6 +3446,29 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 256
+          },
+          "deps": {
+            "description": "Map of dependency key to dependency configuration. Keys may target an application (for example \"backend\") or an application service (for example \"backend.api\").",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "projectId": {
+                  "description": "Optional Vercel project identifier for the dependency target named by the map key.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "env": {
+                  "description": "Optional environment variable name to inject for this dependency.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256,
+                  "pattern": "^[A-Z][A-Z0-9_]*$"
+                }
+              },
+              "additionalProperties": false
+            }
           }
         },
         "additionalProperties": false

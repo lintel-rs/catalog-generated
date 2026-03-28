@@ -4,7 +4,7 @@
   "title": "Speakeasy Workflow Schema",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/speakeasy-api/sdk-gen-config/main/schemas/workflow.schema.json",
-    "sourceSha256": "2a7baa03734c7934fcdfb763a2ccffe2604a03cbb0c6dfc8f69240eb392fd4b6",
+    "sourceSha256": "7a63f43c12453fb6df11cbdda73d65876f8d4aadb0b56b18d11ec21b934dc559",
     "fileMatch": [
       "**/.speakeasy/workflow.yaml"
     ],
@@ -273,6 +273,28 @@
       ],
       "additionalProperties": false
     },
+    "WorkflowMCPRegistry": {
+      "type": "object",
+      "properties": {
+        "auth": {
+          "description": "Authentication method for the MCP Registry. Use 'github-oidc' (recommended, no token needed) for io.github.* namespaces in GitHub Actions, 'github' with a PAT, or 'dns' for custom domain namespaces.",
+          "enum": [
+            "github-oidc",
+            "github",
+            "dns"
+          ],
+          "type": "string"
+        },
+        "token": {
+          "description": "Authentication token. Not needed for github-oidc. For github auth, a GitHub PAT with read:org and read:user scopes. For dns auth, the Ed25519 private key.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "auth"
+      ],
+      "additionalProperties": false
+    },
     "WorkflowMockServer": {
       "type": "object",
       "properties": {
@@ -366,6 +388,10 @@
         "java": {
           "$ref": "#/$defs/WorkflowJava",
           "description": "Maven (Java) publishing configuration."
+        },
+        "mcpRegistry": {
+          "$ref": "#/$defs/WorkflowMCPRegistry",
+          "description": "MCP Registry publishing configuration. Publishes server metadata to the official MCP Registry (registry.modelcontextprotocol.io)."
         },
         "npm": {
           "$ref": "#/$defs/WorkflowNPM",
