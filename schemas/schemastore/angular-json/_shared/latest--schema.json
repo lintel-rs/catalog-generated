@@ -1,57 +1,67 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Extract i18n Target",
-  "description": "Extract i18n target options for Build Facade.",
+  "title": "Angular Interceptor Options Schema",
+  "description": "Creates a new interceptor in your project. Interceptors are used to intercept and modify HTTP requests and responses before they reach their destination. This allows you to perform tasks like adding authentication headers, handling errors, or logging requests. This schematic generates the necessary files and boilerplate code for a new interceptor.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/angular/build/src/builders/extract-i18n/schema.json",
-    "sourceSha256": "196008c5a1cdff07bc23e47545a10873c8d368ec76a5ce1338a5b86c10fd6f26"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/interceptor/schema.json",
+    "sourceSha256": "a51b8dd511cc3657cc8fd11ab11b711d8eb53b42c040cff41258939d01ff14cb"
   },
   "type": "object",
   "properties": {
-    "buildTarget": {
+    "name": {
       "type": "string",
-      "description": "A builder target to extract i18n messages in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
-      "pattern": "^[^:\\s]*:[^:\\s]*(:[^\\s]+)?$"
+      "description": "The name for the new interceptor. This will be used to create the interceptor's class and spec files (e.g., `my-interceptor.interceptor.ts` and `my-interceptor.interceptor.spec.ts`).",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What name would you like to use for the interceptor?"
     },
-    "format": {
+    "path": {
       "type": "string",
-      "description": "Output format for the generated file.",
-      "default": "xlf",
-      "enum": [
-        "xmb",
-        "xlf",
-        "xlif",
-        "xliff",
-        "xlf2",
-        "xliff2",
-        "json",
-        "arb",
-        "legacy-migrate"
-      ]
+      "format": "path",
+      "$default": {
+        "$source": "workingDirectory"
+      },
+      "description": "The path where the interceptor files should be created, relative to the workspace root. If not provided, the interceptor will be created in the current directory.",
+      "visible": false
     },
-    "progress": {
+    "project": {
+      "type": "string",
+      "description": "The name of the project where the interceptor should be created. If not specified, the CLI will determine the project from the current directory.",
+      "$default": {
+        "$source": "projectName"
+      }
+    },
+    "flat": {
       "type": "boolean",
-      "description": "Log progress to the console.",
+      "default": true,
+      "description": "Creates the new interceptor files at the top level of the current project. If set to false, a new folder with the interceptor's name will be created to contain the files."
+    },
+    "skipTests": {
+      "type": "boolean",
+      "description": "Skip the generation of a unit test file `spec.ts` for the new interceptor.",
+      "default": false
+    },
+    "functional": {
+      "type": "boolean",
+      "description": "Creates the interceptor as a function `HttpInterceptorFn` instead of a class. Functional interceptors can be simpler for basic scenarios.",
       "default": true
     },
-    "outputPath": {
+    "typeSeparator": {
       "type": "string",
-      "description": "Path where output will be placed."
-    },
-    "outFile": {
-      "type": "string",
-      "description": "Name of the file to output."
-    },
-    "i18nDuplicateTranslation": {
-      "type": "string",
-      "description": "How to handle duplicate translations.",
+      "default": "-",
       "enum": [
-        "error",
-        "warning",
-        "ignore"
-      ]
+        "-",
+        "."
+      ],
+      "description": "The separator character to use before the type within the generated file's name. For example, if you set the option to `.`, the file will be named `example.interceptor.ts`."
     }
   },
+  "required": [
+    "name",
+    "project"
+  ],
   "additionalProperties": false
 }

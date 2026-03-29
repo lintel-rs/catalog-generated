@@ -5,7 +5,7 @@
   "description": "Poe the Poet is a task runner and build tool that uses simple configuration to define project tasks. It can work as a standalone tool or as a plugin for Poetry.",
   "x-lintel": {
     "source": "https://json.schemastore.org/partial-poe.json",
-    "sourceSha256": "e0d0cb5e20e2dd25f28a92a1a8a053ec097c450bd8afa8b9aafd366b7682ee5c"
+    "sourceSha256": "9a29e1730c79e9275c276c0286c5aa0c70607d5483e689a0977faa35410c3c1b"
   },
   "type": "object",
   "properties": {
@@ -24,6 +24,10 @@
     "default_array_task_type": {
       "default": "sequence",
       "description": "When a task is declared as an array (instead of a table), then it is interpreted as the default array task type, which will be 'sequence' unless otherwise specified.",
+      "enum": [
+        "sequence",
+        "parallel"
+      ],
       "type": "string"
     },
     "default_task_type": {
@@ -167,6 +171,7 @@
   },
   "$defs": {
     "standard_options": {
+      "type": "object",
       "properties": {
         "args": {
           "anyOf": [
@@ -343,9 +348,10 @@
           "type": "integer"
         }
       },
-      "type": "object"
+      "additionalProperties": true
     },
     "capture_stdout_option": {
+      "type": "object",
       "properties": {
         "capture_stdout": {
           "description": "Redirects the task output to a file with the given path. Supports environment variable interpolation.",
@@ -357,9 +363,10 @@
           "type": "string"
         }
       },
-      "type": "object"
+      "additionalProperties": true
     },
     "use_exec_option": {
+      "type": "object",
       "properties": {
         "use_exec": {
           "description": "Specify that this task should be executed in the same process, instead of as a subprocess. Note: This feature has limitations, such as not being compatible with tasks that are referenced by other tasks and not working on Windows.",
@@ -388,7 +395,7 @@
           ]
         }
       },
-      "type": "object"
+      "additionalProperties": true
     },
     "ignore_fail_exec_option": {
       "description": "Return exit code 0 even if the task fails, or specify a list of task exit codes to ignore.",
@@ -638,6 +645,9 @@
         },
         {
           "type": "object",
+          "required": [
+            "cmd"
+          ],
           "properties": {
             "empty_glob": {
               "default": "pass",
@@ -664,9 +674,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "cmd"
-          ]
+          "additionalProperties": true
         }
       ]
     },
@@ -683,6 +691,9 @@
         },
         {
           "type": "object",
+          "required": [
+            "expr"
+          ],
           "properties": {
             "assert": {
               "description": "A boolean indicating if the task will fail when the result of the expression is falsy.",
@@ -703,9 +714,7 @@
               "type": "array"
             }
           },
-          "required": [
-            "expr"
-          ]
+          "additionalProperties": true
         }
       ]
     },
@@ -719,6 +728,9 @@
         },
         {
           "type": "object",
+          "required": [
+            "ref"
+          ],
           "properties": {
             "ignore_fail": {
               "description": "If true the failure of the referenced task will be ignored and the ref task will return exit code 0.",
@@ -747,9 +759,7 @@
             ],
             "type": "object"
           },
-          "required": [
-            "ref"
-          ]
+          "additionalProperties": true
         }
       ]
     },
@@ -766,6 +776,9 @@
         },
         {
           "type": "object",
+          "required": [
+            "script"
+          ],
           "properties": {
             "ignore_fail": {
               "$ref": "#/$defs/ignore_fail_exec_option"
@@ -785,9 +798,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "script"
-          ]
+          "additionalProperties": true
         }
       ]
     },
@@ -798,6 +809,9 @@
         },
         {
           "type": "object",
+          "required": [
+            "sequence"
+          ],
           "properties": {
             "default_item_type": {
               "default": "ref",
@@ -812,9 +826,7 @@
               "description": "A sequence task is defined by an array of tasks or command names to be run one after the other. Each item in the sequence can be a command name, a command, script, reference to another task, or another sequence."
             }
           },
-          "required": [
-            "sequence"
-          ]
+          "additionalProperties": true
         }
       ]
     },
@@ -825,6 +837,9 @@
         },
         {
           "type": "object",
+          "required": [
+            "parallel"
+          ],
           "properties": {
             "default_item_type": {
               "default": "ref",
@@ -854,9 +869,7 @@
               "description": "A subtask is defined by an array of tasks or command names to be run multiple tasks concurrently. Each subtask can be a command name, a command, script, reference to another task, or another sequence."
             }
           },
-          "required": [
-            "parallel"
-          ]
+          "additionalProperties": true
         }
       ]
     },
@@ -870,6 +883,9 @@
         },
         {
           "type": "object",
+          "required": [
+            "shell"
+          ],
           "properties": {
             "ignore_fail": {
               "$ref": "#/$defs/ignore_fail_exec_option"
@@ -914,9 +930,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "shell"
-          ]
+          "additionalProperties": true
         }
       ]
     },
@@ -930,6 +944,10 @@
         },
         {
           "type": "object",
+          "required": [
+            "control",
+            "switch"
+          ],
           "properties": {
             "control": {
               "$ref": "#/$defs/one_of_tasks",
@@ -969,10 +987,7 @@
               "type": "array"
             }
           },
-          "required": [
-            "control",
-            "switch"
-          ]
+          "additionalProperties": true
         }
       ]
     },
