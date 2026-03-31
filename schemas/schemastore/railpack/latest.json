@@ -1,0 +1,537 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/railpack/latest.json",
+  "x-lintel": {
+    "source": "https://schema.railpack.com",
+    "sourceSha256": "d2f491c6e383b7aa47cc988937ce71931afa5c2afd8872d0c4f790fa37ddc5cd",
+    "fileMatch": [
+      "railpack.json"
+    ],
+    "parsers": [
+      "json"
+    ]
+  },
+  "type": "object",
+  "properties": {
+    "provider": {
+      "type": "string",
+      "description": "The provider to use"
+    },
+    "buildAptPackages": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "description": "List of apt packages to install during the build step"
+    },
+    "steps": {
+      "description": "Map of step names to step definitions",
+      "type": "object",
+      "additionalProperties": {
+        "properties": {
+          "inputs": {
+            "items": {
+              "oneOf": [
+                {
+                  "properties": {
+                    "step": {
+                      "type": "string",
+                      "description": "The step to use as input"
+                    },
+                    "include": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "description": "Files or directories to include"
+                    },
+                    "exclude": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "description": "Files or directories to exclude"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "step"
+                  ]
+                },
+                {
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "The image to use as input"
+                    },
+                    "include": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "description": "Files or directories to include"
+                    },
+                    "exclude": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "description": "Files or directories to exclude"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "image"
+                  ]
+                },
+                {
+                  "properties": {
+                    "local": {
+                      "type": "boolean",
+                      "description": "Whether to use local files as input"
+                    },
+                    "include": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "description": "Files or directories to include"
+                    },
+                    "exclude": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "description": "Files or directories to exclude"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "local"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    ".",
+                    "..."
+                  ],
+                  "description": "Strings will be parsed and interpreted as an input. Valid formats are: '.', '...', or '$step'"
+                }
+              ]
+            },
+            "type": "array",
+            "description": "The inputs for this step"
+          },
+          "commands": {
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "Strings will be parsed and interpreted as a command to run"
+                },
+                {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "properties": {
+                    "cmd": {
+                      "type": "string",
+                      "description": "The shell command to execute (e.g. 'go build' or 'npm install')"
+                    },
+                    "customName": {
+                      "type": "string",
+                      "description": "Optional custom name to display for this command in build output"
+                    }
+                  },
+                  "required": [
+                    "cmd"
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "description": "Directory path to add to the global PATH environment variable. This path will be available to all subsequent commands in the build"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "description": "Optional source image to copy from. This can be any public image URL"
+                    },
+                    "src": {
+                      "type": "string",
+                      "description": "Source path to copy from. Can be a file or directory"
+                    },
+                    "dest": {
+                      "type": "string",
+                      "description": "Destination path to copy to. Will be created if it doesn't exist"
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "dest"
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "description": "Directory path where the file should be created"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the file to create"
+                    },
+                    "mode": {
+                      "type": "integer",
+                      "description": "Optional Unix file permissions mode (e.g. 0644 for regular file)"
+                    },
+                    "customName": {
+                      "type": "string",
+                      "description": "Optional custom name to display for this file operation"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "name"
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "type": "array",
+            "description": "The commands to run in this step"
+          },
+          "secrets": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The secrets that this step uses"
+          },
+          "assets": {
+            "description": "The assets available to this step. The key is the name of the asset that is referenced in a file command",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "description": "The variables available to this step. The key is the name of the variable that is referenced in a variable command",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "caches": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The caches available to all commands in this step. Each cache must refer to a cache at the top level of the plan"
+          },
+          "deployOutputs": {
+            "items": {
+              "properties": {
+                "include": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "description": "Files or directories to include"
+                },
+                "exclude": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "description": "Files or directories to exclude"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "type": "array",
+            "description": "Parts of this step that should be included in the final image. If empty"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    "deploy": {
+      "properties": {
+        "aptPackages": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of apt packages to include at runtime"
+        },
+        "base": {
+          "oneOf": [
+            {
+              "properties": {
+                "step": {
+                  "type": "string",
+                  "description": "The step to use as input"
+                },
+                "include": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "description": "Files or directories to include"
+                },
+                "exclude": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "description": "Files or directories to exclude"
+                }
+              },
+              "type": "object",
+              "required": [
+                "step"
+              ]
+            },
+            {
+              "properties": {
+                "image": {
+                  "type": "string",
+                  "description": "The image to use as input"
+                },
+                "include": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "description": "Files or directories to include"
+                },
+                "exclude": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "description": "Files or directories to exclude"
+                }
+              },
+              "type": "object",
+              "required": [
+                "image"
+              ]
+            },
+            {
+              "properties": {
+                "local": {
+                  "type": "boolean",
+                  "description": "Whether to use local files as input"
+                },
+                "include": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "description": "Files or directories to include"
+                },
+                "exclude": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "description": "Files or directories to exclude"
+                }
+              },
+              "type": "object",
+              "required": [
+                "local"
+              ]
+            },
+            {
+              "type": "string",
+              "enum": [
+                ".",
+                "..."
+              ],
+              "description": "Strings will be parsed and interpreted as an input. Valid formats are: '.', '...', or '$step'"
+            }
+          ],
+          "description": "The base image to use for the deploy step"
+        },
+        "inputs": {
+          "items": {
+            "oneOf": [
+              {
+                "properties": {
+                  "step": {
+                    "type": "string",
+                    "description": "The step to use as input"
+                  },
+                  "include": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "description": "Files or directories to include"
+                  },
+                  "exclude": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "description": "Files or directories to exclude"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "step"
+                ]
+              },
+              {
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "description": "The image to use as input"
+                  },
+                  "include": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "description": "Files or directories to include"
+                  },
+                  "exclude": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "description": "Files or directories to exclude"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "image"
+                ]
+              },
+              {
+                "properties": {
+                  "local": {
+                    "type": "boolean",
+                    "description": "Whether to use local files as input"
+                  },
+                  "include": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "description": "Files or directories to include"
+                  },
+                  "exclude": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "description": "Files or directories to exclude"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "local"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  ".",
+                  "..."
+                ],
+                "description": "Strings will be parsed and interpreted as an input. Valid formats are: '.', '...', or '$step'"
+              }
+            ]
+          },
+          "type": "array",
+          "description": "The inputs for the deploy step"
+        },
+        "startCommand": {
+          "type": "string",
+          "description": "The command to run in the container"
+        },
+        "variables": {
+          "description": "The variables available to this step. The key is the name of the variable that is referenced in a variable command",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "paths": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "The paths to prepend to the $PATH environment variable"
+        }
+      },
+      "description": "Deploy configuration",
+      "type": "object",
+      "additionalProperties": false
+    },
+    "packages": {
+      "description": "Map of package name to package version",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "caches": {
+      "description": "Map of cache name to cache definitions. The cache key can be referenced in an exec command",
+      "type": "object",
+      "additionalProperties": {
+        "properties": {
+          "directory": {
+            "type": "string",
+            "description": "The directory to cache"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "shared",
+              "locked"
+            ],
+            "description": "The type of cache (either 'shared' or 'locked')",
+            "default": "shared"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    "secrets": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "description": "Secrets that should be made available to commands that have useSecrets set to true"
+    },
+    "$schema": {
+      "type": "string",
+      "description": "The schema for this config"
+    }
+  },
+  "additionalProperties": false
+}
