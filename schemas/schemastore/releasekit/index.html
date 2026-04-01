@@ -368,10 +368,10 @@ Schema - Lintel Catalog"
     <span class="property-name">tagTemplate</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Template for Git tags</p>
+  <div class="desc-html"><p>Template for Git tags. Available variables: ${version} (version number), ${prefix} (versionPrefix value, e.g. 'v'), ${packageName} (sanitized package name, e.g. 'scope-pkg'). Example: "${packageName}-${prefix}${version}" produces "scope-pkg-v1.2.3".</p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;v{version}&quot;</code>
+    <span class="meta-label">Default:</span> <code>&quot;${prefix}${version}&quot;</code>
   </div>
        </div>    <div
   class="property-item"
@@ -848,7 +848,7 @@ Schema - Lintel Catalog"
   <div class="desc-html"><p>GitHub Release configuration</p>
 </div>
          <details class="nested-properties">
-    <summary>5 nested properties</summary>
+    <summary>6 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -914,7 +914,19 @@ Schema - Lintel Catalog"
   </div>
     <div class="property-meta">
     <span class="meta-label">Values:</span> <code class="enum-value">&quot;auto&quot;</code> <code class="enum-value">&quot;releaseNotes&quot;</code> <code class="enum-value">&quot;changelog&quot;</code> <code class="enum-value">&quot;generated&quot;</code> <code class="enum-value">&quot;none&quot;</code>  </div>
-     </div>      </div>
+     </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">titleTemplate</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Template for the GitHub release title when a package name is resolved. Available variables: ${packageName} (original scoped name, e.g. '@scope/pkg'), ${version} (e.g. 'v1.0.0'). Version-only tags always use the tag string directly.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;${packageName}: ${version}&quot;</code>
+  </div>
+       </div>      </div>
   </details>
 </div>    <div
   class="property-item"
@@ -1119,6 +1131,188 @@ Schema - Lintel Catalog"
     <div class="property-meta">
     <span class="meta-label">Values:</span> <code class="enum-value">&quot;prepend&quot;</code> <code class="enum-value">&quot;regenerate&quot;</code>  </div>
      </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+  id="prop-ci"
+>
+  <div class="property-header">
+    <span class="property-name">ci</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>CI automation configuration for release triggers, PR previews, and label management</p>
+</div>
+         <details class="nested-properties">
+    <summary>7 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">releaseStrategy</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>How releases are delivered. 'direct': release on merge to main. 'manual': releases triggered manually (e.g. workflow_dispatch). 'standing-pr': changes accumulate in a release PR. 'scheduled': releases triggered on a schedule.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;direct&quot;</code>
+  </div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;manual&quot;</code> <code class="enum-value">&quot;direct&quot;</code> <code class="enum-value">&quot;standing-pr&quot;</code> <code class="enum-value">&quot;scheduled&quot;</code>  </div>
+     </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">releaseTrigger</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>What triggers a release. 'label': a PR bump label (release:patch/minor/major) is required. 'commit': conventional commits drive the bump automatically; every merge can trigger a release.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;label&quot;</code>
+  </div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;commit&quot;</code> <code class="enum-value">&quot;label&quot;</code>  </div>
+     </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">prPreview</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Enable PR preview comments showing what would be released if the PR is merged. Set to false to disable.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>true</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">autoRelease</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Automatically trigger a release when CI conditions are met, without manual intervention.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">skipPatterns</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Commit message prefixes that suppress a release. The default matches the release commit template to prevent release loops.</p>
+</div>
+    <div class="property-meta"><span class="meta-label">Default:</span></div>
+  <pre class="code-block"><code>[
+  &quot;chore: release &quot;
+]</code></pre>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">minChanges</span>
+    <span class="type-badge">integer</span>
+   </div>
+  <div class="desc-html"><p>Minimum number of packages with releasable changes required to trigger a release.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>1</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >min=1</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">labels</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>PR label names used for release control. Override to match your repository's label conventions.</p>
+</div>
+         <details class="nested-properties">
+    <summary>6 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">stable</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Label to graduate a prerelease to stable</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;release:stable&quot;</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">prerelease</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Label to create a prerelease</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;release:prerelease&quot;</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">skip</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Label to suppress a release on this PR</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;release:skip&quot;</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">major</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Label to force a major bump</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;release:major&quot;</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">minor</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Label to force a minor bump</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;release:minor&quot;</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">patch</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Label to force a patch bump</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;release:patch&quot;</code>
+  </div>
+       </div>      </div>
+  </details>
+</div>      </div>
   </details>
 </div>    <div
   class="property-item"

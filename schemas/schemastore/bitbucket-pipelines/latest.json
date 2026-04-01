@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/bitbucket-pipelines/latest.json",
   "x-lintel": {
     "source": "https://api.bitbucket.org/schemas/pipelines-configuration",
-    "sourceSha256": "7bab5629e59623ca24ae370eaf40ec9f7527c8a0d925841c2480f7bb5bf8e0bd",
+    "sourceSha256": "9476921719f1f606ac6e377ca5b20a099e1c258a2397f1cdea0b397cfce099cf",
     "fileMatch": [
       "bitbucket-pipelines.yml"
     ],
@@ -288,6 +288,42 @@
         "title": "Fail Fast",
         "type": "boolean"
       },
+      "final_item": {
+        "additionalProperties": false,
+        "properties": {
+          "final": {
+            "$ref": "#/components/schemas/final_step"
+          }
+        },
+        "type": "object"
+      },
+      "final_step": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/step_base"
+          },
+          {
+            "description": "A special step that always runs at the end of a pipeline, even if earlier steps fail or the pipeline is stopped. Only one final step is allowed per pipeline and it must be the last item.",
+            "properties": {
+              "deployment": {
+                "not": {}
+              },
+              "fail-fast": {
+                "not": {}
+              },
+              "trigger": {
+                "description": "The final step always runs automatically. Manual trigger is not supported.",
+                "enum": [
+                  "automatic"
+                ],
+                "type": "string"
+              }
+            },
+            "title": "Final Pipeline Step",
+            "type": "object"
+          }
+        ]
+      },
       "image": {
         "oneOf": [
           {
@@ -494,6 +530,9 @@
             },
             {
               "$ref": "#/components/schemas/stage_item"
+            },
+            {
+              "$ref": "#/components/schemas/final_item"
             }
           ]
         },

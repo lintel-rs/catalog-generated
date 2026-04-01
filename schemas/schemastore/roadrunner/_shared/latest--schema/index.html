@@ -164,7 +164,7 @@
     <span class="label">Type:</span>
     <span class="type-badge">object</span>
   </div>
-   <div class="desc-html"><p>All the valid configuration parameters for the http plugin for RoadRunner.</p>
+   <div class="desc-html"><p>All the valid configuration parameters for the Temporal plugin for RoadRunner.</p>
 </div>
    <h2 id="properties">Properties</h2>
   <div class="property-list">
@@ -176,789 +176,244 @@
     <span class="property-name">address</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Host and/or port to listen on for HTTP traffic. If omitted, RoadRunner will not listen for HTTP requests.</p>
+  <div class="desc-html"><p>Address of the Temporal server. Defaults to localhost:7233 if not provided.</p>
 </div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;127.0.0.1:8080&quot;</code>, <code>&quot;:8080&quot;</code>  </div>
-   <div class="property-constraints">
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;localhost:7233&quot;</code>
+  </div>
+       <div class="property-constraints">
 <span class="constraint"
       >minLength=1</span
     >  </div>
   </div>    <div
   class="property-item"
-  id="prop-internal_error_code"
+  id="prop-cache_size"
 >
   <div class="property-header">
-    <span class="property-name">internal_error_code</span>
+    <span class="property-name">cache_size</span>
     <span class="type-badge">integer</span>
    </div>
-  <div class="desc-html"><p>HTTP status code to use for internal RoadRunner errors. Defaults to 500 if omitted.</p>
+  <div class="desc-html"><p>Sticky cache size. Sticky workflow execution is the affinity between workflow tasks of a specific workflow execution to a specific worker. The benefit of sticky execution is that the workflow does not have to reconstruct state by replaying history from the beginning. The cache is shared between workers running within same process. This must be called before any worker is started. If not called, the default size of 10K (which may change) will be used.</p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>500</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >min=100</span
-    ><span class="constraint"
-      >max=599</span
-    >  </div>
-  </div>    <div
-  class="property-item"
-  id="prop-max_request_size"
->
-  <div class="property-header">
-    <span class="property-name">max_request_size</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>Maximum request size in MB. Defaults to 1 GB if zero or omitted.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>1000</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >min=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
-  id="prop-raw_body"
->
-  <div class="property-header">
-    <span class="property-name">raw_body</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to send the raw, encoded body for <code>application/x-www-form-urlencoded</code> content. Defaults to sending decoded content to PHP workers.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
+    <span class="meta-label">Default:</span> <code>10000</code>
   </div>
        </div>    <div
   class="property-item"
-  id="prop-access_logs"
+  id="prop-interceptors"
 >
   <div class="property-header">
-    <span class="property-name">access_logs</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to enable HTTP access logs.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>    <div
-  class="property-item"
-  id="prop-middleware"
->
-  <div class="property-header">
-    <span class="property-name">middleware</span>
+    <span class="property-name">interceptors</span>
     <span class="type-badge">string[]</span>
    </div>
-  <div class="desc-html"><p>List of middleware to load for the HTTP plugin, executed in the specified order.</p>
+  <div class="desc-html"><p>Ordered list of enabled worker interceptor plugin names. When set, only these interceptors are active and applied in the specified order. When omitted, all registered interceptors are applied.</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
-      >minItems=1</span
+      >uniqueItems=true</span
     >  </div>
   </div>    <div
   class="property-item"
-  id="prop-trusted_subnets"
+  id="prop-data_converters"
 >
   <div class="property-header">
-    <span class="property-name">trusted_subnets</span>
+    <span class="property-name">data_converters</span>
     <span class="type-badge">string[]</span>
    </div>
-  <div class="desc-html"><p>List of subnets from which incoming requests are allowed. Defaults to typical private network ranges (192.168.<em>, 10.0.</em>, and 172.16.<em>) and local/loopback interfaces (127.</em>).</p>
+  <div class="desc-html"><p>Ordered list of enabled custom data converter encodings. When set, only these converters are active and applied in the specified order. When omitted, all registered custom converters are applied. Custom converters are inserted before the default JSON converter in the converter chain.</p>
 </div>
-    <div class="property-meta"><span class="meta-label">Default:</span></div>
-  <pre class="code-block"><code>[
-  &quot;10.0.0.0/8&quot;,
-  &quot;127.0.0.0/8&quot;,
-  &quot;172.16.0.0/12&quot;,
-  &quot;192.168.0.0/16&quot;,
-  &quot;::1/128&quot;,
-  &quot;fc00::/7&quot;,
-  &quot;fe80::/10&quot;
-]</code></pre>
-       </div>    <div
+       <div class="property-constraints">
+<span class="constraint"
+      >uniqueItems=true</span
+    >  </div>
+  </div>    <div
   class="property-item"
-  id="prop-uploads"
+  id="prop-namespace"
 >
   <div class="property-header">
-    <span class="property-name">uploads</span>
-    <a href="#def-Uploads" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>File upload configuration.</p>
-</div>
-         <details class="nested-properties">
-    <summary>3 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">dir</span>
+    <span class="property-name">namespace</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Directory for file uploads. Empty/undefined value means the OS default temporary directory ($TEMP) will be used, i.e. <code>/tmp</code>.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/tmp&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">forbid</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>Disallow upload of files with the provided extensions.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">allow</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>Allow only upload of files with the provided extensions. Empty/undefined value means all files except explicitly disallowed (<code>forbid</code>) files are allowed.</p>
-</div>
-    <div class="property-meta"><span class="meta-label">Default:</span></div>
-  <pre class="code-block"><code>[]</code></pre>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
-  id="prop-headers"
->
-  <div class="property-header">
-    <span class="property-name">headers</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>HTTP header configuration.</p>
-</div>
-         <details class="nested-properties">
-    <summary>3 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">cors</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>Controls which CORS headers are returned. Additional headers <code>Vary: Origin</code>, <code>Vary: Access-Control-Request-Method</code> and <code>Vary: Access-Control-Request-Headers</code> will be added to responses. Omit this section to disable CORS headers.</p>
-</div>
-         <details class="nested-properties">
-    <summary>7 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">allowed_origin</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Controls the value of 'Access-Control-Allow-Origin'.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;*&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">allowed_origin_regex</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Controls the value of 'Access-Control-Allow-Origin' header value, but evaluated as regex.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;^https://foo&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">allowed_headers</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Controls the value of 'Access-Control-Allow-Headers'.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;*&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">allowed_methods</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Controls the value of 'Access-Control-Allow-Methods'. Provide a comma-separated string of HTTP verbs.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;GET,POST,PUT,DELETE&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">allow_credentials</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Controls the value of 'Access-Control-Allow-Credentials'.</p>
+  <div class="desc-html"><p>Namespace for this client to work with.</p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
+    <span class="meta-label">Default:</span> <code>&quot;default&quot;</code>
   </div>
        </div>    <div
   class="property-item"
+  id="prop-metrics"
 >
   <div class="property-header">
-    <span class="property-name">exposed_headers</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Controls the value of 'Access-Control-Expose-Headers'. Provide a comma-separated list of HTTP headers.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">max_age</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>Controls the value of 'Access-Control-Max-Age' (in seconds).</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>0</code>
-  </div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>600</code>  </div>
-   </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">request</span>
-    <a href="#def-Headers" class="type-badge type-badge-link"
-      >object</a
+    <span class="property-name">metrics</span>
+    <span class="type-badge"
+      >object | object</span
     >
    </div>
        </div>    <div
   class="property-item"
+  id="prop-activities"
 >
   <div class="property-header">
-    <span class="property-name">response</span>
-    <a href="#def-Headers" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
-  id="prop-static"
->
-  <div class="property-header">
-    <span class="property-name">static</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>Configuration options for serving static files.</p>
-</div>
-         <details class="nested-properties">
-    <summary>7 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">dir</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Path to the directory with static assets. Defaults to the current working directory. Empty/undefined and <code>.</code> are equal and are both treated as current directory.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;.&quot;</code>, <code>&quot;/var/www/html&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">forbid</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>File extensions of files that must not be served. Empty/undefined disallows no files. If files are specified in both <code>forbid</code> and <code>allow</code>, they will be disallowed. Defaults to an empty array, disallowing no files.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">allow</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>File extensions of files that may be served. Empty/undefined allows all files, except files specified in <code>forbid</code>.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">calculate_etag</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to enable ETag computation for static files.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">weak</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to use a weak generator (/W), which uses only the filename to generate a CRC32 sum for et ETag. Disable to use the file contents.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">request</span>
-    <a href="#def-Headers" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">response</span>
-    <a href="#def-Headers" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
-  id="prop-pool"
->
-  <div class="property-header">
-    <span class="property-name">pool</span>
+    <span class="property-name">activities</span>
     <span class="type-badge">Schema</span>
    </div>
        </div>    <div
   class="property-item"
-  id="prop-ssl"
+  id="prop-tls"
 >
   <div class="property-header">
-    <span class="property-name">ssl</span>
-    <a href="#def-SSL" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Settings required to set up manual or automatic HTTPS for your server. Either <code>key</code> and <code>cert</code> <em>or</em> <code>acme</code> is required, but not both.</p>
-</div>
-         <details class="nested-properties">
-    <summary>7 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">address</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Host address/or port to bind to. Defaults to 127.0.0.1:443.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;127.0.0.1:443&quot;</code>
-  </div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;127.0.0.1:443&quot;</code>, <code>&quot;:8443&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">acme</span>
+    <span class="property-name">tls</span>
     <span class="type-badge">object</span>
    </div>
-  <div class="desc-html"><p>ACME certificates provider (Let's encrypt). Do not provide this parameter if you use <code>key</code> and <code>cert</code>.</p>
+  <div class="desc-html"><p>Temporal TLS configuration.</p>
 </div>
          <details class="nested-properties">
-    <summary>7 nested properties</summary>
+    <summary>5 nested properties</summary>
     <div class="property-list">
   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">email</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>User email used to create a Let's Encrypt account. This is required.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;user@domain.com&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">domains</span>
-    <span class="type-badge">string[]</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>List of domains to obtain certificates for. At least one domain is required.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">cache_dir</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Directory to use for certificates, private keys, Let's Encrypt configuration etc.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;rr_cache_dir&quot;</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">alt_http_port</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>Alternate port for the HTTP challenge. Challenge traffic should be redirected to this port if overridden. See <a target="_blank" rel="noopener noreferrer" href="https://letsencrypt.org/docs/challenge-types/#http-01-challenge">https://letsencrypt.org/docs/challenge-types/#http-01-challenge</a></p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>80</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">alt_tlsalpn_port</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>Alternate port for the TLS-ALPN-01 challenge. Challenge traffic should be redirected to this port if overridden. See <a target="_blank" rel="noopener noreferrer" href="https://letsencrypt.org/docs/challenge-types/#tls-alpn-01">https://letsencrypt.org/docs/challenge-types/#tls-alpn-01</a></p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>443</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">challenge_type</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Challenge types</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;http-01&quot;</code>
-  </div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;http-01&quot;</code> <code class="enum-value">&quot;tlsalpn-01&quot;</code>  </div>
-     </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">use_production_endpoint</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to use the production endpoint. We recommend you use the staging endpoint to make sure everything works correctly before you deploy your certificate.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">redirect</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to automatically redirect from HTTP to HTTPS.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>    <div
   class="property-item"
 >
   <div class="property-header">
     <span class="property-name">key</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Path to the private key for the certificate. Must not be provided if <code>acme</code> is set.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/key.pem&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
+    <span class="type-badge">key</span>
+ <span class="required-badge"
+      >required</span
     >  </div>
-  </div>    <div
+       </div>    <div
   class="property-item"
 >
   <div class="property-header">
     <span class="property-name">cert</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Path to the public certificate file. Must not be provided if <code>acme</code> is set.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/cert.crt&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
+    <span class="type-badge">cert</span>
+ <span class="required-badge"
+      >required</span
     >  </div>
-  </div>    <div
+       </div>    <div
   class="property-item"
 >
   <div class="property-header">
     <span class="property-name">root_ca</span>
-    <span class="type-badge">string</span>
+    <span class="type-badge">root_ca</span>
    </div>
-  <div class="desc-html"><p>Path to the CA certificate, if required. Always required for mTLS. Omit this option if unused. Must not be provided if <code>acme</code> is set.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/ca.crt&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">client_auth_type</span>
-    <a href="#def-ClientAuthType" class="type-badge type-badge-link"
-      >string</a
-    >
-   </div>
-  <div class="desc-html"><p>Authorization method for mTLS.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;no_client_certs&quot;</code>
-  </div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;request_client_cert&quot;</code> <code class="enum-value">&quot;require_any_client_cert&quot;</code> <code class="enum-value">&quot;verify_client_cert_if_given&quot;</code> <code class="enum-value">&quot;no_client_certs&quot;</code> <code class="enum-value">&quot;require_and_verify_client_cert&quot;</code>  </div>
-     </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
-  id="prop-fcgi"
->
-  <div class="property-header">
-    <span class="property-name">fcgi</span>
-    <a href="#def-FCGI" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Enables FastCGI support. If omitted, RoadRunner will not listen for FCGI requests.</p>
-</div>
-         <details class="nested-properties">
-    <summary>1 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">address</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>Host and/or port to listen on for FCGI requests.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;0.0.0.0:9000&quot;</code>, <code>&quot;127.0.0.1:9000&quot;</code>, <code>&quot;localhost:9000&quot;</code>, <code>&quot;unix:/path/to/socket.sock&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
-  id="prop-http2"
->
-  <div class="property-header">
-    <span class="property-name">http2</span>
-    <a href="#def-HTTP2" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>HTTP/2 settings.</p>
-</div>
-         <details class="nested-properties">
-    <summary>2 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">h2c</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Use HTTP/2 over non-encrypted TCP connection using H2C</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
        </div>    <div
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">max_concurrent_streams</span>
-    <span class="type-badge">integer</span>
+    <span class="property-name">client_auth_type</span>
+    <span class="type-badge">ClientAuthType</span>
    </div>
-  <div class="desc-html"><p>Maximum number of concurrent streams. Defaults to 128 if omitted or zero.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>128</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >min=0</span
-    >  </div>
-  </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
-  id="prop-http3"
->
-  <div class="property-header">
-    <span class="property-name">http3</span>
-    <a href="#def-HTTP3" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>HTTP/3 settings. <strong>Experimental</strong>: Requires that RoadRunner has experimental features enabled. Unless you configured <code>acme</code>, you must provide a <code>key</code> and <code>cert</code> here.</p>
-</div>
-         <details class="nested-properties">
-    <summary>3 nested properties</summary>
-    <div class="property-list">
-  <div
+       </div>    <div
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">address</span>
+    <span class="property-name">server_name</span>
     <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>Host and/or port to listen on for HTTP/3.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;127.0.0.1:8080&quot;</code>, <code>&quot;:8080&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">cert</span>
-    <a href="#def-cert" class="type-badge type-badge-link"
-      >string</a
-    >
    </div>
-  <div class="desc-html"><p>Path to the public certificate file. Must not be provided if <code>acme</code> is set.</p>
+  <div class="desc-html"><p>ServerName is used to verify the hostname on the returned certificates unless InsecureSkipVerify is given. It is also included in the client's handshake to support virtual hosting unless it is an IP address.</p>
 </div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/cert.crt&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">key</span>
-    <a href="#def-key" class="type-badge type-badge-link"
-      >string</a
-    >
-   </div>
-  <div class="desc-html"><p>Path to the private key for the certificate. Must not be provided if <code>acme</code> is set.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/key.pem&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>      </div>
+       </div>      </div>
   </details>
 </div>    </div>
      <h2 id="definitions">Definitions</h2>
-  <div class="definition-block" id="def-Uploads">
+  <div class="definition-block" id="def-Statsd">
     <div class="definition-header">
-      <span class="def-name">Uploads</span>
+      <span class="def-name">Statsd</span>
 <span class="type-badge"
         >object</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>File upload configuration.</p>
+      <div class="desc-html"><p>Properties for Temporal Statsd integration.</p>
 </div>
         <div class="property-list">
  <div
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">dir</span>
+    <span class="property-name">host_port</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Directory for file uploads. Empty/undefined value means the OS default temporary directory ($TEMP) will be used, i.e. <code>/tmp</code>.</p>
+  <div class="desc-html"><p>The host and port of the statsd server.</p>
 </div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/tmp&quot;</code>  </div>
-   </div>   <div
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;127.0.0.1:8125&quot;</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minLength=1</span
+    >  </div>
+  </div>   <div
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">forbid</span>
-    <span class="type-badge">string[]</span>
+    <span class="property-name">prefix</span>
+    <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Disallow upload of files with the provided extensions.</p>
+  <div class="desc-html"><p>The prefix to use in reporting to statsd.</p>
 </div>
        </div>   <div
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">allow</span>
-    <span class="type-badge">string[]</span>
+    <span class="property-name">flush_interval</span>
+    <a href="/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration/" class="type-badge type-badge-link"
+      >Duration</a
+    >
    </div>
-  <div class="desc-html"><p>Allow only upload of files with the provided extensions. Empty/undefined value means all files except explicitly disallowed (<code>forbid</code>) files are allowed.</p>
+  <div class="desc-html"><p>The maximum interval between sending packets.</p>
 </div>
-    <div class="property-meta"><span class="meta-label">Default:</span></div>
-  <pre class="code-block"><code>[]</code></pre>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;1s&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">flush_bytes</span>
+    <span class="type-badge">integer</span>
+   </div>
+  <div class="desc-html"><p>The maximum UDP packet size you wish to send. Defaults to 1432 bytes if zero or undefined, which is considered safe for local traffic.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>1432</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">tags</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>A map of tags consisting of keys and values.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">tag_prefix</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Prefix for the tags.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">tag_separator</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The tag separator allows tags to be appended with a separator. If not specified, tag keys and values are embedded in the stat name directly.</p>
+</div>
        </div>        </div>
     </div>
   </div>
-  <div class="definition-block" id="def-SSL">
+  <div class="definition-block" id="def-Prometheus">
     <div class="definition-header">
-      <span class="def-name">SSL</span>
+      <span class="def-name">Prometheus</span>
 <span class="type-badge"
         >object</span
       >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>Settings required to set up manual or automatic HTTPS for your server. Either <code>key</code> and <code>cert</code> <em>or</em> <code>acme</code> is required, but not both.</p>
+      <div class="desc-html"><p>Properties for Temporal Prometheus integration.</p>
 </div>
         <div class="property-list">
  <div
@@ -968,347 +423,40 @@
     <span class="property-name">address</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Host address/or port to bind to. Defaults to 127.0.0.1:443.</p>
+  <div class="desc-html"><p>Server metrics address.</p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;127.0.0.1:443&quot;</code>
-  </div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;127.0.0.1:443&quot;</code>, <code>&quot;:8443&quot;</code>  </div>
-   </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">acme</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>ACME certificates provider (Let's encrypt). Do not provide this parameter if you use <code>key</code> and <code>cert</code>.</p>
-</div>
-         <details class="nested-properties">
-    <summary>7 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">email</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>User email used to create a Let's Encrypt account. This is required.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;user@domain.com&quot;</code>  </div>
-   </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">domains</span>
-    <span class="type-badge">string[]</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>List of domains to obtain certificates for. At least one domain is required.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minItems=1</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">cache_dir</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Directory to use for certificates, private keys, Let's Encrypt configuration etc.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;rr_cache_dir&quot;</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">alt_http_port</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>Alternate port for the HTTP challenge. Challenge traffic should be redirected to this port if overridden. See <a target="_blank" rel="noopener noreferrer" href="https://letsencrypt.org/docs/challenge-types/#http-01-challenge">https://letsencrypt.org/docs/challenge-types/#http-01-challenge</a></p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>80</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">alt_tlsalpn_port</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>Alternate port for the TLS-ALPN-01 challenge. Challenge traffic should be redirected to this port if overridden. See <a target="_blank" rel="noopener noreferrer" href="https://letsencrypt.org/docs/challenge-types/#tls-alpn-01">https://letsencrypt.org/docs/challenge-types/#tls-alpn-01</a></p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>443</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">challenge_type</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Challenge types</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;http-01&quot;</code>
-  </div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;http-01&quot;</code> <code class="enum-value">&quot;tlsalpn-01&quot;</code>  </div>
-     </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">use_production_endpoint</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to use the production endpoint. We recommend you use the staging endpoint to make sure everything works correctly before you deploy your certificate.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>      </div>
-  </details>
-</div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">redirect</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Whether to automatically redirect from HTTP to HTTPS.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">key</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Path to the private key for the certificate. Must not be provided if <code>acme</code> is set.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/key.pem&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">cert</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Path to the public certificate file. Must not be provided if <code>acme</code> is set.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/cert.crt&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">root_ca</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Path to the CA certificate, if required. Always required for mTLS. Omit this option if unused. Must not be provided if <code>acme</code> is set.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/ca.crt&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">client_auth_type</span>
-    <a href="#def-ClientAuthType" class="type-badge type-badge-link"
-      >string</a
-    >
-   </div>
-  <div class="desc-html"><p>Authorization method for mTLS.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;no_client_certs&quot;</code>
-  </div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;request_client_cert&quot;</code> <code class="enum-value">&quot;require_any_client_cert&quot;</code> <code class="enum-value">&quot;verify_client_cert_if_given&quot;</code> <code class="enum-value">&quot;no_client_certs&quot;</code> <code class="enum-value">&quot;require_and_verify_client_cert&quot;</code>  </div>
-     </div>        </div>
-    </div>
-  </div>
-  <div class="definition-block" id="def-ClientAuthType">
-    <div class="definition-header">
-      <span class="def-name">ClientAuthType</span>
-<span class="type-badge"
-        >string</span
-      >    </div>
-    <div class="definition-body">
-      <div class="desc-html"><p>Authorization method for mTLS.</p>
-</div>
-      </div>
-  </div>
-  <div class="definition-block" id="def-FCGI">
-    <div class="definition-header">
-      <span class="def-name">FCGI</span>
-<span class="type-badge"
-        >object</span
-      >    </div>
-    <div class="definition-body">
-      <div class="desc-html"><p>Enables FastCGI support. If omitted, RoadRunner will not listen for FCGI requests.</p>
-</div>
-        <div class="property-list">
- <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">address</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>Host and/or port to listen on for FCGI requests.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;0.0.0.0:9000&quot;</code>, <code>&quot;127.0.0.1:9000&quot;</code>, <code>&quot;localhost:9000&quot;</code>, <code>&quot;unix:/path/to/socket.sock&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>        </div>
-    </div>
-  </div>
-  <div class="definition-block" id="def-HTTP2">
-    <div class="definition-header">
-      <span class="def-name">HTTP2</span>
-<span class="type-badge"
-        >object</span
-      >    </div>
-    <div class="definition-body">
-      <div class="desc-html"><p>HTTP/2 settings.</p>
-</div>
-        <div class="property-list">
- <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">h2c</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Use HTTP/2 over non-encrypted TCP connection using H2C</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">max_concurrent_streams</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>Maximum number of concurrent streams. Defaults to 128 if omitted or zero.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>128</code>
+    <span class="meta-label">Default:</span> <code>&quot;127.0.0.1:9091&quot;</code>
   </div>
        <div class="property-constraints">
 <span class="constraint"
-      >min=0</span
+      >minLength=1</span
     >  </div>
-  </div>        </div>
-    </div>
-  </div>
-  <div class="definition-block" id="def-HTTP3">
-    <div class="definition-header">
-      <span class="def-name">HTTP3</span>
-<span class="type-badge"
-        >object</span
-      >    </div>
-    <div class="definition-body">
-      <div class="desc-html"><p>HTTP/3 settings. <strong>Experimental</strong>: Requires that RoadRunner has experimental features enabled. Unless you configured <code>acme</code>, you must provide a <code>key</code> and <code>cert</code> here.</p>
-</div>
-        <div class="property-list">
- <div
+  </div>   <div
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">address</span>
+    <span class="property-name">type</span>
     <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p>Host and/or port to listen on for HTTP/3.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;127.0.0.1:8080&quot;</code>, <code>&quot;:8080&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">cert</span>
-    <a href="#def-cert" class="type-badge type-badge-link"
-      >string</a
-    >
    </div>
-  <div class="desc-html"><p>Path to the public certificate file. Must not be provided if <code>acme</code> is set.</p>
+  <div class="desc-html"><p>Metrics type to use. Defaults to <code>summary</code>.</p>
 </div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/cert.crt&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">key</span>
-    <a href="#def-key" class="type-badge type-badge-link"
-      >string</a
-    >
-   </div>
-  <div class="desc-html"><p>Path to the private key for the certificate. Must not be provided if <code>acme</code> is set.</p>
-</div>
-      <div class="property-meta">
-    <span class="meta-label">Examples:</span> <code>&quot;/ssl/server/key.pem&quot;</code>  </div>
-   <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>        </div>
-    </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;summary&quot;</code>
   </div>
-  <div class="definition-block" id="def-Headers">
-    <div class="definition-header">
-      <span class="def-name">Headers</span>
-<span class="type-badge"
-        >object</span
-      >    </div>
-    <div class="definition-body">
-      </div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;summary&quot;</code> <code class="enum-value">&quot;histogram&quot;</code>  </div>
+     </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">prefix</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Temporal metrics prefix.</p>
+</div>
+       </div>        </div>
+    </div>
   </div>
   </section>
   </article>

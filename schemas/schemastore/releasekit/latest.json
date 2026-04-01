@@ -5,7 +5,7 @@
   "description": "Configuration schema for ReleaseKit - Automated versioning, changelog generation, and publishing",
   "x-lintel": {
     "source": "https://goosewobbler.github.io/releasekit/schema.json",
-    "sourceSha256": "454f7046d729ab3150348564c0cd41e70731fb037e8c035b2fd35a863f45b432",
+    "sourceSha256": "c1abea3a8c690be80af43bc8e52d06c8e9978e3c399323c89e2a096ab8fb05f6",
     "fileMatch": [
       "releasekit.config.json"
     ],
@@ -92,8 +92,8 @@
       "properties": {
         "tagTemplate": {
           "type": "string",
-          "default": "v{version}",
-          "description": "Template for Git tags"
+          "default": "${prefix}${version}",
+          "description": "Template for Git tags. Available variables: ${version} (version number), ${prefix} (versionPrefix value, e.g. 'v'), ${packageName} (sanitized package name, e.g. 'scope-pkg'). Example: \"${packageName}-${prefix}${version}\" produces \"scope-pkg-v1.2.3\"."
         },
         "packageSpecificTags": {
           "type": "boolean",
@@ -411,6 +411,11 @@
               ],
               "default": "auto",
               "description": "Source for GitHub release body. 'auto': use release notes if enabled, else changelog, else GitHub auto. 'releaseNotes': use LLM-generated release notes. 'changelog': use changelog entries. 'generated': GitHub auto-generated. 'none': no body."
+            },
+            "titleTemplate": {
+              "type": "string",
+              "default": "${packageName}: ${version}",
+              "description": "Template for the GitHub release title when a package name is resolved. Available variables: ${packageName} (original scoped name, e.g. '@scope/pkg'), ${version} (e.g. 'v1.0.0'). Version-only tags always use the tag string directly."
             }
           },
           "additionalProperties": false
@@ -787,6 +792,96 @@
             "regenerate"
           ],
           "description": "How to update existing changelog files. 'prepend' adds new entries to the top; 'regenerate' rewrites the file from scratch."
+        }
+      },
+      "additionalProperties": false
+    },
+    "ci": {
+      "type": "object",
+      "description": "CI automation configuration for release triggers, PR previews, and label management",
+      "properties": {
+        "releaseStrategy": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "direct",
+            "standing-pr",
+            "scheduled"
+          ],
+          "default": "direct",
+          "description": "How releases are delivered. 'direct': release on merge to main. 'manual': releases triggered manually (e.g. workflow_dispatch). 'standing-pr': changes accumulate in a release PR. 'scheduled': releases triggered on a schedule."
+        },
+        "releaseTrigger": {
+          "type": "string",
+          "enum": [
+            "commit",
+            "label"
+          ],
+          "default": "label",
+          "description": "What triggers a release. 'label': a PR bump label (release:patch/minor/major) is required. 'commit': conventional commits drive the bump automatically; every merge can trigger a release."
+        },
+        "prPreview": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable PR preview comments showing what would be released if the PR is merged. Set to false to disable."
+        },
+        "autoRelease": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically trigger a release when CI conditions are met, without manual intervention."
+        },
+        "skipPatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "chore: release "
+          ],
+          "description": "Commit message prefixes that suppress a release. The default matches the release commit template to prevent release loops."
+        },
+        "minChanges": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "Minimum number of packages with releasable changes required to trigger a release."
+        },
+        "labels": {
+          "type": "object",
+          "description": "PR label names used for release control. Override to match your repository's label conventions.",
+          "properties": {
+            "stable": {
+              "type": "string",
+              "default": "release:stable",
+              "description": "Label to graduate a prerelease to stable"
+            },
+            "prerelease": {
+              "type": "string",
+              "default": "release:prerelease",
+              "description": "Label to create a prerelease"
+            },
+            "skip": {
+              "type": "string",
+              "default": "release:skip",
+              "description": "Label to suppress a release on this PR"
+            },
+            "major": {
+              "type": "string",
+              "default": "release:major",
+              "description": "Label to force a major bump"
+            },
+            "minor": {
+              "type": "string",
+              "default": "release:minor",
+              "description": "Label to force a minor bump"
+            },
+            "patch": {
+              "type": "string",
+              "default": "release:patch",
+              "description": "Label to force a patch bump"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
