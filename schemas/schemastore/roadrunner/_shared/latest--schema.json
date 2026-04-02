@@ -1,188 +1,99 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json",
-  "title": "roadrunner-temporal",
-  "description": "All the valid configuration parameters for the Temporal plugin for RoadRunner.",
+  "title": "roadrunner-jobs",
+  "description": "All the valid configuration parameters for the jobs plugin for RoadRunner.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/temporalio/roadrunner-temporal/refs/heads/master/schema.json",
-    "sourceSha256": "9037333f8a7ec54d892be00d80b13ce29c6869c84cb734787f14ae199cf495bc"
+    "source": "https://raw.githubusercontent.com/roadrunner-server/jobs/refs/heads/master/schema.json",
+    "sourceSha256": "ba9e4dadf412640d77690ffbbfb9822fad2bdd75a2b2490f07f122a8df336128"
   },
   "type": "object",
   "properties": {
-    "address": {
-      "description": "Address of the Temporal server. Defaults to localhost:7233 if not provided.",
-      "type": "string",
-      "default": "localhost:7233",
-      "minLength": 1
-    },
-    "cache_size": {
-      "description": "Sticky cache size. Sticky workflow execution is the affinity between workflow tasks of a specific workflow execution to a specific worker. The benefit of sticky execution is that the workflow does not have to reconstruct state by replaying history from the beginning. The cache is shared between workers running within same process. This must be called before any worker is started. If not called, the default size of 10K (which may change) will be used.",
+    "num_pollers": {
+      "description": "Number of threads which will try to obtain jobs from the priority queue. Default is the number of workers in the pool +1. **Deprecated:** This will be removed in a future version.",
       "type": "integer",
-      "default": 10000
+      "minimum": 1,
+      "examples": [
+        10,
+        32
+      ],
+      "deprecated": true
     },
-    "interceptors": {
-      "description": "Ordered list of enabled worker interceptor plugin names. When set, only these interceptors are active and applied in the specified order. When omitted, all registered interceptors are applied.",
+    "timeout": {
+      "description": "Request timeout (in seconds) when attempting to send jobs to the queue. If zero or omitted, this defaults to 60 seconds.",
+      "type": "integer",
+      "default": 60
+    },
+    "pipeline_size": {
+      "description": "Size of the internal priority queue. If the internal priority queue is full, you cannot send (push) additional jobs to the queue. If you set this value to zero or omit it, it defaults to 1 million.",
+      "type": "integer",
+      "default": 1000000,
+      "minimum": 0
+    },
+    "consume": {
+      "description": "A list of pipelines to be consumed by the server automatically when starting. You can omit this list if you want to start consuming manually. Each item in this list must be defined as a key under `pipelines`.",
       "type": "array",
-      "uniqueItems": true,
       "items": {
         "type": "string",
-        "minLength": 1
+        "pattern": "^[a-zA-Z0-9._-]+$"
       }
     },
-    "data_converters": {
-      "description": "Ordered list of enabled custom data converter encodings. When set, only these converters are active and applied in the specified order. When omitted, all registered custom converters are applied. Custom converters are inserted before the default JSON converter in the converter chain.",
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "namespace": {
-      "description": "Namespace for this client to work with.",
-      "type": "string",
-      "default": "default"
-    },
-    "metrics": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "driver": {
-              "description": "The Prometheus driver.",
-              "type": "string",
-              "enum": [
-                "prometheus"
-              ]
-            },
-            "prometheus": {
-              "$ref": "#/$defs/Prometheus"
-            }
-          },
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "driver": {
-              "description": "The Statsd driver.",
-              "type": "string",
-              "enum": [
-                "statsd"
-              ]
-            },
-            "statsd": {
-              "$ref": "#/$defs/Statsd"
-            }
-          },
-          "additionalProperties": false
-        }
-      ]
-    },
-    "activities": {
+    "pool": {
       "$ref": "https://raw.githubusercontent.com/roadrunner-server/pool/refs/heads/master/schema.json"
     },
-    "tls": {
-      "description": "Temporal TLS configuration.",
+    "pipelines": {
+      "description": "List of broker pipelines associated with the configured drivers. This option is not required since you can declare pipelines at runtime. The selected pipeline `driver` must be configured in the root of your configuration file.",
       "type": "object",
-      "required": [
-        "key",
-        "cert"
-      ],
-      "properties": {
-        "key": {
-          "$ref": "https://raw.githubusercontent.com/roadrunner-server/http/refs/heads/master/schema.json#/$defs/SSL/properties/key"
-        },
-        "cert": {
-          "$ref": "https://raw.githubusercontent.com/roadrunner-server/http/refs/heads/master/schema.json#/$defs/SSL/properties/cert"
-        },
-        "root_ca": {
-          "$ref": "https://raw.githubusercontent.com/roadrunner-server/http/refs/heads/master/schema.json#/$defs/SSL/properties/root_ca"
-        },
-        "client_auth_type": {
-          "$ref": "https://raw.githubusercontent.com/roadrunner-server/http/refs/heads/master/schema.json#/$defs/ClientAuthType"
-        },
-        "server_name": {
-          "description": "ServerName is used to verify the hostname on the returned certificates unless InsecureSkipVerify is given. It is also included in the client's handshake to support virtual hosting unless it is an IP address.",
-          "type": "string"
+      "patternProperties": {
+        "additionalProperties": false,
+        "^[a-zA-Z0-9._-]+$": {
+          "oneOf": [
+            {
+              "$ref": "https://raw.githubusercontent.com/roadrunner-server/amqp/refs/heads/master/schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://raw.githubusercontent.com/roadrunner-server/beanstalk/refs/heads/master/schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://raw.githubusercontent.com/roadrunner-server/boltdb/refs/heads/master/schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://raw.githubusercontent.com/roadrunner-server/kafka/refs/heads/master/schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://raw.githubusercontent.com/roadrunner-server/memory/refs/heads/master/schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://raw.githubusercontent.com/roadrunner-server/nats/refs/heads/master/schema.json#/$defs/pipeline"
+            },
+            {
+              "$ref": "https://raw.githubusercontent.com/roadrunner-server/sqs/refs/heads/master/schema.json#/$defs/pipeline"
+            }
+          ]
         }
       }
     }
   },
   "additionalProperties": false,
   "$defs": {
-    "Statsd": {
-      "type": "object",
-      "description": "Properties for Temporal Statsd integration.",
-      "properties": {
-        "host_port": {
-          "description": "The host and port of the statsd server.",
-          "type": "string",
-          "default": "127.0.0.1:8125",
-          "minLength": 1
-        },
-        "prefix": {
-          "description": "The prefix to use in reporting to statsd.",
-          "type": "string"
-        },
-        "flush_interval": {
-          "description": "The maximum interval between sending packets.",
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration",
-          "default": "1s"
-        },
-        "flush_bytes": {
-          "description": "The maximum UDP packet size you wish to send. Defaults to 1432 bytes if zero or undefined, which is considered safe for local traffic.",
-          "type": "integer",
-          "default": 1432
-        },
-        "tags": {
-          "description": "A map of tags consisting of keys and values.",
-          "type": "object",
-          "minProperties": 1,
-          "additionalProperties": false,
-          "patternProperties": {
-            "^[a-zA-Z0-9._-]+$": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        },
-        "tag_prefix": {
-          "description": "Prefix for the tags.",
-          "type": "string"
-        },
-        "tag_separator": {
-          "description": "The tag separator allows tags to be appended with a separator. If not specified, tag keys and values are embedded in the stat name directly.",
-          "type": "string"
-        }
+    "PipelineProperties": {
+      "description": "Common configuration options for queues/pipelines.",
+      "priority": {
+        "description": "Pipeline priority. If the job pushed to the pipeline has priority set to 0, it will inherit the pipeline's priority.",
+        "type": "integer",
+        "minimum": 0,
+        "default": 10
       },
-      "additionalProperties": false
-    },
-    "Prometheus": {
-      "type": "object",
-      "description": "Properties for Temporal Prometheus integration.",
-      "properties": {
-        "address": {
-          "description": "Server metrics address.",
-          "type": "string",
-          "default": "127.0.0.1:9091",
-          "minLength": 1
-        },
-        "type": {
-          "type": "string",
-          "description": "Metrics type to use. Defaults to `summary`.",
-          "enum": [
-            "summary",
-            "histogram"
-          ],
-          "default": "summary"
-        },
-        "prefix": {
-          "description": "Temporal metrics prefix.",
-          "type": "string"
-        }
+      "prefetch": {
+        "description": "Number of jobs to prefetch from the driver. Please consult the driver for the maximum and default values. For instance, SQS allows only 10.",
+        "type": "integer",
+        "minimum": 0
       },
-      "additionalProperties": false
+      "queue": {
+        "type": "string",
+        "description": "The name of the queue.",
+        "default": "default"
+      }
     }
   }
 }

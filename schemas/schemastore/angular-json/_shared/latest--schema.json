@@ -1,74 +1,61 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Library Options Schema",
-  "description": "Creates a new library project in your Angular workspace. Libraries are reusable collections of components, services, and other Angular artifacts that can be shared across multiple applications. This schematic simplifies the process of generating a new library with the necessary files and configurations.",
+  "title": "Angular Service Options Schema",
+  "description": "Creates a new service in your project. Services are used to encapsulate reusable logic, such as data access, API calls, or utility functions. This schematic simplifies the process of generating a new service with the necessary files and boilerplate code.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/library/schema.json",
-    "sourceSha256": "a26717250707cdc3af457388606e1e90e96d6028f6995c08a9907fbc295549af"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/service/schema.json",
+    "sourceSha256": "ee6df96e4b6fd5a3081adff36e1402e5e870ab231521c6ffaf96368892bc7182"
   },
   "type": "object",
   "properties": {
     "name": {
       "type": "string",
-      "description": "The name for the new library. This name will be used for the project directory and various identifiers within the library's code.",
-      "pattern": "^(?:@[a-zA-Z0-9-*~][a-zA-Z0-9-*._~]*/)?[a-zA-Z0-9-~][a-zA-Z0-9-._~]*$",
+      "description": "The name for the new service. This will be used to create the service's class and spec files (e.g., `my-service.service.ts` and `my-service.service.spec.ts`).",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use for the library?"
+      "x-prompt": "What name would you like to use for the service?"
     },
-    "entryFile": {
+    "path": {
       "type": "string",
-      "format": "path",
-      "description": "The path to the library's public API file, relative to the workspace root. This file defines what parts of the library are accessible to applications that import it.",
-      "default": "public-api"
+      "$default": {
+        "$source": "workingDirectory"
+      },
+      "description": "The path where the service files should be created, relative to the workspace root. If not provided, the service will be created in the project's `src/app` directory.",
+      "visible": false
     },
-    "prefix": {
+    "project": {
       "type": "string",
-      "format": "html-selector",
-      "description": "A prefix to be added to the selectors of components generated within this library. For example, if the prefix is `my-lib` and you generate a component named `my-component`, the selector will be `my-lib-my-component`.",
-      "default": "lib",
-      "alias": "p"
+      "description": "The name of the project where the service should be added. If not specified, the CLI will determine the project from the current directory.",
+      "$default": {
+        "$source": "projectName"
+      }
     },
-    "skipPackageJson": {
-      "type": "boolean",
-      "default": false,
-      "description": "Do not automatically add dependencies to the `package.json` file."
-    },
-    "skipInstall": {
-      "description": "Skip the automatic installation of packages. You will need to manually install the dependencies later.",
-      "type": "boolean",
-      "default": false
-    },
-    "skipTsConfig": {
-      "type": "boolean",
-      "default": false,
-      "description": "Do not update the workspace `tsconfig.json` file to add a path mapping for the new library. The path mapping is needed to use the library in an application, but can be disabled here to simplify development."
-    },
-    "projectRoot": {
-      "type": "string",
-      "description": "The root directory for the new library, relative to the workspace root. If not specified, the library will be created in a subfolder within the `projects` directory, using the library's name."
-    },
-    "standalone": {
-      "description": "Create a library that utilizes the standalone API, eliminating the need for NgModules. This can simplify the structure of your library and its usage in applications.",
+    "flat": {
       "type": "boolean",
       "default": true,
-      "x-user-analytics": "ep.ng_standalone"
+      "description": "Creates files at the top level of the project or the given path. If set to false, a new folder with the service's name will be created to contain the files."
     },
-    "testRunner": {
-      "description": "The unit testing runner to use.",
+    "skipTests": {
+      "type": "boolean",
+      "description": "Skip the generation of a unit test file `spec.ts` for the service.",
+      "default": false
+    },
+    "type": {
       "type": "string",
-      "enum": [
-        "vitest",
-        "karma"
-      ],
-      "default": "vitest"
+      "description": "Append a custom type to the service's filename. For example, if you set the type to `service`, the file will be named `my-service.service.ts`."
+    },
+    "addTypeToClassName": {
+      "type": "boolean",
+      "default": true,
+      "description": "When true, the 'type' option will be appended to the generated class name. When false, only the file name will include the type."
     }
   },
   "required": [
-    "name"
+    "name",
+    "project"
   ],
   "additionalProperties": false
 }

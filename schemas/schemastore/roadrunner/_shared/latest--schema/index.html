@@ -164,299 +164,94 @@
     <span class="label">Type:</span>
     <span class="type-badge">object</span>
   </div>
-   <div class="desc-html"><p>All the valid configuration parameters for the Temporal plugin for RoadRunner.</p>
+   <div class="desc-html"><p>All the valid configuration parameters for the jobs plugin for RoadRunner.</p>
 </div>
    <h2 id="properties">Properties</h2>
   <div class="property-list">
   <div
   class="property-item"
-  id="prop-address"
+  id="prop-num_pollers"
 >
   <div class="property-header">
-    <span class="property-name">address</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Address of the Temporal server. Defaults to localhost:7233 if not provided.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;localhost:7233&quot;</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>    <div
-  class="property-item"
-  id="prop-cache_size"
->
-  <div class="property-header">
-    <span class="property-name">cache_size</span>
+    <span class="property-name">num_pollers</span>
     <span class="type-badge">integer</span>
    </div>
-  <div class="desc-html"><p>Sticky cache size. Sticky workflow execution is the affinity between workflow tasks of a specific workflow execution to a specific worker. The benefit of sticky execution is that the workflow does not have to reconstruct state by replaying history from the beginning. The cache is shared between workers running within same process. This must be called before any worker is started. If not called, the default size of 10K (which may change) will be used.</p>
+  <div class="desc-html"><p>Number of threads which will try to obtain jobs from the priority queue. Default is the number of workers in the pool +1. <strong>Deprecated:</strong> This will be removed in a future version.</p>
 </div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>10000</code>
-  </div>
-       </div>    <div
-  class="property-item"
-  id="prop-interceptors"
->
-  <div class="property-header">
-    <span class="property-name">interceptors</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>Ordered list of enabled worker interceptor plugin names. When set, only these interceptors are active and applied in the specified order. When omitted, all registered interceptors are applied.</p>
-</div>
-       <div class="property-constraints">
+      <div class="property-meta">
+    <span class="meta-label">Examples:</span> <code>10</code>, <code>32</code>  </div>
+   <div class="property-constraints">
 <span class="constraint"
-      >uniqueItems=true</span
+      >min=1</span
     >  </div>
   </div>    <div
   class="property-item"
-  id="prop-data_converters"
+  id="prop-timeout"
 >
   <div class="property-header">
-    <span class="property-name">data_converters</span>
-    <span class="type-badge">string[]</span>
+    <span class="property-name">timeout</span>
+    <span class="type-badge">integer</span>
    </div>
-  <div class="desc-html"><p>Ordered list of enabled custom data converter encodings. When set, only these converters are active and applied in the specified order. When omitted, all registered custom converters are applied. Custom converters are inserted before the default JSON converter in the converter chain.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >uniqueItems=true</span
-    >  </div>
-  </div>    <div
-  class="property-item"
-  id="prop-namespace"
->
-  <div class="property-header">
-    <span class="property-name">namespace</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Namespace for this client to work with.</p>
+  <div class="desc-html"><p>Request timeout (in seconds) when attempting to send jobs to the queue. If zero or omitted, this defaults to 60 seconds.</p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;default&quot;</code>
+    <span class="meta-label">Default:</span> <code>60</code>
   </div>
        </div>    <div
   class="property-item"
-  id="prop-metrics"
+  id="prop-pipeline_size"
 >
   <div class="property-header">
-    <span class="property-name">metrics</span>
-    <span class="type-badge"
-      >object | object</span
-    >
+    <span class="property-name">pipeline_size</span>
+    <span class="type-badge">integer</span>
    </div>
+  <div class="desc-html"><p>Size of the internal priority queue. If the internal priority queue is full, you cannot send (push) additional jobs to the queue. If you set this value to zero or omit it, it defaults to 1 million.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>1000000</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >min=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+  id="prop-consume"
+>
+  <div class="property-header">
+    <span class="property-name">consume</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>A list of pipelines to be consumed by the server automatically when starting. You can omit this list if you want to start consuming manually. Each item in this list must be defined as a key under <code>pipelines</code>.</p>
+</div>
        </div>    <div
   class="property-item"
-  id="prop-activities"
+  id="prop-pool"
 >
   <div class="property-header">
-    <span class="property-name">activities</span>
+    <span class="property-name">pool</span>
     <span class="type-badge">Schema</span>
    </div>
        </div>    <div
   class="property-item"
-  id="prop-tls"
+  id="prop-pipelines"
 >
   <div class="property-header">
-    <span class="property-name">tls</span>
+    <span class="property-name">pipelines</span>
     <span class="type-badge">object</span>
    </div>
-  <div class="desc-html"><p>Temporal TLS configuration.</p>
+  <div class="desc-html"><p>List of broker pipelines associated with the configured drivers. This option is not required since you can declare pipelines at runtime. The selected pipeline <code>driver</code> must be configured in the root of your configuration file.</p>
 </div>
-         <details class="nested-properties">
-    <summary>5 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">key</span>
-    <span class="type-badge">key</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">cert</span>
-    <span class="type-badge">cert</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">root_ca</span>
-    <span class="type-badge">root_ca</span>
-   </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">client_auth_type</span>
-    <span class="type-badge">ClientAuthType</span>
-   </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">server_name</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>ServerName is used to verify the hostname on the returned certificates unless InsecureSkipVerify is given. It is also included in the client's handshake to support virtual hosting unless it is an IP address.</p>
-</div>
-       </div>      </div>
-  </details>
-</div>    </div>
+       </div>    </div>
      <h2 id="definitions">Definitions</h2>
-  <div class="definition-block" id="def-Statsd">
+  <div class="definition-block" id="def-PipelineProperties">
     <div class="definition-header">
-      <span class="def-name">Statsd</span>
-<span class="type-badge"
-        >object</span
-      >    </div>
-    <div class="definition-body">
-      <div class="desc-html"><p>Properties for Temporal Statsd integration.</p>
-</div>
-        <div class="property-list">
- <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">host_port</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The host and port of the statsd server.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;127.0.0.1:8125&quot;</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">prefix</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The prefix to use in reporting to statsd.</p>
-</div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">flush_interval</span>
-    <a href="/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration/" class="type-badge type-badge-link"
-      >Duration</a
-    >
-   </div>
-  <div class="desc-html"><p>The maximum interval between sending packets.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;1s&quot;</code>
-  </div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">flush_bytes</span>
-    <span class="type-badge">integer</span>
-   </div>
-  <div class="desc-html"><p>The maximum UDP packet size you wish to send. Defaults to 1432 bytes if zero or undefined, which is considered safe for local traffic.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>1432</code>
-  </div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">tags</span>
-    <span class="type-badge">object</span>
-   </div>
-  <div class="desc-html"><p>A map of tags consisting of keys and values.</p>
-</div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">tag_prefix</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Prefix for the tags.</p>
-</div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">tag_separator</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The tag separator allows tags to be appended with a separator. If not specified, tag keys and values are embedded in the stat name directly.</p>
-</div>
-       </div>        </div>
+      <span class="def-name">PipelineProperties</span>
     </div>
-  </div>
-  <div class="definition-block" id="def-Prometheus">
-    <div class="definition-header">
-      <span class="def-name">Prometheus</span>
-<span class="type-badge"
-        >object</span
-      >    </div>
     <div class="definition-body">
-      <div class="desc-html"><p>Properties for Temporal Prometheus integration.</p>
+      <div class="desc-html"><p>Common configuration options for queues/pipelines.</p>
 </div>
-        <div class="property-list">
- <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">address</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Server metrics address.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;127.0.0.1:9091&quot;</code>
-  </div>
-       <div class="property-constraints">
-<span class="constraint"
-      >minLength=1</span
-    >  </div>
-  </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">type</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Metrics type to use. Defaults to <code>summary</code>.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;summary&quot;</code>
-  </div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;summary&quot;</code> <code class="enum-value">&quot;histogram&quot;</code>  </div>
-     </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">prefix</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Temporal metrics prefix.</p>
-</div>
-       </div>        </div>
-    </div>
+      </div>
   </div>
   </section>
   </article>
