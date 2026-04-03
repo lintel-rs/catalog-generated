@@ -1,18 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--1.0.0-without-$id.json",
-  "title": "AsyncAPI 1.0 schema.",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--1.2.0-without-$id.json",
+  "title": "AsyncAPI 1.2.0 schema.",
   "description": "!!Auto generated!! \n Do not manually edit. ",
   "x-lintel": {
-    "source": "http://asyncapi.com/schema-store/1.0.0-without-$id.json",
-    "sourceSha256": "c2756ea5264ab3e41bbfed22cf80f9958cbbc0d7025277f280f93dff645aaa82"
+    "source": "http://asyncapi.com/schema-store/1.2.0-without-$id.json",
+    "sourceSha256": "ed304ca4d56905b9e4a1361191417e87d29db494fd57ce5ac7fbf384a475b428"
   },
   "type": "object",
   "properties": {
     "asyncapi": {
       "type": "string",
       "enum": [
-        "1.0.0"
+        "1.0.0",
+        "1.1.0",
+        "1.2.0"
       ],
       "description": "The AsyncAPI specification version of this document."
     },
@@ -35,6 +37,14 @@
     "topics": {
       "$ref": "#/$defs/topics"
     },
+    "stream": {
+      "$ref": "#/$defs/stream",
+      "description": "The list of messages a consumer can read or write from/to a streaming API."
+    },
+    "events": {
+      "$ref": "#/$defs/events",
+      "description": "The list of messages an events API sends and/or receives."
+    },
     "components": {
       "$ref": "#/$defs/components"
     },
@@ -55,12 +65,12 @@
       "$ref": "#/$defs/externalDocs"
     }
   },
-  "id": "http://asyncapi.com/definitions/1.0.0/asyncapi.json",
+  "id": "http://asyncapi.com/definitions/1.2.0/asyncapi.json",
   "$defs": {
     "vendorExtension": {
       "additionalItems": true,
       "description": "Any property starting with x- is valid.",
-      "$id": "http://asyncapi.com/$defs/1.0.0/vendorExtension.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/vendorExtension.json",
       "additionalProperties": true
     },
     "info": {
@@ -95,7 +105,7 @@
         "version",
         "title"
       ],
-      "$id": "http://asyncapi.com/$defs/1.0.0/info.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/info.json",
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
@@ -107,7 +117,7 @@
       "additionalProperties": false,
       "type": "object",
       "description": "Contact information for the owners of the API.",
-      "$id": "http://asyncapi.com/$defs/1.0.0/contact.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/contact.json",
       "properties": {
         "name": {
           "type": "string",
@@ -136,7 +146,7 @@
       "required": [
         "name"
       ],
-      "$id": "http://asyncapi.com/$defs/1.0.0/license.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/license.json",
       "properties": {
         "name": {
           "type": "string",
@@ -176,7 +186,10 @@
             "ws",
             "wss",
             "stomp",
-            "stomps"
+            "stomps",
+            "jms",
+            "http",
+            "https"
           ]
         },
         "schemeVersion": {
@@ -192,7 +205,7 @@
         "url",
         "scheme"
       ],
-      "$id": "http://asyncapi.com/$defs/1.0.0/server.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/server.json",
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
@@ -201,7 +214,7 @@
       }
     },
     "serverVariables": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/serverVariables.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/serverVariables.json",
       "type": "object",
       "additionalProperties": {
         "$ref": "#/$defs/serverVariable"
@@ -226,7 +239,7 @@
       "type": "object",
       "description": "An object representing a Server Variable for server URL template substitution.",
       "minProperties": 1,
-      "$id": "http://asyncapi.com/$defs/1.0.0/serverVariable.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/serverVariable.json",
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
@@ -235,7 +248,7 @@
       }
     },
     "topics": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/topics.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/topics.json",
       "type": "object",
       "description": "Relative paths to the individual topics. They must be relative to the 'baseTopic'.",
       "additionalProperties": false,
@@ -253,11 +266,19 @@
         "$ref": {
           "type": "string"
         },
+        "parameters": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/parameter"
+          }
+        },
         "publish": {
-          "$ref": "#/$defs/message"
+          "$ref": "#/$defs/operation"
         },
         "subscribe": {
-          "$ref": "#/$defs/message"
+          "$ref": "#/$defs/operation"
         },
         "deprecated": {
           "type": "boolean",
@@ -265,7 +286,7 @@
         }
       },
       "type": "object",
-      "$id": "http://asyncapi.com/$defs/1.0.0/topicItem.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/topicItem.json",
       "additionalProperties": false,
       "minProperties": 1,
       "patternProperties": {
@@ -274,52 +295,34 @@
         }
       }
     },
-    "message": {
+    "parameter": {
       "properties": {
-        "$ref": {
-          "type": "string"
-        },
-        "headers": {
-          "$ref": "#/$defs/schema"
-        },
-        "payload": {
-          "$ref": "#/$defs/schema"
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/tag"
-          },
-          "uniqueItems": true
-        },
-        "summary": {
-          "type": "string",
-          "description": "A brief summary of the message."
-        },
         "description": {
           "type": "string",
-          "description": "A longer description of the message. CommonMark is allowed."
+          "description": "A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed."
         },
-        "externalDocs": {
-          "$ref": "#/$defs/externalDocs"
+        "name": {
+          "type": "string",
+          "description": "The name of the parameter."
         },
-        "deprecated": {
-          "type": "boolean",
-          "default": false
+        "schema": {
+          "$ref": "#/$defs/schema"
         },
-        "example": {}
+        "$ref": {
+          "type": "string"
+        }
       },
-      "type": "object",
-      "$id": "http://asyncapi.com/$defs/1.0.0/message.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/parameter.json",
       "additionalProperties": false,
       "patternProperties": {
         "^x-": {
           "$ref": "#/$defs/vendorExtension"
         }
-      }
+      },
+      "type": "object"
     },
     "schema": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/schema.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/schema.json",
       "type": "object",
       "description": "A deterministic version of a JSON Schema object.",
       "additionalProperties": false,
@@ -419,6 +422,23 @@
           "items": {
             "$ref": "#/$defs/schema"
           }
+        },
+        "oneOf": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/schema"
+          }
+        },
+        "anyOf": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/schema"
+          }
+        },
+        "not": {
+          "$ref": "#/$defs/schema"
         },
         "properties": {
           "type": "object",
@@ -689,13 +709,13 @@
         }
       },
       "type": "object",
-      "$id": "http://asyncapi.com/$defs/1.0.0/xml.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/xml.json",
       "additionalProperties": false
     },
     "externalDocs": {
       "additionalProperties": false,
       "type": "object",
-      "$id": "http://asyncapi.com/$defs/1.0.0/externalDocs.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/externalDocs.json",
       "description": "information about external documentation",
       "required": [
         "url"
@@ -715,10 +735,83 @@
         }
       }
     },
+    "operation": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/message"
+        },
+        {
+          "type": "object",
+          "required": [
+            "oneOf"
+          ],
+          "properties": {
+            "oneOf": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/message"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x-": {
+              "$ref": "#/$defs/vendorExtension"
+            }
+          }
+        }
+      ],
+      "$id": "http://asyncapi.com/$defs/1.2.0/operation.json"
+    },
+    "message": {
+      "properties": {
+        "$ref": {
+          "type": "string"
+        },
+        "headers": {
+          "$ref": "#/$defs/schema"
+        },
+        "payload": {
+          "$ref": "#/$defs/schema"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tag"
+          },
+          "uniqueItems": true
+        },
+        "summary": {
+          "type": "string",
+          "description": "A brief summary of the message."
+        },
+        "description": {
+          "type": "string",
+          "description": "A longer description of the message. CommonMark is allowed."
+        },
+        "externalDocs": {
+          "$ref": "#/$defs/externalDocs"
+        },
+        "deprecated": {
+          "type": "boolean",
+          "default": false
+        },
+        "example": {}
+      },
+      "type": "object",
+      "$id": "http://asyncapi.com/$defs/1.2.0/message.json",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {
+          "$ref": "#/$defs/vendorExtension"
+        }
+      }
+    },
     "tag": {
       "additionalProperties": false,
       "type": "object",
-      "$id": "http://asyncapi.com/$defs/1.0.0/tag.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/tag.json",
       "required": [
         "name"
       ],
@@ -733,6 +826,133 @@
           "$ref": "#/$defs/externalDocs"
         }
       },
+      "patternProperties": {
+        "^x-": {
+          "$ref": "#/$defs/vendorExtension"
+        }
+      }
+    },
+    "stream": {
+      "properties": {
+        "framing": {
+          "title": "Stream Framing Object",
+          "type": "object",
+          "oneOf": [
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "chunked"
+                  ]
+                },
+                "delimiter": {
+                  "type": "string",
+                  "enum": [
+                    "\\r\\n",
+                    "\\n"
+                  ],
+                  "default": "\\r\\n"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object"
+            },
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "sse"
+                  ]
+                },
+                "delimiter": {
+                  "type": "string",
+                  "enum": [
+                    "\\n\\n"
+                  ],
+                  "default": "\\n\\n"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object"
+            }
+          ],
+          "minProperties": 1,
+          "patternProperties": {
+            "^x-": {
+              "$ref": "#/$defs/vendorExtension"
+            }
+          }
+        },
+        "read": {
+          "title": "Stream Read Object",
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/message"
+          }
+        },
+        "write": {
+          "title": "Stream Write Object",
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/message"
+          }
+        }
+      },
+      "title": "Stream Object",
+      "type": "object",
+      "$id": "http://asyncapi.com/$defs/1.2.0/stream.json",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "patternProperties": {
+        "^x-": {
+          "$ref": "#/$defs/vendorExtension"
+        }
+      }
+    },
+    "events": {
+      "properties": {
+        "receive": {
+          "title": "Events Receive Object",
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/message"
+          }
+        },
+        "send": {
+          "title": "Events Send Object",
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/message"
+          }
+        }
+      },
+      "title": "Events Object",
+      "type": "object",
+      "$id": "http://asyncapi.com/$defs/1.2.0/events.json",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "anyOf": [
+        {
+          "required": [
+            "receive"
+          ]
+        },
+        {
+          "required": [
+            "send"
+          ]
+        }
+      ],
       "patternProperties": {
         "^x-": {
           "$ref": "#/$defs/vendorExtension"
@@ -761,17 +981,20 @@
               ]
             }
           }
+        },
+        "parameters": {
+          "$ref": "#/$defs/parameters"
         }
       },
       "type": "object",
       "description": "An object to hold a set of reusable objects for different aspects of the AsyncAPI Specification.",
-      "$id": "http://asyncapi.com/$defs/1.0.0/components.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/components.json",
       "additionalProperties": false
     },
     "schemas": {
       "description": "JSON objects describing schemas the API uses.",
       "type": "object",
-      "$id": "http://asyncapi.com/$defs/1.0.0/schemas.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/schemas.json",
       "additionalProperties": {
         "$ref": "#/$defs/schema"
       }
@@ -779,7 +1002,7 @@
     "messages": {
       "description": "JSON objects describing the messages being consumed and produced by the API.",
       "type": "object",
-      "$id": "http://asyncapi.com/$defs/1.0.0/messages.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/messages.json",
       "additionalProperties": {
         "$ref": "#/$defs/message"
       }
@@ -795,7 +1018,7 @@
       "required": [
         "$ref"
       ],
-      "$id": "http://asyncapi.com/$defs/1.0.0/Reference.json"
+      "$id": "http://asyncapi.com/$defs/1.2.0/Reference.json"
     },
     "SecurityScheme": {
       "oneOf": [
@@ -818,10 +1041,10 @@
           "$ref": "#/$defs/HTTPSecurityScheme"
         }
       ],
-      "$id": "http://asyncapi.com/$defs/1.0.0/SecurityScheme.json"
+      "$id": "http://asyncapi.com/$defs/1.2.0/SecurityScheme.json"
     },
     "userPassword": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/userPassword.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/userPassword.json",
       "type": "object",
       "required": [
         "type"
@@ -843,7 +1066,7 @@
       }
     },
     "apiKey": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/apiKey.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/apiKey.json",
       "type": "object",
       "required": [
         "type",
@@ -873,7 +1096,7 @@
       }
     },
     "X509": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/X509.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/X509.json",
       "type": "object",
       "required": [
         "type"
@@ -895,7 +1118,7 @@
       }
     },
     "symmetricEncryption": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/symmetricEncryption.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/symmetricEncryption.json",
       "type": "object",
       "required": [
         "type"
@@ -917,7 +1140,7 @@
       }
     },
     "asymmetricEncryption": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/asymmetricEncryption.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/asymmetricEncryption.json",
       "type": "object",
       "required": [
         "type"
@@ -950,10 +1173,10 @@
           "$ref": "#/$defs/APIKeyHTTPSecurityScheme"
         }
       ],
-      "$id": "http://asyncapi.com/$defs/1.0.0/HTTPSecurityScheme.json"
+      "$id": "http://asyncapi.com/$defs/1.2.0/HTTPSecurityScheme.json"
     },
     "NonBearerHTTPSecurityScheme": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/NonBearerHTTPSecurityScheme.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/NonBearerHTTPSecurityScheme.json",
       "not": {
         "type": "object",
         "properties": {
@@ -990,7 +1213,7 @@
       }
     },
     "BearerHTTPSecurityScheme": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/BearerHTTPSecurityScheme.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/BearerHTTPSecurityScheme.json",
       "type": "object",
       "required": [
         "type",
@@ -1022,7 +1245,7 @@
       }
     },
     "APIKeyHTTPSecurityScheme": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/APIKeyHTTPSecurityScheme.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/APIKeyHTTPSecurityScheme.json",
       "type": "object",
       "required": [
         "type",
@@ -1056,8 +1279,16 @@
         "^x-": {}
       }
     },
+    "parameters": {
+      "description": "JSON objects describing re-usable topic parameters.",
+      "type": "object",
+      "$id": "http://asyncapi.com/$defs/1.2.0/parameters.json",
+      "additionalProperties": {
+        "$ref": "#/$defs/parameter"
+      }
+    },
     "SecurityRequirement": {
-      "$id": "http://asyncapi.com/$defs/1.0.0/SecurityRequirement.json",
+      "$id": "http://asyncapi.com/$defs/1.2.0/SecurityRequirement.json",
       "type": "object",
       "additionalProperties": {
         "type": "array",
@@ -1075,7 +1306,23 @@
   "additionalProperties": false,
   "required": [
     "asyncapi",
-    "info",
-    "topics"
+    "info"
+  ],
+  "oneOf": [
+    {
+      "required": [
+        "topics"
+      ]
+    },
+    {
+      "required": [
+        "stream"
+      ]
+    },
+    {
+      "required": [
+        "events"
+      ]
+    }
   ]
 }

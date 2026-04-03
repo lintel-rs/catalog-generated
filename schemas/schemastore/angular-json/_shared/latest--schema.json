@@ -1,61 +1,150 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Angular Service Options Schema",
-  "description": "Creates a new service in your project. Services are used to encapsulate reusable logic, such as data access, API calls, or utility functions. This schematic simplifies the process of generating a new service with the necessary files and boilerplate code.",
+  "title": "Dev Server Target",
+  "description": "Dev Server target options for Build Facade.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/service/schema.json",
-    "sourceSha256": "ee6df96e4b6fd5a3081adff36e1402e5e870ab231521c6ffaf96368892bc7182"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/angular_devkit/build_angular/src/builders/dev-server/schema.json",
+    "sourceSha256": "897b9b0a91c7741f39efcb7dd0f9a85029d260a2d53fa45ece4a2d30827d1745"
   },
   "type": "object",
   "properties": {
-    "name": {
+    "buildTarget": {
       "type": "string",
-      "description": "The name for the new service. This will be used to create the service's class and spec files (e.g., `my-service.service.ts` and `my-service.service.spec.ts`).",
-      "$default": {
-        "$source": "argv",
-        "index": 0
-      },
-      "x-prompt": "What name would you like to use for the service?"
+      "description": "A build builder target to serve in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+      "pattern": "^[^:\\s]*:[^:\\s]*(:[^\\s]+)?$"
     },
-    "path": {
+    "port": {
+      "type": "number",
+      "description": "Port to listen on.",
+      "default": 4200
+    },
+    "host": {
       "type": "string",
-      "$default": {
-        "$source": "workingDirectory"
-      },
-      "description": "The path where the service files should be created, relative to the workspace root. If not provided, the service will be created in the project's `src/app` directory.",
-      "visible": false
+      "description": "Host to listen on.",
+      "default": "localhost"
     },
-    "project": {
+    "proxyConfig": {
       "type": "string",
-      "description": "The name of the project where the service should be added. If not specified, the CLI will determine the project from the current directory.",
-      "$default": {
-        "$source": "projectName"
-      }
+      "description": "Proxy configuration file. For more information, see <https://angular.dev/tools/cli/serve#proxying-to-a-backend-server>."
     },
-    "flat": {
+    "ssl": {
       "type": "boolean",
-      "default": true,
-      "description": "Creates files at the top level of the project or the given path. If set to false, a new folder with the service's name will be created to contain the files."
-    },
-    "skipTests": {
-      "type": "boolean",
-      "description": "Skip the generation of a unit test file `spec.ts` for the service.",
+      "description": "Serve using HTTPS.",
       "default": false
     },
-    "type": {
+    "sslKey": {
       "type": "string",
-      "description": "Append a custom type to the service's filename. For example, if you set the type to `service`, the file will be named `my-service.service.ts`."
+      "description": "SSL key to use for serving HTTPS."
     },
-    "addTypeToClassName": {
+    "sslCert": {
+      "type": "string",
+      "description": "SSL certificate to use for serving HTTPS."
+    },
+    "headers": {
+      "type": "object",
+      "description": "Custom HTTP headers to be added to all responses.",
+      "propertyNames": {
+        "pattern": "^[-_A-Za-z0-9]+$"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "open": {
       "type": "boolean",
-      "default": true,
-      "description": "When true, the 'type' option will be appended to the generated class name. When false, only the file name will include the type."
+      "description": "Opens the url in default browser.",
+      "default": false,
+      "alias": "o"
+    },
+    "verbose": {
+      "type": "boolean",
+      "description": "Adds more details to output logging."
+    },
+    "liveReload": {
+      "type": "boolean",
+      "description": "Whether to reload the page on change, using live-reload.",
+      "default": true
+    },
+    "publicHost": {
+      "type": "string",
+      "description": "The URL that the browser client (or live-reload client, if enabled) should use to connect to the development server. Use for a complex dev server setup, such as one with reverse proxies. This option has no effect when using the 'application' or other esbuild-based builders."
+    },
+    "allowedHosts": {
+      "type": "array",
+      "description": "List of hosts that are allowed to access the dev server.",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "servePath": {
+      "type": "string",
+      "description": "The pathname where the application will be served."
+    },
+    "disableHostCheck": {
+      "type": "boolean",
+      "description": "Don't verify connected clients are part of allowed hosts.",
+      "default": false
+    },
+    "hmr": {
+      "type": "boolean",
+      "description": "Enable hot module replacement."
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "Rebuild on change.",
+      "default": true
+    },
+    "poll": {
+      "type": "number",
+      "description": "Enable and define the file watching poll time period in milliseconds."
+    },
+    "inspect": {
+      "default": false,
+      "description": "Activate debugging inspector. This option only has an effect when 'SSR' or 'SSG' are enabled.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Activate the inspector on host and port in the format of `[[host:]port]`. See the security warning in <https://nodejs.org/docs/latest-v22.x/api/cli.html#warning-binding-inspector-to-a-public-ipport-combination-is-insecure> regarding the host parameter usage."
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    },
+    "forceEsbuild": {
+      "type": "boolean",
+      "description": "Force the development server to use the 'browser-esbuild' builder when building.",
+      "default": false
+    },
+    "prebundle": {
+      "description": "Enable and control the Vite-based development server's prebundling capabilities. To enable prebundling, the Angular CLI cache must also be enabled. This option has no effect when using the 'browser' or other Webpack-based builders.",
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "exclude": {
+              "description": "List of package imports that should not be prebundled by the development server. The packages will be bundled into the application code itself.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "exclude"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   },
+  "additionalProperties": false,
   "required": [
-    "name",
-    "project"
-  ],
-  "additionalProperties": false
+    "buildTarget"
+  ]
 }

@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/agentcore-cli/versions/1.0.json",
   "x-lintel": {
     "source": "https://schema.agentcore.aws.dev/v1/agentcore.json",
-    "sourceSha256": "e88ec8cd6cc31e0a0e307633fc9e505627fe34e8564b8b74396b55914cf8282d",
+    "sourceSha256": "21b76ec06e1183aee7b72af8faa6993ab2f8fdc7486b61ec7af996ea0231ff6b",
     "fileMatch": [
       "**/agentcore/agentcore.json"
     ],
@@ -59,6 +59,10 @@
             "minLength": 1,
             "maxLength": 48,
             "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,47}$"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200
           },
           "build": {
             "type": "string",
@@ -333,8 +337,7 @@
           "name",
           "build",
           "entrypoint",
-          "codeLocation",
-          "runtimeVersion"
+          "codeLocation"
         ],
         "additionalProperties": false
       }
@@ -412,6 +415,12 @@
               "maxLength": 256,
               "pattern": "^[\\p{L}\\p{N}\\s_.:/=+\\-@]*$"
             }
+          },
+          "encryptionKeyArn": {
+            "type": "string"
+          },
+          "executionRoleArn": {
+            "type": "string"
           }
         },
         "required": [
@@ -591,11 +600,59 @@
                   "ratingScale"
                 ],
                 "additionalProperties": false
+              },
+              "codeBased": {
+                "type": "object",
+                "properties": {
+                  "managed": {
+                    "type": "object",
+                    "properties": {
+                      "codeLocation": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "entrypoint": {
+                        "default": "lambda_function.handler",
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "timeoutSeconds": {
+                        "default": 60,
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 300
+                      },
+                      "additionalPolicies": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    },
+                    "required": [
+                      "codeLocation"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "external": {
+                    "type": "object",
+                    "properties": {
+                      "lambdaArn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^arn:aws[a-z-]*:lambda:[a-z0-9-]+:\\d{12}:function:.+$"
+                      }
+                    },
+                    "required": [
+                      "lambdaArn"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
               }
             },
-            "required": [
-              "llmAsAJudge"
-            ],
             "additionalProperties": false
           },
           "tags": {

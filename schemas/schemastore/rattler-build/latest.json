@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/rattler-build/latest.json",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json",
-    "sourceSha256": "77a96368e71f3127c4db902a462f58802099fe32e170b87b0616f01ceb399ac1",
+    "sourceSha256": "97154dcfaa8c2907ceaea7ec880b9b4af5c15e5b05bed57b646b7d8d3f557a4c",
     "fileMatch": [
       "recipe.yaml",
       "recipe.yml"
@@ -105,6 +105,19 @@
           "description": "Paths to the license files of this package.",
           "title": "License File"
         },
+        "license_family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The license family (deprecated, but still used in some recipes).",
+          "title": "License Family"
+        },
         "summary": {
           "anyOf": [
             {
@@ -124,14 +137,11 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/DescriptionFile"
-            },
-            {
               "type": "null"
             }
           ],
           "default": null,
-          "description": "Extended description of the package or a file (usually a README).",
+          "description": "Extended description of the package.",
           "title": "Description"
         },
         "prelink_message": {
@@ -148,6 +158,37 @@
         }
       },
       "title": "About",
+      "additionalProperties": false
+    },
+    "AttestationConfig": {
+      "type": "object",
+      "properties": {
+        "bundle_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to download the attestation bundle from (e.g., .sigstore.json file). Auto-derived for PyPI sources if not specified.",
+          "title": "Bundle Url"
+        },
+        "publishers": {
+          "default": [],
+          "description": "Publisher identities to verify (e.g., 'github:owner/repo'). All specified publishers must match.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Publishers",
+          "type": "array"
+        }
+      },
+      "title": "AttestationConfig",
       "additionalProperties": false
     },
     "BaseGitSource": {
@@ -225,6 +266,33 @@
           "description": "Should we LFS files be checked out as well",
           "title": "Lfs",
           "type": "boolean"
+        },
+        "submodules": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to recursively initialize and update submodules.",
+          "title": "Submodules"
+        },
+        "expected_commit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An expected commit hash to verify after checkout.",
+          "title": "Expected Commit"
         }
       },
       "required": [
@@ -500,18 +568,6 @@
           "default": null,
           "description": "Configuration to post-process dynamically linked libraries and executables"
         },
-        "link_options": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/LinkOptions"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Options that influence how a package behaves when it is installed or uninstalled."
-        },
         "prefix_detection": {
           "anyOf": [
             {
@@ -554,6 +610,32 @@
           "default": null,
           "description": "Glob patterns to include or exclude files from the package.",
           "title": "Files"
+        },
+        "post_process": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PostProcess"
+            },
+            {
+              "$ref": "#/$defs/IfStatement"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/PostProcess"
+                  },
+                  {
+                    "$ref": "#/$defs/IfStatement"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "default": [],
+          "description": "Post-processing operations using regex replacements on files.",
+          "title": "Post Process"
         }
       },
       "title": "Build",
@@ -636,7 +718,7 @@
         "build": {
           "anyOf": [
             {
-              "$ref": "#/$defs/OutputBuild"
+              "$ref": "#/$defs/Build"
             },
             {
               "type": "null"
@@ -881,6 +963,71 @@
           ],
           "description": "A list of outputs that are generated for this recipe.",
           "title": "Outputs"
+        },
+        "tests": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScriptTestElement"
+            },
+            {
+              "$ref": "#/$defs/PythonTestElement"
+            },
+            {
+              "$ref": "#/$defs/PerlTestElement"
+            },
+            {
+              "$ref": "#/$defs/RTestElement"
+            },
+            {
+              "$ref": "#/$defs/RubyTestElement"
+            },
+            {
+              "$ref": "#/$defs/DownstreamTestElement"
+            },
+            {
+              "$ref": "#/$defs/PackageContentTest"
+            },
+            {
+              "$ref": "#/$defs/IfStatement"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ScriptTestElement"
+                  },
+                  {
+                    "$ref": "#/$defs/PythonTestElement"
+                  },
+                  {
+                    "$ref": "#/$defs/PerlTestElement"
+                  },
+                  {
+                    "$ref": "#/$defs/RTestElement"
+                  },
+                  {
+                    "$ref": "#/$defs/RubyTestElement"
+                  },
+                  {
+                    "$ref": "#/$defs/DownstreamTestElement"
+                  },
+                  {
+                    "$ref": "#/$defs/PackageContentTest"
+                  },
+                  {
+                    "$ref": "#/$defs/IfStatement"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Top-level tests that are inherited by outputs",
+          "title": "Tests"
         }
       },
       "required": [
@@ -943,6 +1090,20 @@
           "description": "Secrets that are set as environment variables but never shown in the logs or the environment.",
           "title": "Secrets"
         },
+        "cwd": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The working directory to use when executing the script.",
+          "title": "Cwd"
+        },
         "content": {
           "anyOf": [
             {
@@ -973,22 +1134,6 @@
         "content"
       ],
       "title": "ContentScript",
-      "additionalProperties": false
-    },
-    "DescriptionFile": {
-      "type": "object",
-      "properties": {
-        "file": {
-          "description": "Path in the source directory that contains the packages description. E.g. README.md",
-          "pattern": "^[^\\\\]+$",
-          "title": "File",
-          "type": "string"
-        }
-      },
-      "required": [
-        "file"
-      ],
-      "title": "DescriptionFile",
       "additionalProperties": false
     },
     "DownstreamTestElement": {
@@ -1379,6 +1524,20 @@
           "description": "Secrets that are set as environment variables but never shown in the logs or the environment.",
           "title": "Secrets"
         },
+        "cwd": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The working directory to use when executing the script.",
+          "title": "Cwd"
+        },
         "file": {
           "anyOf": [
             {
@@ -1607,6 +1766,33 @@
           "title": "Lfs",
           "type": "boolean"
         },
+        "submodules": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to recursively initialize and update submodules.",
+          "title": "Submodules"
+        },
+        "expected_commit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An expected commit hash to verify after checkout.",
+          "title": "Expected Commit"
+        },
         "branch": {
           "description": "Branch to check out",
           "minLength": 1,
@@ -1697,6 +1883,33 @@
           "title": "Lfs",
           "type": "boolean"
         },
+        "submodules": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to recursively initialize and update submodules.",
+          "title": "Submodules"
+        },
+        "expected_commit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An expected commit hash to verify after checkout.",
+          "title": "Expected Commit"
+        },
         "rev": {
           "description": "Revision to checkout to (hash or ref)",
           "minLength": 1,
@@ -1786,6 +1999,33 @@
           "description": "Should we LFS files be checked out as well",
           "title": "Lfs",
           "type": "boolean"
+        },
+        "submodules": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to recursively initialize and update submodules.",
+          "title": "Submodules"
+        },
+        "expected_commit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An expected commit hash to verify after checkout.",
+          "title": "Expected Commit"
         },
         "tag": {
           "description": "Tag to checkout",
@@ -1954,7 +2194,7 @@
       "title": "IfStatement[Annotated[str, StringConstraints]]",
       "additionalProperties": false
     },
-    "IfStatement_Union_ScriptTestElement__PythonTestElement__PerlTestElement__RTestElement__DownstreamTestElement__PackageContentTest__": {
+    "IfStatement_Union_ScriptTestElement__PythonTestElement__PerlTestElement__RTestElement__RubyTestElement__DownstreamTestElement__PackageContentTest__": {
       "type": "object",
       "properties": {
         "if": {
@@ -1976,6 +2216,9 @@
               "$ref": "#/$defs/RTestElement"
             },
             {
+              "$ref": "#/$defs/RubyTestElement"
+            },
+            {
               "$ref": "#/$defs/DownstreamTestElement"
             },
             {
@@ -1995,6 +2238,9 @@
                   },
                   {
                     "$ref": "#/$defs/RTestElement"
+                  },
+                  {
+                    "$ref": "#/$defs/RubyTestElement"
                   },
                   {
                     "$ref": "#/$defs/DownstreamTestElement"
@@ -2024,6 +2270,9 @@
               "$ref": "#/$defs/RTestElement"
             },
             {
+              "$ref": "#/$defs/RubyTestElement"
+            },
+            {
               "$ref": "#/$defs/DownstreamTestElement"
             },
             {
@@ -2043,6 +2292,9 @@
                   },
                   {
                     "$ref": "#/$defs/RTestElement"
+                  },
+                  {
+                    "$ref": "#/$defs/RubyTestElement"
                   },
                   {
                     "$ref": "#/$defs/DownstreamTestElement"
@@ -2066,7 +2318,7 @@
         "if",
         "then"
       ],
-      "title": "IfStatement[Union[ScriptTestElement, PythonTestElement, PerlTestElement, RTestElement, DownstreamTestElement, PackageContentTest]]",
+      "title": "IfStatement[Union[ScriptTestElement, PythonTestElement, PerlTestElement, RTestElement, RubyTestElement, DownstreamTestElement, PackageContentTest]]",
       "additionalProperties": false
     },
     "IfStatement_Union_UrlSource__GitRev__GitTag__GitBranch__BaseGitSource__LocalSource__": {
@@ -2245,55 +2497,6 @@
         }
       },
       "title": "IgnoreRunExports",
-      "additionalProperties": false
-    },
-    "LinkOptions": {
-      "type": "object",
-      "properties": {
-        "post_link_script": {
-          "anyOf": [
-            {
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Script to execute after the package has been linked into an environment",
-          "title": "Post Link Script"
-        },
-        "pre_unlink_script": {
-          "anyOf": [
-            {
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Script to execute before uninstalling the package from an environment",
-          "title": "Pre Unlink Script"
-        },
-        "pre_link_message": {
-          "anyOf": [
-            {
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Message to show before linking",
-          "title": "Pre Link Message"
-        }
-      },
-      "title": "LinkOptions",
       "additionalProperties": false
     },
     "LocalSource": {
@@ -2535,7 +2738,7 @@
         "build": {
           "anyOf": [
             {
-              "$ref": "#/$defs/OutputBuild"
+              "$ref": "#/$defs/Build"
             },
             {
               "type": "null"
@@ -2574,13 +2777,16 @@
                     "$ref": "#/$defs/RTestElement"
                   },
                   {
+                    "$ref": "#/$defs/RubyTestElement"
+                  },
+                  {
                     "$ref": "#/$defs/DownstreamTestElement"
                   },
                   {
                     "$ref": "#/$defs/PackageContentTest"
                   },
                   {
-                    "$ref": "#/$defs/IfStatement_Union_ScriptTestElement__PythonTestElement__PerlTestElement__RTestElement__DownstreamTestElement__PackageContentTest__"
+                    "$ref": "#/$defs/IfStatement_Union_ScriptTestElement__PythonTestElement__PerlTestElement__RTestElement__RubyTestElement__DownstreamTestElement__PackageContentTest__"
                   },
                   {
                     "items": {
@@ -2598,13 +2804,16 @@
                           "$ref": "#/$defs/RTestElement"
                         },
                         {
+                          "$ref": "#/$defs/RubyTestElement"
+                        },
+                        {
                           "$ref": "#/$defs/DownstreamTestElement"
                         },
                         {
                           "$ref": "#/$defs/PackageContentTest"
                         },
                         {
-                          "$ref": "#/$defs/IfStatement_Union_ScriptTestElement__PythonTestElement__PerlTestElement__RTestElement__DownstreamTestElement__PackageContentTest__"
+                          "$ref": "#/$defs/IfStatement_Union_ScriptTestElement__PythonTestElement__PerlTestElement__RTestElement__RubyTestElement__DownstreamTestElement__PackageContentTest__"
                         }
                       ]
                     },
@@ -2633,387 +2842,9 @@
           ],
           "default": null,
           "description": "A human readable description of the package information. The values here are merged with the top level `about` field."
-        },
-        "extra": {
-          "anyOf": [
-            {
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "An set of arbitrary values that are included in the package manifest. The values here are merged with the top level `extras` field.",
-          "title": "Extra"
         }
       },
       "title": "Output",
-      "additionalProperties": false
-    },
-    "OutputBuild": {
-      "type": "object",
-      "properties": {
-        "number": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "pattern": "\\$\\{\\{.*\\}\\}",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": 0,
-          "description": "Build number to version current build in addition to package version",
-          "title": "Number"
-        },
-        "string": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "pattern": "\\$\\{\\{.*\\}\\}",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The build string to identify build variant. This is usually omitted (can use `${{ hash }}`) variable here)",
-          "title": "String"
-        },
-        "skip": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "boolean"
-            },
-            {
-              "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "boolean"
-                  }
-                ]
-              },
-              "type": "array"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "List of conditions under which to skip the build of the package. If any of these condition returns true the build is skipped.",
-          "title": "Skip"
-        },
-        "noarch": {
-          "anyOf": [
-            {
-              "enum": [
-                "generic",
-                "python"
-              ],
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Can be either 'generic' or 'python'. A noarch 'python' package compiles .pyc files upon installation.",
-          "title": "Noarch"
-        },
-        "script": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/FileScript"
-            },
-            {
-              "$ref": "#/$defs/ContentScript"
-            },
-            {
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/IfStatement"
-            },
-            {
-              "items": {
-                "anyOf": [
-                  {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  {
-                    "$ref": "#/$defs/IfStatement"
-                  }
-                ]
-              },
-              "type": "array"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "The script to execute to invoke the build. If the string is a single line and ends with `.sh` or `.bat`, then we interpret it as a file.",
-          "title": "Script"
-        },
-        "merge_build_and_host_envs": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "pattern": "\\$\\{\\{.*\\}\\}",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": false,
-          "description": "Merge the build and host environments (used in many R packages on Windows)",
-          "title": "Merge Build And Host Envs"
-        },
-        "always_include_files": {
-          "anyOf": [
-            {
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/IfStatement"
-            },
-            {
-              "items": {
-                "anyOf": [
-                  {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  {
-                    "$ref": "#/$defs/IfStatement"
-                  }
-                ]
-              },
-              "type": "array"
-            }
-          ],
-          "default": [],
-          "description": "Files to be included even if they are present in the PREFIX before building.",
-          "title": "Always Include Files"
-        },
-        "always_copy_files": {
-          "anyOf": [
-            {
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/IfStatement"
-            },
-            {
-              "items": {
-                "anyOf": [
-                  {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  {
-                    "$ref": "#/$defs/IfStatement"
-                  }
-                ]
-              },
-              "type": "array"
-            },
-            {
-              "$ref": "#/$defs/GlobDict"
-            },
-            {
-              "items": {
-                "anyOf": [
-                  {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  {
-                    "$ref": "#/$defs/IfStatement"
-                  },
-                  {
-                    "items": {
-                      "anyOf": [
-                        {
-                          "minLength": 1,
-                          "type": "string"
-                        },
-                        {
-                          "$ref": "#/$defs/IfStatement"
-                        }
-                      ]
-                    },
-                    "type": "array"
-                  },
-                  {
-                    "$ref": "#/$defs/GlobDict"
-                  }
-                ]
-              },
-              "type": "array"
-            }
-          ],
-          "default": [],
-          "description": "Do not soft- or hard-link these files but instead always copy them into the environment",
-          "title": "Always Copy Files"
-        },
-        "variant": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Variant"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Options that influence how the different variants are computed."
-        },
-        "python": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Python"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Python specific build configuration"
-        },
-        "dynamic_linking": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DynamicLinking"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Configuration to post-process dynamically linked libraries and executables"
-        },
-        "link_options": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/LinkOptions"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Options that influence how a package behaves when it is installed or uninstalled."
-        },
-        "prefix_detection": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/PrefixDetection"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Options that influence how the prefix replacement is done."
-        },
-        "files": {
-          "anyOf": [
-            {
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/IfStatement"
-            },
-            {
-              "items": {
-                "anyOf": [
-                  {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  {
-                    "$ref": "#/$defs/IfStatement"
-                  }
-                ]
-              },
-              "type": "array"
-            },
-            {
-              "$ref": "#/$defs/GlobDict"
-            }
-          ],
-          "default": null,
-          "description": "Glob patterns to include or exclude files from the package.",
-          "title": "Files"
-        },
-        "cache_only": {
-          "default": false,
-          "deprecated": true,
-          "description": "Do not output a package but use this output as an input to others.",
-          "title": "Cache Only",
-          "type": "boolean"
-        },
-        "cache_from": {
-          "anyOf": [
-            {
-              "minLength": 1,
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/IfStatement"
-            },
-            {
-              "items": {
-                "anyOf": [
-                  {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  {
-                    "$ref": "#/$defs/IfStatement"
-                  }
-                ]
-              },
-              "type": "array"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "deprecated": true,
-          "description": "Take the output of the specified outputs and copy them in the working directory.",
-          "title": "Cache From"
-        }
-      },
-      "title": "OutputBuild",
       "additionalProperties": false
     },
     "PackageContentTest": {
@@ -3269,6 +3100,71 @@
       "title": "PerlTestElementInner",
       "additionalProperties": false
     },
+    "PostProcess": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/IfStatement"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/IfStatement"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "description": "Files to apply post-processing to",
+          "title": "Files"
+        },
+        "regex": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "pattern": "\\$\\{\\{.*\\}\\}",
+              "type": "string"
+            }
+          ],
+          "description": "Regular expression pattern to match",
+          "title": "Regex"
+        },
+        "replacement": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "pattern": "\\$\\{\\{.*\\}\\}",
+              "type": "string"
+            }
+          ],
+          "description": "Replacement string",
+          "title": "Replacement"
+        }
+      },
+      "required": [
+        "files",
+        "regex",
+        "replacement"
+      ],
+      "title": "PostProcess",
+      "additionalProperties": false
+    },
     "PrefixDetection": {
       "type": "object",
       "properties": {
@@ -3327,27 +3223,6 @@
             {
               "pattern": "\\$\\{\\{.*\\}\\}",
               "type": "string"
-            },
-            {
-              "pattern": "^[^\\\\]+$",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/IfStatement"
-            },
-            {
-              "items": {
-                "anyOf": [
-                  {
-                    "pattern": "^[^\\\\]+$",
-                    "type": "string"
-                  },
-                  {
-                    "$ref": "#/$defs/IfStatement"
-                  }
-                ]
-              },
-              "type": "array"
             }
           ],
           "default": false,
@@ -3474,19 +3349,6 @@
           "default": [],
           "description": "Skip compiling pyc for some files",
           "title": "Skip Pyc Compilation"
-        },
-        "disable_pip": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "pattern": "\\$\\{\\{.*\\}\\}",
-              "type": "string"
-            }
-          ],
-          "default": false,
-          "title": "Disable Pip"
         },
         "site_packages_path": {
           "anyOf": [
@@ -3818,6 +3680,61 @@
         }
       },
       "title": "Requirements",
+      "additionalProperties": false
+    },
+    "RubyTestElement": {
+      "type": "object",
+      "properties": {
+        "ruby": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RubyTestElementInner"
+            }
+          ],
+          "description": "Ruby specific test configuration"
+        }
+      },
+      "required": [
+        "ruby"
+      ],
+      "title": "RubyTestElement",
+      "additionalProperties": false
+    },
+    "RubyTestElementInner": {
+      "type": "object",
+      "properties": {
+        "requires": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/IfStatement"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/IfStatement"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "description": "A list of Ruby modules to check after having installed the built package.",
+          "title": "Requires"
+        }
+      },
+      "required": [
+        "requires"
+      ],
+      "title": "RubyTestElementInner",
       "additionalProperties": false
     },
     "RunExports": {
@@ -4204,6 +4121,9 @@
               "$ref": "#/$defs/RTestElement"
             },
             {
+              "$ref": "#/$defs/RubyTestElement"
+            },
+            {
               "$ref": "#/$defs/DownstreamTestElement"
             },
             {
@@ -4226,6 +4146,9 @@
                   },
                   {
                     "$ref": "#/$defs/RTestElement"
+                  },
+                  {
+                    "$ref": "#/$defs/RubyTestElement"
                   },
                   {
                     "$ref": "#/$defs/DownstreamTestElement"
@@ -4754,6 +4677,18 @@
           "default": null,
           "description": "A file name to rename the downloaded file to (does not apply to archives).",
           "title": "File Name"
+        },
+        "attestation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AttestationConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional attestation verification configuration."
         }
       },
       "required": [

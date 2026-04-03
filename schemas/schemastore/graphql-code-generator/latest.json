@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/graphql-code-generator/latest.json",
   "x-lintel": {
     "source": "https://www.graphql-code-generator.com/config.schema.json",
-    "sourceSha256": "51d277f0a7960b42ee06b6b32b4b7342c9ff693cc1e76c37a6aed76a14352a6f",
+    "sourceSha256": "ded0fea3e8262607930ce8ef4b76a336c89897107f58e80ea73539d7807ef5a2",
     "fileMatch": [
       "codegen.yml",
       "codegen.yaml",
@@ -457,6 +457,10 @@
         "overrideExisting": {
           "description": "Sets the `overrideExisting` option, for example to allow for hot module reloading when running graphql-codegen in watch mode.\nWill directly be injected as code.\nDefault value: \"undefined\"",
           "type": "string"
+        },
+        "addTransformResponse": {
+          "description": "Sets the `addTransformResponse` option, which will automatically add a types transformResponse for query\nDefault value: \"false\"",
+          "type": "boolean"
         }
       }
     },
@@ -470,10 +474,6 @@
         },
         "rawRequest": {
           "description": "By default the `request` method return the `data` or `errors` key from the response. If you need to access the `extensions` key you can use the `rawRequest` method.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
           "type": "boolean"
         },
         "gqlImport": {
@@ -521,7 +521,7 @@
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -549,11 +549,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -576,16 +576,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -1103,7 +1128,7 @@
       "type": "object",
       "properties": {
         "enumValues": {
-          "$ref": "#/$defs/EnumValuesMap_1",
+          "$ref": "#/$defs/EnumValuesMap",
           "description": "Overrides the default value of enum values declared in your GraphQL schema."
         },
         "namespaceName": {
@@ -1139,11 +1164,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap_2",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention_2",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -1166,17 +1191,49 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
           "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "memberNameConvention": {
+          "enum": [
+            "camelCase",
+            "pascalCase"
+          ],
+          "type": "string"
         }
       }
     },
@@ -1208,9 +1265,9 @@
           "description": "Allows to generate operation methods with class definitions for request/response parameters\nDefault value: \"false\"",
           "type": "boolean"
         },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
-          "type": "boolean"
+        "jsonAttributesSource": {
+          "$ref": "#/$defs/JsonAttributesSource",
+          "description": "Library that should be used to emit JSON attributes.\nDefault value: \"Newtonsoft.Json\""
         },
         "gqlImport": {
           "description": "Customize from which module will `gql` be imported from.\nThis is useful if you want to use modules other than `graphql-tag`, e.g. `graphql.macro`.\nDefault value: \"graphql-tag#gql\"",
@@ -1253,11 +1310,11 @@
           "type": "string"
         },
         "documentMode": {
-          "$ref": "#/$defs/DocumentMode_1",
+          "$ref": "#/$defs/DocumentMode",
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -1285,11 +1342,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap_2",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention_2",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -1312,17 +1369,49 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
           "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "memberNameConvention": {
+          "enum": [
+            "camelCase",
+            "pascalCase"
+          ],
+          "type": "string"
         }
       }
     },
@@ -1579,6 +1668,10 @@
         "useConsts": {
           "description": "Will generate a const string instead of regular string.\nDefault value: \"false\"",
           "type": "boolean"
+        },
+        "throwOnDuplicate": {
+          "description": "Throws an error if a duplicate operation name is found.\nDefault value: \"false\"",
+          "type": "boolean"
         }
       }
     },
@@ -1593,10 +1686,6 @@
         "extensionsType": {
           "description": "Allows you to override the type for extensions when `rawRequest` is enabled.\nDefault value: \"any\"",
           "type": "string"
-        },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
-          "type": "boolean"
         },
         "gqlImport": {
           "description": "Customize from which module will `gql` be imported from.\nThis is useful if you want to use modules other than `graphql-tag`, e.g. `graphql.macro`.\nDefault value: \"graphql-tag#gql\"",
@@ -1643,7 +1732,7 @@
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -1671,11 +1760,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -1698,16 +1787,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -1748,11 +1862,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -1775,16 +1889,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -2085,10 +2224,6 @@
           "description": "Add `override` modifier to make the generated code compatible with the `noImplicitOverride` option of Typescript v4.3+.\nDefault value: \"false\"",
           "type": "boolean"
         },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "gqlImport": {
           "description": "Customize from which module will `gql` be imported from.\nThis is useful if you want to use modules other than `graphql-tag`, e.g. `graphql.macro`.\nDefault value: \"graphql-tag#gql\"",
           "type": "string"
@@ -2134,7 +2269,7 @@
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -2162,11 +2297,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -2189,16 +2324,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -2208,7 +2368,7 @@
       "type": "object",
       "properties": {
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap_3",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         }
       }
@@ -2229,10 +2389,6 @@
           "description": "You can specify module that exports components `Query`, `Mutation`, `Subscription` and HOCs\nThis is useful for further abstraction of some common tasks (e.g. error handling).\nFilepath relative to generated file can be also specified.\nDefault value: \"urql\"",
           "type": "string"
         },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "gqlImport": {
           "description": "Customize from which module will `gql` be imported from.\nThis is useful if you want to use modules other than `graphql-tag`, e.g. `graphql.macro`.\nDefault value: \"graphql-tag#gql\"",
           "type": "string"
@@ -2278,7 +2434,7 @@
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -2306,11 +2462,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -2333,16 +2489,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -2407,22 +2588,20 @@
           "description": "Customized the output by enabling/disabling the generated mutation option type.\nDefault value: \"true\"",
           "type": "boolean"
         },
+        "withFragmentHooks": {
+          "description": "Whether or not to include wrappers for Apollo's useFragment hook.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
         "addDocBlocks": {
           "description": "Allows you to enable/disable the generation of docblocks in generated code.\nSome IDE's (like VSCode) add extra inline information with docblocks, you can disable this feature if your preferred IDE does not.\nDefault value: \"true\"",
           "type": "boolean"
         },
         "defaultBaseOptions": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "$ref": "#/$defs/ReactApolloPluginConfigDefaultBaseOptions",
+          "description": "Configure default mutation and query hook options."
         },
         "hooksSuffix": {
           "type": "string"
-        },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
-          "type": "boolean"
         },
         "gqlImport": {
           "description": "Customize from which module will `gql` be imported from.\nThis is useful if you want to use modules other than `graphql-tag`, e.g. `graphql.macro`.\nDefault value: \"graphql-tag#gql\"",
@@ -2469,7 +2648,7 @@
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -2497,11 +2676,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -2524,16 +2703,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -2558,9 +2762,9 @@
           "description": "Allows you to enable/disable the generation of docblocks in generated code.\nSome IDE's (like VSCode) add extra inline information with docblocks, you can disable this feature if your preferred IDE does not.\nDefault value: \"true\"",
           "type": "boolean"
         },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
-          "type": "boolean"
+        "clientId": {
+          "description": "Allows you to set the clientId in the composition functions when using multiple apollo clients.\nDefault value: \"null\"",
+          "type": "string"
         },
         "gqlImport": {
           "description": "Customize from which module will `gql` be imported from.\nThis is useful if you want to use modules other than `graphql-tag`, e.g. `graphql.macro`.\nDefault value: \"graphql-tag#gql\"",
@@ -2607,7 +2811,7 @@
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -2635,11 +2839,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -2662,16 +2866,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -2716,10 +2945,6 @@
           "description": "Allows you to enable/disable the generation of docblocks in generated code.\nSome IDE's (like VSCode) add extra inline information with docblocks, you can disable this feature if\nyour preferred IDE does not.\nDefault value: \"true\"",
           "type": "boolean"
         },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "gqlImport": {
           "description": "Customize from which module will `gql` be imported from.\nThis is useful if you want to use modules other than `graphql-tag`, e.g. `graphql.macro`.\nDefault value: \"graphql-tag#gql\"",
           "type": "string"
@@ -2765,7 +2990,7 @@
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -2793,11 +3018,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -2820,16 +3045,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -2846,10 +3096,6 @@
           "description": "You can specify module that exports components `Query`, `Mutation`, `Subscription`\nThis is useful for further abstraction of some common tasks (e.g. error handling).\nFilepath relative to generated file can be also specified.\nDefault value: \"urql\"",
           "type": "string"
         },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "gqlImport": {
           "description": "Customize from which module will `gql` be imported from.\nThis is useful if you want to use modules other than `graphql-tag`, e.g. `graphql.macro`.\nDefault value: \"graphql-tag#gql\"",
           "type": "string"
@@ -2895,7 +3141,7 @@
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -2923,11 +3169,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -2950,16 +3196,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -2972,10 +3243,6 @@
           "$ref": "#/$defs/StencilComponentType",
           "description": "Customize the output of the plugin - you can choose to generate a Component class or a function component.\nDefault value: \"functional\""
         },
-        "noGraphQLTag": {
-          "description": "Deprecated. Changes the documentMode to `documentNode`.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "gqlImport": {
           "description": "Customize from which module will `gql` be imported from.\nThis is useful if you want to use modules other than `graphql-tag`, e.g. `graphql.macro`.\nDefault value: \"graphql-tag#gql\"",
           "type": "string"
@@ -3021,7 +3288,7 @@
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
-          "description": "If you are using `documentNode: documentMode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
+          "description": "If you are using `documentMode: documentNode | documentNodeImportFragments`, you can set this to `true` to apply document optimizations for your GraphQL document.\nThis will remove all \"loc\" and \"description\" fields from the compiled document, and will remove all empty arrays (such as `directives`, `arguments` and `variableDefinitions`).\nDefault value: \"true\"",
           "type": "boolean"
         },
         "importOperationTypesFrom": {
@@ -3049,11 +3316,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -3076,16 +3343,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -3155,7 +3447,7 @@
           "type": "string"
         },
         "documentMode": {
-          "$ref": "#/$defs/DocumentMode_2",
+          "$ref": "#/$defs/DocumentMode",
           "description": "Declares how DocumentNode are created:\n\n- `graphQLTag`: `graphql-tag` or other modules (check `gqlImport`) will be used to generate document nodes. If this is used, document nodes are generated on client side i.e. the module used to generate this will be shipped to the client\n- `documentNode`: document nodes will be generated as objects when we generate the templates.\n- `documentNodeImportFragments`: Similar to documentNode except it imports external fragments instead of embedding them.\n- `external`: document nodes are imported from an external file. To be used with `importDocumentNodeExternallyFrom`\n\nNote that some plugins (like `typescript-graphql-request`) also supports `string` for this parameter.\nDefault value: \"graphQLTag\""
         },
         "optimizeDocumentNode": {
@@ -3298,11 +3590,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -3325,16 +3617,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -3374,11 +3691,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -3401,16 +3718,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -3423,7 +3765,7 @@
           "type": "string"
         },
         "enumValues": {
-          "$ref": "#/$defs/EnumValuesMap_2",
+          "$ref": "#/$defs/EnumValuesMap",
           "description": "Overrides the default value of enum values declared in your GraphQL schema."
         },
         "listType": {
@@ -3447,11 +3789,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_1",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_1",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -3474,16 +3816,41 @@
           "type": "boolean",
           "description": "Will use `import type {}` rather than `import {}` when importing only types. This gives\ncompatibility with TypeScript's \"importsNotUsedAsValues\": \"error\" option\nDefault value: \"false\""
         },
-        "dedupeFragments": {
-          "description": "Removes fragment duplicates for reducing data transfer.\nIt is done by removing sub-fragments imports from fragment definition\nInstead - all of them are imported to the Operation node.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
-          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
+          "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\n\"mask\" transforms the types for use with fragment masking. Useful when masked types are needed when not using the \"client\" preset e.g. such as combining it with Apollo Client's data masking feature.\nDefault value: \"inline\"",
           "type": "string"
         },
         "emitLegacyCommonJSImports": {
           "description": "Emit legacy common js imports.\nDefault it will be `true` this way it ensure that generated code works with [non-compliant bundlers](https://github.com/dotansimha/graphql-code-generator/issues/8065).\nDefault value: \"true\"",
+          "type": "boolean"
+        },
+        "importExtension": {
+          "description": "Append this extension to all imports.\nUseful for ESM environments that require file extensions in import statements.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          ]
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "printFieldsOnNewLines": {
+          "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "includeExternalFragments": {
+          "description": "Whether to include external fragments in the generated code. External fragments are not defined\nin the same location as the operation definition.\nDefault value: \"false\"",
           "type": "boolean"
         }
       }
@@ -3505,14 +3872,14 @@
           "type": "boolean"
         },
         "enumValues": {
-          "$ref": "#/$defs/EnumValuesMap_2",
+          "$ref": "#/$defs/EnumValuesMap_1",
           "description": "Overrides the default value of enum values declared in your GraphQL schema.\nYou can also map the entire enum to an external type by providing a string that of `module#type`."
         },
         "declarationKind": {
           "description": "Overrides the default output for various GraphQL elements.",
           "anyOf": [
             {
-              "$ref": "#/$defs/DeclarationKindConfig_2"
+              "$ref": "#/$defs/DeclarationKindConfig_1"
             },
             {
               "enum": [
@@ -3558,7 +3925,7 @@
           "description": "Allow to override the type value of `EntireFieldWrapper`. This wrapper applies outside of Array and Maybe\nunlike `fieldWrapperValue`, that will wrap the inner type.\nDefault value: \"T | Promise<T> | (() => T | Promise<T>)\""
         },
         "directiveArgumentAndInputFieldMappings": {
-          "$ref": "#/$defs/DirectiveArgumentAndInputFieldMappings_2",
+          "$ref": "#/$defs/DirectiveArgumentAndInputFieldMappings_1",
           "description": "Replaces a GraphQL scalar with a custom type based on the applied directive on an argument or input field.\n\nYou can use both `module#type` and `module#namespace#type` syntax.\nWill NOT work with introspected schemas since directives are not exported.\nOnly works with directives on ARGUMENT_DEFINITION or INPUT_FIELD_DEFINITION.\n\n**WARNING:** Using this option does only change the type definitions.\n\nFor actually ensuring that a type is correct at runtime you will have to use schema transforms (e.g. with [@graphql-tools/utils mapSchema](https://graphql-tools.com/docs/schema-directives)) that apply those rules!\nOtherwise, you might end up with a runtime type mismatch which could cause unnoticed bugs or runtime errors.\n\nPlease use this configuration option with care!"
         },
         "directiveArgumentAndInputFieldMappingTypeSuffix": {
@@ -3574,11 +3941,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_2",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_2",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -3658,7 +4025,7 @@
           "description": "This will cause the generator to avoid using optionals (`?`),\nso all field resolvers must be implemented in order to avoid compilation errors.\nDefault value: \"false\"",
           "anyOf": [
             {
-              "$ref": "#/$defs/AvoidOptionalsConfig_2"
+              "$ref": "#/$defs/AvoidOptionalsConfig_1"
             },
             {
               "type": "boolean"
@@ -3670,7 +4037,7 @@
           "type": "boolean"
         },
         "enumValues": {
-          "$ref": "#/$defs/EnumValuesMap_2",
+          "$ref": "#/$defs/EnumValuesMap_1",
           "description": "Overrides the default value of enum values declared in your GraphQL schema, supported\nin this plugin because of the need for integration with `typescript` package.\nSee documentation under `typescript` plugin for more information and examples."
         },
         "resolverTypeWrapperSignature": {
@@ -3722,11 +4089,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_2",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_2",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -3820,14 +4187,14 @@
           "type": "boolean"
         },
         "enumValues": {
-          "$ref": "#/$defs/EnumValuesMap_2",
+          "$ref": "#/$defs/EnumValuesMap_1",
           "description": "Overrides the default value of enum values declared in your GraphQL schema.\nYou can also map the entire enum to an external type by providing a string that of `module#type`."
         },
         "declarationKind": {
           "description": "Overrides the default output for various GraphQL elements.",
           "anyOf": [
             {
-              "$ref": "#/$defs/DeclarationKindConfig_2"
+              "$ref": "#/$defs/DeclarationKindConfig_1"
             },
             {
               "enum": [
@@ -3873,7 +4240,7 @@
           "description": "Allow to override the type value of `EntireFieldWrapper`. This wrapper applies outside of Array and Maybe\nunlike `fieldWrapperValue`, that will wrap the inner type.\nDefault value: \"T | Promise<T> | (() => T | Promise<T>)\""
         },
         "directiveArgumentAndInputFieldMappings": {
-          "$ref": "#/$defs/DirectiveArgumentAndInputFieldMappings_2",
+          "$ref": "#/$defs/DirectiveArgumentAndInputFieldMappings_1",
           "description": "Replaces a GraphQL scalar with a custom type based on the applied directive on an argument or input field.\n\nYou can use both `module#type` and `module#namespace#type` syntax.\nWill NOT work with introspected schemas since directives are not exported.\nOnly works with directives on ARGUMENT_DEFINITION or INPUT_FIELD_DEFINITION.\n\n**WARNING:** Using this option does only change the type definitions.\n\nFor actually ensuring that a type is correct at runtime you will have to use schema transforms (e.g. with [@graphql-tools/utils mapSchema](https://graphql-tools.com/docs/schema-directives)) that apply those rules!\nOtherwise, you might end up with a runtime type mismatch which could cause unnoticed bugs or runtime errors.\n\nPlease use this configuration option with care!"
         },
         "directiveArgumentAndInputFieldMappingTypeSuffix": {
@@ -3889,11 +4256,11 @@
           "type": "string"
         },
         "scalars": {
-          "$ref": "#/$defs/ScalarsMap",
+          "$ref": "#/$defs/ScalarsMap_2",
           "description": "Extends or overrides the built-in scalars and custom GraphQL scalars to a custom type."
         },
         "namingConvention": {
-          "$ref": "#/$defs/NamingConvention",
+          "$ref": "#/$defs/NamingConvention_2",
           "description": "Allow you to override the naming convention of the output.\nYou can either override all namings, or specify an object with specific custom naming convention per output.\nThe format of the converter must be a valid `module#method`.\nAllowed values for specific output are: `typeNames`, `enumValues`.\nYou can also use \"keep\" to keep all GraphQL names as-is.\nAdditionally, you can set `transformUnderscore` to `true` if you want to override the default behavior,\nwhich is to preserve underscores.\n\nAvailable case functions in `change-case-all` are `camelCase`, `capitalCase`, `constantCase`, `dotCase`, `headerCase`, `noCase`, `paramCase`, `pascalCase`, `pathCase`, `sentenceCase`, `snakeCase`, `lowerCase`, `localeLowerCase`, `lowerCaseFirst`, `spongeCase`, `titleCase`, `upperCase`, `localeUpperCase` and `upperCaseFirst`\n[See more](https://github.com/btxtiger/change-case-all)\nDefault value: \"change-case-all#pascalCase\""
         },
         "typesPrefix": {
@@ -4044,6 +4411,14 @@
         "globalFragments": {
           "description": "Whether to source fragments per-document, or globally. If set, will enforce fragment name uniqueness\nDefault value: \"false\"",
           "type": "boolean"
+        },
+        "fragmentsOrder": {
+          "description": "Whether to order fragments by global definition order, or by definition order in the document\nDefault value: \"definition\"",
+          "enum": [
+            "document",
+            "global"
+          ],
+          "type": "string"
         }
       }
     },
@@ -4088,7 +4463,7 @@
       "type": "object",
       "properties": {
         "baseTypesPath": {
-          "description": "Required, should point to the base schema types file.\nThe key of the output is used a the base path for this file.\n\nIf you wish to use an NPM package or a local workspace package, make sure to prefix the package name with `~`.",
+          "description": "points to the base schema types file.\nThe key of the output is used a the base path for this file.\n\nIf you wish to use an NPM package or a local workspace package, make sure to prefix the package name with `~`.",
           "type": "string"
         },
         "importAllFragmentsFrom": {
@@ -4197,7 +4572,7 @@
         "_typeMap": {},
         "_subTypeMap": {},
         "_implementationsMap": {},
-        "__@toStringTag@39": {
+        "__@toStringTag@40": {
           "type": "string"
         }
       }
@@ -4262,7 +4637,7 @@
           "$ref": "#/$defs/Source",
           "description": "The Source document the AST represents."
         },
-        "__@toStringTag@39": {
+        "__@toStringTag@40": {
           "type": "string"
         }
       }
@@ -4302,7 +4677,7 @@
         "next": {
           "$ref": "#/$defs/Token"
         },
-        "__@toStringTag@39": {
+        "__@toStringTag@40": {
           "type": "string"
         }
       }
@@ -4348,7 +4723,7 @@
         "locationOffset": {
           "$ref": "#/$defs/Location_1"
         },
-        "__@toStringTag@39": {
+        "__@toStringTag@40": {
           "type": "string"
         }
       }
@@ -4816,7 +5191,7 @@
           "description": "An optional schema coordinate (e.g. \"MyType.myField\") associated with this error.",
           "type": "string"
         },
-        "__@toStringTag@39": {
+        "__@toStringTag@40": {
           "type": "string"
         },
         "name": {
@@ -7593,6 +7968,83 @@
       ],
       "type": "string"
     },
+    "ScalarsMap_1": {
+      "description": "Scalars map or a string, a map between the GraphQL scalar name and the identifier that should be used",
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "output": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "NamingConvention_1": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NamingConventionFn_1"
+        },
+        {
+          "$ref": "#/$defs/NamingConventionMap_1"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "__type_14": {
+      "type": "object"
+    },
+    "NamingConventionFn_1": {
+      "$ref": "#/$defs/__type_14"
+    },
+    "NamingConventionMap_1": {
+      "properties": {
+        "enumValues": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NamingConventionFn_1"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "typeNames": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NamingConventionFn_1"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "transformUnderscore": {
+          "type": "boolean"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
     "AvoidOptionalsConfig": {
       "type": "object",
       "properties": {
@@ -7691,7 +8143,7 @@
       ],
       "type": "string"
     },
-    "__type_14": {
+    "__type_15": {
       "description": "A map between the GraphQL directive name and the identifier that should be used",
       "type": "object",
       "additionalProperties": {
@@ -7699,90 +8151,63 @@
       }
     },
     "DirectiveArgumentAndInputFieldMappings": {
-      "$ref": "#/$defs/__type_14"
-    },
-    "ScalarsMap_1": {
-      "description": "Scalars map or a string, a map between the GraphQL scalar name and the identifier that should be used",
-      "anyOf": [
-        {
-          "type": "object",
-          "additionalProperties": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "output": {
-                    "type": "string"
-                  }
-                }
-              },
-              {
-                "type": "string"
-              }
-            ]
-          }
-        },
-        {
-          "type": "string"
-        }
-      ]
-    },
-    "NamingConvention_1": {
-      "anyOf": [
-        {
-          "$ref": "#/$defs/NamingConventionFn_1"
-        },
-        {
-          "$ref": "#/$defs/NamingConventionMap_1"
-        },
-        {
-          "type": "string"
-        }
-      ]
-    },
-    "__type_15": {
-      "type": "object"
-    },
-    "NamingConventionFn_1": {
       "$ref": "#/$defs/__type_15"
-    },
-    "NamingConventionMap_1": {
-      "properties": {
-        "enumValues": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/NamingConventionFn_1"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "typeNames": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/NamingConventionFn_1"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "transformUnderscore": {
-          "type": "boolean"
-        }
-      },
-      "type": "object",
-      "additionalProperties": false
     },
     "CustomDirectivesConfig": {
       "type": "object",
       "properties": {
         "apolloUnmask": {
           "description": "Adds integration with Apollo Client's `@unmask` directive\nwhen using Apollo Client's data masking feature. `@unmask` ensures fields\nmarked by `@unmask` are available in the type definition.\nDefault value: \"false\"",
+          "type": "boolean"
+        }
+      }
+    },
+    "JsonAttributesSource": {
+      "enum": [
+        "Newtonsoft.Json",
+        "System.Text.Json"
+      ],
+      "type": "string"
+    },
+    "__type_16": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "interface": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "input": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "string"
+        }
+      }
+    },
+    "Partial_1": {
+      "$ref": "#/$defs/__type_16"
+    },
+    "AvoidOptionalsConfig_1": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "boolean"
+        },
+        "object": {
+          "type": "boolean"
+        },
+        "inputValue": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "type": "boolean"
+        },
+        "resolvers": {
           "type": "boolean"
         }
       }
@@ -7824,128 +8249,6 @@
     "AdditionalProps_1": {
       "type": "object"
     },
-    "JsonAttributesSource": {
-      "enum": [
-        "Newtonsoft.Json",
-        "System.Text.Json"
-      ],
-      "type": "string"
-    },
-    "ScalarsMap_2": {
-      "description": "Scalars map or a string, a map between the GraphQL scalar name and the identifier that should be used",
-      "anyOf": [
-        {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        {
-          "type": "string"
-        }
-      ]
-    },
-    "NamingConvention_2": {
-      "anyOf": [
-        {
-          "$ref": "#/$defs/NamingConventionFn_2"
-        },
-        {
-          "$ref": "#/$defs/NamingConventionMap_2"
-        },
-        {
-          "type": "string"
-        }
-      ]
-    },
-    "__type_16": {
-      "type": "object"
-    },
-    "NamingConventionFn_2": {
-      "$ref": "#/$defs/__type_16"
-    },
-    "NamingConventionMap_2": {
-      "properties": {
-        "enumValues": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/NamingConventionFn_2"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "typeNames": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/NamingConventionFn_2"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "transformUnderscore": {
-          "type": "boolean"
-        }
-      },
-      "type": "object",
-      "additionalProperties": false
-    },
-    "DocumentMode_1": {
-      "enum": [
-        "documentNode",
-        "documentNodeImportFragments",
-        "external",
-        "graphQLTag",
-        "string"
-      ],
-      "type": "string"
-    },
-    "__type_17": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "interface": {
-          "type": "string"
-        },
-        "field": {
-          "type": "string"
-        },
-        "input": {
-          "type": "string"
-        },
-        "arguments": {
-          "type": "string"
-        }
-      }
-    },
-    "Partial_1": {
-      "$ref": "#/$defs/__type_17"
-    },
-    "AvoidOptionalsConfig_1": {
-      "type": "object",
-      "properties": {
-        "field": {
-          "type": "boolean"
-        },
-        "object": {
-          "type": "boolean"
-        },
-        "inputValue": {
-          "type": "boolean"
-        },
-        "defaultValue": {
-          "type": "boolean"
-        },
-        "resolvers": {
-          "type": "boolean"
-        }
-      }
-    },
     "DeclarationKindConfig_1": {
       "type": "object",
       "properties": {
@@ -7978,7 +8281,7 @@
       ],
       "type": "string"
     },
-    "__type_18": {
+    "__type_17": {
       "description": "A map between the GraphQL directive name and the identifier that should be used",
       "type": "object",
       "additionalProperties": {
@@ -7986,7 +8289,69 @@
       }
     },
     "DirectiveArgumentAndInputFieldMappings_1": {
+      "$ref": "#/$defs/__type_17"
+    },
+    "ScalarsMap_2": {
+      "description": "Scalars map or a string, a map between the GraphQL scalar name and the identifier that should be used",
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "NamingConvention_2": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NamingConventionFn_2"
+        },
+        {
+          "$ref": "#/$defs/NamingConventionMap_2"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "__type_18": {
+      "type": "object"
+    },
+    "NamingConventionFn_2": {
       "$ref": "#/$defs/__type_18"
+    },
+    "NamingConventionMap_2": {
+      "properties": {
+        "enumValues": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NamingConventionFn_2"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "typeNames": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NamingConventionFn_2"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "transformUnderscore": {
+          "type": "boolean"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "Array_1": {
       "type": "array",
@@ -8011,34 +8376,37 @@
         }
       }
     },
-    "ScalarsMap_3": {
-      "description": "Scalars map or a string, a map between the GraphQL scalar name and the identifier that should be used",
-      "anyOf": [
-        {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+    "ReactApolloPluginConfigDefaultBaseOptions": {
+      "type": "object",
+      "properties": {
+        "awaitRefetchQueries": {
+          "type": "boolean"
         },
-        {
+        "errorPolicy": {
           "type": "string"
+        },
+        "fetchPolicy": {
+          "type": "string"
+        },
+        "ignoreResults": {
+          "type": "boolean"
+        },
+        "notifyOnNetworkStatusChange": {
+          "type": "boolean"
+        },
+        "returnPartialData": {
+          "type": "boolean"
+        },
+        "ssr": {
+          "type": "boolean"
         }
-      ]
+      },
+      "additionalProperties": {}
     },
     "StencilComponentType": {
       "enum": [
         "class",
         "functional"
-      ],
-      "type": "string"
-    },
-    "DocumentMode_2": {
-      "enum": [
-        "documentNode",
-        "documentNodeImportFragments",
-        "external",
-        "graphQLTag",
-        "string"
       ],
       "type": "string"
     },
@@ -8051,110 +8419,11 @@
       ],
       "type": "number"
     },
-    "EnumValuesMap_2": {
-      "description": "A raw configuration for enumValues map - can be represented with a single string value for a file path,\na map between enum name and a file path, or a map between enum name and an object with explicit enum values.",
-      "anyOf": [
-        {
-          "type": "object",
-          "additionalProperties": {
-            "anyOf": [
-              {
-                "allOf": [
-                  {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": [
-                        "string",
-                        "number"
-                      ]
-                    }
-                  },
-                  {
-                    "$ref": "#/$defs/AdditionalProps_2"
-                  }
-                ]
-              },
-              {
-                "type": "string"
-              }
-            ]
-          }
-        },
-        {
-          "type": "string"
-        }
-      ]
-    },
-    "AdditionalProps_2": {
-      "type": "object"
-    },
-    "DeclarationKindConfig_2": {
-      "type": "object",
-      "properties": {
-        "directive": {
-          "$ref": "#/$defs/DeclarationKind_2"
-        },
-        "scalar": {
-          "$ref": "#/$defs/DeclarationKind_2"
-        },
-        "input": {
-          "$ref": "#/$defs/DeclarationKind_2"
-        },
-        "type": {
-          "$ref": "#/$defs/DeclarationKind_2"
-        },
-        "interface": {
-          "$ref": "#/$defs/DeclarationKind_2"
-        },
-        "arguments": {
-          "$ref": "#/$defs/DeclarationKind_2"
-        }
-      }
-    },
-    "DeclarationKind_2": {
-      "enum": [
-        "abstract class",
-        "class",
-        "interface",
-        "type"
-      ],
-      "type": "string"
-    },
     "__type_19": {
-      "description": "A map between the GraphQL directive name and the identifier that should be used",
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    },
-    "DirectiveArgumentAndInputFieldMappings_2": {
-      "$ref": "#/$defs/__type_19"
-    },
-    "AvoidOptionalsConfig_2": {
-      "type": "object",
-      "properties": {
-        "field": {
-          "type": "boolean"
-        },
-        "object": {
-          "type": "boolean"
-        },
-        "inputValue": {
-          "type": "boolean"
-        },
-        "defaultValue": {
-          "type": "boolean"
-        },
-        "resolvers": {
-          "type": "boolean"
-        }
-      }
-    },
-    "__type_20": {
       "type": "object"
     },
     "FragmentImportFromFn": {
-      "$ref": "#/$defs/__type_20"
+      "$ref": "#/$defs/__type_19"
     },
     "GeneratedPluginsMap": {
       "anyOf": [

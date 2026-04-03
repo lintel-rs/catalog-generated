@@ -1,99 +1,83 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json",
-  "title": "roadrunner-jobs",
-  "description": "All the valid configuration parameters for the jobs plugin for RoadRunner.",
+  "title": "roadrunner-nats",
+  "description": "The schema contains all the valid configuration parameters for the NATS plugin for the roadrunner job system.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/roadrunner-server/jobs/refs/heads/master/schema.json",
-    "sourceSha256": "ba9e4dadf412640d77690ffbbfb9822fad2bdd75a2b2490f07f122a8df336128"
+    "source": "https://raw.githubusercontent.com/roadrunner-server/nats/refs/heads/master/schema.json",
+    "sourceSha256": "d1c727b2142a0a0d2b9e87b39c8db46909ae6353b059761d6d21a68f3f72e858"
   },
-  "type": "object",
-  "properties": {
-    "num_pollers": {
-      "description": "Number of threads which will try to obtain jobs from the priority queue. Default is the number of workers in the pool +1. **Deprecated:** This will be removed in a future version.",
-      "type": "integer",
-      "minimum": 1,
-      "examples": [
-        10,
-        32
-      ],
-      "deprecated": true
-    },
-    "timeout": {
-      "description": "Request timeout (in seconds) when attempting to send jobs to the queue. If zero or omitted, this defaults to 60 seconds.",
-      "type": "integer",
-      "default": 60
-    },
-    "pipeline_size": {
-      "description": "Size of the internal priority queue. If the internal priority queue is full, you cannot send (push) additional jobs to the queue. If you set this value to zero or omit it, it defaults to 1 million.",
-      "type": "integer",
-      "default": 1000000,
-      "minimum": 0
-    },
-    "consume": {
-      "description": "A list of pipelines to be consumed by the server automatically when starting. You can omit this list if you want to start consuming manually. Each item in this list must be defined as a key under `pipelines`.",
-      "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^[a-zA-Z0-9._-]+$"
-      }
-    },
-    "pool": {
-      "$ref": "https://raw.githubusercontent.com/roadrunner-server/pool/refs/heads/master/schema.json"
-    },
-    "pipelines": {
-      "description": "List of broker pipelines associated with the configured drivers. This option is not required since you can declare pipelines at runtime. The selected pipeline `driver` must be configured in the root of your configuration file.",
-      "type": "object",
-      "patternProperties": {
-        "additionalProperties": false,
-        "^[a-zA-Z0-9._-]+$": {
-          "oneOf": [
-            {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/amqp/refs/heads/master/schema.json#/$defs/pipeline"
-            },
-            {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/beanstalk/refs/heads/master/schema.json#/$defs/pipeline"
-            },
-            {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/boltdb/refs/heads/master/schema.json#/$defs/pipeline"
-            },
-            {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/kafka/refs/heads/master/schema.json#/$defs/pipeline"
-            },
-            {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/memory/refs/heads/master/schema.json#/$defs/pipeline"
-            },
-            {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/nats/refs/heads/master/schema.json#/$defs/pipeline"
-            },
-            {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/sqs/refs/heads/master/schema.json#/$defs/pipeline"
-            }
-          ]
-        }
-      }
-    }
-  },
-  "additionalProperties": false,
   "$defs": {
-    "PipelineProperties": {
-      "description": "Common configuration options for queues/pipelines.",
-      "priority": {
-        "description": "Pipeline priority. If the job pushed to the pipeline has priority set to 0, it will inherit the pipeline's priority.",
-        "type": "integer",
-        "minimum": 0,
-        "default": 10
+    "pipeline": {
+      "type": "object",
+      "required": [
+        "driver"
+      ],
+      "properties": {
+        "driver": {
+          "type": "string",
+          "enum": [
+            "nats"
+          ]
+        },
+        "config": {
+          "type": "object",
+          "description": "Configuration for the NATS driver.",
+          "properties": {
+            "priority": {
+              "$ref": "https://raw.githubusercontent.com/roadrunner-server/jobs/refs/heads/master/schema.json#/$defs/PipelineProperties/priority"
+            },
+            "prefetch": {
+              "$ref": "https://raw.githubusercontent.com/roadrunner-server/jobs/refs/heads/master/schema.json#/$defs/PipelineProperties/prefetch"
+            },
+            "subject": {
+              "description": "NATS subject",
+              "type": "string",
+              "default": "default"
+            },
+            "stream": {
+              "description": "NATS stream",
+              "type": "string",
+              "default": "default-stream"
+            },
+            "deliver_new": {
+              "description": "Whether to only receive messages that were created after the consumer was created.",
+              "type": "boolean",
+              "default": false
+            },
+            "rate_limit": {
+              "description": "Consumer rate-limiter in bytes. See <https://docs.nats.io/jetstream/concepts/consumers#ratelimit>",
+              "type": "integer",
+              "default": 1000,
+              "minimum": 0
+            },
+            "delete_stream_on_stop": {
+              "description": "Whether to delete the stream after the pipeline is stopped.",
+              "type": "boolean",
+              "default": false
+            },
+            "delete_after_ack": {
+              "description": "Whether to delete messages from the stream after successful acknowledgement.",
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "additionalProperties": false
+        }
       },
-      "prefetch": {
-        "description": "Number of jobs to prefetch from the driver. Please consult the driver for the maximum and default values. For instance, SQS allows only 10.",
-        "type": "integer",
-        "minimum": 0
+      "additionalProperties": false
+    },
+    "driver": {
+      "type": "object",
+      "properties": {
+        "addr": {
+          "description": "NATS server address.",
+          "type": "string",
+          "default": "nats://127.0.0.1:4222"
+        }
       },
-      "queue": {
-        "type": "string",
-        "description": "The name of the queue.",
-        "default": "default"
-      }
+      "description": "Configuration options for the NATS driver.",
+      "additionalProperties": false
     }
   }
 }

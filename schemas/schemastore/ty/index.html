@@ -835,35 +835,6 @@ that users can easily differentiate between the two cases.</p>
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">byte-string-type-annotation</span>
-    <span class="type-badge"
-      ><a
-        href="#def-Level"
-        class="type-badge-link"
-        >Level</a
-      ></span
-    >
-   </div>
-  <div class="desc-html"><h2>What it does</h2>
-<p>Checks for byte-strings in type annotation positions.</p>
-<h2>Why is this bad?</h2>
-<p>Static analysis tools like ty can't analyze type annotations that use byte-string notation.</p>
-<h2>Examples</h2>
-<pre><code class="language-python">def test(): -&gt; b"int":
-    ...
-</code></pre>
-<p>Use instead:</p>
-<pre><code class="language-python">def test(): -&gt; "int":
-    ...
-</code></pre>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;error&quot;</code>
-  </div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
     <span class="property-name">call-abstract-method</span>
     <span class="type-badge"
       ><a
@@ -1392,35 +1363,6 @@ MY_CONSTANT: Final[int]
 
 # OK: `Final` symbol with a value
 MY_CONSTANT: Final[int] = 1
-</code></pre>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;error&quot;</code>
-  </div>
-       </div>   <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">fstring-type-annotation</span>
-    <span class="type-badge"
-      ><a
-        href="#def-Level"
-        class="type-badge-link"
-        >Level</a
-      ></span
-    >
-   </div>
-  <div class="desc-html"><h2>What it does</h2>
-<p>Checks for f-strings in type annotation positions.</p>
-<h2>Why is this bad?</h2>
-<p>Static analysis tools like ty can't analyze type annotations that use f-string notation.</p>
-<h2>Examples</h2>
-<pre><code class="language-python">def test(): -&gt; f"int":
-    ...
-</code></pre>
-<p>Use instead:</p>
-<pre><code class="language-python">def test(): -&gt; "int":
-    ...
 </code></pre>
 </div>
     <div class="property-meta">
@@ -3183,6 +3125,37 @@ must be one of the constraints (see: <a target="_blank" rel="noopener noreferrer
 <h2>Examples</h2>
 <pre><code class="language-python">T = TypeVar("T", bound=str, default=int)  # error: [invalid-type-variable-default]
 U = TypeVar("U", int, str, default=bytes)  # error: [invalid-type-variable-default]
+</code></pre>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;error&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">invalid-typed-dict-field</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><h2>What it does</h2>
+<p>Detects invalid <code>TypedDict</code> field declarations.</p>
+<h2>Why is this bad?</h2>
+<p><code>TypedDict</code> subclasses cannot redefine inherited fields incompatibly. Doing so breaks the
+subtype guarantees that <code>TypedDict</code> inheritance is meant to preserve.</p>
+<h2>Example</h2>
+<pre><code class="language-python">from typing import TypedDict
+
+class Base(TypedDict):
+    x: int
+
+class Child(Base):
+    x: str  # error: [invalid-typed-dict-field]
 </code></pre>
 </div>
     <div class="property-meta">
