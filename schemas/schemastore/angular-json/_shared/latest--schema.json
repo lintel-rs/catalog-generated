@@ -1,150 +1,310 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Dev Server Target",
-  "description": "Dev Server target options for Build Facade.",
+  "title": "Unit testing",
+  "description": "Unit testing options for Angular applications.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/angular_devkit/build_angular/src/builders/dev-server/schema.json",
-    "sourceSha256": "897b9b0a91c7741f39efcb7dd0f9a85029d260a2d53fa45ece4a2d30827d1745"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/angular/build/src/builders/unit-test/schema.json",
+    "sourceSha256": "2e5289d88e9bf3617d5e629ccbe9aa71b95347535b27a410343c80ece3aa8a5d"
   },
   "type": "object",
   "properties": {
     "buildTarget": {
       "type": "string",
-      "description": "A build builder target to serve in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+      "description": "Specifies the build target to use for the unit test build in the format `project:target[:configuration]`. This defaults to the `build` target of the current project with the `development` configuration. You can also pass a comma-separated list of configurations. Example: `project:target:production,staging`.",
       "pattern": "^[^:\\s]*:[^:\\s]*(:[^\\s]+)?$"
     },
-    "port": {
-      "type": "number",
-      "description": "Port to listen on.",
-      "default": 4200
-    },
-    "host": {
+    "tsConfig": {
       "type": "string",
-      "description": "Host to listen on.",
-      "default": "localhost"
+      "description": "The path to the TypeScript configuration file, relative to the workspace root. Defaults to `tsconfig.spec.json` in the project root if it exists. If not specified and the default does not exist, the `tsConfig` from the specified `buildTarget` will be used."
     },
-    "proxyConfig": {
+    "runner": {
       "type": "string",
-      "description": "Proxy configuration file. For more information, see <https://angular.dev/tools/cli/serve#proxying-to-a-backend-server>."
+      "description": "Specifies the test runner to use for test execution.",
+      "default": "vitest",
+      "enum": [
+        "karma",
+        "vitest"
+      ]
     },
-    "ssl": {
-      "type": "boolean",
-      "description": "Serve using HTTPS.",
+    "runnerConfig": {
+      "type": [
+        "string",
+        "boolean"
+      ],
+      "description": "Specifies the configuration file for the selected test runner. If a string is provided, it will be used as the path to the configuration file. If `true`, the builder will search for a default configuration file (e.g., `vitest.config.ts` or `karma.conf.js`). If `false`, no external configuration file will be used.\\nFor Vitest, this enables advanced options and the use of custom plugins. Please note that while the file is loaded, the Angular team does not provide direct support for its specific contents or any third-party plugins used within it.",
       "default": false
     },
-    "sslKey": {
-      "type": "string",
-      "description": "SSL key to use for serving HTTPS."
-    },
-    "sslCert": {
-      "type": "string",
-      "description": "SSL certificate to use for serving HTTPS."
-    },
-    "headers": {
-      "type": "object",
-      "description": "Custom HTTP headers to be added to all responses.",
-      "propertyNames": {
-        "pattern": "^[-_A-Za-z0-9]+$"
-      },
-      "additionalProperties": {
-        "type": "string"
-      }
-    },
-    "open": {
-      "type": "boolean",
-      "description": "Opens the url in default browser.",
-      "default": false,
-      "alias": "o"
-    },
-    "verbose": {
-      "type": "boolean",
-      "description": "Adds more details to output logging."
-    },
-    "liveReload": {
-      "type": "boolean",
-      "description": "Whether to reload the page on change, using live-reload.",
-      "default": true
-    },
-    "publicHost": {
-      "type": "string",
-      "description": "The URL that the browser client (or live-reload client, if enabled) should use to connect to the development server. Use for a complex dev server setup, such as one with reverse proxies. This option has no effect when using the 'application' or other esbuild-based builders."
-    },
-    "allowedHosts": {
+    "browsers": {
+      "description": "Specifies the browsers to use for test execution. When not specified, tests are run in a Node.js environment using jsdom. For both Vitest and Karma, browser names ending with 'Headless' (e.g., 'ChromeHeadless') will enable headless mode.",
       "type": "array",
-      "description": "List of hosts that are allowed to access the dev server.",
-      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "browserViewport": {
+      "description": "Specifies the browser viewport dimensions for browser-based tests in the format `widthxheight`.",
+      "type": "string",
+      "pattern": "^\\d+x\\d+$"
+    },
+    "include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "**/*.spec.ts",
+        "**/*.test.ts"
+      ],
+      "description": "Specifies glob patterns of files to include for testing, relative to the project root. This option also has special handling for directory paths (includes all test files within) and file paths (includes the corresponding test file if one exists)."
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specifies glob patterns of files to exclude from testing, relative to the project root."
+    },
+    "filter": {
+      "type": "string",
+      "description": "Specifies a regular expression pattern to match against test suite and test names. Only tests with a name matching the pattern will be executed. For example, `^App` will run only tests in suites beginning with 'App'."
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "Enables watch mode, which re-runs tests when source files change. Defaults to `true` in TTY environments and `false` otherwise."
+    },
+    "headless": {
+      "type": "boolean",
+      "description": "Forces all configured browsers to run in headless mode. When using the Vitest runner, this option is ignored if no browsers are configured. The Karma runner does not support this option."
+    },
+    "debug": {
+      "type": "boolean",
+      "description": "Enables debugging mode for tests, allowing the use of the Node Inspector.",
+      "default": false
+    },
+    "ui": {
+      "type": "boolean",
+      "description": "Enables the Vitest UI for interactive test execution. This option is only available for the Vitest runner."
+    },
+    "coverage": {
+      "type": "boolean",
+      "description": "Enables coverage reporting for tests. If not specified, the coverage configuration from a runner configuration file will be used if present. Otherwise, coverage is disabled by default."
+    },
+    "coverageInclude": {
+      "type": "array",
+      "description": "Specifies glob patterns of files to include in the coverage report.",
       "items": {
         "type": "string"
       }
     },
-    "servePath": {
-      "type": "string",
-      "description": "The pathname where the application will be served."
+    "coverageExclude": {
+      "type": "array",
+      "description": "Specifies glob patterns of files to exclude from the coverage report.",
+      "items": {
+        "type": "string"
+      }
     },
-    "disableHostCheck": {
-      "type": "boolean",
-      "description": "Don't verify connected clients are part of allowed hosts.",
-      "default": false
-    },
-    "hmr": {
-      "type": "boolean",
-      "description": "Enable hot module replacement."
-    },
-    "watch": {
-      "type": "boolean",
-      "description": "Rebuild on change.",
-      "default": true
-    },
-    "poll": {
-      "type": "number",
-      "description": "Enable and define the file watching poll time period in milliseconds."
-    },
-    "inspect": {
-      "default": false,
-      "description": "Activate debugging inspector. This option only has an effect when 'SSR' or 'SSG' are enabled.",
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "Activate the inspector on host and port in the format of `[[host:]port]`. See the security warning in <https://nodejs.org/docs/latest-v22.x/api/cli.html#warning-binding-inspector-to-a-public-ipport-combination-is-insecure> regarding the host parameter usage."
-        },
-        {
-          "type": "boolean"
-        }
-      ]
-    },
-    "forceEsbuild": {
-      "type": "boolean",
-      "description": "Force the development server to use the 'browser-esbuild' builder when building.",
-      "default": false
-    },
-    "prebundle": {
-      "description": "Enable and control the Vite-based development server's prebundling capabilities. To enable prebundling, the Angular CLI cache must also be enabled. This option has no effect when using the 'browser' or other Webpack-based builders.",
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "exclude": {
-              "description": "List of package imports that should not be prebundled by the development server. The packages will be bundled into the application code itself.",
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+    "coverageReporters": {
+      "type": "array",
+      "description": "Specifies the reporters to use for coverage results. Each reporter can be a string representing its name, or a tuple containing the name and an options object. Built-in reporters include 'html', 'lcov', 'lcovonly', 'text', 'text-summary', 'cobertura', 'json', and 'json-summary'.",
+      "items": {
+        "oneOf": [
+          {
+            "enum": [
+              "html",
+              "lcov",
+              "lcovonly",
+              "text",
+              "text-summary",
+              "cobertura",
+              "json",
+              "json-summary"
+            ]
           },
-          "required": [
-            "exclude"
-          ],
-          "additionalProperties": false
+          {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "prefixItems": [
+              {
+                "enum": [
+                  "html",
+                  "lcov",
+                  "lcovonly",
+                  "text",
+                  "text-summary",
+                  "cobertura",
+                  "json",
+                  "json-summary"
+                ]
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "coverageThresholds": {
+      "type": "object",
+      "description": "Specifies minimum coverage thresholds that must be met. If thresholds are not met, the builder will exit with an error.",
+      "properties": {
+        "perFile": {
+          "type": "boolean",
+          "description": "When true, thresholds are enforced for each file individually."
+        },
+        "statements": {
+          "type": "number",
+          "description": "Minimum percentage of statements covered."
+        },
+        "branches": {
+          "type": "number",
+          "description": "Minimum percentage of branches covered."
+        },
+        "functions": {
+          "type": "number",
+          "description": "Minimum percentage of functions covered."
+        },
+        "lines": {
+          "type": "number",
+          "description": "Minimum percentage of lines covered."
         }
-      ]
+      },
+      "additionalProperties": false
+    },
+    "coverageWatermarks": {
+      "type": "object",
+      "description": "Specifies coverage watermarks for the HTML reporter. These determine the color coding for high, medium, and low coverage.",
+      "properties": {
+        "statements": {
+          "type": "array",
+          "description": "The high and low watermarks for statements coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "branches": {
+          "type": "array",
+          "description": "The high and low watermarks for branches coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "functions": {
+          "type": "array",
+          "description": "The high and low watermarks for functions coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "lines": {
+          "type": "array",
+          "description": "The high and low watermarks for lines coverage. `[low, high]`",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "additionalProperties": false
+    },
+    "reporters": {
+      "type": "array",
+      "description": "Specifies the reporters to use during test execution. Each reporter can be a string representing its name, or a tuple containing the name and an options object. Built-in reporters include 'default', 'verbose', 'dots', 'json', 'junit', 'tap', 'tap-flat', and 'html'. You can also provide a path to a custom reporter.",
+      "items": {
+        "oneOf": [
+          {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "enum": [
+                  "default",
+                  "verbose",
+                  "dots",
+                  "json",
+                  "junit",
+                  "tap",
+                  "tap-flat",
+                  "html"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "prefixItems": [
+              {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "default",
+                      "verbose",
+                      "dots",
+                      "json",
+                      "junit",
+                      "tap",
+                      "tap-flat",
+                      "html"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "outputFile": {
+      "type": "string",
+      "description": "Specifies a file path for the test report, applying only to the first reporter. To configure output files for multiple reporters, use the tuple format `['reporter-name', { outputFile: '...' }]` within the `reporters` option. When not provided, output is written to the console."
+    },
+    "providersFile": {
+      "type": "string",
+      "description": "Specifies the path to a TypeScript file that provides an array of Angular providers for the test environment. The file must contain a default export of the provider array.",
+      "minLength": 1
+    },
+    "setupFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "A list of paths to global setup files that are executed before the test files. The application's polyfills and the Angular TestBed are always initialized before these files."
+    },
+    "progress": {
+      "type": "boolean",
+      "description": "Shows build progress information in the console. Defaults to the `progress` setting of the specified `buildTarget`."
+    },
+    "listTests": {
+      "type": "boolean",
+      "description": "Lists all discovered test files and exits the process without building or executing the tests.",
+      "default": false
+    },
+    "dumpVirtualFiles": {
+      "type": "boolean",
+      "description": "Dumps build output files to the `.angular/cache` directory for debugging purposes.",
+      "default": false,
+      "visible": false
     }
   },
   "additionalProperties": false,
-  "required": [
-    "buildTarget"
-  ]
+  "required": []
 }

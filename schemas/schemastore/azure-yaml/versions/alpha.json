@@ -5,7 +5,7 @@
   "description": "Configuration file for the Azure Developer CLI (azd)",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/alpha/azure.yaml.json",
-    "sourceSha256": "95648dd109dcf9650c58868a9181290ef548b89b87d3c6260b9d39a3df1401f1",
+    "sourceSha256": "ad05d07cd4696e56947f9e6899d9d09e56e466e64dbaacec8c4157f4d0feabd1",
     "fileMatch": [
       "azure.yaml",
       "azure.yml"
@@ -112,24 +112,6 @@
           "type": "array",
           "title": "Provisioning layers.",
           "description": "Optional. Layers for Azure infrastructure provisioning.",
-          "allOf": [
-            {
-              "if": {
-                "not": {
-                  "properties": {
-                    "provider": {
-                      "const": "bicep"
-                    }
-                  }
-                }
-              },
-              "then": {
-                "properties": {
-                  "deploymentStacks": false
-                }
-              }
-            }
-          ],
           "uniqueItems": true,
           "items": {
             "type": "object",
@@ -152,6 +134,24 @@
               },
               "deploymentStacks": {
                 "$ref": "#/$defs/deploymentStacksConfig"
+              },
+              "hooks": {
+                "type": "object",
+                "title": "Provisioning layer hooks",
+                "description": "Hooks should match `provision` event names prefixed with `pre` or `post` depending on when the script should execute. When specifying paths they should be relative to the layer path.",
+                "properties": {
+                  "preprovision": {
+                    "title": "pre provision hook",
+                    "description": "Runs before provisioning the layer",
+                    "$ref": "#/$defs/hooks"
+                  },
+                  "postprovision": {
+                    "title": "post provision hook",
+                    "description": "Runs after provisioning the layer",
+                    "$ref": "#/$defs/hooks"
+                  }
+                },
+                "additionalProperties": false
               }
             },
             "required": [
@@ -160,7 +160,24 @@
             ],
             "additionalProperties": false
           },
-          "additionalProperties": false
+          "allOf": [
+            {
+              "if": {
+                "not": {
+                  "properties": {
+                    "provider": {
+                      "const": "bicep"
+                    }
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "deploymentStacks": false
+                }
+              }
+            }
+          ]
         }
       },
       "additionalProperties": false
