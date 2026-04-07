@@ -1,339 +1,483 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--schema.json",
-  "title": "roadrunner-kafka",
-  "description": "The schema contains all the valid configuration parameters for the Kafka plugin for the roadrunner job system.",
+  "title": "roadrunner-http",
+  "description": "All the valid configuration parameters for the http plugin for RoadRunner.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/roadrunner-server/kafka/refs/heads/master/schema.json",
-    "sourceSha256": "e4a89dd6b7b6fb5e0eec16b8def05a9449febeb8a9c0537532c8efd31860a6c6"
+    "source": "https://raw.githubusercontent.com/roadrunner-server/http/refs/heads/master/schema.json",
+    "sourceSha256": "208559faba94d82e95cfded28b839b4855c63a03640da72fed0449620194f066"
   },
-  "$defs": {
-    "pipeline": {
+  "type": "object",
+  "properties": {
+    "address": {
+      "description": "Host and/or port to listen on for HTTP traffic. If omitted, RoadRunner will not listen for HTTP requests.",
+      "type": "string",
+      "minLength": 1,
+      "examples": [
+        "127.0.0.1:8080",
+        ":8080"
+      ]
+    },
+    "internal_error_code": {
+      "description": "HTTP status code to use for internal RoadRunner errors. Defaults to 500 if omitted.",
+      "type": "integer",
+      "default": 500,
+      "minimum": 100,
+      "maximum": 599
+    },
+    "max_request_size": {
+      "description": "Maximum request size in MB. Defaults to 1 GB if zero or omitted.",
+      "type": "integer",
+      "minimum": 0,
+      "default": 1000
+    },
+    "raw_body": {
+      "description": "Whether to send the raw, encoded body for `application/x-www-form-urlencoded` content. Defaults to sending decoded content to PHP workers.",
+      "type": "boolean",
+      "default": false
+    },
+    "access_logs": {
+      "description": "Whether to enable HTTP access logs.",
+      "type": "boolean",
+      "default": false
+    },
+    "middleware": {
+      "description": "List of middleware to load for the HTTP plugin, executed in the specified order.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "headers",
+          "gzip",
+          "static",
+          "sendfile",
+          "http_metrics",
+          "cache",
+          "proxy_ip_parser",
+          "otel"
+        ]
+      }
+    },
+    "trusted_subnets": {
+      "description": "List of subnets from which incoming requests are allowed. Defaults to typical private network ranges (192.168.*, 10.0.*, and 172.16.*) and local/loopback interfaces (127.*).",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "examples": [
+          "10.0.0.0/8",
+          "127.0.0.0/8"
+        ]
+      },
+      "default": [
+        "10.0.0.0/8",
+        "127.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16",
+        "::1/128",
+        "fc00::/7",
+        "fe80::/10"
+      ]
+    },
+    "uploads": {
+      "$ref": "#/$defs/Uploads"
+    },
+    "headers": {
+      "description": "HTTP header configuration.",
       "type": "object",
-      "required": [
-        "driver"
-      ],
       "properties": {
-        "driver": {
-          "type": "string",
-          "enum": [
-            "kafka"
-          ]
-        },
-        "config": {
+        "cors": {
+          "description": "Controls which CORS headers are returned. Additional headers `Vary: Origin`, `Vary: Access-Control-Request-Method` and `Vary: Access-Control-Request-Headers` will be added to responses. Omit this section to disable CORS headers.",
           "type": "object",
-          "description": "Configuration for the Kafka pipeline.",
           "properties": {
-            "priority": {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/jobs/refs/heads/master/schema.json#/$defs/PipelineProperties/priority"
+            "allowed_origin": {
+              "description": "Controls the value of 'Access-Control-Allow-Origin'.",
+              "type": "string",
+              "examples": [
+                "*"
+              ]
             },
-            "auto_create_topics_enable": {
-              "description": "Auto create topic for the consumer/producer",
+            "allowed_origin_regex": {
+              "description": "Controls the value of 'Access-Control-Allow-Origin' header value, but evaluated as regex.",
+              "type": "string",
+              "examples": [
+                "^https://foo"
+              ]
+            },
+            "allowed_headers": {
+              "description": "Controls the value of 'Access-Control-Allow-Headers'.",
+              "type": "string",
+              "examples": [
+                "*"
+              ]
+            },
+            "allowed_methods": {
+              "description": "Controls the value of 'Access-Control-Allow-Methods'. Provide a comma-separated string of HTTP verbs.",
+              "type": "string",
+              "examples": [
+                "GET,POST,PUT,DELETE"
+              ]
+            },
+            "allow_credentials": {
+              "description": "Controls the value of 'Access-Control-Allow-Credentials'.",
               "type": "boolean",
               "default": false
             },
-            "producer_options": {
-              "description": "Kafka producer options.",
-              "type": "object",
-              "properties": {
-                "disable_idempotent": {
-                  "description": "Disables idempotent produce requests, opting out of Kafka server-side deduplication in the face of reissued requests due to transient network problems. Idempotent production is strictly a win, but does require the IDEMPOTENT_WRITE permission on CLUSTER (pre Kafka 3.0), and not all clients can have that permission.",
-                  "type": "boolean",
-                  "default": false
-                },
-                "partitioning_strategy": {
-                  "description": "The partitioning strategy to use for produced records.",
-                  "type": "string",
-                  "enum": [
-                    "Manual",
-                    "Uniform",
-                    "RoundRobin",
-                    "LeastBackup",
-                    "Sticky"
-                  ],
-                  "default": "Uniform"
-                },
-                "required_acks": {
-                  "description": "Sets the required acks for produced records",
-                  "type": "string",
-                  "default": "AllISRAck",
-                  "enum": [
-                    "NoAck",
-                    "LeaderAck",
-                    "AllISRAck"
-                  ]
-                },
-                "max_message_bytes": {
-                  "type": "integer",
-                  "default": 1000012,
-                  "minimum": 0
-                },
-                "request_timeout": {
-                  "description": "The maximum duration in seconds the broker will wait the receipt of the number of required_acks.",
-                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration",
-                  "default": "10s"
-                },
-                "compression_codec": {
-                  "description": "The compression codec to use, if any.",
-                  "type": "string",
-                  "enum": [
-                    "gzip",
-                    "snappy",
-                    "lz4",
-                    "zstd"
-                  ]
-                },
-                "delivery_timeout": {
-                  "description": "A rough duration of how long a record can sit around in a batch before timing out, overriding the unlimited default.",
-                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration"
-                },
-                "transaction_timeout": {
-                  "description": "The allowed duration for a transaction. It is a good idea to keep this less than a group's session timeout.",
-                  "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration",
-                  "default": "40s"
-                }
-              },
-              "additionalProperties": false
+            "exposed_headers": {
+              "description": "Controls the value of 'Access-Control-Expose-Headers'. Provide a comma-separated list of HTTP headers.",
+              "type": "string",
+              "examples": [
+                "Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma"
+              ]
             },
-            "group_options": {
-              "type": "object",
-              "required": [
-                "group_id"
+            "max_age": {
+              "description": "Controls the value of 'Access-Control-Max-Age' (in seconds).",
+              "type": "integer",
+              "examples": [
+                600
               ],
-              "description": "group_options sets the consumer group for the client to join and consume in. This option is required if using any other group options.",
-              "properties": {
-                "instance_id": {
-                  "description": "InstanceID sets the group consumer's instance ID, switching the group member from 'dynamic' to 'static'.",
-                  "type": "string",
-                  "minLength": 1
-                },
-                "group_id": {
-                  "description": "Kafka Group ID",
-                  "type": "string",
-                  "minLength": 1
-                },
-                "block_rebalance_on_poll": {
-                  "description": "Switches the client to block rebalances whenever you poll.",
-                  "type": "boolean",
-                  "default": false
-                }
-              },
-              "additionalProperties": false
-            },
-            "consumer_options": {
-              "description": "Kafka consumer options",
-              "type": "object",
-              "properties": {
-                "topics": {
-                  "description": "List of the topics to consume. Regex also supported. At least a `topic` or a partition in `consume_partitions` should be provided.",
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1
-                  }
-                },
-                "consume_regexp": {
-                  "description": "Sets the client to parse all topics passed to `topics` as regular expressions. When consuming via regex, every metadata request loads *all* topics, so that all topics can be passed to any regular expressions. Every topic is evaluated only once ever across all regular expressions; either it permanently is known to match, or is permanently known to not match.",
-                  "type": "boolean",
-                  "default": false
-                },
-                "max_fetch_message_size": {
-                  "type": "integer",
-                  "default": 50000
-                },
-                "min_fetch_message_size": {
-                  "type": "integer",
-                  "default": 1
-                },
-                "consumer_offset": {
-                  "$ref": "#/$defs/Offset"
-                },
-                "consume_partitions": {
-                  "type": "object",
-                  "minProperties": 1,
-                  "additionalProperties": false,
-                  "patternProperties": {
-                    "^[a-zA-Z0-9._-]+$": {
-                      "description": "Topic to consume.",
-                      "type": "object",
-                      "minProperties": 1,
-                      "additionalProperties": false,
-                      "patternProperties": {
-                        "^[0-9]+$": {
-                          "$ref": "#/$defs/Offset"
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "additionalProperties": false
-            },
-            "sasl_options": {
-              "$ref": "#/$defs/SASL"
+              "default": 0
             }
-          },
-          "additionalProperties": false
+          }
+        },
+        "request": {
+          "description": "Custom HTTP headers to add to every request passed to PHP.",
+          "$ref": "#/$defs/Headers"
+        },
+        "response": {
+          "description": "Custom HTTP headers to add to every response from PHP.",
+          "$ref": "#/$defs/Headers"
         }
       },
       "additionalProperties": false
     },
-    "driver": {
+    "static": {
+      "description": "Configuration options for serving static files.",
       "type": "object",
       "properties": {
-        "brokers": {
-          "description": "Kafka broker addresses.",
+        "dir": {
+          "description": "Path to the directory with static assets. Defaults to the current working directory. Empty/undefined and `.` are equal and are both treated as current directory.",
+          "type": "string",
+          "examples": [
+            ".",
+            "/var/www/html"
+          ]
+        },
+        "forbid": {
+          "description": "File extensions of files that must not be served. Empty/undefined disallows no files. If files are specified in both `forbid` and `allow`, they will be disallowed. Defaults to an empty array, disallowing no files.",
           "type": "array",
-          "minItems": 1,
           "items": {
             "type": "string",
             "minLength": 1,
             "examples": [
-              "127.0.0.1:9092",
-              "127.0.0.1:9002"
+              ".php",
+              ".htaccess",
+              ".sh"
             ]
           }
         },
-        "tls": {
-          "title": "TLS Configuration",
-          "description": "TLS configuration for TLS for Kafka.",
+        "allow": {
+          "description": "File extensions of files that may be served. Empty/undefined allows all files, except files specified in `forbid`.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "examples": [
+              ".jpg",
+              ".png",
+              ".css",
+              ".js"
+            ]
+          }
+        },
+        "calculate_etag": {
+          "description": "Whether to enable ETag computation for static files.",
+          "type": "boolean",
+          "default": false
+        },
+        "weak": {
+          "description": "Whether to use a weak generator (/W), which uses only the filename to generate a CRC32 sum for et ETag. Disable to use the file contents.",
+          "type": "boolean",
+          "default": false
+        },
+        "request": {
+          "description": "Custom HTTP headers to add to every request for static files.",
+          "$ref": "#/$defs/Headers"
+        },
+        "response": {
+          "description": "Custom HTTP headers to add to every response from static files.",
+          "$ref": "#/$defs/Headers"
+        }
+      },
+      "additionalProperties": false
+    },
+    "pool": {
+      "$ref": "https://raw.githubusercontent.com/roadrunner-server/pool/refs/heads/master/schema.json"
+    },
+    "ssl": {
+      "$ref": "#/$defs/SSL"
+    },
+    "fcgi": {
+      "$ref": "#/$defs/FCGI"
+    },
+    "http2": {
+      "$ref": "#/$defs/HTTP2"
+    },
+    "http3": {
+      "$ref": "#/$defs/HTTP3"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Uploads": {
+      "type": "object",
+      "properties": {
+        "dir": {
+          "description": "Directory for file uploads. Empty/undefined value means the OS default temporary directory ($TEMP) will be used, i.e. `/tmp`.",
+          "type": "string",
+          "examples": [
+            "/tmp"
+          ]
+        },
+        "forbid": {
+          "description": "Disallow upload of files with the provided extensions.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "examples": [
+              ".php",
+              ".sh",
+              ".go"
+            ]
+          }
+        },
+        "allow": {
+          "description": "Allow only upload of files with the provided extensions. Empty/undefined value means all files except explicitly disallowed (`forbid`) files are allowed.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "examples": [
+              ".html",
+              ".go"
+            ]
+          },
+          "default": []
+        }
+      },
+      "description": "File upload configuration.",
+      "additionalProperties": false
+    },
+    "SSL": {
+      "title": "SSL/TLS (HTTPS) Configuration",
+      "description": "Settings required to set up manual or automatic HTTPS for your server. Either `key` and `cert` *or* `acme` is required, but not both.",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Host address/or port to bind to. Defaults to 127.0.0.1:443.",
+          "type": "string",
+          "default": "127.0.0.1:443",
+          "examples": [
+            "127.0.0.1:443",
+            ":8443"
+          ]
+        },
+        "acme": {
+          "description": "ACME certificates provider (Let's encrypt). Do not provide this parameter if you use `key` and `cert`.",
           "type": "object",
-          "anyOf": [
-            {
-              "required": [
-                "key",
-                "cert"
-              ]
-            },
-            {
-              "required": [
-                "root_ca"
-              ]
-            }
+          "required": [
+            "domains",
+            "email"
           ],
           "properties": {
-            "timeout": {
-              "description": "Timeout of TLS connections.",
-              "default": "10s",
-              "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration"
+            "cache_dir": {
+              "description": "Directory to use for certificates, private keys, Let's Encrypt configuration etc.",
+              "type": "string",
+              "default": "rr_cache_dir"
             },
-            "key": {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/http/refs/heads/master/schema.json#/$defs/SSL/properties/key"
+            "email": {
+              "description": "User email used to create a Let's Encrypt account. This is required.",
+              "type": "string",
+              "examples": [
+                "user@domain.com"
+              ]
             },
-            "cert": {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/http/refs/heads/master/schema.json#/$defs/SSL/properties/cert"
+            "alt_http_port": {
+              "description": "Alternate port for the HTTP challenge. Challenge traffic should be redirected to this port if overridden. See <https://letsencrypt.org/docs/challenge-types/#http-01-challenge>",
+              "type": "integer",
+              "default": 80
             },
-            "root_ca": {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/http/refs/heads/master/schema.json#/$defs/SSL/properties/root_ca"
+            "alt_tlsalpn_port": {
+              "description": "Alternate port for the TLS-ALPN-01 challenge. Challenge traffic should be redirected to this port if overridden. See <https://letsencrypt.org/docs/challenge-types/#tls-alpn-01>",
+              "type": "integer",
+              "default": 443
             },
-            "client_auth_type": {
-              "$ref": "https://raw.githubusercontent.com/roadrunner-server/http/refs/heads/master/schema.json#/$defs/ClientAuthType"
+            "challenge_type": {
+              "type": "string",
+              "enum": [
+                "http-01",
+                "tlsalpn-01"
+              ],
+              "description": "Challenge types",
+              "default": "http-01"
+            },
+            "use_production_endpoint": {
+              "description": "Whether to use the production endpoint. We recommend you use the staging endpoint to make sure everything works correctly before you deploy your certificate.",
+              "type": "boolean",
+              "default": false
+            },
+            "domains": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "examples": [
+                  "example.com"
+                ]
+              },
+              "description": "List of domains to obtain certificates for. At least one domain is required."
             }
           },
           "additionalProperties": false
         },
-        "sasl": {
-          "$ref": "#/$defs/SASL"
-        },
-        "ping": {
-          "$ref": "#/$defs/Ping"
-        }
-      },
-      "description": "Configuration options for the Kafka driver.",
-      "additionalProperties": false
-    },
-    "Offset": {
-      "type": "object",
-      "description": "Sets the offset to start consuming from, or if OffsetOutOfRange is seen while fetching, to restart consuming from.",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "description": "Partition offset type.",
-          "type": "string",
-          "enum": [
-            "AtEnd",
-            "At",
-            "AfterMilli",
-            "AtStart",
-            "Relative",
-            "WithEpoch"
-          ]
-        },
-        "value": {
-          "description": "Value for the: At, AfterMilli, Relative and WithEpoch offsets.",
-          "type": "integer",
-          "default": 0
-        }
-      },
-      "additionalProperties": false
-    },
-    "SASL": {
-      "title": "SASL Authentication",
-      "type": "object",
-      "description": "SASL configuration for Kafka.",
-      "properties": {
-        "mechanism": {
-          "description": "Mechanism used for the authentication.",
-          "type": "string",
-          "enum": [
-            "aws_msk_iam",
-            "plain",
-            "SCRAM-SHA-256",
-            "SCRAM-SHA-512"
-          ]
-        },
-        "username": {
-          "description": "Username for authentication.",
-          "type": "string"
-        },
-        "password": {
-          "description": "Password for authentication.",
-          "type": "string"
-        },
-        "nonce": {
-          "description": "Optional for the SHA auth types. Empty by default.",
-          "type": "string"
-        },
-        "is_token": {
-          "description": "If true, suffixes the tokenauth=true extra attribute to the initial authentication message. Set this to true if the user and pass are from a delegation token. Optional for the SHA auth types. Defaults to false.",
+        "redirect": {
+          "description": "Whether to automatically redirect from HTTP to HTTPS.",
           "type": "boolean",
           "default": false
         },
-        "zid": {
-          "description": "Zid is an optional authorization ID to use in authentication.",
-          "type": "string"
+        "key": {
+          "description": "Path to the private key for the certificate. Must not be provided if `acme` is set.",
+          "type": "string",
+          "minLength": 1,
+          "examples": [
+            "/ssl/server/key.pem"
+          ]
         },
-        "access_key": {
-          "description": "AWS Access Key ID",
-          "type": "string"
+        "cert": {
+          "description": "Path to the public certificate file. Must not be provided if `acme` is set.",
+          "type": "string",
+          "minLength": 1,
+          "examples": [
+            "/ssl/server/cert.crt"
+          ]
         },
-        "secret_key": {
-          "description": "AWS Access Key Secret",
-          "type": "string"
+        "root_ca": {
+          "description": "Path to the CA certificate, if required. Always required for mTLS. Omit this option if unused. Must not be provided if `acme` is set.",
+          "type": "string",
+          "minLength": 1,
+          "examples": [
+            "/ssl/server/ca.crt"
+          ]
         },
-        "session_token": {
-          "description": "SessionToken, if non-empty, is a session / security token to use for authentication. See the following link for more details: <https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html>",
-          "type": "string"
-        },
-        "user_agent": {
-          "description": "UserAgent is the user agent to for the client to use when connecting to Kafka, overriding the default franz-go/<runtime.Version()>/<hostname>. Setting a UserAgent allows authorizing based on the aws:UserAgent condition key; see the following link for more details: <https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-useragent>",
-          "type": "string"
+        "client_auth_type": {
+          "$ref": "#/$defs/ClientAuthType"
+        }
+      },
+      "dependentRequired": {
+        "key": [
+          "cert"
+        ],
+        "cert": [
+          "key"
+        ]
+      },
+      "additionalProperties": false
+    },
+    "ClientAuthType": {
+      "description": "Authorization method for mTLS.",
+      "type": "string",
+      "default": "no_client_certs",
+      "enum": [
+        "request_client_cert",
+        "require_any_client_cert",
+        "verify_client_cert_if_given",
+        "no_client_certs",
+        "require_and_verify_client_cert"
+      ]
+    },
+    "FCGI": {
+      "description": "Enables FastCGI support. If omitted, RoadRunner will not listen for FCGI requests.",
+      "type": "object",
+      "required": [
+        "address"
+      ],
+      "properties": {
+        "address": {
+          "description": "Host and/or port to listen on for FCGI requests.",
+          "type": "string",
+          "minLength": 1,
+          "examples": [
+            "0.0.0.0:9000",
+            "127.0.0.1:9000",
+            "localhost:9000",
+            "unix:/path/to/socket.sock"
+          ]
         }
       },
       "additionalProperties": false
     },
-    "Ping": {
+    "HTTP2": {
+      "description": "HTTP/2 settings.",
       "type": "object",
       "properties": {
-        "timeout": {
-          "description": "Timeout when pinging Kafka.",
-          "default": "10s",
-          "$ref": "https://catalog.lintel.tools/schemas/schemastore/roadrunner/_shared/latest--3.0.schema.json#/$defs/Duration"
+        "h2c": {
+          "description": "Use HTTP/2 over non-encrypted TCP connection using H2C",
+          "type": "boolean",
+          "default": false
+        },
+        "max_concurrent_streams": {
+          "description": "Maximum number of concurrent streams. Defaults to 128 if omitted or zero.",
+          "type": "integer",
+          "default": 128,
+          "minimum": 0
         }
       },
       "additionalProperties": false
+    },
+    "HTTP3": {
+      "description": "HTTP/3 settings. **Experimental**: Requires that RoadRunner has experimental features enabled. Unless you configured `acme`, you must provide a `key` and `cert` here.",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Host and/or port to listen on for HTTP/3.",
+          "type": "string",
+          "minLength": 1,
+          "examples": [
+            "127.0.0.1:8080",
+            ":8080"
+          ]
+        },
+        "cert": {
+          "$ref": "#/$defs/SSL/properties/cert"
+        },
+        "key": {
+          "$ref": "#/$defs/SSL/properties/key"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "dependentRequired": {
+        "cert": [
+          "key"
+        ],
+        "key": [
+          "cert"
+        ]
+      },
+      "additionalProperties": false
+    },
+    "Headers": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9._-]+$": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   }
 }

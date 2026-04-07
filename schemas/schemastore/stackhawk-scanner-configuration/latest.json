@@ -5,7 +5,7 @@
   "description": "JSON schema for StackHawk HawkScan configuration files.",
   "x-lintel": {
     "source": "https://download.stackhawk.com/hawk/jsonschema/hawkconfig.json",
-    "sourceSha256": "447a29a8372871b2f30cfa3604e9e91ca7b94d599d3e6ee0a9bb4a07218cdf0b",
+    "sourceSha256": "592f809d2e05aeab84d8cac540efbd8b55f9cd41ad28af6e5ff20c2e471e055b",
     "fileMatch": [
       "stackhawk.yml",
       "stackhawk.yaml",
@@ -45,7 +45,6 @@
       "description": "Searchable keywords to associate with this scan."
     }
   },
-  "id": "com.stackhawk.nest.HawkScanMessages$HawkscanConf",
   "$defs": {
     "HawkscanConf": {
       "required": [
@@ -92,7 +91,8 @@
           "type": "number",
           "description": "Maximum time in minutes to wait for the scanner process to start.",
           "markdownDescription": "Maximum time in minutes to wait for the scanner process to start.",
-          "exclusiveMinimum": 0
+          "exclusiveMinimum": 0,
+          "default": 5
         },
         "failureThreshold": {
           "type": "string",
@@ -143,12 +143,13 @@
           "type": "number",
           "description": "Maximum allowed time for enabled spiders to crawl your web application.",
           "markdownDescription": "Maximum allowed time for enabled spiders to crawl your web application.",
-          "exclusiveMinimum": 0
+          "exclusiveMinimum": 0,
+          "default": 2
         },
         "ajaxBrowser": {
           "type": "string",
-          "description": "The browser type and style to use when running the AjaxSpider. When running the `stackhawk/hawkscan` docker container, this setting is ignored and will uses the default FIREFOX_HEADLESS. The options are FIREFOX_HEADLESS, FIREFOX, CHROME_HEADLESS, and CHROME.",
-          "markdownDescription": "The browser type and style to use when running the AjaxSpider. When running the `stackhawk/hawkscan` docker container, this setting is ignored and will uses the default FIREFOX_HEADLESS. The options are FIREFOX_HEADLESS, FIREFOX, CHROME_HEADLESS, and CHROME.",
+          "description": "The browser type and style to use when running the AjaxSpider. When running the `stackhawk/hawkscan` docker container, this setting is ignored and will use the default CHROME_HEADLESS. The options are CHROME_HEADLESS and CHROME. FIREFOX_HEADLESS and FIREFOX are deprecated.",
+          "markdownDescription": "The browser type and style to use when running the AjaxSpider. When running the `stackhawk/hawkscan` docker container, this setting is ignored and will use the default CHROME_HEADLESS. The options are CHROME_HEADLESS and CHROME. FIREFOX_HEADLESS and FIREFOX are deprecated.",
           "enum": [
             "FIREFOX_HEADLESS",
             "CHROME_HEADLESS",
@@ -270,25 +271,11 @@
       },
       "type": "object",
       "description": "Configuration for the Postman Collection.",
-      "markdownDescription": "Configuration for the Postman Collection."
+      "markdownDescription": "Configuration for the Postman Collection.",
+      "additionalProperties": false
     },
     "HARImportConfig": {
-      "allOf": [
-        {
-          "oneOf": [
-            {
-              "required": [
-                "file"
-              ]
-            },
-            {
-              "required": [
-                "dir"
-              ]
-            }
-          ]
-        }
-      ],
+      "additionalProperties": false,
       "type": "object",
       "description": "Configuration for using a HAR file as the discovery for a scan.\nHAR files often contain requests including urls from many hosts, but only URLs matching the `app.host` or\n`replaceHost` will be included in the scan.",
       "markdownDescription": "Configuration for using a HAR file as the discovery for a scan.\nHAR files often contain requests including urls from many hosts, but only URLs matching the `app.host` or\n`replaceHost` will be included in the scan.",
@@ -309,7 +296,24 @@
           "markdownDescription": "Use a directory of HAR files."
         }
       },
-      "required": []
+      "required": [],
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "required": [
+                "file"
+              ]
+            },
+            {
+              "required": [
+                "dir"
+              ]
+            }
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
     },
     "HARImportFiles": {
       "properties": {
@@ -324,7 +328,8 @@
       },
       "type": "object",
       "description": "Paths to .har HTTP Archive formatted files, for use with HARImportConfig.",
-      "markdownDescription": "Paths to .har HTTP Archive formatted files, for use with HARImportConfig."
+      "markdownDescription": "Paths to .har HTTP Archive formatted files, for use with HARImportConfig.",
+      "additionalProperties": false
     },
     "HARImportDirectory": {
       "properties": {
@@ -336,7 +341,8 @@
       },
       "type": "object",
       "description": "Paths to directories, for use with HARImportConfig.",
-      "markdownDescription": "Paths to directories, for use with HARImportConfig."
+      "markdownDescription": "Paths to directories, for use with HARImportConfig.",
+      "additionalProperties": false
     },
     "SpiderResponseBodyFilter": {
       "properties": {
@@ -480,7 +486,8 @@
       },
       "type": "object",
       "description": "Configuration block for a proxy. This enables HawkScan to traffic scanner requests through an outbound network proxy.",
-      "markdownDescription": "Configuration block for a proxy. This enables HawkScan to traffic scanner requests through an outbound network proxy."
+      "markdownDescription": "Configuration block for a proxy. This enables HawkScan to traffic scanner requests through an outbound network proxy.",
+      "additionalProperties": false
     },
     "ProxyCredentials": {
       "properties": {
@@ -507,31 +514,11 @@
       },
       "type": "object",
       "description": "Credential details for the outbound proxy behavior.",
-      "markdownDescription": "Credential details for the outbound proxy behavior."
+      "markdownDescription": "Credential details for the outbound proxy behavior.",
+      "additionalProperties": false
     },
     "AppConf": {
-      "allOf": [
-        {
-          "oneOf": [
-            {
-              "required": [
-                "authentication"
-              ]
-            },
-            {
-              "not": {
-                "anyOf": [
-                  {
-                    "required": [
-                      "authentication"
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ],
+      "additionalProperties": false,
       "type": "object",
       "description": "Define key settings for the application to be scanned, including properties like the application's host URL, authentication methods, API type, and custom paths. This section includes essential parameters, such as:\n\n- `applicationId`: **Required**. The unique identifier for the application in the StackHawk platform.\n- `env`: **Required**. The environment name used to organize scan results (e.g., \"Production\" or \"Staging\").\n- `host`: **Required**. The base URL of the application to scan, e.g., `<http://localhost:8000>`. The scan will not proceed if the URL is unreachable.\n\nAdditionally, specify other optional details such as session tokens, CSRF parameters, API-specific configurations (e.g., GraphQL, OpenAPI, SOAP, gRPC), and any paths to exclude or include in the scan.",
       "markdownDescription": "Define key settings for the application to be scanned, including properties like the application's host URL, authentication methods, API type, and custom paths. This section includes essential parameters, such as:\n\n- `applicationId`: **Required**. The unique identifier for the application in the StackHawk platform.\n- `env`: **Required**. The environment name used to organize scan results (e.g., \"Production\" or \"Staging\").\n- `host`: **Required**. The base URL of the application to scan, e.g., `http://localhost:8000`. The scan will not proceed if the URL is unreachable.\n\nAdditionally, specify other optional details such as session tokens, CSRF parameters, API-specific configurations (e.g., GraphQL, OpenAPI, SOAP, gRPC), and any paths to exclude or include in the scan.",
@@ -648,9 +635,113 @@
         "applicationId",
         "env"
       ],
-      "additionalProperties": false
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "required": [
+                "authentication"
+              ]
+            },
+            {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "authentication"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
     },
     "Authentication": {
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Configuration block for application authentication to enable scanning as the provided user of your application.\nIf provided, HawkScan will first attempt to sign into your web application with the provided login credentials.\nOnly after successfully verifying will scanning occur.\nFor more information, see the Authenticated Scanning section.",
+      "markdownDescription": "Configuration block for application authentication to enable scanning as the provided user of your application.\nIf provided, HawkScan will first attempt to sign into your web application with the provided login credentials.\nOnly after successfully verifying will scanning occur.\nFor more information, see the Authenticated Scanning section.",
+      "properties": {
+        "usernamePassword": {
+          "$ref": "#/$defs/UsernamePasswordCredentials",
+          "description": "Optional configuration specifying a username and password based authentication configuration. Do not configure if using `external`.",
+          "markdownDescription": "Optional configuration specifying a username and password based authentication configuration. Do not configure if using `external`."
+        },
+        "external": {
+          "$ref": "#/$defs/ExternalCredentials",
+          "description": "Optional configuration block for specifying an externally supplied authorization token. Do not configure if using `usernamePassword`.",
+          "markdownDescription": "Optional configuration block for specifying an externally supplied authorization token. Do not configure if using `usernamePassword`."
+        },
+        "script": {
+          "$ref": "#/$defs/AuthenticationScript",
+          "description": "Optional configuration block for using an authentication script.",
+          "markdownDescription": "Optional configuration block for using an authentication script."
+        },
+        "externalCommand": {
+          "$ref": "#/$defs/ExternalCommandCredentials",
+          "description": "Optional configuration block for running an external command process.",
+          "markdownDescription": "Optional configuration block for running an external command process."
+        },
+        "oauth": {
+          "$ref": "#/$defs/OAuth",
+          "description": "Optional configuration block for 3rd Party/OAuth.",
+          "markdownDescription": "Optional configuration block for 3rd Party/OAuth."
+        },
+        "tokenExtraction": {
+          "$ref": "#/$defs/TokenExtraction",
+          "description": "Optional configuration block for extracting the authorization token from the authentication response.",
+          "markdownDescription": "Optional configuration block for extracting the authorization token from the authentication response."
+        },
+        "cookieAuthorization": {
+          "$ref": "#/$defs/CookieAuthorization",
+          "description": "Optional configuration specifying if authorization is maintained via a cookie session. Do not configure if using `tokenAuthorization`.",
+          "markdownDescription": "Optional configuration specifying if authorization is maintained via a cookie session. Do not configure if using `tokenAuthorization`."
+        },
+        "tokenAuthorization": {
+          "$ref": "#/$defs/TokenAuthorization",
+          "description": "Optional configuration telling HawkScan how to pass the authorization token to your application on each request to maintain authorized access. Do not configure if using `cookieAuthorization`.",
+          "markdownDescription": "Optional configuration telling HawkScan how to pass the authorization token to your application on each request to maintain authorized access. Do not configure if using `cookieAuthorization`."
+        },
+        "sessionScript": {
+          "$ref": "#/$defs/SessionScript",
+          "description": "Optional configuration for using a session management script.",
+          "markdownDescription": "Optional configuration for using a session management script."
+        },
+        "loggedInIndicator": {
+          "type": "string",
+          "description": "A regex to match against http responses from pages in the web application to determine if the scanned pages user session is still logged in to the app, provided as a string (ex. `\".*signed in as.*\"`). Required if authorization token is not a JWT.",
+          "markdownDescription": "A regex to match against http responses from pages in the web application to determine if the scanned pages user session is still logged in to the app, provided as a string (ex. `\".*signed in as.*\"`). Required if authorization token is not a JWT."
+        },
+        "loggedOutIndicator": {
+          "type": "string",
+          "description": "A regex to match against http responses from pages in the web application to determine if the scanned pages user session is logged out of the app, provided as a string. Required if authorization token is not a JWT.",
+          "markdownDescription": "A regex to match against http responses from pages in the web application to determine if the scanned pages user session is logged out of the app, provided as a string. Required if authorization token is not a JWT."
+        },
+        "testPath": {
+          "$ref": "#/$defs/AuthTestPath",
+          "description": "A configuration block specifying how to verify authentication/authorization is working.",
+          "markdownDescription": "A configuration block specifying how to verify authentication/authorization is working."
+        },
+        "overrideJWTAutoRenew": {
+          "type": "boolean",
+          "description": "If set to true HawkScan will not try to autorenew a JWT.",
+          "markdownDescription": "If set to true HawkScan will not try to autorenew a JWT."
+        },
+        "profiles": {
+          "type": "array",
+          "description": "Optional extra creds",
+          "markdownDescription": "Optional extra creds",
+          "items": {
+            "$ref": "#/$defs/UserProfile"
+          }
+        }
+      },
+      "required": [
+        "testPath"
+      ],
       "allOf": [
         {
           "oneOf": [
@@ -753,96 +844,11 @@
           ]
         }
       ],
-      "type": "object",
-      "description": "Configuration block for application authentication to enable scanning as the provided user of your application.\nIf provided, HawkScan will first attempt to sign into your web application with the provided login credentials.\nOnly after successfully verifying will scanning occur.\nFor more information, see the Authenticated Scanning section.",
-      "markdownDescription": "Configuration block for application authentication to enable scanning as the provided user of your application.\nIf provided, HawkScan will first attempt to sign into your web application with the provided login credentials.\nOnly after successfully verifying will scanning occur.\nFor more information, see the Authenticated Scanning section.",
-      "properties": {
-        "usernamePassword": {
-          "$ref": "#/$defs/UsernamePasswordCredentials",
-          "description": "Optional configuration specifying a username and password based authentication configuration. Do not configure if using `external`.",
-          "markdownDescription": "Optional configuration specifying a username and password based authentication configuration. Do not configure if using `external`."
-        },
-        "external": {
-          "$ref": "#/$defs/ExternalCredentials",
-          "description": "Optional configuration block for specifying an externally supplied authorization token. Do not configure if using `usernamePassword`.",
-          "markdownDescription": "Optional configuration block for specifying an externally supplied authorization token. Do not configure if using `usernamePassword`."
-        },
-        "script": {
-          "$ref": "#/$defs/AuthenticationScript",
-          "description": "Optional configuration block for using an authentication script.",
-          "markdownDescription": "Optional configuration block for using an authentication script."
-        },
-        "externalCommand": {
-          "$ref": "#/$defs/ExternalCommandCredentials",
-          "description": "Optional configuration block for running an external command process.",
-          "markdownDescription": "Optional configuration block for running an external command process."
-        },
-        "oauth": {
-          "$ref": "#/$defs/OAuth",
-          "description": "Optional configuration block for 3rd Party/OAuth.",
-          "markdownDescription": "Optional configuration block for 3rd Party/OAuth."
-        },
-        "tokenExtraction": {
-          "$ref": "#/$defs/TokenExtraction",
-          "description": "Optional configuration block for extracting the authorization token from the authentication response.",
-          "markdownDescription": "Optional configuration block for extracting the authorization token from the authentication response."
-        },
-        "cookieAuthorization": {
-          "$ref": "#/$defs/CookieAuthorization",
-          "description": "Optional configuration specifying if authorization is maintained via a cookie session. Do not configure if using `tokenAuthorization`.",
-          "markdownDescription": "Optional configuration specifying if authorization is maintained via a cookie session. Do not configure if using `tokenAuthorization`."
-        },
-        "tokenAuthorization": {
-          "$ref": "#/$defs/TokenAuthorization",
-          "description": "Optional configuration telling HawkScan how to pass the authorization token to your application on each request to maintain authorized access. Do not configure if using `cookieAuthorization`.",
-          "markdownDescription": "Optional configuration telling HawkScan how to pass the authorization token to your application on each request to maintain authorized access. Do not configure if using `cookieAuthorization`."
-        },
-        "sessionScript": {
-          "$ref": "#/$defs/SessionScript",
-          "description": "Optional configuration for using a session management script.",
-          "markdownDescription": "Optional configuration for using a session management script."
-        },
-        "loggedInIndicator": {
-          "type": "string",
-          "description": "A regex to match against http responses from pages in the web application to determine if the scanned pages user session is still logged in to the app, provided as a string (ex. `\".*signed in as.*\"`). Required if authorization token is not a JWT.",
-          "markdownDescription": "A regex to match against http responses from pages in the web application to determine if the scanned pages user session is still logged in to the app, provided as a string (ex. `\".*signed in as.*\"`). Required if authorization token is not a JWT."
-        },
-        "loggedOutIndicator": {
-          "type": "string",
-          "description": "A regex to match against http responses from pages in the web application to determine if the scanned pages user session is logged out of the app, provided as a string. Required if authorization token is not a JWT.",
-          "markdownDescription": "A regex to match against http responses from pages in the web application to determine if the scanned pages user session is logged out of the app, provided as a string. Required if authorization token is not a JWT."
-        },
-        "testPath": {
-          "$ref": "#/$defs/AuthTestPath",
-          "description": "A configuration block specifying how to verify authentication/authorization is working.",
-          "markdownDescription": "A configuration block specifying how to verify authentication/authorization is working."
-        },
-        "overrideJWTAutoRenew": {
-          "type": "boolean",
-          "description": "If set to true HawkScan will not try to autorenew a JWT.",
-          "markdownDescription": "If set to true HawkScan will not try to autorenew a JWT."
-        },
-        "profiles": {
-          "type": "array",
-          "description": "Optional extra creds",
-          "markdownDescription": "Optional extra creds",
-          "items": {
-            "$ref": "#/$defs/UserProfile"
-          }
-        }
-      },
-      "required": [
-        "testPath"
-      ]
+      "title": "Authentication Configuration",
+      "unevaluatedProperties": false
     },
     "UsernamePasswordCredentials": {
-      "required": [
-        "loginPath",
-        "usernameField",
-        "passwordField",
-        "scanUsername",
-        "scanPassword"
-      ],
+      "title": "Username/Password Authentication",
       "type": "object",
       "description": "Optional configuration specifying a username and password based authentication configuration.\nCurrently POSTing the credentials via `FORM` or `JSON` type is supported. Use in conjunction `cookieAuthorization` or `tokenAuthorization` to maintain authorized access to your application.",
       "markdownDescription": "Optional configuration specifying a username and password based authentication configuration.\nCurrently POSTing the credentials via `FORM` or `JSON` type is supported. Use in conjunction `cookieAuthorization` or `tokenAuthorization` to maintain authorized access to your application.",
@@ -851,13 +857,13 @@
           "type": "string",
           "description": "The path to your login form, if applicable. This is an optional path but is often required if the `POST` to the loginPath requires an anti csrf token to be passed as part of the `POST`. The `app.antiCsrfParam` will be extracted from the response body of a GET request to this page.",
           "markdownDescription": "The path to your login form, if applicable. This is an optional path but is often required if the `POST` to the loginPath requires an anti csrf token to be passed as part of the `POST`. The `app.antiCsrfParam` will be extracted from the response body of a GET request to this page.",
-          "pattern": "^\\/(([A-z0-9\\-\\%]+\\/)*[A-z0-9\\-\\%]+$)?"
+          "pattern": "^(https?://[^\\s]+|\\/(([A-z0-9\\-\\%]+\\/)*[A-z0-9\\-\\%]+)?(\\?[^\\s]*)?)$"
         },
         "loginPath": {
           "type": "string",
           "description": "**Required**. login route to `POST` credentials for a user in the application (ex. `/login`). An http `POST` request using the type specified will be made to this path.",
           "markdownDescription": "**Required**. login route to `POST` credentials for a user in the application (ex. `/login`). An http `POST` request using the type specified will be made to this path.",
-          "pattern": "^\\/(([A-z0-9\\-\\%]+\\/)*[A-z0-9\\-\\%]+$)?"
+          "pattern": "^(https?://[^\\s]+|\\/(([A-z0-9\\-\\%]+\\/)*[A-z0-9\\-\\%]+)?(\\?[^\\s]*)?)$"
         },
         "usernameField": {
           "type": "string",
@@ -886,7 +892,9 @@
           "enum": [
             "FORM",
             "JSON",
-            "HTTP"
+            "HTTP",
+            "JSON_RPC",
+            "GRPC"
           ]
         },
         "otherParams": {
@@ -901,8 +909,26 @@
           "type": "string",
           "description": "Realm for NTLM authentication",
           "markdownDescription": "Realm for NTLM authentication"
+        },
+        "jsonrpcMethod": {
+          "type": "string",
+          "description": "The JSON-RPC method name to call for authentication (e.g., \"auth.login\"). Required when type is JSON_RPC.",
+          "markdownDescription": "The JSON-RPC method name to call for authentication (e.g., \"auth.login\"). Required when type is JSON_RPC."
+        },
+        "grpcMethod": {
+          "type": "string",
+          "description": "The gRPC method path for authentication (e.g., \"/auth.AuthService/Login\"). Required when type is GRPC. Uses grpcConf for descriptor.",
+          "markdownDescription": "The gRPC method path for authentication (e.g., \"/auth.AuthService/Login\"). Required when type is GRPC. Uses grpcConf for descriptor."
         }
-      }
+      },
+      "required": [
+        "loginPath",
+        "usernameField",
+        "passwordField",
+        "scanUsername",
+        "scanPassword"
+      ],
+      "additionalProperties": false
     },
     "NameValParam": {
       "properties": {
@@ -919,9 +945,14 @@
       },
       "type": "object",
       "description": "General name / value parameter.",
-      "markdownDescription": "General name / value parameter."
+      "markdownDescription": "General name / value parameter.",
+      "additionalProperties": false
     },
     "ExternalCredentials": {
+      "title": "External Token/Cookie Credentials",
+      "type": "object",
+      "description": "Optional configuration block for specifying an externally supplied authorization token, HawkScan will attempt to access a protected path in your web application with the supplied token before scanning. For more information, see the [Authenticated Scanning section](https://docs.stackhawk.com/hawkscan/configuration/authenticated-scanning.html).",
+      "markdownDescription": "Optional configuration block for specifying an externally supplied authorization token, HawkScan will attempt to access a protected path in your web application with the supplied token before scanning. For more information, see the [Authenticated Scanning section](https://docs.stackhawk.com/hawkscan/configuration/authenticated-scanning.html).",
       "properties": {
         "type": {
           "type": "string",
@@ -941,9 +972,7 @@
           }
         }
       },
-      "type": "object",
-      "description": "Optional configuration block for specifying an externally supplied authorization token, HawkScan will attempt to access a protected path in your web application with the supplied token before scanning. For more information, see the [Authenticated Scanning section](https://docs.stackhawk.com/hawkscan/configuration/authenticated-scanning.html).",
-      "markdownDescription": "Optional configuration block for specifying an externally supplied authorization token, HawkScan will attempt to access a protected path in your web application with the supplied token before scanning. For more information, see the [Authenticated Scanning section](https://docs.stackhawk.com/hawkscan/configuration/authenticated-scanning.html)."
+      "additionalProperties": false
     },
     "AuthTokens": {
       "properties": {
@@ -969,7 +998,8 @@
       },
       "type": "object",
       "description": "Configuration for Token Authentication.",
-      "markdownDescription": "Configuration for Token Authentication."
+      "markdownDescription": "Configuration for Token Authentication.",
+      "additionalProperties": false
     },
     "AuthenticationScript": {
       "required": [
@@ -994,7 +1024,8 @@
           "description": "The credentials required for the authentication script. These values will be redacted.",
           "markdownDescription": "The credentials required for the authentication script. These values will be redacted."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ParametersEntry": {
       "type": "object",
@@ -1034,7 +1065,8 @@
           "minimum": 0,
           "pattern": "^([0-9][0-9]+|[1-9]|0)$"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "OAuth": {
       "properties": {
@@ -1051,7 +1083,8 @@
       },
       "type": "object",
       "description": "Optional configuration block allowing HawkScan to authorize requests with a 3rd party [OAuth 2.0](https://oauth.net/2/) auth provider.",
-      "markdownDescription": "Optional configuration block allowing HawkScan to authorize requests with a 3rd party [OAuth 2.0](https://oauth.net/2/) auth provider."
+      "markdownDescription": "Optional configuration block allowing HawkScan to authorize requests with a 3rd party [OAuth 2.0](https://oauth.net/2/) auth provider.",
+      "additionalProperties": false
     },
     "OAuthCredentials": {
       "properties": {
@@ -1161,9 +1194,7 @@
       }
     },
     "TokenExtraction": {
-      "required": [
-        "value"
-      ],
+      "title": "Token Extraction Configuration",
       "type": "object",
       "description": "Token extraction is optional unless you're using the `tokenAuthorization` in combination with `usernamePassword` authentication. This configuration specifies how to extract the authorization token from the authentication response.",
       "markdownDescription": "Token extraction is optional unless you're using the `tokenAuthorization` in combination with `usernamePassword` authentication. This configuration specifies how to extract the authorization token from the authentication response.",
@@ -1182,7 +1213,11 @@
           "description": "*Required**. String containing the path to the token in the JSON payload authentication response or the name of the response header containing the token.\nExample: if the authentication response JSON payload looks like `{\"auth\" : {\"token\": \"<my-auth-token>\"}}` the value would be `auth.token`. If the authentication response has a header named `AuthToken: <my-token>`, then the value should be `AuthToken`.",
           "markdownDescription": "*Required**. String containing the path to the token in the JSON payload authentication response or the name of the response header containing the token.\nExample: if the authentication response JSON payload looks like `{\"auth\" : {\"token\": \"<my-auth-token>\"}}` the value would be `auth.token`. If the authentication response has a header named `AuthToken: <my-token>`, then the value should be `AuthToken`."
         }
-      }
+      },
+      "required": [
+        "value"
+      ],
+      "additionalProperties": false
     },
     "CookieAuthorization": {
       "properties": {
@@ -1197,12 +1232,11 @@
       },
       "type": "object",
       "description": "An optional configuration specifying if authorization is maintained via a cookie session.",
-      "markdownDescription": "An optional configuration specifying if authorization is maintained via a cookie session."
+      "markdownDescription": "An optional configuration specifying if authorization is maintained via a cookie session.",
+      "additionalProperties": false
     },
     "TokenAuthorization": {
-      "required": [
-        "value"
-      ],
+      "title": "Token Authorization Configuration",
       "type": "object",
       "description": "An optional configuration telling HawkScan how to pass the authorization token to your application on each request to maintain authorized access.",
       "markdownDescription": "An optional configuration telling HawkScan how to pass the authorization token to your application on each request to maintain authorized access.",
@@ -1224,7 +1258,8 @@
         "tokenType": {
           "type": "string",
           "description": "TokenType will be prepended the header value e.g. tokenType: TOKEN -> \"TOKEN xxxxxxxxx\"",
-          "markdownDescription": "TokenType will be prepended the header value e.g. tokenType: TOKEN -> \"TOKEN xxxxxxxxx\""
+          "markdownDescription": "TokenType will be prepended the header value e.g. tokenType: TOKEN -> \"TOKEN xxxxxxxxx\"",
+          "default": "Bearer"
         },
         "isJWT": {
           "type": "boolean",
@@ -1242,7 +1277,11 @@
           "exclusiveMinimum": 0,
           "pattern": "^([0-9][0-9]+|[1-9])$"
         }
-      }
+      },
+      "required": [
+        "value"
+      ],
+      "additionalProperties": false
     },
     "SessionScript": {
       "required": [
@@ -1262,25 +1301,11 @@
           "description": "A map of key/value pairs that will be passed to your session script, which can be accessed via `sessionWrapper.getParam()` function.",
           "markdownDescription": "A map of key/value pairs that will be passed to your session script, which can be accessed via `sessionWrapper.getParam()` function."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "AuthTestPath": {
-      "allOf": [
-        {
-          "oneOf": [
-            {
-              "required": [
-                "success"
-              ]
-            },
-            {
-              "required": [
-                "fail"
-              ]
-            }
-          ]
-        }
-      ],
+      "additionalProperties": false,
       "type": "object",
       "description": "A configuration specifying how to verify if Scan authentication and authorization is working before running a scan.\n\nAn example configuration of `app.authentication.testPath`:\n```yaml\n app:\n  authentication:\n    testPath:\n      type: HEADER\n      path: /user/profile\n      success: \".*200.*\"\n      requestMethod: POST\n      requestBody: '{\"feeling\": \"KaaKaww!\"}'\n      requestHeaders:\n        Content-Type: \"application/json\"\n```\n\nThis uses either `success` or `fail` criteria to determine if authorized access is working correctly.",
       "markdownDescription": "A configuration specifying how to verify if Scan authentication and authorization is working before running a scan.\n\nAn example configuration of `app.authentication.testPath`:\n```yaml\n app:\n  authentication:\n    testPath:\n      type: HEADER\n      path: /user/profile\n      success: \".*200.*\"\n      requestMethod: POST\n      requestBody: '{\"feeling\": \"KaaKaww!\"}'\n      requestHeaders:\n        Content-Type: \"application/json\"\n```\n\nThis uses either `success` or `fail` criteria to determine if authorized access is working correctly.",
@@ -1330,11 +1355,34 @@
           "$ref": "#/$defs/RequestHeadersEntry",
           "description": "List of key/value pairs to be included as headers in the request to the `path`.\nHeaders that match the following pattern are unable to be added or modified `'^(Host|Origin|Proxy-.*|Sec-.*|Content-Length)'`.",
           "markdownDescription": "List of key/value pairs to be included as headers in the request to the `path`.\nHeaders that match the following pattern are unable to be added or modified `'^(Host|Origin|Proxy-.*|Sec-.*|Content-Length)'`."
+        },
+        "grpcTestMethod": {
+          "type": "string",
+          "description": "The gRPC method path to call for authentication validation (e.g., \"/auth.AuthService/ValidateToken\"). Only used when authentication type is GRPC.",
+          "markdownDescription": "The gRPC method path to call for authentication validation (e.g., \"/auth.AuthService/ValidateToken\"). Only used when authentication type is GRPC."
         }
       },
       "required": [
         "path"
-      ]
+      ],
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "required": [
+                "success"
+              ]
+            },
+            {
+              "required": [
+                "fail"
+              ]
+            }
+          ]
+        }
+      ],
+      "title": "Authentication Test Path",
+      "unevaluatedProperties": false
     },
     "UserProfile": {
       "allOf": [
@@ -1413,7 +1461,8 @@
           "description": "Use this for parameters for individual users that can't be discovered by smart crawling.",
           "markdownDescription": "Use this for parameters for individual users that can't be discovered by smart crawling."
         }
-      }
+      },
+      "unevaluatedProperties": false
     },
     "UserNamePassword": {
       "properties": {
@@ -1552,7 +1601,8 @@
       },
       "type": "object",
       "description": "Configure how HawkScan interacts with [GraphQL](https://spec.graphql.org/June2018/) APIs.\n\nOne of the following is **Required**:\n- `schemaPath`: Relative path to the introspection endpoint (based on the host address).\n- `filePath`: Relative path to a GraphQL schema file (SDL format).\n\nThe following are **Optional**:\n- `operation`: Adjust the operation requests generated by the spider (`QUERY` or `MUTATION`, defaults to both).\n- `excludeOperations`: Exclude particular GraphQL operations from being scanned.\n\nFor full details, see [GraphQL Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/graphql-configuration.html).",
-      "markdownDescription": "Configure how HawkScan interacts with [GraphQL](https://spec.graphql.org/June2018/) APIs.\n\nOne of the following is **Required**:\n- `schemaPath`: Relative path to the introspection endpoint (based on the host address).\n- `filePath`: Relative path to a GraphQL schema file (SDL format).\n\nThe following are **Optional**:\n- `operation`: Adjust the operation requests generated by the spider (`QUERY` or `MUTATION`, defaults to both).\n- `excludeOperations`: Exclude particular GraphQL operations from being scanned.\n\nFor full details, see [GraphQL Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/graphql-configuration.html)."
+      "markdownDescription": "Configure how HawkScan interacts with [GraphQL](https://spec.graphql.org/June2018/) APIs.\n\nOne of the following is **Required**:\n- `schemaPath`: Relative path to the introspection endpoint (based on the host address).\n- `filePath`: Relative path to a GraphQL schema file (SDL format).\n\nThe following are **Optional**:\n- `operation`: Adjust the operation requests generated by the spider (`QUERY` or `MUTATION`, defaults to both).\n- `excludeOperations`: Exclude particular GraphQL operations from being scanned.\n\nFor full details, see [GraphQL Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/graphql-configuration.html).",
+      "additionalProperties": false
     },
     "GraphQLExcludeOperationParam": {
       "properties": {
@@ -1574,7 +1624,8 @@
       },
       "type": "object",
       "description": "A GraphQL operation to exclude from the spider by name and type.",
-      "markdownDescription": "A GraphQL operation to exclude from the spider by name and type."
+      "markdownDescription": "A GraphQL operation to exclude from the spider by name and type.",
+      "additionalProperties": false
     },
     "GraphQLCustomVariable": {
       "properties": {
@@ -1609,7 +1660,8 @@
       },
       "type": "object",
       "description": "Custom variable data specific to OpenAPI schemas.",
-      "markdownDescription": "Custom variable data specific to OpenAPI schemas."
+      "markdownDescription": "Custom variable data specific to OpenAPI schemas.",
+      "additionalProperties": false
     },
     "OpenApiConf": {
       "properties": {
@@ -1704,7 +1756,8 @@
       },
       "type": "object",
       "description": "Define how HawkScan scans [OpenAPI](https://swagger.io/specification/) endpoints.\n\nOne of the following is **Required**:\n- `filePath`: Path to a local OpenAPI specification file (JSON or YAML).\n- `path`: URL path to fetch the OpenAPI spec from the scanned host.\n\nFor full details such as custom variable injection, see [OpenAPI Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/openapi-configuration.html).",
-      "markdownDescription": "Define how HawkScan scans [OpenAPI](https://swagger.io/specification/) endpoints.\n\nOne of the following is **Required**:\n- `filePath`: Path to a local OpenAPI specification file (JSON or YAML).\n- `path`: URL path to fetch the OpenAPI spec from the scanned host.\n\nFor full details such as custom variable injection, see [OpenAPI Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/openapi-configuration.html)."
+      "markdownDescription": "Define how HawkScan scans [OpenAPI](https://swagger.io/specification/) endpoints.\n\nOne of the following is **Required**:\n- `filePath`: Path to a local OpenAPI specification file (JSON or YAML).\n- `path`: URL path to fetch the OpenAPI spec from the scanned host.\n\nFor full details such as custom variable injection, see [OpenAPI Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/openapi-configuration.html).",
+      "additionalProperties": false
     },
     "OpenApiCustomVariable": {
       "properties": {
@@ -1746,7 +1799,8 @@
       },
       "type": "object",
       "description": "Custom variable data specific to OpenAPI schemas.",
-      "markdownDescription": "Custom variable data specific to OpenAPI schemas."
+      "markdownDescription": "Custom variable data specific to OpenAPI schemas.",
+      "additionalProperties": false
     },
     "SoapConf": {
       "properties": {
@@ -1764,7 +1818,8 @@
       },
       "type": "object",
       "description": "Set parameters for scanning [SOAP](https://www.w3.org/TR/soap/) APIs.\n\nOne of the following is **Required**:\n- `path`: Relative URL to fetch the SOAP API WSDL from the scanned host.\n- `filePath`: Path to a local SOAP API WSDL specification file.\n\nFor full details, see [SOAP Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/soap-configuration.html).",
-      "markdownDescription": "Set parameters for scanning [SOAP](https://www.w3.org/TR/soap/) APIs.\n\nOne of the following is **Required**:\n- `path`: Relative URL to fetch the SOAP API WSDL from the scanned host.\n- `filePath`: Path to a local SOAP API WSDL specification file.\n\nFor full details, see [SOAP Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/soap-configuration.html)."
+      "markdownDescription": "Set parameters for scanning [SOAP](https://www.w3.org/TR/soap/) APIs.\n\nOne of the following is **Required**:\n- `path`: Relative URL to fetch the SOAP API WSDL from the scanned host.\n- `filePath`: Path to a local SOAP API WSDL specification file.\n\nFor full details, see [SOAP Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/soap-configuration.html).",
+      "additionalProperties": false
     },
     "GrpcConf": {
       "properties": {
@@ -1809,7 +1864,8 @@
       },
       "type": "object",
       "description": "Configure HawkScan for [gRPC](https://grpc.io/) API scanning.\n\nOne of the following is **Required**:\n- `path`: Reflection endpoint for reading gRPC schema.\n- `filePath`: Relative path to a [protobuf descriptor_set](https://protobuf.com/docs/descriptors) file.\n\nFor full details such as custom variable injection, see [gRPC Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/gRPC-configuration.html).",
-      "markdownDescription": "Configure HawkScan for [gRPC](https://grpc.io/) API scanning.\n\nOne of the following is **Required**:\n- `path`: Reflection endpoint for reading gRPC schema.\n- `filePath`: Relative path to a [protobuf descriptor_set](https://protobuf.com/docs/descriptors) file.\n\nFor full details such as custom variable injection, see [gRPC Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/gRPC-configuration.html)."
+      "markdownDescription": "Configure HawkScan for [gRPC](https://grpc.io/) API scanning.\n\nOne of the following is **Required**:\n- `path`: Reflection endpoint for reading gRPC schema.\n- `filePath`: Relative path to a [protobuf descriptor_set](https://protobuf.com/docs/descriptors) file.\n\nFor full details such as custom variable injection, see [gRPC Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/gRPC-configuration.html).",
+      "additionalProperties": false
     },
     "CustomVariable": {
       "properties": {
@@ -1834,7 +1890,8 @@
       },
       "type": "object",
       "description": "Generic custom variable for different API types.",
-      "markdownDescription": "Generic custom variable for different API types."
+      "markdownDescription": "Generic custom variable for different API types.",
+      "additionalProperties": false
     },
     "InputVectorParams": {
       "properties": {
@@ -1980,7 +2037,8 @@
           "description": "Key-value map of additional headers to be sent along with the request to the app target host.",
           "markdownDescription": "Key-value map of additional headers to be sent along with the request to the app target host."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "AppRedactions": {
       "required": [],
@@ -2036,7 +2094,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "JsonRpcConf": {
       "properties": {
@@ -2100,11 +2159,22 @@
           "items": {
             "$ref": "#/$defs/JsonRpcCustomVariable"
           }
+        },
+        "mcp": {
+          "$ref": "#/$defs/McpConf",
+          "description": "MCP (Model Context Protocol) server configuration. Presence of this field enables MCP scanning mode.",
+          "markdownDescription": "MCP (Model Context Protocol) server configuration. Presence of this field enables MCP scanning mode."
+        },
+        "path": {
+          "type": "string",
+          "description": "Host path to a hosted OpenRPC specification, relative to the target host (e.g., `/openrpc.json`).",
+          "markdownDescription": "Host path to a hosted OpenRPC specification, relative to the target host (e.g., `/openrpc.json`)."
         }
       },
       "type": "object",
-      "description": "Configure HawkScan for [JSON-RPC 2.0](https://www.jsonrpc.org/specification) API scanning.\n\nOne of the following is **Required**:\n- `endpoint`: The JSON-RPC endpoint path (e.g., `/jsonrpc` or `/api/rpc`).\n- `filePath`: Relative path to an OpenRPC schema file (JSON format).\n\nFor full details such as custom variable injection, see [JSON-RPC Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/json-rpc-configuration.html).",
-      "markdownDescription": "Configure HawkScan for [JSON-RPC 2.0](https://www.jsonrpc.org/specification) API scanning.\n\nOne of the following is **Required**:\n- `endpoint`: The JSON-RPC endpoint path (e.g., `/jsonrpc` or `/api/rpc`).\n- `filePath`: Relative path to an OpenRPC schema file (JSON format).\n\nFor full details such as custom variable injection, see [JSON-RPC Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/json-rpc-configuration.html)."
+      "description": "Configure HawkScan for [JSON-RPC 2.0](https://www.jsonrpc.org/specification) API scanning.\n\nOne of the following is **Required**:\n- `endpoint`: The JSON-RPC endpoint path (e.g., `/jsonrpc` or `/api/rpc`).\n- `path`: Host path to a hosted OpenRPC specification (e.g., `/openrpc.json`).\n- `filePath`: Relative path to a local OpenRPC schema file (JSON format).\n\nFor full details such as custom variable injection, see [JSON-RPC Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/json-rpc-configuration.html).",
+      "markdownDescription": "Configure HawkScan for [JSON-RPC 2.0](https://www.jsonrpc.org/specification) API scanning.\n\nOne of the following is **Required**:\n- `endpoint`: The JSON-RPC endpoint path (e.g., `/jsonrpc` or `/api/rpc`).\n- `path`: Host path to a hosted OpenRPC specification (e.g., `/openrpc.json`).\n- `filePath`: Relative path to a local OpenRPC schema file (JSON format).\n\nFor full details such as custom variable injection, see [JSON-RPC Configuration Documentation](https://docs.stackhawk.com/hawkscan/configuration/json-rpc-configuration.html).",
+      "additionalProperties": false
     },
     "JsonRpcCustomVariable": {
       "properties": {
@@ -2129,7 +2199,65 @@
       },
       "type": "object",
       "description": "Custom variable data specific to JSON-RPC schemas.",
-      "markdownDescription": "Custom variable data specific to JSON-RPC schemas."
+      "markdownDescription": "Custom variable data specific to JSON-RPC schemas.",
+      "additionalProperties": false
+    },
+    "McpConf": {
+      "properties": {
+        "endpoint": {
+          "type": "string",
+          "description": "MCP server endpoint path relative to target host. Defaults to `/mcp`.",
+          "markdownDescription": "MCP server endpoint path relative to target host. Defaults to `/mcp`.",
+          "default": "/mcp",
+          "pattern": "^\\/(([A-z0-9\\-\\%]+\\/)*[A-z0-9\\-\\%]+$)?"
+        },
+        "excludeTools": {
+          "type": "array",
+          "description": "MCP tool names to exclude from scanning.",
+          "markdownDescription": "MCP tool names to exclude from scanning.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "customValues": {
+          "type": "array",
+          "description": "Define custom variables and values for use in MCP tool scanning.",
+          "markdownDescription": "Define custom variables and values for use in MCP tool scanning.",
+          "items": {
+            "$ref": "#/$defs/McpCustomVariable"
+          }
+        }
+      },
+      "type": "object",
+      "description": "MCP (Model Context Protocol) server configuration for JSON-RPC scanning.",
+      "markdownDescription": "MCP (Model Context Protocol) server configuration for JSON-RPC scanning.",
+      "additionalProperties": false
+    },
+    "McpCustomVariable": {
+      "properties": {
+        "tool": {
+          "type": "string",
+          "description": "MCP tool name this variable applies to.",
+          "markdownDescription": "MCP tool name this variable applies to."
+        },
+        "param": {
+          "type": "string",
+          "description": "Parameter name within the tool's inputSchema. Using dot notation resolves nested objects (e.g., `user.address.id`).",
+          "markdownDescription": "Parameter name within the tool's inputSchema. Using dot notation resolves nested objects (e.g., `user.address.id`)."
+        },
+        "values": {
+          "type": "array",
+          "description": "A list of possible values to be randomly selected for the given parameter.",
+          "markdownDescription": "A list of possible values to be randomly selected for the given parameter.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "type": "object",
+      "description": "Custom variable data specific to MCP tool scanning.",
+      "markdownDescription": "Custom variable data specific to MCP tool scanning.",
+      "additionalProperties": false
     },
     "HawkAddOnConf": {
       "properties": {
@@ -2165,7 +2293,8 @@
       },
       "type": "object",
       "description": "Configuration block for header value replacement. These rules support manipulating request headers, useful for modifying requests to web applications running behind a proxy.",
-      "markdownDescription": "Configuration block for header value replacement. These rules support manipulating request headers, useful for modifying requests to web applications running behind a proxy."
+      "markdownDescription": "Configuration block for header value replacement. These rules support manipulating request headers, useful for modifying requests to web applications running behind a proxy.",
+      "additionalProperties": false
     },
     "ReplacerRules": {
       "required": [
@@ -2220,15 +2349,10 @@
           "description": "Enable regex search for `matchString`. Useful when `replaceOnly` is true (e.g. `Referer:.*` will replace the entire `Referer:` header line).",
           "markdownDescription": "Enable regex search for `matchString`. Useful when `replaceOnly` is true (e.g. `Referer:.*` will replace the entire `Referer:` header line)."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Script": {
-      "required": [
-        "language"
-      ],
-      "type": "object",
-      "description": "Configuration block for custom scripts.",
-      "markdownDescription": "Configuration block for custom scripts.",
       "properties": {
         "name": {
           "type": "string",
@@ -2237,8 +2361,8 @@
         },
         "type": {
           "type": "string",
-          "description": "The type of this script. One of `active`, `authentication`, `httpsender`, `passive`, `proxy`, `standalone`, `targeted`, `session`.",
-          "markdownDescription": "The type of this script. One of `active`, `authentication`, `httpsender`, `passive`, `proxy`, `standalone`, `targeted`, `session`.",
+          "description": "The type of this script. One of `active`, `authentication`, `httpsender`, `passive`, `proxy`, `session`.",
+          "markdownDescription": "The type of this script. One of `active`, `authentication`, `httpsender`, `passive`, `proxy`, `session`.",
           "enum": [
             "active",
             "authentication",
@@ -2278,7 +2402,11 @@
           "description": "Plugin Id for script.",
           "markdownDescription": "Plugin Id for script."
         }
-      }
+      },
+      "type": "object",
+      "description": "Configuration block for custom scripts.",
+      "markdownDescription": "Configuration block for custom scripts.",
+      "additionalProperties": false
     },
     "Tag": {
       "properties": {
@@ -2306,5 +2434,10 @@
       "additionalProperties": false
     }
   },
-  "$comment": "https://www.stackhawk.com"
+  "additionalProperties": false,
+  "$comment": "https://www.stackhawk.com",
+  "id": "com.stackhawk.nest.HawkScanMessages$HawkscanConf",
+  "required": [
+    "app"
+  ]
 }

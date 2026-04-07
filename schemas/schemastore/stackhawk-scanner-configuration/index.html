@@ -216,602 +216,6 @@ Schema - Lintel Catalog"
   <div class="property-list">
   <div
   class="property-item"
-  id="prop-hawk"
->
-  <div class="property-header">
-    <span class="property-name">hawk</span>
-    <a href="#def-HawkConf" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Define global HawkScan settings, independent of the scanned application:</p>
-<ul>
-<li><code>spider</code>: Configure application crawling and scan discovery. Enable <code>base</code> and <code>ajax</code> crawlers, set <code>maxDurationMinutes</code>, add <code>seedPaths</code>, use <code>custom</code> commands, or import <code>har</code> files.</li>
-<li><code>startupTimeoutMinutes</code>: Maximum time to wait for the scanner to start (default: 5).</li>
-<li><code>failureThreshold</code>: Alert severity level to fail a scan (<code>high</code>, <code>medium</code>, or <code>low</code>).</li>
-<li><code>scan</code>: Set runtime behavior like max duration, request throttling, and concurrency.</li>
-<li><code>config</code>: Advanced scanner configuration overrides.</li>
-<li><code>outboundProxy</code>: Configure an outbound proxy, including host, credentials, and CA certificate.</li>
-</ul>
-<p>For more details, see <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.com/hawkscan/configuration/">HawkScan Configuration Documentation</a>.</p>
-</div>
-         <details class="nested-properties">
-    <summary>6 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">spider</span>
-    <a href="#def-Spider" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Configuration block for the application crawling and Discovery Phase aka Spider. See the <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.com/hawkscan/scan-discovery/">Scan Discovery</a> page for more details.</p>
-</div>
-         <details class="nested-properties">
-    <summary>10 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">base</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Enable the basic web crawler for discovering your application's routes. This spider is appropriate for most traditional web applications.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>true</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">ajax</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Enable the ajax web crawler for discovering your application’s routes. This spider is appropriate for single-page web applications.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">maxDurationMinutes</span>
-    <span class="type-badge">number</span>
-   </div>
-  <div class="desc-html"><p>Maximum allowed time for enabled spiders to crawl your web application.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >exclusiveMin=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">ajaxBrowser</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The browser type and style to use when running the AjaxSpider. When running the <code>stackhawk/hawkscan</code> docker container, this setting is ignored and will uses the default FIREFOX_HEADLESS. The options are FIREFOX_HEADLESS, FIREFOX, CHROME_HEADLESS, and CHROME.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FIREFOX_HEADLESS&quot;</code> <code class="enum-value">&quot;CHROME_HEADLESS&quot;</code> <code class="enum-value">&quot;FIREFOX&quot;</code> <code class="enum-value">&quot;CHROME&quot;</code>  </div>
-     </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">seedPaths</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>List of paths to supplement the spider. These paths will be used as additional starting points for crawling your application. Useful for paths that are not crawlable from the root of your application. For example, <code>/admin</code>. <strong>Note</strong>: this configuration is NOT a replacement for an API spec and provides no benefit to pure REST API's.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">custom</span>
-    <a href="#def-CustomDiscovery" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-         <details class="nested-properties">
-    <summary>7 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">command</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Provide a command to run as part of the scan discovery phase. This command will be split from its arguments and execute on its own thread in a context with additional environment variables set with the proxy configuration for HawkScan to intercept http traffic.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">environment</span>
-    <span class="type-badge"
-      >Record&lt;string, string&gt;</span
-    >
-   </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">workingDir</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The absolute path working directory these commands are run from.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">credentials</span>
-    <span class="type-badge"
-      >Record&lt;string, string&gt;</span
-    >
-   </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">arguments</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>Command arguments provided as an array of strings. These arguments can be used in addition to or instead of the command. This should be used if the command is sufficiently complex or is exceptionally whitespace sensitive.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">excludeParentEnvironment</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Only provide the environment variables and credentials as configured. By default also includes the environment from the parent process environment for convenience.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">logOutputToForeground</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>This command prints the stdout and stderr of the command to the foreground.</p>
-</div>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">postmanConfig</span>
-    <a href="#def-PostmanConfig" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Configuration for the Postman Collection.</p>
-</div>
-         <details class="nested-properties">
-    <summary>3 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">apikey</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>API key to authenticated the user with Postman.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">collectionUID</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Id of the collection to be pulled from Postman.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">filePath</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>File path of the Postman collection.</p>
-</div>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">har</span>
-    <a href="#def-HARImportConfig" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Configuration for using a HAR file as the discovery for a scan.
-HAR files often contain requests including urls from many hosts, but only URLs matching the <code>app.host</code> or
-<code>replaceHost</code> will be included in the scan.</p>
-</div>
-        <div class="inline-composition">
-    <span class="meta-label">All of:</span>
-    <span class="inline-variant"
-      >variant</span
-    >   </div>
-   <details class="nested-properties">
-    <summary>3 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">replaceHost</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The hostname of URLs in the HAR file that will be replaced with the host defined in <code>app.host</code>. Leave blank if the <code>app.host</code> is then same hostname in the HAR file.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">file</span>
-    <a href="#def-HARImportFiles" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Paths to .har HTTP Archive formatted files, for use with HARImportConfig.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">dir</span>
-    <a href="#def-HARImportDirectory" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Paths to directories, for use with HARImportConfig.</p>
-</div>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">disableSmartCrawling</span>
-    <span class="type-badge">boolean</span>
-   </div>
-  <div class="desc-html"><p>Disable smart crawling for openApiConf to enable legacy openapi import process.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>false</code>
-  </div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">responseBodyFilter</span>
-    <a href="#def-SpiderResponseBodyFilter" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-         <details class="nested-properties">
-    <summary>2 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">includeContentTypes</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>Content types to include in response body uploads. If specified, replaces the default include list. Supports wildcards (e.g., <code>application/*+json</code>, <code>image/*</code>).</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">excludeContentTypes</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>Content types to exclude from response body uploads. If specified, adds to the default exclude list. Exclusions take precedence over inclusions. Supports wildcards (e.g., <code>image/*</code>).</p>
-</div>
-       </div>      </div>
-  </details>
-</div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">startupTimeoutMinutes</span>
-    <span class="type-badge">number</span>
-   </div>
-  <div class="desc-html"><p>Maximum time in minutes to wait for the scanner process to start.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >exclusiveMin=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">failureThreshold</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The lowest alert level that returns a failed scan status. Accepted values: high, medium, or low.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >pattern=\b(?:high|medium|low|HIGH|MEDIUM|LOW)\b</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">scan</span>
-    <a href="#def-ScanConf" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Configuration block for HawkScan runtime.</p>
-</div>
-         <details class="nested-properties">
-    <summary>10 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">maxDurationMinutes</span>
-    <span class="type-badge">number | string</span>
-   </div>
-  <div class="desc-html"><p>Maximum duration that a scan will run.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >pattern=^([0-9][0-9]+|[1-9]|0)$</span
-    ><span class="constraint"
-      >min=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">maxRuleDurationMinutes</span>
-    <span class="type-badge">number | string</span>
-   </div>
-  <div class="desc-html"><p>Maximum duration that a scan will spend on a rule.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >pattern=^([0-9][0-9]+|[1-9]|0)$</span
-    ><span class="constraint"
-      >min=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">requestDelayMillis</span>
-    <span class="type-badge">number | string</span>
-   </div>
-  <div class="desc-html"><p>Delay time between sending requests.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >pattern=^([0-9][0-9]+|[1-9]|0)$</span
-    ><span class="constraint"
-      >min=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">concurrentRequests</span>
-    <span class="type-badge">number | string</span>
-   </div>
-  <div class="desc-html"><p>Number of request threads. <em>If you need that little extra push.</em> defaults to 20.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >pattern=^([0-9][0-9]+|[1-9])$</span
-    ><span class="constraint"
-      >exclusiveMin=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">throttlePassiveBacklog</span>
-    <span class="type-badge">number | string</span>
-   </div>
-  <div class="desc-html"><p>Pause active scan when passive backlog is greater than this value, resumes once backlog is empty. defaults to 50.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >pattern=^([0-9][0-9]+|[1-9])$</span
-    ><span class="constraint"
-      >exclusiveMin=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">throttleIntervalSeconds</span>
-    <span class="type-badge">number | string</span>
-   </div>
-  <div class="desc-html"><p>How often the throttle check is run, in seconds.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >pattern=^([0-9][0-9]+|[1-9])$</span
-    ><span class="constraint"
-      >exclusiveMin=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">throttleTempRecordMax</span>
-    <span class="type-badge">number | string</span>
-   </div>
-  <div class="desc-html"><p>The max number of temp records allowed before pruning of temp records begins.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >pattern=^([0-9][0-9]+|[1-9])$</span
-    ><span class="constraint"
-      >exclusiveMin=0</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">throttleTempRecordDeleteQuota</span>
-    <span class="type-badge">number | string</span>
-   </div>
-  <div class="desc-html"><p>The percentage of throttleTempRecordMax records to delete on each throttleIntervalSeconds.</p>
-</div>
-       <div class="property-constraints">
-<span class="constraint"
-      >pattern=^([0-9][0-9]+|[1-9])$</span
-    ><span class="constraint"
-      >min=1</span
-    ><span class="constraint"
-      >max=100</span
-    >  </div>
-  </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">policyName</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Name of a specific named scan policy to use. This field is optional, and an applicable scan policy will be selected if omitted.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">includedPlugins</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>Specify to only scan with these listed plugins.</p>
-</div>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">config</span>
-    <span class="type-badge">string[]</span>
-   </div>
-  <div class="desc-html"><p>Scanner configuration overrides, provided as a list of key=value strings.
-A list of strings in the form of key=value pairs passed to the scanner as scanner configuration overrides.</p>
-<p>This is an advanced feature to configure HawkScan plugins and override their default behavior.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">outboundProxy</span>
-    <a href="#def-Proxy" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Configuration block for a proxy. This enables HawkScan to traffic scanner requests through an outbound network proxy.</p>
-</div>
-         <details class="nested-properties">
-    <summary>3 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">host</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>The host of the outbound explicit proxy, including port (e.g. https://localhost:8888).</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">credentials</span>
-    <a href="#def-ProxyCredentials" class="type-badge type-badge-link"
-      >object</a
-    >
-   </div>
-  <div class="desc-html"><p>Credential details for the outbound proxy behavior.</p>
-</div>
-         <details class="nested-properties">
-    <summary>4 nested properties</summary>
-    <div class="property-list">
-  <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">username</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p><strong>Required</strong>. The username for proxy credentials.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">password</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p><strong>Required</strong>. The password for proxy credentials.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">realm</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Realm for proxy credentials.</p>
-</div>
-       </div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">scheme</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Scheme of proxy authentication. Currently <code>BASIC</code>, <code>NTLM</code> are supported.</p>
-</div>
-       </div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
->
-  <div class="property-header">
-    <span class="property-name">rootCACertPath</span>
-    <span class="type-badge">string</span>
-   </div>
-  <div class="desc-html"><p>Path to root CA Certificate for transparent outbound proxies.  This can be used without specifying host or credentials.</p>
-</div>
-       </div>      </div>
-  </details>
-</div>      </div>
-  </details>
-</div>    <div
-  class="property-item"
   id="prop-app"
 >
   <div class="property-header">
@@ -819,7 +223,9 @@ A list of strings in the form of key=value pairs passed to the scanner as scanne
     <a href="#def-AppConf" class="type-badge type-badge-link"
       >object</a
     >
-   </div>
+ <span class="required-badge"
+      >required</span
+    >  </div>
   <div class="desc-html"><p>Define key settings for the application to be scanned, including properties like the application's host URL, authentication methods, API type, and custom paths. This section includes essential parameters, such as:</p>
 <ul>
 <li><code>applicationId</code>: <strong>Required</strong>. The unique identifier for the application in the StackHawk platform.</li>
@@ -951,7 +357,7 @@ For more information, see the Authenticated Scanning section.</p>
       >variant</span
     >   </div>
    <details class="nested-properties">
-    <summary>7 nested properties</summary>
+    <summary>8 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -1030,6 +436,15 @@ A match of the regex supplied will indicate that scanning should halt and enter 
       >Record&lt;string, string&gt;</span
     >
    </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">grpcTestMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The gRPC method path to call for authentication validation (e.g., "/auth.AuthService/ValidateToken"). Only used when authentication type is GRPC.</p>
+</div>
        </div>      </div>
   </details>
 </div>    <div
@@ -1045,7 +460,7 @@ A match of the regex supplied will indicate that scanning should halt and enter 
 Currently POSTing the credentials via <code>FORM</code> or <code>JSON</code> type is supported. Use in conjunction <code>cookieAuthorization</code> or <code>tokenAuthorization</code> to maintain authorized access to your application.</p>
 </div>
          <details class="nested-properties">
-    <summary>9 nested properties</summary>
+    <summary>11 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -1060,7 +475,7 @@ Currently POSTing the credentials via <code>FORM</code> or <code>JSON</code> typ
 </div>
        <div class="property-constraints">
 <span class="constraint"
-      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+      >pattern=^(https?://[^\s]+|\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+)?(\?[^\s]*)?)$</span
     >  </div>
   </div>    <div
   class="property-item"
@@ -1119,7 +534,7 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
 </div>
        <div class="property-constraints">
 <span class="constraint"
-      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+      >pattern=^(https?://[^\s]+|\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+)?(\?[^\s]*)?)$</span
     >  </div>
   </div>    <div
   class="property-item"
@@ -1131,7 +546,7 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
   <div class="desc-html"><p>An enum value describing the type of <code>POST</code> data expected by the <code>loginPath</code></p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FORM&quot;</code> <code class="enum-value">&quot;JSON&quot;</code> <code class="enum-value">&quot;HTTP&quot;</code>  </div>
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FORM&quot;</code> <code class="enum-value">&quot;JSON&quot;</code> <code class="enum-value">&quot;HTTP&quot;</code> <code class="enum-value">&quot;JSON_RPC&quot;</code> <code class="enum-value">&quot;GRPC&quot;</code>  </div>
      </div>    <div
   class="property-item"
 >
@@ -1151,6 +566,24 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
     <span class="type-badge">string</span>
    </div>
   <div class="desc-html"><p>Realm for NTLM authentication</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">jsonrpcMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The JSON-RPC method name to call for authentication (e.g., "auth.login"). Required when type is JSON_RPC.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">grpcMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The gRPC method path for authentication (e.g., "/auth.AuthService/Login"). Required when type is GRPC. Uses grpcConf for descriptor.</p>
 </div>
        </div>      </div>
   </details>
@@ -1442,6 +875,9 @@ Example: if the authentication response JSON payload looks like <code>{"auth" : 
    </div>
   <div class="desc-html"><p>TokenType will be prepended the header value e.g. tokenType: TOKEN -&gt; "TOKEN xxxxxxxxx"</p>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;Bearer&quot;</code>
+  </div>
        </div>    <div
   class="property-item"
 >
@@ -2336,12 +1772,13 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
 <p>One of the following is <strong>Required</strong>:</p>
 <ul>
 <li><code>endpoint</code>: The JSON-RPC endpoint path (e.g., <code>/jsonrpc</code> or <code>/api/rpc</code>).</li>
-<li><code>filePath</code>: Relative path to an OpenRPC schema file (JSON format).</li>
+<li><code>path</code>: Host path to a hosted OpenRPC specification (e.g., <code>/openrpc.json</code>).</li>
+<li><code>filePath</code>: Relative path to a local OpenRPC schema file (JSON format).</li>
 </ul>
 <p>For full details such as custom variable injection, see <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.com/hawkscan/configuration/json-rpc-configuration.html">JSON-RPC Configuration Documentation</a>.</p>
 </div>
          <details class="nested-properties">
-    <summary>8 nested properties</summary>
+    <summary>10 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -2443,6 +1880,669 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
     >
    </div>
   <div class="desc-html"><p>Define custom variables and values for use in JSON-RPC scanning.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">mcp</span>
+    <a href="#def-McpConf" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>MCP (Model Context Protocol) server configuration for JSON-RPC scanning.</p>
+</div>
+         <details class="nested-properties">
+    <summary>3 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">endpoint</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>MCP server endpoint path relative to target host. Defaults to <code>/mcp</code>.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;/mcp&quot;</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">excludeTools</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>MCP tool names to exclude from scanning.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">customValues</span>
+    <a href="#def-McpCustomVariable" class="type-badge type-badge-link"
+      >McpCustomVariable[]</a
+    >
+   </div>
+  <div class="desc-html"><p>Define custom variables and values for use in MCP tool scanning.</p>
+</div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">path</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Host path to a hosted OpenRPC specification, relative to the target host (e.g., <code>/openrpc.json</code>).</p>
+</div>
+       </div>      </div>
+  </details>
+</div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+  id="prop-hawk"
+>
+  <div class="property-header">
+    <span class="property-name">hawk</span>
+    <a href="#def-HawkConf" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>Define global HawkScan settings, independent of the scanned application:</p>
+<ul>
+<li><code>spider</code>: Configure application crawling and scan discovery. Enable <code>base</code> and <code>ajax</code> crawlers, set <code>maxDurationMinutes</code>, add <code>seedPaths</code>, use <code>custom</code> commands, or import <code>har</code> files.</li>
+<li><code>startupTimeoutMinutes</code>: Maximum time to wait for the scanner to start (default: 5).</li>
+<li><code>failureThreshold</code>: Alert severity level to fail a scan (<code>high</code>, <code>medium</code>, or <code>low</code>).</li>
+<li><code>scan</code>: Set runtime behavior like max duration, request throttling, and concurrency.</li>
+<li><code>config</code>: Advanced scanner configuration overrides.</li>
+<li><code>outboundProxy</code>: Configure an outbound proxy, including host, credentials, and CA certificate.</li>
+</ul>
+<p>For more details, see <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.com/hawkscan/configuration/">HawkScan Configuration Documentation</a>.</p>
+</div>
+         <details class="nested-properties">
+    <summary>6 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">spider</span>
+    <a href="#def-Spider" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>Configuration block for the application crawling and Discovery Phase aka Spider. See the <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.com/hawkscan/scan-discovery/">Scan Discovery</a> page for more details.</p>
+</div>
+         <details class="nested-properties">
+    <summary>10 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">base</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Enable the basic web crawler for discovering your application's routes. This spider is appropriate for most traditional web applications.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>true</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">ajax</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Enable the ajax web crawler for discovering your application’s routes. This spider is appropriate for single-page web applications.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">maxDurationMinutes</span>
+    <span class="type-badge">number</span>
+   </div>
+  <div class="desc-html"><p>Maximum allowed time for enabled spiders to crawl your web application.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>2</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >exclusiveMin=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">ajaxBrowser</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The browser type and style to use when running the AjaxSpider. When running the <code>stackhawk/hawkscan</code> docker container, this setting is ignored and will use the default CHROME_HEADLESS. The options are CHROME_HEADLESS and CHROME. FIREFOX_HEADLESS and FIREFOX are deprecated.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FIREFOX_HEADLESS&quot;</code> <code class="enum-value">&quot;CHROME_HEADLESS&quot;</code> <code class="enum-value">&quot;FIREFOX&quot;</code> <code class="enum-value">&quot;CHROME&quot;</code>  </div>
+     </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">seedPaths</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>List of paths to supplement the spider. These paths will be used as additional starting points for crawling your application. Useful for paths that are not crawlable from the root of your application. For example, <code>/admin</code>. <strong>Note</strong>: this configuration is NOT a replacement for an API spec and provides no benefit to pure REST API's.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">custom</span>
+    <a href="#def-CustomDiscovery" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+         <details class="nested-properties">
+    <summary>7 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">command</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Provide a command to run as part of the scan discovery phase. This command will be split from its arguments and execute on its own thread in a context with additional environment variables set with the proxy configuration for HawkScan to intercept http traffic.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">environment</span>
+    <span class="type-badge"
+      >Record&lt;string, string&gt;</span
+    >
+   </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">workingDir</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The absolute path working directory these commands are run from.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">credentials</span>
+    <span class="type-badge"
+      >Record&lt;string, string&gt;</span
+    >
+   </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">arguments</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Command arguments provided as an array of strings. These arguments can be used in addition to or instead of the command. This should be used if the command is sufficiently complex or is exceptionally whitespace sensitive.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">excludeParentEnvironment</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Only provide the environment variables and credentials as configured. By default also includes the environment from the parent process environment for convenience.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">logOutputToForeground</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>This command prints the stdout and stderr of the command to the foreground.</p>
+</div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">postmanConfig</span>
+    <a href="#def-PostmanConfig" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>Configuration for the Postman Collection.</p>
+</div>
+         <details class="nested-properties">
+    <summary>3 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">apikey</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>API key to authenticated the user with Postman.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">collectionUID</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Id of the collection to be pulled from Postman.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">filePath</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>File path of the Postman collection.</p>
+</div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">har</span>
+    <a href="#def-HARImportConfig" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>Configuration for using a HAR file as the discovery for a scan.
+HAR files often contain requests including urls from many hosts, but only URLs matching the <code>app.host</code> or
+<code>replaceHost</code> will be included in the scan.</p>
+</div>
+        <div class="inline-composition">
+    <span class="meta-label">All of:</span>
+    <span class="inline-variant"
+      >variant</span
+    >   </div>
+   <details class="nested-properties">
+    <summary>3 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">replaceHost</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The hostname of URLs in the HAR file that will be replaced with the host defined in <code>app.host</code>. Leave blank if the <code>app.host</code> is then same hostname in the HAR file.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">file</span>
+    <a href="#def-HARImportFiles" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>Paths to .har HTTP Archive formatted files, for use with HARImportConfig.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">dir</span>
+    <a href="#def-HARImportDirectory" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>Paths to directories, for use with HARImportConfig.</p>
+</div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">disableSmartCrawling</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Disable smart crawling for openApiConf to enable legacy openapi import process.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">responseBodyFilter</span>
+    <a href="#def-SpiderResponseBodyFilter" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+         <details class="nested-properties">
+    <summary>2 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">includeContentTypes</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Content types to include in response body uploads. If specified, replaces the default include list. Supports wildcards (e.g., <code>application/*+json</code>, <code>image/*</code>).</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">excludeContentTypes</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Content types to exclude from response body uploads. If specified, adds to the default exclude list. Exclusions take precedence over inclusions. Supports wildcards (e.g., <code>image/*</code>).</p>
+</div>
+       </div>      </div>
+  </details>
+</div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">startupTimeoutMinutes</span>
+    <span class="type-badge">number</span>
+   </div>
+  <div class="desc-html"><p>Maximum time in minutes to wait for the scanner process to start.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>5</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >exclusiveMin=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">failureThreshold</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The lowest alert level that returns a failed scan status. Accepted values: high, medium, or low.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=\b(?:high|medium|low|HIGH|MEDIUM|LOW)\b</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">scan</span>
+    <a href="#def-ScanConf" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>Configuration block for HawkScan runtime.</p>
+</div>
+         <details class="nested-properties">
+    <summary>10 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">maxDurationMinutes</span>
+    <span class="type-badge">number | string</span>
+   </div>
+  <div class="desc-html"><p>Maximum duration that a scan will run.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^([0-9][0-9]+|[1-9]|0)$</span
+    ><span class="constraint"
+      >min=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">maxRuleDurationMinutes</span>
+    <span class="type-badge">number | string</span>
+   </div>
+  <div class="desc-html"><p>Maximum duration that a scan will spend on a rule.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^([0-9][0-9]+|[1-9]|0)$</span
+    ><span class="constraint"
+      >min=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">requestDelayMillis</span>
+    <span class="type-badge">number | string</span>
+   </div>
+  <div class="desc-html"><p>Delay time between sending requests.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^([0-9][0-9]+|[1-9]|0)$</span
+    ><span class="constraint"
+      >min=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">concurrentRequests</span>
+    <span class="type-badge">number | string</span>
+   </div>
+  <div class="desc-html"><p>Number of request threads. <em>If you need that little extra push.</em> defaults to 20.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^([0-9][0-9]+|[1-9])$</span
+    ><span class="constraint"
+      >exclusiveMin=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">throttlePassiveBacklog</span>
+    <span class="type-badge">number | string</span>
+   </div>
+  <div class="desc-html"><p>Pause active scan when passive backlog is greater than this value, resumes once backlog is empty. defaults to 50.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^([0-9][0-9]+|[1-9])$</span
+    ><span class="constraint"
+      >exclusiveMin=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">throttleIntervalSeconds</span>
+    <span class="type-badge">number | string</span>
+   </div>
+  <div class="desc-html"><p>How often the throttle check is run, in seconds.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^([0-9][0-9]+|[1-9])$</span
+    ><span class="constraint"
+      >exclusiveMin=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">throttleTempRecordMax</span>
+    <span class="type-badge">number | string</span>
+   </div>
+  <div class="desc-html"><p>The max number of temp records allowed before pruning of temp records begins.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^([0-9][0-9]+|[1-9])$</span
+    ><span class="constraint"
+      >exclusiveMin=0</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">throttleTempRecordDeleteQuota</span>
+    <span class="type-badge">number | string</span>
+   </div>
+  <div class="desc-html"><p>The percentage of throttleTempRecordMax records to delete on each throttleIntervalSeconds.</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^([0-9][0-9]+|[1-9])$</span
+    ><span class="constraint"
+      >min=1</span
+    ><span class="constraint"
+      >max=100</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">policyName</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Name of a specific named scan policy to use. This field is optional, and an applicable scan policy will be selected if omitted.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">includedPlugins</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Specify to only scan with these listed plugins.</p>
+</div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">config</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Scanner configuration overrides, provided as a list of key=value strings.
+A list of strings in the form of key=value pairs passed to the scanner as scanner configuration overrides.</p>
+<p>This is an advanced feature to configure HawkScan plugins and override their default behavior.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">outboundProxy</span>
+    <a href="#def-Proxy" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>Configuration block for a proxy. This enables HawkScan to traffic scanner requests through an outbound network proxy.</p>
+</div>
+         <details class="nested-properties">
+    <summary>3 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">host</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The host of the outbound explicit proxy, including port (e.g. https://localhost:8888).</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">credentials</span>
+    <a href="#def-ProxyCredentials" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>Credential details for the outbound proxy behavior.</p>
+</div>
+         <details class="nested-properties">
+    <summary>4 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">username</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p><strong>Required</strong>. The username for proxy credentials.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">password</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p><strong>Required</strong>. The password for proxy credentials.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">realm</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Realm for proxy credentials.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">scheme</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Scheme of proxy authentication. Currently <code>BASIC</code>, <code>NTLM</code> are supported.</p>
+</div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">rootCACertPath</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Path to root CA Certificate for transparent outbound proxies.  This can be used without specifying host or credentials.</p>
 </div>
        </div>      </div>
   </details>
@@ -3494,12 +3594,13 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
 <p>One of the following is <strong>Required</strong>:</p>
 <ul>
 <li><code>endpoint</code>: The JSON-RPC endpoint path (e.g., <code>/jsonrpc</code> or <code>/api/rpc</code>).</li>
-<li><code>filePath</code>: Relative path to an OpenRPC schema file (JSON format).</li>
+<li><code>path</code>: Host path to a hosted OpenRPC specification (e.g., <code>/openrpc.json</code>).</li>
+<li><code>filePath</code>: Relative path to a local OpenRPC schema file (JSON format).</li>
 </ul>
 <p>For full details such as custom variable injection, see <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.com/hawkscan/configuration/json-rpc-configuration.html">JSON-RPC Configuration Documentation</a>.</p>
 </div>
          <details class="nested-properties">
-    <summary>8 nested properties</summary>
+    <summary>10 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -3602,6 +3703,26 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
    </div>
   <div class="desc-html"><p>Define custom variables and values for use in JSON-RPC scanning.</p>
 </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">mcp</span>
+    <a href="#def-McpConf" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>MCP (Model Context Protocol) server configuration for JSON-RPC scanning.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">path</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Host path to a hosted OpenRPC specification, relative to the target host (e.g., <code>/openrpc.json</code>).</p>
+</div>
        </div>      </div>
   </details>
 </div>      </div>
@@ -3676,6 +3797,9 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
    </div>
   <div class="desc-html"><p>Maximum allowed time for enabled spiders to crawl your web application.</p>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>2</code>
+  </div>
        <div class="property-constraints">
 <span class="constraint"
       >exclusiveMin=0</span
@@ -3687,7 +3811,7 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
     <span class="property-name">ajaxBrowser</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>The browser type and style to use when running the AjaxSpider. When running the <code>stackhawk/hawkscan</code> docker container, this setting is ignored and will uses the default FIREFOX_HEADLESS. The options are FIREFOX_HEADLESS, FIREFOX, CHROME_HEADLESS, and CHROME.</p>
+  <div class="desc-html"><p>The browser type and style to use when running the AjaxSpider. When running the <code>stackhawk/hawkscan</code> docker container, this setting is ignored and will use the default CHROME_HEADLESS. The options are CHROME_HEADLESS and CHROME. FIREFOX_HEADLESS and FIREFOX are deprecated.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Values:</span> <code class="enum-value">&quot;FIREFOX_HEADLESS&quot;</code> <code class="enum-value">&quot;CHROME_HEADLESS&quot;</code> <code class="enum-value">&quot;FIREFOX&quot;</code> <code class="enum-value">&quot;CHROME&quot;</code>  </div>
@@ -3770,6 +3894,9 @@ HAR files often contain requests including urls from many hosts, but only URLs m
    </div>
   <div class="desc-html"><p>Maximum time in minutes to wait for the scanner process to start.</p>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>5</code>
+  </div>
        <div class="property-constraints">
 <span class="constraint"
       >exclusiveMin=0</span
@@ -4140,6 +4267,9 @@ A list of strings in the form of key=value pairs passed to the scanner as scanne
    </div>
   <div class="desc-html"><p>Maximum allowed time for enabled spiders to crawl your web application.</p>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>2</code>
+  </div>
        <div class="property-constraints">
 <span class="constraint"
       >exclusiveMin=0</span
@@ -4151,7 +4281,7 @@ A list of strings in the form of key=value pairs passed to the scanner as scanne
     <span class="property-name">ajaxBrowser</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>The browser type and style to use when running the AjaxSpider. When running the <code>stackhawk/hawkscan</code> docker container, this setting is ignored and will uses the default FIREFOX_HEADLESS. The options are FIREFOX_HEADLESS, FIREFOX, CHROME_HEADLESS, and CHROME.</p>
+  <div class="desc-html"><p>The browser type and style to use when running the AjaxSpider. When running the <code>stackhawk/hawkscan</code> docker container, this setting is ignored and will use the default CHROME_HEADLESS. The options are CHROME_HEADLESS and CHROME. FIREFOX_HEADLESS and FIREFOX are deprecated.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Values:</span> <code class="enum-value">&quot;FIREFOX_HEADLESS&quot;</code> <code class="enum-value">&quot;CHROME_HEADLESS&quot;</code> <code class="enum-value">&quot;FIREFOX&quot;</code> <code class="enum-value">&quot;CHROME&quot;</code>  </div>
@@ -4393,6 +4523,9 @@ HAR files often contain requests including urls from many hosts, but only URLs m
    </div>
   <div class="desc-html"><p>Maximum time in minutes to wait for the scanner process to start.</p>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>5</code>
+  </div>
        <div class="property-constraints">
 <span class="constraint"
       >exclusiveMin=0</span
@@ -4709,6 +4842,9 @@ A list of strings in the form of key=value pairs passed to the scanner as scanne
    </div>
   <div class="desc-html"><p>Maximum allowed time for enabled spiders to crawl your web application.</p>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>2</code>
+  </div>
        <div class="property-constraints">
 <span class="constraint"
       >exclusiveMin=0</span
@@ -4720,7 +4856,7 @@ A list of strings in the form of key=value pairs passed to the scanner as scanne
     <span class="property-name">ajaxBrowser</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>The browser type and style to use when running the AjaxSpider. When running the <code>stackhawk/hawkscan</code> docker container, this setting is ignored and will uses the default FIREFOX_HEADLESS. The options are FIREFOX_HEADLESS, FIREFOX, CHROME_HEADLESS, and CHROME.</p>
+  <div class="desc-html"><p>The browser type and style to use when running the AjaxSpider. When running the <code>stackhawk/hawkscan</code> docker container, this setting is ignored and will use the default CHROME_HEADLESS. The options are CHROME_HEADLESS and CHROME. FIREFOX_HEADLESS and FIREFOX are deprecated.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Values:</span> <code class="enum-value">&quot;FIREFOX_HEADLESS&quot;</code> <code class="enum-value">&quot;CHROME_HEADLESS&quot;</code> <code class="enum-value">&quot;FIREFOX&quot;</code> <code class="enum-value">&quot;CHROME&quot;</code>  </div>
@@ -5677,7 +5813,7 @@ For more information, see the Authenticated Scanning section.</p>
       >variant</span
     >   </div>
    <details class="nested-properties">
-    <summary>7 nested properties</summary>
+    <summary>8 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -5756,6 +5892,15 @@ A match of the regex supplied will indicate that scanning should halt and enter 
       >Record&lt;string, string&gt;</span
     >
    </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">grpcTestMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The gRPC method path to call for authentication validation (e.g., "/auth.AuthService/ValidateToken"). Only used when authentication type is GRPC.</p>
+</div>
        </div>      </div>
   </details>
 </div>    <div
@@ -5771,7 +5916,7 @@ A match of the regex supplied will indicate that scanning should halt and enter 
 Currently POSTing the credentials via <code>FORM</code> or <code>JSON</code> type is supported. Use in conjunction <code>cookieAuthorization</code> or <code>tokenAuthorization</code> to maintain authorized access to your application.</p>
 </div>
          <details class="nested-properties">
-    <summary>9 nested properties</summary>
+    <summary>11 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -5786,7 +5931,7 @@ Currently POSTing the credentials via <code>FORM</code> or <code>JSON</code> typ
 </div>
        <div class="property-constraints">
 <span class="constraint"
-      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+      >pattern=^(https?://[^\s]+|\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+)?(\?[^\s]*)?)$</span
     >  </div>
   </div>    <div
   class="property-item"
@@ -5845,7 +5990,7 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
 </div>
        <div class="property-constraints">
 <span class="constraint"
-      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+      >pattern=^(https?://[^\s]+|\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+)?(\?[^\s]*)?)$</span
     >  </div>
   </div>    <div
   class="property-item"
@@ -5857,7 +6002,7 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
   <div class="desc-html"><p>An enum value describing the type of <code>POST</code> data expected by the <code>loginPath</code></p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FORM&quot;</code> <code class="enum-value">&quot;JSON&quot;</code> <code class="enum-value">&quot;HTTP&quot;</code>  </div>
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FORM&quot;</code> <code class="enum-value">&quot;JSON&quot;</code> <code class="enum-value">&quot;HTTP&quot;</code> <code class="enum-value">&quot;JSON_RPC&quot;</code> <code class="enum-value">&quot;GRPC&quot;</code>  </div>
      </div>    <div
   class="property-item"
 >
@@ -5877,6 +6022,24 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
     <span class="type-badge">string</span>
    </div>
   <div class="desc-html"><p>Realm for NTLM authentication</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">jsonrpcMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The JSON-RPC method name to call for authentication (e.g., "auth.login"). Required when type is JSON_RPC.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">grpcMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The gRPC method path for authentication (e.g., "/auth.AuthService/Login"). Required when type is GRPC. Uses grpcConf for descriptor.</p>
 </div>
        </div>      </div>
   </details>
@@ -6168,6 +6331,9 @@ Example: if the authentication response JSON payload looks like <code>{"auth" : 
    </div>
   <div class="desc-html"><p>TokenType will be prepended the header value e.g. tokenType: TOKEN -&gt; "TOKEN xxxxxxxxx"</p>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;Bearer&quot;</code>
+  </div>
        </div>    <div
   class="property-item"
 >
@@ -7062,12 +7228,13 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
 <p>One of the following is <strong>Required</strong>:</p>
 <ul>
 <li><code>endpoint</code>: The JSON-RPC endpoint path (e.g., <code>/jsonrpc</code> or <code>/api/rpc</code>).</li>
-<li><code>filePath</code>: Relative path to an OpenRPC schema file (JSON format).</li>
+<li><code>path</code>: Host path to a hosted OpenRPC specification (e.g., <code>/openrpc.json</code>).</li>
+<li><code>filePath</code>: Relative path to a local OpenRPC schema file (JSON format).</li>
 </ul>
 <p>For full details such as custom variable injection, see <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.com/hawkscan/configuration/json-rpc-configuration.html">JSON-RPC Configuration Documentation</a>.</p>
 </div>
          <details class="nested-properties">
-    <summary>8 nested properties</summary>
+    <summary>10 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -7170,6 +7337,67 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
    </div>
   <div class="desc-html"><p>Define custom variables and values for use in JSON-RPC scanning.</p>
 </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">mcp</span>
+    <a href="#def-McpConf" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>MCP (Model Context Protocol) server configuration for JSON-RPC scanning.</p>
+</div>
+         <details class="nested-properties">
+    <summary>3 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">endpoint</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>MCP server endpoint path relative to target host. Defaults to <code>/mcp</code>.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;/mcp&quot;</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">excludeTools</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>MCP tool names to exclude from scanning.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">customValues</span>
+    <a href="#def-McpCustomVariable" class="type-badge type-badge-link"
+      >McpCustomVariable[]</a
+    >
+   </div>
+  <div class="desc-html"><p>Define custom variables and values for use in MCP tool scanning.</p>
+</div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">path</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Host path to a hosted OpenRPC specification, relative to the target host (e.g., <code>/openrpc.json</code>).</p>
+</div>
        </div>      </div>
   </details>
 </div>        </div>
@@ -7220,7 +7448,7 @@ For more information, see the Authenticated Scanning section.</p>
       >variant</span
     >   </div>
    <details class="nested-properties">
-    <summary>7 nested properties</summary>
+    <summary>8 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -7299,6 +7527,15 @@ A match of the regex supplied will indicate that scanning should halt and enter 
       >Record&lt;string, string&gt;</span
     >
    </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">grpcTestMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The gRPC method path to call for authentication validation (e.g., "/auth.AuthService/ValidateToken"). Only used when authentication type is GRPC.</p>
+</div>
        </div>      </div>
   </details>
 </div>   <div
@@ -7314,7 +7551,7 @@ A match of the regex supplied will indicate that scanning should halt and enter 
 Currently POSTing the credentials via <code>FORM</code> or <code>JSON</code> type is supported. Use in conjunction <code>cookieAuthorization</code> or <code>tokenAuthorization</code> to maintain authorized access to your application.</p>
 </div>
          <details class="nested-properties">
-    <summary>9 nested properties</summary>
+    <summary>11 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -7329,7 +7566,7 @@ Currently POSTing the credentials via <code>FORM</code> or <code>JSON</code> typ
 </div>
        <div class="property-constraints">
 <span class="constraint"
-      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+      >pattern=^(https?://[^\s]+|\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+)?(\?[^\s]*)?)$</span
     >  </div>
   </div>    <div
   class="property-item"
@@ -7388,7 +7625,7 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
 </div>
        <div class="property-constraints">
 <span class="constraint"
-      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+      >pattern=^(https?://[^\s]+|\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+)?(\?[^\s]*)?)$</span
     >  </div>
   </div>    <div
   class="property-item"
@@ -7400,7 +7637,7 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
   <div class="desc-html"><p>An enum value describing the type of <code>POST</code> data expected by the <code>loginPath</code></p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FORM&quot;</code> <code class="enum-value">&quot;JSON&quot;</code> <code class="enum-value">&quot;HTTP&quot;</code>  </div>
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FORM&quot;</code> <code class="enum-value">&quot;JSON&quot;</code> <code class="enum-value">&quot;HTTP&quot;</code> <code class="enum-value">&quot;JSON_RPC&quot;</code> <code class="enum-value">&quot;GRPC&quot;</code>  </div>
      </div>    <div
   class="property-item"
 >
@@ -7420,6 +7657,24 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
     <span class="type-badge">string</span>
    </div>
   <div class="desc-html"><p>Realm for NTLM authentication</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">jsonrpcMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The JSON-RPC method name to call for authentication (e.g., "auth.login"). Required when type is JSON_RPC.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">grpcMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The gRPC method path for authentication (e.g., "/auth.AuthService/Login"). Required when type is GRPC. Uses grpcConf for descriptor.</p>
 </div>
        </div>      </div>
   </details>
@@ -7831,6 +8086,9 @@ Example: if the authentication response JSON payload looks like <code>{"auth" : 
    </div>
   <div class="desc-html"><p>TokenType will be prepended the header value e.g. tokenType: TOKEN -&gt; "TOKEN xxxxxxxxx"</p>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;Bearer&quot;</code>
+  </div>
        </div>    <div
   class="property-item"
 >
@@ -7961,7 +8219,7 @@ Currently POSTing the credentials via <code>FORM</code> or <code>JSON</code> typ
 </div>
        <div class="property-constraints">
 <span class="constraint"
-      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+      >pattern=^(https?://[^\s]+|\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+)?(\?[^\s]*)?)$</span
     >  </div>
   </div>   <div
   class="property-item"
@@ -8020,7 +8278,7 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
 </div>
        <div class="property-constraints">
 <span class="constraint"
-      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+      >pattern=^(https?://[^\s]+|\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+)?(\?[^\s]*)?)$</span
     >  </div>
   </div>   <div
   class="property-item"
@@ -8032,7 +8290,7 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
   <div class="desc-html"><p>An enum value describing the type of <code>POST</code> data expected by the <code>loginPath</code></p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FORM&quot;</code> <code class="enum-value">&quot;JSON&quot;</code> <code class="enum-value">&quot;HTTP&quot;</code>  </div>
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;FORM&quot;</code> <code class="enum-value">&quot;JSON&quot;</code> <code class="enum-value">&quot;HTTP&quot;</code> <code class="enum-value">&quot;JSON_RPC&quot;</code> <code class="enum-value">&quot;GRPC&quot;</code>  </div>
      </div>   <div
   class="property-item"
 >
@@ -8052,6 +8310,24 @@ HawkScan best practices recommend using <a target="_blank" rel="noopener norefer
     <span class="type-badge">string</span>
    </div>
   <div class="desc-html"><p>Realm for NTLM authentication</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">jsonrpcMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The JSON-RPC method name to call for authentication (e.g., "auth.login"). Required when type is JSON_RPC.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">grpcMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The gRPC method path for authentication (e.g., "/auth.AuthService/Login"). Required when type is GRPC. Uses grpcConf for descriptor.</p>
 </div>
        </div>        </div>
     </div>
@@ -8721,6 +8997,9 @@ Example: if the authentication response JSON payload looks like <code>{"auth" : 
    </div>
   <div class="desc-html"><p>TokenType will be prepended the header value e.g. tokenType: TOKEN -&gt; "TOKEN xxxxxxxxx"</p>
 </div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;Bearer&quot;</code>
+  </div>
        </div>   <div
   class="property-item"
 >
@@ -8884,6 +9163,15 @@ A match of the regex supplied will indicate that scanning should halt and enter 
       >Record&lt;string, string&gt;</span
     >
    </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">grpcTestMethod</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>The gRPC method path to call for authentication validation (e.g., "/auth.AuthService/ValidateToken"). Only used when authentication type is GRPC.</p>
+</div>
        </div>        </div>
     </div>
   </div>
@@ -10145,7 +10433,8 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
 <p>One of the following is <strong>Required</strong>:</p>
 <ul>
 <li><code>endpoint</code>: The JSON-RPC endpoint path (e.g., <code>/jsonrpc</code> or <code>/api/rpc</code>).</li>
-<li><code>filePath</code>: Relative path to an OpenRPC schema file (JSON format).</li>
+<li><code>path</code>: Host path to a hosted OpenRPC specification (e.g., <code>/openrpc.json</code>).</li>
+<li><code>filePath</code>: Relative path to a local OpenRPC schema file (JSON format).</li>
 </ul>
 <p>For full details such as custom variable injection, see <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.com/hawkscan/configuration/json-rpc-configuration.html">JSON-RPC Configuration Documentation</a>.</p>
 </div>
@@ -10251,6 +10540,67 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
    </div>
   <div class="desc-html"><p>Define custom variables and values for use in JSON-RPC scanning.</p>
 </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">mcp</span>
+    <a href="#def-McpConf" class="type-badge type-badge-link"
+      >object</a
+    >
+   </div>
+  <div class="desc-html"><p>MCP (Model Context Protocol) server configuration for JSON-RPC scanning.</p>
+</div>
+         <details class="nested-properties">
+    <summary>3 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">endpoint</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>MCP server endpoint path relative to target host. Defaults to <code>/mcp</code>.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;/mcp&quot;</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">excludeTools</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>MCP tool names to exclude from scanning.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">customValues</span>
+    <a href="#def-McpCustomVariable" class="type-badge type-badge-link"
+      >McpCustomVariable[]</a
+    >
+   </div>
+  <div class="desc-html"><p>Define custom variables and values for use in MCP tool scanning.</p>
+</div>
+       </div>      </div>
+  </details>
+</div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">path</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Host path to a hosted OpenRPC specification, relative to the target host (e.g., <code>/openrpc.json</code>).</p>
+</div>
        </div>        </div>
     </div>
   </div>
@@ -10290,6 +10640,95 @@ Increase this value if you see the  "Number of aliases for non-scalar nodes exce
     <span class="type-badge">string</span>
    </div>
   <div class="desc-html"><p>An optional regex pattern that will only inject custom values if the JSON-RPC method name matches.</p>
+</div>
+       </div>        </div>
+    </div>
+  </div>
+  <div class="definition-block" id="def-McpConf">
+    <div class="definition-header">
+      <span class="def-name">McpConf</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>MCP (Model Context Protocol) server configuration for JSON-RPC scanning.</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">endpoint</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>MCP server endpoint path relative to target host. Defaults to <code>/mcp</code>.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;/mcp&quot;</code>
+  </div>
+       <div class="property-constraints">
+<span class="constraint"
+      >pattern=^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?</span
+    >  </div>
+  </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">excludeTools</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>MCP tool names to exclude from scanning.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">customValues</span>
+    <a href="#def-McpCustomVariable" class="type-badge type-badge-link"
+      >McpCustomVariable[]</a
+    >
+   </div>
+  <div class="desc-html"><p>Define custom variables and values for use in MCP tool scanning.</p>
+</div>
+       </div>        </div>
+    </div>
+  </div>
+  <div class="definition-block" id="def-McpCustomVariable">
+    <div class="definition-header">
+      <span class="def-name">McpCustomVariable</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>Custom variable data specific to MCP tool scanning.</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">tool</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>MCP tool name this variable applies to.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">param</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Parameter name within the tool's inputSchema. Using dot notation resolves nested objects (e.g., <code>user.address.id</code>).</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">values</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>A list of possible values to be randomly selected for the given parameter.</p>
 </div>
        </div>        </div>
     </div>
@@ -10452,19 +10891,6 @@ See <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.co
   class="property-item"
 >
   <div class="property-header">
-    <span class="property-name">language</span>
-    <span class="type-badge">string</span>
- <span class="required-badge"
-      >required</span
-    >  </div>
-  <div class="desc-html"><p><strong>Required</strong>. The language of this script. Either <code>KOTLIN</code> or <code>JAVASCRIPT</code>.</p>
-</div>
-    <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;KOTLIN&quot;</code> <code class="enum-value">&quot;JAVASCRIPT&quot;</code>  </div>
-     </div>   <div
-  class="property-item"
->
-  <div class="property-header">
     <span class="property-name">name</span>
     <span class="type-badge">string</span>
    </div>
@@ -10477,7 +10903,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.co
     <span class="property-name">type</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>The type of this script. One of <code>active</code>, <code>authentication</code>, <code>httpsender</code>, <code>passive</code>, <code>proxy</code>, <code>standalone</code>, <code>targeted</code>, <code>session</code>.</p>
+  <div class="desc-html"><p>The type of this script. One of <code>active</code>, <code>authentication</code>, <code>httpsender</code>, <code>passive</code>, <code>proxy</code>, <code>session</code>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Values:</span> <code class="enum-value">&quot;active&quot;</code> <code class="enum-value">&quot;authentication&quot;</code> <code class="enum-value">&quot;httpsender&quot;</code> <code class="enum-value">&quot;passive&quot;</code> <code class="enum-value">&quot;proxy&quot;</code> <code class="enum-value">&quot;session&quot;</code>  </div>
@@ -10502,6 +10928,17 @@ See <a target="_blank" rel="noopener noreferrer" href="https://docs.stackhawk.co
   <div class="desc-html"><p>Named variables to expose to the script.</p>
 </div>
        </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">language</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p><strong>Required</strong>. The language of this script. Either <code>KOTLIN</code> or <code>JAVASCRIPT</code>.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;KOTLIN&quot;</code> <code class="enum-value">&quot;JAVASCRIPT&quot;</code>  </div>
+     </div>   <div
   class="property-item"
 >
   <div class="property-header">
