@@ -5,7 +5,7 @@
   "description": "The configuration for a [`pixi`](https://pixi.sh) project.",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/prefix-dev/pixi/main/schema/schema.json",
-    "sourceSha256": "934b283a946f17abbc01bb3bb98f20aca35a3318870583ce2d0d7b889ad00036",
+    "sourceSha256": "94e15aab8659abe0432b09b1cf968fe1dcc93742adcf8d5c015afafe98152cb6",
     "fileMatch": [
       "pixi.toml"
     ],
@@ -19,7 +19,7 @@
       "title": "Schema",
       "description": "The schema identifier for the project's configuration",
       "type": "string",
-      "default": "https://pixi.sh/v0.66.0/schema/manifest/schema.json",
+      "default": "https://pixi.sh/v0.67.0/schema/manifest/schema.json",
       "format": "uri-reference"
     },
     "activation": {
@@ -115,6 +115,18 @@
         }
       }
     },
+    "exclude-newer": {
+      "title": "Exclude-Newer",
+      "description": "Workspace-wide per-package `exclude-newer` overrides for conda packages",
+      "type": "object",
+      "propertyNames": {
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})|\\d{4}-\\d{2}-\\d{2}|(\\d+\\s*[A-Za-z]+\\s*)+)$"
+      }
+    },
     "feature": {
       "title": "Feature",
       "description": "The features of the project",
@@ -190,6 +202,18 @@
             "$ref": "#/$defs/PyPIUrlRequirement"
           }
         ]
+      }
+    },
+    "pypi-exclude-newer": {
+      "title": "Pypi-Exclude-Newer",
+      "description": "Workspace-wide per-package `exclude-newer` overrides for PyPI packages",
+      "type": "object",
+      "propertyNames": {
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})|\\d{4}-\\d{2}-\\d{2}|(\\d+\\s*[A-Za-z]+\\s*)+)$"
       }
     },
     "pypi-options": {
@@ -468,12 +492,6 @@
             ]
           }
         },
-        "exclude-newer": {
-          "title": "Exclude-Newer",
-          "description": "Override the workspace-level `exclude-newer` cutoff for this package only",
-          "type": "string",
-          "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})|(\\d+\\s*[A-Za-z]+\\s*)+)$"
-        },
         "file-name": {
           "title": "File-Name",
           "description": "The file name of the package",
@@ -596,7 +614,7 @@
           "title": "Exclude-Newer",
           "description": "Override the workspace-level `exclude-newer` cutoff for this channel only",
           "type": "string",
-          "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})|(\\d+\\s*[A-Za-z]+\\s*)+)$"
+          "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})|\\d{4}-\\d{2}-\\d{2}|(\\d+\\s*[A-Za-z]+\\s*)+)$"
         },
         "priority": {
           "title": "Priority",
@@ -1036,12 +1054,6 @@
             "pytorch",
             "https://prefix.dev/conda-forge"
           ]
-        },
-        "exclude-newer": {
-          "title": "Exclude-Newer",
-          "description": "Override the workspace-level `exclude-newer` cutoff for this package only",
-          "type": "string",
-          "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})|(\\d+\\s*[A-Za-z]+\\s*)+)$"
         },
         "file-name": {
           "title": "File-Name",
@@ -2525,13 +2537,19 @@
         },
         "exclude-newer": {
           "title": "Exclude-Newer",
-          "description": "Exclude any package newer than this timestamp or duration. Can be an absolute timestamp or a relative duration (e.g. '7days', '1h30m').",
+          "description": "Exclude any package newer than this timestamp or duration. Can be an absolute timestamp or a relative duration accepted by humantime (for example '0d', '1 week', '2w', '1 month', '1M', '72h', '72 hours', or '1h30m').",
           "type": "string",
-          "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})|(\\d+\\s*[A-Za-z]+\\s*)+)$",
+          "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})|\\d{4}-\\d{2}-\\d{2}|(\\d+\\s*[A-Za-z]+\\s*)+)$",
           "examples": [
             "2023-11-03T03:33:12Z",
             "2026-04-01",
-            "7days",
+            "0d",
+            "1 week",
+            "2w",
+            "1 month",
+            "1M",
+            "72h",
+            "72 hours",
             "1h30m"
           ]
         },

@@ -4,7 +4,7 @@
   "title": "SAP JSON schema for Web Application Manifest File",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/UI5/manifest/main/schema.json",
-    "sourceSha256": "9da70ad90d43001fdd783b669795c0e7c44fae6302d2b2f46a32ca640a5f484b",
+    "sourceSha256": "fb03433a385b8841babf974966987cb32748f873706a12ac5bc121bff54a4e9b",
     "fileMatch": [
       "**/webapp/manifest.json",
       "**/src/main/webapp/manifest.json",
@@ -110,7 +110,8 @@
         "1.82.0",
         "1.83.0",
         "1.83.1",
-        "1.84.0"
+        "1.84.0",
+        "1.85.0"
       ]
     },
     "start_url": {
@@ -2002,6 +2003,10 @@
           "description": "Specify if the UI can be accessed from a different space than origin development space",
           "type": "boolean",
           "default": false
+        },
+        "backgroundImageRelativeToComponent": {
+          "description": "Provides the background image for the custom visualization. The URL of the image must be relative to the location of the component.js file",
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -2247,6 +2252,10 @@
           "description": "[Deprecated] The path to the design time folder with assets files",
           "type": "string",
           "deprecated": true
+        },
+        "customSettings": {
+          "description": "[RESTRICTED] Custom settings which can be used by the host environment for special handling of different scenarios.",
+          "type": "object"
         },
         "configuration": {
           "description": "General configuration of the card. Allows to define parameters, destinations, filters and more",
@@ -4086,6 +4095,27 @@
         "customStateIcon": {
           "description": "The custom state icon",
           "type": "string"
+        },
+        "importance": {
+          "description": "Specifies the column's significance, affecting its behavior in responsive design.",
+          "oneOf": [
+            {
+              "enum": [
+                "None",
+                "Low",
+                "Medium",
+                "High"
+              ],
+              "default": "None"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        },
+        "autoPopinWidth": {
+          "description": "Sets the minimum width threshold for displaying the column in the pop-in area.",
+          "type": "number"
         }
       },
       "additionalProperties": false
@@ -5770,6 +5800,17 @@
             }
           ]
         },
+        "navigationArrow": {
+          "description": "Indicates whether a navigation arrow is shown for the item or row. Applicable only to actions of type Navigation.",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        },
         "enabled": {
           "description": "Represents the state of the action",
           "oneOf": [
@@ -6332,6 +6373,48 @@
             }
           },
           "additionalProperties": false
+        },
+        "autoPopinMode": {
+          "description": "Controls the table's auto pop-in mode. When true, columns automatically adjust based on available space. When false, manually set 'autoPopinWidth' for each column.",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        },
+        "hiddenInPopin": {
+          "description": "Specifies columns to hide rather than move into the pop-in area, based on importance.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "None",
+              "Low",
+              "Medium",
+              "High"
+            ]
+          }
+        },
+        "popinLayout": {
+          "description": "Sets the layout style for rendering table pop-in rows.",
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "Block",
+                "GridSmall",
+                "GridLarge"
+              ],
+              "default": "Block"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
         },
         "maxItems": {
           "description": "Represents number of items",
@@ -7643,6 +7726,11 @@
           "description": "Represents the flag to enable/disable individual card's functionality to add them to insight",
           "type": "boolean",
           "default": true
+        },
+        "enableTextWrapping": {
+          "description": "Represents the flag to enable/disable text wrapping for list and table cards",
+          "type": "boolean",
+          "default": false
         },
         "showRefresh": {
           "description": "Represents the flag to show/hide individual card's functionality to refresh the card",
