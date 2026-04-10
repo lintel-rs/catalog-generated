@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/agentcore-cli/versions/1.0.json",
   "x-lintel": {
     "source": "https://schema.agentcore.aws.dev/v1/agentcore.json",
-    "sourceSha256": "f979e4ee09ee94c1cf8f485ce7390dbb3f52350515333107d17fe644df426da0",
+    "sourceSha256": "d7c1a5fb2bc834acce1cef517e3359f7d08ca2eb951996075c9c9fb062363d6f",
     "fileMatch": [
       "**/agentcore/agentcore.json"
     ],
@@ -427,6 +427,67 @@
           },
           "executionRoleArn": {
             "type": "string"
+          },
+          "streamDeliveryResources": {
+            "type": "object",
+            "properties": {
+              "resources": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kinesis": {
+                      "type": "object",
+                      "properties": {
+                        "dataStreamArn": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "contentConfigurations": {
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "const": "MEMORY_RECORDS"
+                              },
+                              "level": {
+                                "type": "string",
+                                "enum": [
+                                  "FULL_CONTENT",
+                                  "METADATA_ONLY"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "level"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "dataStreamArn",
+                        "contentConfigurations"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "kinesis"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "resources"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [

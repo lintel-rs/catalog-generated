@@ -332,6 +332,13 @@ specified by <a href="#lint_fixable"><code>fixable</code></a>.</p>
    </div>
   <div class="desc-html"><p>A list of rule codes or prefixes to ignore, in addition to those
 specified by <code>ignore</code>.</p>
+<p>This option is deprecated because it is now interchangeable with
+<a href="#lint_ignore"><code>ignore</code></a>. In earlier versions of Ruff, <code>ignore</code> would
+<em>replace</em> the set of ignored rules when using configuration inheritance
+(via the top-level <a target="_blank" rel="noopener noreferrer" href="https://docs.astral.sh/ruff/settings/#extend"><code>extend</code></a>
+setting), while <code>extend-ignore</code> would <em>add</em> to the inherited set. Ruff
+now merges both <code>ignore</code> and <code>extend-ignore</code> into a single set, so the
+distinction no longer applies. Use <a href="#lint_ignore"><code>ignore</code></a> instead.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -381,6 +388,18 @@ safe.</p>
    </div>
   <div class="desc-html"><p>A list of rule codes or prefixes to enable, in addition to those
 specified by <a href="#lint_select"><code>select</code></a>.</p>
+<p>Unlike <a href="#lint_select"><code>select</code></a>, which <em>replaces</em> the default rule set
+when specified, <code>extend-select</code> <em>adds</em> to whatever rules are already
+active. This makes <code>extend-select</code> the preferred option when you want
+to enable additional rules on top of the defaults without having to
+enumerate them.</p>
+<p>For example, to enable the defaults plus flake8-bugbear:</p>
+<pre><code class="language-toml">[tool.ruff.lint]
+# Adds flake8-bugbear on top of the default rules (E4, E7, E9, F).
+extend-select = ["B"]
+</code></pre>
+<p>Using <code>select = ["B"]</code> instead would <em>replace</em> the defaults, enabling
+only flake8-bugbear.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -2738,6 +2757,29 @@ We care about accessibility; if you do not need tabs for accessibility, we do no
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">nested-string-quote-style</span>
+    <span class="type-badge"
+      ><a
+        href="#def-NestedStringQuoteStyle"
+        class="type-badge-link"
+        >NestedStringQuoteStyle</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Controls the quote style for nested strings inside interpolated string expressions.</p>
+<ul>
+<li><code>alternating</code> (default): Use alternating quotes.</li>
+<li><code>preferred</code>: Use the configured <a href="#format_quote-style"><code>quote-style</code></a>.</li>
+</ul>
+<pre><code class="language-python">f"{data['key']}"  # alternating (default)
+f"{data["key"]}"  # preferred
+</code></pre>
+<p>Note: This setting has no effect when targeting Python versions below 3.12.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">preview</span>
     <span class="type-badge">boolean | null</span>
    </div>
@@ -3537,6 +3579,13 @@ specified by <a href="#lint_fixable"><code>fixable</code></a>.</p>
    </div>
   <div class="desc-html"><p>A list of rule codes or prefixes to ignore, in addition to those
 specified by <code>ignore</code>.</p>
+<p>This option is deprecated because it is now interchangeable with
+<a href="#lint_ignore"><code>ignore</code></a>. In earlier versions of Ruff, <code>ignore</code> would
+<em>replace</em> the set of ignored rules when using configuration inheritance
+(via the top-level <a target="_blank" rel="noopener noreferrer" href="https://docs.astral.sh/ruff/settings/#extend"><code>extend</code></a>
+setting), while <code>extend-ignore</code> would <em>add</em> to the inherited set. Ruff
+now merges both <code>ignore</code> and <code>extend-ignore</code> into a single set, so the
+distinction no longer applies. Use <a href="#lint_ignore"><code>ignore</code></a> instead.</p>
 </div>
        </div>   <div
   class="property-item"
@@ -3569,6 +3618,18 @@ safe.</p>
    </div>
   <div class="desc-html"><p>A list of rule codes or prefixes to enable, in addition to those
 specified by <a href="#lint_select"><code>select</code></a>.</p>
+<p>Unlike <a href="#lint_select"><code>select</code></a>, which <em>replaces</em> the default rule set
+when specified, <code>extend-select</code> <em>adds</em> to whatever rules are already
+active. This makes <code>extend-select</code> the preferred option when you want
+to enable additional rules on top of the defaults without having to
+enumerate them.</p>
+<p>For example, to enable the defaults plus flake8-bugbear:</p>
+<pre><code class="language-toml">[tool.ruff.lint]
+# Adds flake8-bugbear on top of the default rules (E4, E7, E9, F).
+extend-select = ["B"]
+</code></pre>
+<p>Using <code>select = ["B"]</code> instead would <em>replace</em> the defaults, enabling
+only flake8-bugbear.</p>
 </div>
        </div>   <div
   class="property-item"
@@ -4201,6 +4262,15 @@ as ordinary Python objects.</p>
   <div class="definition-block" id="def-NameImports">
     <div class="definition-header">
       <span class="def-name">NameImports</span>
+<span class="type-badge"
+        >string</span
+      >    </div>
+    <div class="definition-body">
+      </div>
+  </div>
+  <div class="definition-block" id="def-NestedStringQuoteStyle">
+    <div class="definition-header">
+      <span class="def-name">NestedStringQuoteStyle</span>
 <span class="type-badge"
         >string</span
       >    </div>

@@ -1,18 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.2.0-without-$id.json",
-  "title": "AsyncAPI 2.2.0 schema.",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/asyncapi/_shared/latest--2.5.0-without-$id.json",
+  "title": "AsyncAPI 2.5.0 schema.",
   "description": "!!Auto generated!! \n Do not manually edit. ",
   "x-lintel": {
-    "source": "http://asyncapi.com/schema-store/2.2.0-without-$id.json",
-    "sourceSha256": "d179d88d299ba45b083b7341ca32b1f9fa69ddc90b61481b684bdc76aff0abd3"
+    "source": "http://asyncapi.com/schema-store/2.5.0-without-$id.json",
+    "sourceSha256": "58982e6b2d2ad0cf51515c34d15c445941905b70cff0783d865ada0cf06d507f"
   },
   "type": "object",
   "properties": {
     "asyncapi": {
       "type": "string",
       "enum": [
-        "2.2.0"
+        "2.5.0"
       ],
       "description": "The AsyncAPI specification version of this document."
     },
@@ -25,10 +25,7 @@
       "$ref": "#/$defs/info"
     },
     "servers": {
-      "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/server"
-      }
+      "$ref": "#/$defs/servers"
     },
     "defaultContentType": {
       "type": "string"
@@ -144,6 +141,35 @@
         }
       }
     },
+    "servers": {
+      "description": "An object representing multiple servers.",
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/Reference"
+          },
+          {
+            "$ref": "#/$defs/server"
+          }
+        ]
+      }
+    },
+    "Reference": {
+      "type": "object",
+      "required": [
+        "$ref"
+      ],
+      "properties": {
+        "$ref": {
+          "$ref": "#/$defs/ReferenceObject"
+        }
+      }
+    },
+    "ReferenceObject": {
+      "type": "string",
+      "format": "uri-reference"
+    },
     "server": {
       "type": "object",
       "description": "An object representing a Server.",
@@ -176,6 +202,13 @@
         },
         "bindings": {
           "$ref": "#/$defs/bindingsObject"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tag"
+          },
+          "uniqueItems": true
         }
       },
       "additionalProperties": false,
@@ -188,7 +221,14 @@
     "serverVariables": {
       "type": "object",
       "additionalProperties": {
-        "$ref": "#/$defs/serverVariable"
+        "oneOf": [
+          {
+            "$ref": "#/$defs/Reference"
+          },
+          {
+            "$ref": "#/$defs/serverVariable"
+          }
+        ]
       }
     },
     "serverVariable": {
@@ -249,9 +289,55 @@
         "sqs": {},
         "stomp": {},
         "redis": {},
-        "ibmmq": {}
+        "ibmmq": {},
+        "solace": {}
       },
       "additionalProperties": true
+    },
+    "tag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "externalDocs": {
+          "$ref": "#/$defs/externalDocs"
+        }
+      },
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
+    },
+    "externalDocs": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "information about external documentation",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "patternProperties": {
+        "^x-[\\w0-9\\.\\x2d_]+$": {
+          "$ref": "#/$defs/specificationExtension"
+        }
+      }
     },
     "channels": {
       "type": "object",
@@ -306,10 +392,6 @@
         }
       }
     },
-    "ReferenceObject": {
-      "type": "string",
-      "format": "uri-reference"
-    },
     "parameters": {
       "type": "object",
       "description": "JSON objects describing re-usable channel parameters.",
@@ -322,17 +404,6 @@
             "$ref": "#/$defs/parameter"
           }
         ]
-      }
-    },
-    "Reference": {
-      "type": "object",
-      "required": [
-        "$ref"
-      ],
-      "properties": {
-        "$ref": {
-          "$ref": "#/$defs/ReferenceObject"
-        }
       }
     },
     "parameter": {
@@ -348,9 +419,6 @@
           "type": "string",
           "description": "A runtime expression that specifies the location of the parameter value",
           "pattern": "^\\$message\\.(header|payload)#(\\/(([^\\/~])|(~[01]))*)*"
-        },
-        "$ref": {
-          "$ref": "#/$defs/ReferenceObject"
         }
       },
       "additionalProperties": false,
@@ -701,28 +769,6 @@
         }
       }
     },
-    "externalDocs": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "information about external documentation",
-      "required": [
-        "url"
-      ],
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string",
-          "format": "uri"
-        }
-      },
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
     "operation": {
       "type": "object",
       "properties": {
@@ -744,6 +790,12 @@
         },
         "description": {
           "type": "string"
+        },
+        "security": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SecurityRequirement"
+          }
         },
         "tags": {
           "type": "array",
@@ -794,34 +846,17 @@
         "operationId": {
           "type": "string"
         },
+        "security": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SecurityRequirement"
+          }
+        },
         "bindings": {
           "$ref": "#/$defs/bindingsObject"
         }
       },
       "additionalProperties": false,
-      "patternProperties": {
-        "^x-[\\w0-9\\.\\x2d_]+$": {
-          "$ref": "#/$defs/specificationExtension"
-        }
-      }
-    },
-    "tag": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "externalDocs": {
-          "$ref": "#/$defs/externalDocs"
-        }
-      },
       "patternProperties": {
         "^x-[\\w0-9\\.\\x2d_]+$": {
           "$ref": "#/$defs/specificationExtension"
@@ -885,7 +920,16 @@
                           "application/vnd.aai.asyncapi+yaml;version=2.1.0",
                           "application/vnd.aai.asyncapi;version=2.2.0",
                           "application/vnd.aai.asyncapi+json;version=2.2.0",
-                          "application/vnd.aai.asyncapi+yaml;version=2.2.0"
+                          "application/vnd.aai.asyncapi+yaml;version=2.2.0",
+                          "application/vnd.aai.asyncapi;version=2.3.0",
+                          "application/vnd.aai.asyncapi+json;version=2.3.0",
+                          "application/vnd.aai.asyncapi+yaml;version=2.3.0",
+                          "application/vnd.aai.asyncapi;version=2.4.0",
+                          "application/vnd.aai.asyncapi+json;version=2.4.0",
+                          "application/vnd.aai.asyncapi+yaml;version=2.4.0",
+                          "application/vnd.aai.asyncapi;version=2.5.0",
+                          "application/vnd.aai.asyncapi+json;version=2.5.0",
+                          "application/vnd.aai.asyncapi+yaml;version=2.5.0"
                         ]
                       }
                     },
@@ -992,6 +1036,9 @@
                       }
                     }
                   ]
+                },
+                "messageId": {
+                  "type": "string"
                 },
                 "payload": {},
                 "correlationId": {
@@ -1139,6 +1186,9 @@
               }
             }
           ]
+        },
+        "messageId": {
+          "type": "string"
         },
         "correlationId": {
           "oneOf": [
@@ -1804,6 +1854,15 @@
       "properties": {
         "schemas": {
           "$ref": "#/$defs/schemas"
+        },
+        "servers": {
+          "$ref": "#/$defs/servers"
+        },
+        "channels": {
+          "$ref": "#/$defs/channels"
+        },
+        "serverVariables": {
+          "$ref": "#/$defs/serverVariables"
         },
         "messages": {
           "$ref": "#/$defs/messages"
