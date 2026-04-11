@@ -275,6 +275,25 @@
     <span class="type-badge">array | null</span>
    </div>
   <div class="desc-html"><p>If no 'files' or 'include' property is present in a tsconfig.json, the compiler defaults to including all files in the containing directory and subdirectories except those specified by 'exclude'. When a 'files' property is specified, only those files and those specified by 'include' are included.</p>
+<hr />
+<p>Specifies an allowlist of files to include in the program. An error occurs if any of the files can't be found.</p>
+<pre><code class="language-json">{
+  "compilerOptions": {},
+  "files": [
+    "core.ts",
+    "sys.ts",
+    "types.ts",
+    "scanner.ts",
+    "parser.ts",
+    "utilities.ts",
+    "binder.ts",
+    "checker.ts",
+    "tsc.ts"
+  ]
+}
+</code></pre>
+<p>This is useful when you only have a small number of files and don't need to use a glob to reference many files.
+If you need that then use <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#include"><code>include</code></a>.</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -297,6 +316,11 @@
     <span class="type-badge">array | null</span>
    </div>
   <div class="desc-html"><p>Specifies a list of files to be excluded from compilation. The 'exclude' property only affects the files included via the 'include' property and not the 'files' property. Glob patterns require TypeScript version 2.0 or later.</p>
+<hr />
+<p>Specifies an array of filenames or patterns that should be skipped when resolving <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#include"><code>include</code></a>.</p>
+<p><strong>Important</strong>: <code>exclude</code> <em>only</em> changes which files are included as a result of the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#include"><code>include</code></a> setting.
+A file specified by <code>exclude</code> can still become part of your codebase due to an <code>import</code> statement in your code, a <code>types</code> inclusion, a <code>/// &lt;reference</code> directive, or being specified in the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#files"><code>files</code></a> list.</p>
+<p>It is not a mechanism that <strong>prevents</strong> a file from being included in the codebase - it simply changes what the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#include"><code>include</code></a> setting finds.</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -319,6 +343,61 @@
     <span class="type-badge">array | null</span>
    </div>
   <div class="desc-html"><p>Specifies a list of glob patterns that match files to be included in compilation. If no 'files' or 'include' property is present in a tsconfig.json, the compiler defaults to including all files in the containing directory and subdirectories except those specified by 'exclude'. Requires TypeScript version 2.0 or later.</p>
+<hr />
+<p>Specifies an array of filenames or patterns to include in the program.
+These filenames are resolved relative to the directory containing the <code>tsconfig.json</code> file.</p>
+<pre><code class="language-json">{
+  "include": ["src/**/*", "tests/**/*"]
+}
+</code></pre>
+<p>Which would include:</p>
+<!-- TODO: #135
+```diff
+  .
+- ├── scripts
+- │   ├── lint.ts
+- │   ├── update_deps.ts
+- │   └── utils.ts
++ ├── src
++ │   ├── client
++ │   │    ├── index.ts
++ │   │    └── utils.ts
++ │   ├── server
++ │   │    └── index.ts
++ ├── tests
++ │   ├── app.test.ts
++ │   ├── utils.ts
++ │   └── tests.d.ts
+- ├── package.json
+- ├── tsconfig.json
+- └── yarn.lock
+``` -->
+<pre><code>.
+├── scripts                ⨯
+│   ├── lint.ts            ⨯
+│   ├── update_deps.ts     ⨯
+│   └── utils.ts           ⨯
+├── src                    ✓
+│   ├── client             ✓
+│   │    ├── index.ts      ✓
+│   │    └── utils.ts      ✓
+│   ├── server             ✓
+│   │    └── index.ts      ✓
+├── tests                  ✓
+│   ├── app.test.ts        ✓
+│   ├── utils.ts           ✓
+│   └── tests.d.ts         ✓
+├── package.json
+├── tsconfig.json
+└── yarn.lock
+</code></pre>
+<p><code>include</code> and <code>exclude</code> support wildcard characters to make glob patterns:</p>
+<ul>
+<li><code>*</code> matches zero or more characters (excluding directory separators)</li>
+<li><code>?</code> matches any one character (excluding directory separators)</li>
+<li><code>**/</code> matches any directory nested to any level</li>
+</ul>
+<p>If the last path segment in a pattern does not contain a file extension or wildcard character, then it is treated as a directory, and files with supported extensions inside that directory are included (e.g. <code>.ts</code>, <code>.tsx</code>, and <code>.d.ts</code> by default, with <code>.js</code> and <code>.jsx</code> if <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#allowJs"><code>allowJs</code></a> is set to true).</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -360,7 +439,38 @@
       >string | string[]</span
     >
    </div>
-  <div class="desc-html"><p>Path to base configuration file to inherit from (requires TypeScript version 2.1 or later), or array of base files, with the rightmost files having the greater priority (requires TypeScript version 5.0 or later).</p>
+  <div class="desc-html"><p>Path to base configuration file to inherit from. Requires TypeScript version 2.1 or later.</p>
+<hr />
+<p>The value of <code>extends</code> is a string which contains a path to another configuration file to inherit from.
+The path may use Node.js style resolution.</p>
+<p>The configuration from the base file are loaded first, then overridden by those in the inheriting config file. All relative paths found in the configuration file will be resolved relative to the configuration file they originated in.</p>
+<p>It's worth noting that <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#files"><code>files</code></a>, <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#include"><code>include</code></a>, and <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#exclude"><code>exclude</code></a> from the inheriting config file <em>overwrite</em> those from the
+base config file, and that circularity between configuration files is not allowed.</p>
+<p>Currently, the only top-level property that is excluded from inheritance is <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#references"><code>references</code></a>.</p>
+<h5>Example</h5>
+<p><code>configs/base.json</code>:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "strictNullChecks": true
+  }
+}
+</code></pre>
+<p><code>tsconfig.json</code>:</p>
+<pre><code class="language-json">{
+  "extends": "./configs/base",
+  "files": ["main.ts", "supplemental.ts"]
+}
+</code></pre>
+<p><code>tsconfig.nostrictnull.json</code>:</p>
+<pre><code class="language-json">{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "strictNullChecks": false
+  }
+}
+</code></pre>
+<p>Properties with relative paths found in the configuration file, which aren't excluded from inheritance, will be resolved relative to the configuration file they originated in.</p>
 </div>
        </div>        </div>
     </div>
@@ -400,7 +510,6 @@
     <span class="type-badge">boolean | null</span>
    </div>
   <div class="desc-html"><p>Build all projects, including those that appear to be up to date</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#force</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -413,7 +522,6 @@
     <span class="type-badge">boolean | null</span>
    </div>
   <div class="desc-html"><p>Enable verbose logging</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#verbose</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -425,8 +533,10 @@
     <span class="property-name">incremental</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Save .tsbuildinfo files to allow for incremental compilation of projects.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#incremental</p>
+  <div class="desc-html"><p>Tells TypeScript to save information about the project graph from the last compilation to files stored on disk. This
+creates a series of <code>.tsbuildinfo</code> files in the same folder as your compilation output. They are not used by your
+JavaScript at runtime and can be safely deleted. You can read more about the flag in the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#faster-subsequent-builds-with-the---incremental-flag">3.4 release notes</a>.</p>
+<p>To control which folders you want to the files to be built to, use the config option <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#tsBuildInfoFile"><code>tsBuildInfoFile</code></a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -438,8 +548,8 @@
     <span class="property-name">assumeChangesOnlyAffectDirectDependencies</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Have recompiles in projects that use <code>incremental</code> and <code>watch</code> mode assume that changes within a file will only affect files directly depending on it.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#assumeChangesOnlyAffectDirectDependencies</p>
+  <div class="desc-html"><p>When this option is enabled, TypeScript will avoid rechecking/rebuilding all truly possibly-affected files, and only recheck/rebuild files that have changed as well as files that directly import them.</p>
+<p>This can be considered a 'fast &amp; loose' implementation of the watching algorithm, which can drastically reduce incremental rebuild times at the expense of having to run the full build occasionally to get all compiler error messages.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -451,8 +561,8 @@
     <span class="property-name">traceResolution</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Log paths used during the <code>moduleResolution</code> process.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#traceResolution</p>
+  <div class="desc-html"><p>When you are trying to debug why a module isn't being included.
+You can set <code>traceResolution</code> to <code>true</code> to have TypeScript print information about its resolution process for each processed file.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -496,8 +606,14 @@
     <span class="property-name">watchFile</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify how the TypeScript watch mode works.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#watchFile</p>
+  <div class="desc-html"><p>The strategy for how individual files are watched.</p>
+<ul>
+<li><code>fixedPollingInterval</code>: Check every file for changes several times a second at a fixed interval.</li>
+<li><code>priorityPollingInterval</code>: Check every file for changes several times a second, but use heuristics to check certain types of files less frequently than others.</li>
+<li><code>dynamicPriorityPolling</code>: Use a dynamic queue where less-frequently modified files will be checked less often.</li>
+<li><code>useFsEvents</code> (the default): Attempt to use the operating system/file system's native events for file changes.</li>
+<li><code>useFsEventsOnParentDirectory</code>: Attempt to use the operating system/file system's native events to listen for changes on a file's parent directory</li>
+</ul>
 </div>
        </div>    <div
   class="property-item"
@@ -506,8 +622,12 @@
     <span class="property-name">watchDirectory</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify how directories are watched on systems that lack recursive file-watching functionality.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#watchDirectory</p>
+  <div class="desc-html"><p>The strategy for how entire directory trees are watched under systems that lack recursive file-watching functionality.</p>
+<ul>
+<li><code>fixedPollingInterval</code>: Check every directory for changes several times a second at a fixed interval.</li>
+<li><code>dynamicPriorityPolling</code>: Use a dynamic queue where less-frequently modified directories will be checked less often.</li>
+<li><code>useFsEvents</code> (the default): Attempt to use the operating system/file system's native events for directory changes.</li>
+</ul>
 </div>
        </div>    <div
   class="property-item"
@@ -516,8 +636,13 @@
     <span class="property-name">fallbackPolling</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify what approach the watcher should use if the system runs out of native file watchers.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#fallbackPolling</p>
+  <div class="desc-html"><p>When using file system events, this option specifies the polling strategy that gets used when the system runs out of native file watchers and/or doesn't support native file watchers.</p>
+<ul>
+<li><code>fixedPollingInterval</code>: Check every file for changes several times a second at a fixed interval.</li>
+<li><code>priorityPollingInterval</code>: Check every file for changes several times a second, but use heuristics to check certain types of files less frequently than others.</li>
+<li><code>dynamicPriorityPolling</code>: Use a dynamic queue where less-frequently modified files will be checked less often.</li>
+<li><code>synchronousWatchDirectory</code>: Disable deferred watching on directories. Deferred watching is useful when lots of file changes might occur at once (e.g. a change in <code>node_modules</code> from running <code>npm install</code>), but you might want to disable it with this flag for some less-common setups.</li>
+</ul>
 </div>
        </div>    <div
   class="property-item"
@@ -526,8 +651,13 @@
     <span class="property-name">synchronousWatchDirectory</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Synchronously call callbacks and update the state of directory watchers on platforms that don`t support recursive watching natively.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#synchronousWatchDirectory</p>
+  <div class="desc-html"><p>Synchronously call callbacks and update the state of directory watchers on platforms that don`t support recursive watching natively. Instead of giving a small timeout to allow for potentially multiple edits to occur on a file.</p>
+<pre><code class="language-json">{
+  "watchOptions": {
+    "synchronousWatchDirectory": true
+  }
+}
+</code></pre>
 </div>
        </div>    <div
   class="property-item"
@@ -536,8 +666,13 @@
     <span class="property-name">excludeFiles</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Remove a list of files from the watch mode's processing.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#excludeFiles</p>
+  <div class="desc-html"><p>You can use <code>excludeFiles</code> to remove a set of specific files from the files which are watched.</p>
+<pre><code class="language-json">{
+  "watchOptions": {
+    "excludeFiles": ["temp/file.ts"]
+  }
+}
+</code></pre>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -550,8 +685,13 @@
     <span class="property-name">excludeDirectories</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Remove a list of directories from the watch process.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#excludeDirectories</p>
+  <div class="desc-html"><p>You can use <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#excludeFiles"><code>excludeFiles</code></a> to drastically reduce the number of files which are watched during <code>--watch</code>. This can be a useful way to reduce the number of open file which TypeScript tracks on Linux.</p>
+<pre><code class="language-json">{
+  "watchOptions": {
+    "excludeDirectories": ["**/node_modules", "_build", "temp/*"]
+  }
+}
+</code></pre>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -587,8 +727,30 @@
     <span class="property-name">allowArbitraryExtensions</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable importing files with any extension, provided a declaration file is present.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#allowArbitraryExtensions</p>
+  <div class="desc-html"><p>In TypeScript 5.0, when an import path ends in an extension that isn't a known JavaScript or TypeScript file extension, the compiler will look for a declaration file for that path in the form of <code>{file basename}.d.{extension}.ts</code>.
+For example, if you are using a CSS loader in a bundler project, you might want to write (or generate) declaration files for those stylesheets:</p>
+<pre><code class="language-css">/* app.css */
+.cookie-banner {
+  display: none;
+}
+</code></pre>
+<pre><code class="language-ts">// app.d.css.ts
+declare const css: {
+  cookieBanner: string;
+};
+export default css;
+</code></pre>
+<pre><code class="language-ts">// App.tsx
+import styles from "./app.css";
+
+styles.cookieBanner; // string
+</code></pre>
+<p>By default, this import will raise an error to let you know that TypeScript doesn't understand this file type and your runtime might not support importing it.
+But if you've configured your runtime or bundler to handle it, you can suppress the error with the new <code>--allowArbitraryExtensions</code> compiler option.</p>
+<p>Note that historically, a similar effect has often been achievable by adding a declaration file named <code>app.css.d.ts</code> instead of <code>app.d.css.ts</code> - however, this just worked through Node's <code>require</code> resolution rules for CommonJS.
+Strictly speaking, the former is interpreted as a declaration file for a JavaScript file named <code>app.css.js</code>.
+Because relative files imports need to include extensions in Node's ESM support, TypeScript would error on our example in an ESM file under <code>--moduleResolution node16</code> or <code>nodenext</code>.</p>
+<p>For more information, read up <a target="_blank" rel="noopener noreferrer" href="https://github.com/microsoft/TypeScript/issues/50133">the proposal for this feature</a> and <a target="_blank" rel="noopener noreferrer" href="https://github.com/microsoft/TypeScript/pull/51435">its corresponding pull request</a>.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -597,8 +759,9 @@
     <span class="property-name">allowImportingTsExtensions</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Allow imports to include TypeScript file extensions. Requires <code>--moduleResolution bundler</code> and either <code>--noEmit</code> or <code>--emitDeclarationOnly</code> to be set.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#allowImportingTsExtensions</p>
+  <div class="desc-html"><p><code>--allowImportingTsExtensions</code> allows TypeScript files to import each other with a TypeScript-specific extension like <code>.ts</code>, <code>.mts</code>, or <code>.tsx</code>.</p>
+<p>This flag is only allowed when <code>--noEmit</code> or <code>--emitDeclarationOnly</code> is enabled, since these import paths would not be resolvable at runtime in JavaScript output files.
+The expectation here is that your resolver (e.g. your bundler, a runtime, or some other tool) is going to make these imports between <code>.ts</code> files work.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -607,8 +770,8 @@
     <span class="property-name">charset</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>No longer supported. In early versions, manually set the text encoding for reading files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#charset</p>
+  <div class="desc-html"><p>In prior versions of TypeScript, this controlled what encoding was used when reading text files from disk.
+Today, TypeScript assumes UTF-8 encoding, but will correctly detect UTF-16 (BE and LE) or UTF-8 BOMs.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -617,8 +780,21 @@
     <span class="property-name">composite</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable constraints that allow a TypeScript project to be used with project references.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#composite</p>
+  <div class="desc-html"><p>The <code>composite</code> option enforces certain constraints which make it possible for build tools (including TypeScript
+itself, under <code>--build</code> mode) to quickly determine if a project has been built yet.</p>
+<p>When this setting is on:</p>
+<ul>
+<li>
+<p>The <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#rootDir"><code>rootDir</code></a> setting, if not explicitly set, defaults to the directory containing the <code>tsconfig.json</code> file.</p>
+</li>
+<li>
+<p>All implementation files must be matched by an <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#include"><code>include</code></a> pattern or listed in the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#files"><code>files</code></a> array. If this constraint is violated, <code>tsc</code> will inform you which files weren't specified.</p>
+</li>
+<li>
+<p><a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#declaration"><code>declaration</code></a> defaults to <code>true</code></p>
+</li>
+</ul>
+<p>You can find documentation on TypeScript projects in <a target="_blank" rel="noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/project-references.html">the handbook</a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>true</code>
@@ -630,8 +806,33 @@
     <span class="property-name">customConditions</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Conditions to set in addition to the resolver-specific defaults when resolving imports.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#customConditions</p>
+  <div class="desc-html"><p><code>--customConditions</code> takes a list of additional <a target="_blank" rel="noopener noreferrer" href="https://nodejs.org/api/packages.html#nested-conditions">conditions</a> that should succeed when TypeScript resolves from an <a target="_blank" rel="noopener noreferrer" href="https://nodejs.org/api/packages.html#exports"><code>exports</code></a> or <a target="_blank" rel="noopener noreferrer" href="https://nodejs.org/api/packages.html#imports"><code>imports</code></a> field of a <code>package.json</code>.
+These conditions are added to whatever existing conditions a resolver will use by default.</p>
+<p>For example, when this field is set in a <code>tsconfig.json</code> as so:</p>
+<pre><code class="language-jsonc">{
+    "compilerOptions": {
+        "target": "es2022",
+        "moduleResolution": "bundler",
+        "customConditions": ["my-condition"]
+    }
+}
+</code></pre>
+<p>Any time an <code>exports</code> or <code>imports</code> field is referenced in <code>package.json</code>, TypeScript will consider conditions called <code>my-condition</code>.</p>
+<p>So when importing from a package with the following <code>package.json</code></p>
+<pre><code class="language-jsonc">{
+    // ...
+    "exports": {
+        ".": {
+            "my-condition": "./foo.mjs",
+            "node": "./bar.mjs",
+            "import": "./baz.mjs",
+            "require": "./biz.mjs"
+        }
+    }
+}
+</code></pre>
+<p>TypeScript will try to look for files corresponding to <code>foo.mjs</code>.</p>
+<p>This field is only valid under the <code>node16</code>, <code>nodenext</code>, and <code>bundler</code> options for <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#moduleResolution"><code>--moduleResolution</code></a>.</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -644,8 +845,23 @@
     <span class="property-name">declaration</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Generate .d.ts files from TypeScript and JavaScript files in your project.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#declaration</p>
+  <div class="desc-html"><p>Generate <code>.d.ts</code> files for every TypeScript or JavaScript file inside your project.
+These <code>.d.ts</code> files are type definition files which describe the external API of your module.
+With <code>.d.ts</code> files, tools like TypeScript can provide intellisense and accurate types for un-typed code.</p>
+<p>When <code>declaration</code> is set to <code>true</code>, running the compiler with this TypeScript code:</p>
+<pre><code class="language-ts">export let helloWorld = "hi";
+</code></pre>
+<p>Will generate an <code>index.js</code> file like this:</p>
+<pre><code class="language-ts">// @showEmit
+export let helloWorld = "hi";
+</code></pre>
+<p>With a corresponding <code>helloWorld.d.ts</code>:</p>
+<pre><code class="language-ts">// @showEmittedFile: index.d.ts
+// @showEmit
+// @declaration
+export let helloWorld = "hi";
+</code></pre>
+<p>When working with <code>.d.ts</code> files for JavaScript files you may want to use <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#emitDeclarationOnly"><code>emitDeclarationOnly</code></a> or use <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#outDir"><code>outDir</code></a> to ensure that the JavaScript files are not overwritten.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -657,8 +873,29 @@
     <span class="property-name">declarationDir</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify the output directory for generated declaration files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#declarationDir</p>
+  <div class="desc-html"><p>Offers a way to configure the root directory for where declaration files are emitted.</p>
+<pre><code>example
+├── index.ts
+├── package.json
+└── tsconfig.json
+</code></pre>
+<p>with this <code>tsconfig.json</code>:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "./types"
+  }
+}
+</code></pre>
+<p>Would place the d.ts for the <code>index.ts</code> in a <code>types</code> folder:</p>
+<pre><code>example
+├── index.js
+├── index.ts
+├── package.json
+├── tsconfig.json
+└── types
+    └── index.d.ts
+</code></pre>
 </div>
        </div>    <div
   class="property-item"
@@ -667,8 +904,8 @@
     <span class="property-name">diagnostics</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Output compiler performance information after building.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#diagnostics</p>
+  <div class="desc-html"><p>Used to output diagnostic information for debugging. This command is a subset of <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#extendedDiagnostics"><code>extendedDiagnostics</code></a> which are more user-facing results, and easier to interpret.</p>
+<p>If you have been asked by a TypeScript compiler engineer to give the results using this flag in a compile, in which there is no harm in using <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#extendedDiagnostics"><code>extendedDiagnostics</code></a> instead.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -677,8 +914,8 @@
     <span class="property-name">disableReferencedProjectLoad</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Reduce the number of projects loaded automatically by TypeScript.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#disableReferencedProjectLoad</p>
+  <div class="desc-html"><p>In multi-project TypeScript programs, TypeScript will load all of the available projects into memory in order to provide accurate results for editor responses which require a full knowledge graph like 'Find All References'.</p>
+<p>If your project is large, you can use the flag <code>disableReferencedProjectLoad</code> to disable the automatic loading of all projects. Instead, projects are loaded dynamically as you open files through your editor.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -687,8 +924,51 @@
     <span class="property-name">noPropertyAccessFromIndexSignature</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enforces using indexed accessors for keys declared using an indexed type.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noPropertyAccessFromIndexSignature</p>
+  <div class="desc-html"><p>This setting ensures consistency between accessing a field via the "dot" (<code>obj.key</code>) syntax, and "indexed" (<code>obj["key"]</code>) and the way which the property is declared in the type.</p>
+<p>Without this flag, TypeScript will allow you to use the dot syntax to access fields which are not defined:</p>
+<pre><code class="language-ts">// @errors: 4111
+declare function getSettings(): GameSettings;
+// ---cut---
+interface GameSettings {
+  // Known up-front properties
+  speed: "fast" | "medium" | "slow";
+  quality: "high" | "low";
+
+  // Assume anything unknown to the interface
+  // is a string.
+  [key: string]: string;
+}
+
+const settings = getSettings();
+settings.speed;
+//       ^?
+settings.quality;
+//       ^?
+
+// Unknown key accessors are allowed on
+// this object, and are `string`
+settings.username;
+//       ^?
+</code></pre>
+<p>Turning the flag on will raise an error because the unknown field uses dot syntax instead of indexed syntax.</p>
+<pre><code class="language-ts">// @errors: 4111
+// @noPropertyAccessFromIndexSignature
+declare function getSettings(): GameSettings;
+interface GameSettings {
+  speed: "fast" | "medium" | "slow";
+  quality: "high" | "low";
+  [key: string]: string;
+}
+// ---cut---
+const settings = getSettings();
+settings.speed;
+settings.quality;
+
+// This would need to be settings["username"];
+settings.username;
+//       ^?
+</code></pre>
+<p>The goal of this flag is to signal intent in your calling syntax about how certain you are this property exists.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -697,8 +977,9 @@
     <span class="property-name">emitBOM</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#emitBOM</p>
+  <div class="desc-html"><p>Controls whether TypeScript will emit a <a target="_blank" rel="noopener noreferrer" href="https://wikipedia.org/wiki/Byte_order_mark">byte order mark (BOM)</a> when writing output files.
+Some runtime environments require a BOM to correctly interpret a JavaScript files; others require that it is not present.
+The default value of <code>false</code> is generally best unless you have a reason to change it.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -710,8 +991,12 @@
     <span class="property-name">emitDeclarationOnly</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Only output d.ts files and not JavaScript files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#emitDeclarationOnly</p>
+  <div class="desc-html"><p><em>Only</em> emit <code>.d.ts</code> files; do not emit <code>.js</code> files.</p>
+<p>This setting is useful in two cases:</p>
+<ul>
+<li>You are using a transpiler other than TypeScript to generate your JavaScript.</li>
+<li>You are using TypeScript to only generate <code>d.ts</code> files for your consumers.</li>
+</ul>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -723,8 +1008,60 @@
     <span class="property-name">erasableSyntaxOnly</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Do not allow runtime constructs that are not part of ECMAScript.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#erasableSyntaxOnly</p>
+  <div class="desc-html"><p>Node.js <a target="_blank" rel="noopener noreferrer" href="https://nodejs.org/api/typescript.html#type-stripping">supports running TypeScript files directly</a> as of v23.6;
+however, only TypeScript-specific syntax that does not have runtime semantics are supported under this mode.
+In other words, it must be possible to easily <em>erase</em> any TypeScript-specific syntax from a file, leaving behind a valid JavaScript file.</p>
+<p>That means the following constructs are not supported:</p>
+<ul>
+<li><code>enum</code> declarations</li>
+<li><code>namespace</code>s and <code>module</code>s with runtime code</li>
+<li>parameter properties in classes</li>
+<li>Non-ECMAScript <code>import =</code> and <code>export =</code> assignments</li>
+<li><code>&lt;prefix&gt;</code>-style type assertions</li>
+</ul>
+<pre><code class="language-ts">// ❌ error: An `import ... = require(...)` alias
+import foo = require("foo");
+
+// ❌ error: A namespace with runtime code.
+namespace container {
+    foo.method();
+
+    export type Bar = string;
+}
+
+// ❌ error: An `import =` alias
+import Bar = container.Bar;
+
+class Point {
+    // ❌ error: Parameter properties
+    constructor(public x: number, public y: number) { }
+}
+
+// ❌ error: An `export =` assignment.
+export = Point;
+
+// ❌ error: An enum declaration.
+enum Direction {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
+// ❌ error: &lt;prefix&gt;-style type assertion.
+const num = &lt;number&gt;1;
+</code></pre>
+<p>Similar tools like <a target="_blank" rel="noopener noreferrer" href="https://github.com/bloomberg/ts-blank-space">ts-blank-space</a> or <a target="_blank" rel="noopener noreferrer" href="https://github.com/nodejs/amaro">Amaro</a> (the underlying library for type-stripping in Node.js) have the same limitations.
+These tools will provide helpful error messages if they encounter code that doesn't meet these requirements, but you still won't find out your code doesn't work until you actually try to run it.</p>
+<p>The <code>--erasableSyntaxOnly</code> flag will cause TypeScript to error on most TypeScript-specific constructs that have runtime behavior.</p>
+<pre><code class="language-ts">class C {
+    constructor(public x: number) { }
+    //          ~~~~~~~~~~~~~~~~
+    // error! This syntax is not allowed when 'erasableSyntaxOnly' is enabled.
+    }
+}
+</code></pre>
+<p>Typically, you will want to combine this flag with the <code>--verbatimModuleSyntax</code>, which ensures that a module contains the appropriate import syntax, and that import elision does not take place.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -736,8 +1073,30 @@
     <span class="property-name">exactOptionalPropertyTypes</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Interpret optional property types as written, rather than adding <code>undefined</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes</p>
+  <div class="desc-html"><p>With exactOptionalPropertyTypes enabled, TypeScript applies stricter rules around how it handles properties on <code>type</code> or <code>interfaces</code> which have a <code>?</code> prefix.</p>
+<p>For example, this interface declares that there is a property which can be one of two strings: 'dark' or 'light' or it should not be in the object.</p>
+<pre><code class="language-ts">interface UserDefaults {
+  // The absence of a value represents 'system'
+  colorThemeOverride?: "dark" | "light";
+}
+</code></pre>
+<p>Without this flag enabled, there are three values which you can set <code>colorThemeOverride</code> to be: "dark", "light" and <code>undefined</code>.</p>
+<p>Setting the value to <code>undefined</code> will allow most JavaScript runtime checks for the existence to fail, which is effectively falsy. However, this isn't quite accurate; <code>colorThemeOverride: undefined</code> is not the same as <code>colorThemeOverride</code> not being defined. For example, <code>"colorThemeOverride" in settings</code> would have different behavior with <code>undefined</code> as the key compared to not being defined.</p>
+<p><code>exactOptionalPropertyTypes</code> makes TypeScript truly enforce the definition provided as an optional property:</p>
+<pre><code class="language-ts">// @exactOptionalPropertyTypes
+// @errors: 2322 2412
+interface UserDefaults {
+  colorThemeOverride?: "dark" | "light";
+}
+declare function getUserSettings(): UserDefaults;
+// ---cut---
+const settings = getUserSettings();
+settings.colorThemeOverride = "dark";
+settings.colorThemeOverride = "light";
+
+// But not:
+settings.colorThemeOverride = undefined;
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -758,8 +1117,18 @@
     <span class="property-name">tsBuildInfoFile</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify the path to .tsbuildinfo incremental compilation file.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#tsBuildInfoFile</p>
+  <div class="desc-html"><p>This setting lets you specify a file for storing incremental compilation information as a part of composite projects which enables faster
+building of larger TypeScript codebases. You can read more about composite projects <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/project-references.html">in the handbook</a>.</p>
+<p>The default depends on a combination of other settings:</p>
+<ul>
+<li>If <code>outFile</code> is set, the default is <code>&lt;outFile&gt;.tsbuildinfo</code>.</li>
+<li>If <code>rootDir</code> and <code>outDir</code> are set, then the file is <code>&lt;outDir&gt;/&lt;relative path to config from rootDir&gt;/&lt;config name&gt;.tsbuildinfo</code>
+For example, if <code>rootDir</code> is <code>src</code>, <code>outDir</code> is <code>dest</code>, and the config is
+<code>./tsconfig.json</code>, then the default is <code>./tsconfig.tsbuildinfo</code>
+as the relative path from <code>src/</code> to <code>./tsconfig.json</code> is <code>../</code>.</li>
+<li>If <code>outDir</code> is set, then the default is <code>&lt;outDir&gt;/&lt;config name&gt;.tsbuildInfo</code></li>
+<li>Otherwise, the default is <code>&lt;config name&gt;.tsbuildInfo</code></li>
+</ul>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;.tsbuildinfo&quot;</code>
@@ -771,8 +1140,26 @@
     <span class="property-name">inlineSourceMap</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Include sourcemap files inside the emitted JavaScript.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#inlineSourceMap</p>
+  <div class="desc-html"><p>When set, instead of writing out a <code>.js.map</code> file to provide source maps, TypeScript will embed the source map content in the <code>.js</code> files.
+Although this results in larger JS files, it can be convenient in some scenarios.
+For example, you might want to debug JS files on a webserver that doesn't allow <code>.map</code> files to be served.</p>
+<p>Mutually exclusive with <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#sourceMap"><code>sourceMap</code></a>.</p>
+<p>For example, with this TypeScript:</p>
+<pre><code class="language-ts">const helloWorld = "hi";
+console.log(helloWorld);
+</code></pre>
+<p>Converts to this JavaScript:</p>
+<pre><code class="language-ts">// @showEmit
+const helloWorld = "hi";
+console.log(helloWorld);
+</code></pre>
+<p>Then enable building it with <code>inlineSourceMap</code> enabled there is a comment at the bottom of the file which includes
+a source-map for the file.</p>
+<pre><code class="language-ts">// @inlineSourceMap
+// @showEmit
+const helloWorld = "hi";
+console.log(helloWorld);
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -784,8 +1171,27 @@
     <span class="property-name">inlineSources</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Include source code in the sourcemaps inside the emitted JavaScript.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#inlineSources</p>
+  <div class="desc-html"><p>When set, TypeScript will include the original content of the <code>.ts</code> file as an embedded string in the source map (using the source map's <code>sourcesContent</code> property).
+This is often useful in the same cases as <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#inlineSourceMap"><code>inlineSourceMap</code></a>.</p>
+<p>Requires either <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#sourceMap"><code>sourceMap</code></a> or <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#inlineSourceMap"><code>inlineSourceMap</code></a> to be set.</p>
+<p>For example, with this TypeScript:</p>
+<pre><code class="language-ts">const helloWorld = "hi";
+console.log(helloWorld);
+</code></pre>
+<p>By default converts to this JavaScript:</p>
+<pre><code class="language-ts">// @showEmit
+const helloWorld = "hi";
+console.log(helloWorld);
+</code></pre>
+<p>Then enable building it with <code>inlineSources</code> and <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#inlineSourceMap"><code>inlineSourceMap</code></a> enabled there is a comment at the bottom of the file which includes
+a source-map for the file.
+Note that the end is different from the example in <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#inlineSourceMap"><code>inlineSourceMap</code></a> because the source-map now contains the original source code also.</p>
+<pre><code class="language-ts">// @inlineSources
+// @inlineSourceMap
+// @showEmit
+const helloWorld = "hi";
+console.log(helloWorld);
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -797,8 +1203,87 @@
     <span class="property-name">jsx</span>
     <span class="type-badge">enum</span>
    </div>
-  <div class="desc-html"><p>Specify what JSX code is generated.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#jsx</p>
+  <div class="desc-html"><p>Controls how JSX constructs are emitted in JavaScript files.
+This only affects output of JS files that started in <code>.tsx</code> files.</p>
+<ul>
+<li><code>react-jsx</code>: Emit <code>.js</code> files with the JSX changed to <code>_jsx</code> calls optimized for production</li>
+<li><code>react-jsxdev</code>: Emit <code>.js</code> files with the JSX changed to <code>_jsx</code> calls for development only</li>
+<li><code>preserve</code>: Emit <code>.jsx</code> files with the JSX unchanged</li>
+<li><code>react-native</code>: Emit <code>.js</code> files with the JSX unchanged</li>
+<li><code>react</code>: Emit <code>.js</code> files with JSX changed to the equivalent <code>React.createElement</code> calls</li>
+</ul>
+<h3>For example</h3>
+<p>This sample code:</p>
+<pre><code class="language-tsx">export const HelloWorld = () =&gt; &lt;h1&gt;Hello world&lt;/h1&gt;;
+</code></pre>
+<p>React: <code>"react-jsx"</code><sup><a target="_blank" rel="noopener noreferrer" href="https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html">[1]</a></sup></p>
+<pre><code class="language-tsx">declare module JSX {
+  interface Element {}
+  interface IntrinsicElements {
+    [s: string]: any;
+  }
+}
+// @showEmit
+// @noErrors
+// @jsx: react-jsx
+export const HelloWorld = () =&gt; &lt;h1&gt;Hello world&lt;/h1&gt;;
+</code></pre>
+<p>React dev transform: <code>"react-jsxdev"</code><sup><a target="_blank" rel="noopener noreferrer" href="https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html">[1]</a></sup></p>
+<pre><code class="language-tsx">declare module JSX {
+  interface Element {}
+  interface IntrinsicElements {
+    [s: string]: any;
+  }
+}
+// @showEmit
+// @noErrors
+// @jsx: react-jsxdev
+export const HelloWorld = () =&gt; &lt;h1&gt;Hello world&lt;/h1&gt;;
+</code></pre>
+<p>Preserve: <code>"preserve"</code></p>
+<pre><code class="language-tsx">declare module JSX {
+  interface Element {}
+  interface IntrinsicElements {
+    [s: string]: any;
+  }
+}
+// @showEmit
+// @noErrors
+// @jsx: preserve
+export const HelloWorld = () =&gt; &lt;h1&gt;Hello world&lt;/h1&gt;;
+</code></pre>
+<p>React Native: <code>"react-native"</code></p>
+<pre><code class="language-tsx">declare module JSX {
+  interface Element {}
+  interface IntrinsicElements {
+    [s: string]: any;
+  }
+}
+// @showEmit
+// @noErrors
+// @jsx: react-native
+export const HelloWorld = () =&gt; &lt;h1&gt;Hello world&lt;/h1&gt;;
+</code></pre>
+<p>Legacy React runtime: <code>"react"</code></p>
+<pre><code class="language-tsx">declare module JSX {
+  interface Element {}
+  interface IntrinsicElements {
+    [s: string]: any;
+  }
+}
+// @showEmit
+// @noErrors
+export const HelloWorld = () =&gt; &lt;h1&gt;Hello world&lt;/h1&gt;;
+</code></pre>
+<p>This option can be used on a per-file basis too using an <code>@jsxRuntime</code> comment.</p>
+<p>Always use the classic runtime (<code>"react"</code>) for this file:</p>
+<pre><code class="language-tsx">/* @jsxRuntime classic */
+export const HelloWorld = () =&gt; &lt;h1&gt;Hello world&lt;/h1&gt;;
+</code></pre>
+<p>Always use the automatic runtime (<code>"react-jsx"</code>) for this file:</p>
+<pre><code class="language-tsx">/* @jsxRuntime automatic */
+export const HelloWorld = () =&gt; &lt;h1&gt;Hello world&lt;/h1&gt;;
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Values:</span> <code class="enum-value">&quot;preserve&quot;</code> <code class="enum-value">&quot;react&quot;</code> <code class="enum-value">&quot;react-jsx&quot;</code> <code class="enum-value">&quot;react-jsxdev&quot;</code> <code class="enum-value">&quot;react-native&quot;</code>  </div>
@@ -809,8 +1294,7 @@
     <span class="property-name">reactNamespace</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify the object invoked for <code>createElement</code>. This only applies when targeting <code>react</code> JSX emit.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#reactNamespace</p>
+  <div class="desc-html"><p>Use <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#jsxFactory"><code>jsxFactory</code></a> instead. Specify the object invoked for <code>createElement</code> when targeting <code>react</code> for TSX files.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;React&quot;</code>
@@ -822,8 +1306,33 @@
     <span class="property-name">jsxFactory</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify the JSX factory function used when targeting React JSX emit, e.g. <code>React.createElement</code> or <code>h</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#jsxFactory</p>
+  <div class="desc-html"><p>Changes the function called in <code>.js</code> files when compiling JSX Elements using the classic JSX runtime.
+The most common change is to use <code>"h"</code> or <code>"preact.h"</code> instead of the default <code>"React.createElement"</code> if using <code>preact</code>.</p>
+<p>For example, this TSX file:</p>
+<pre><code class="language-tsx">import { h } from "preact";
+
+const HelloWorld = () =&gt; &lt;div&gt;Hello&lt;/div&gt;;
+</code></pre>
+<p>With <code>jsxFactory: "h"</code> looks like:</p>
+<pre><code class="language-tsx">// @showEmit
+// @showEmittedFile: index.js
+// @jsxFactory: h
+// @noErrors
+// @target: esnext
+// @module: commonjs
+
+import { h, Fragment } from "preact";
+
+const HelloWorld = () =&gt; &lt;div&gt;Hello&lt;/div&gt;;
+</code></pre>
+<p>This option can be used on a per-file basis too similar to <a target="_blank" rel="noopener noreferrer" href="https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#custom">Babel's <code>/** @jsx h */</code> directive</a>.</p>
+<pre><code class="language-tsx">/** @jsx h */
+import { h } from "preact";
+
+const HelloWorld = () =&gt; &lt;div&gt;Hello&lt;/div&gt;;
+</code></pre>
+<p>The factory chosen will also affect where the <code>JSX</code> namespace is looked up (for type checking information) before falling back to the global one.</p>
+<p>If the factory is defined as <code>React.createElement</code> (the default), the compiler will check for <code>React.JSX</code> before checking for a global <code>JSX</code>. If the factory is defined as <code>h</code>, it will check for <code>h.JSX</code> before a global <code>JSX</code>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;React.createElement&quot;</code>
@@ -835,8 +1344,57 @@
     <span class="property-name">jsxFragmentFactory</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. <code>React.Fragment</code> or <code>Fragment</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#jsxFragmentFactory</p>
+  <div class="desc-html"><p>Specify the JSX fragment factory function to use when targeting react JSX emit with <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#jsxFactory"><code>jsxFactory</code></a> compiler option is specified, e.g. <code>Fragment</code>.</p>
+<p>For example with this TSConfig:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment"
+  }
+}
+</code></pre>
+<p>This TSX file:</p>
+<pre><code class="language-tsx">import { h, Fragment } from "preact";
+
+const HelloWorld = () =&gt; (
+  &lt;&gt;
+    &lt;div&gt;Hello&lt;/div&gt;
+  &lt;/&gt;
+);
+</code></pre>
+<p>Would look like:</p>
+<pre><code class="language-tsx">// @showEmit
+// @showEmittedFile: index.js
+// @jsxFactory: h
+// @jsxFragmentFactory: Fragment
+// @noErrors
+// @target: esnext
+// @module: commonjs
+
+import { h, Fragment } from "preact";
+
+const HelloWorld = () =&gt; (
+  &lt;&gt;
+    &lt;div&gt;Hello&lt;/div&gt;
+  &lt;/&gt;
+);
+</code></pre>
+<p>This option can be used on a per-file basis too similar to <a target="_blank" rel="noopener noreferrer" href="https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#fragments">Babel's <code>/* @jsxFrag h */</code> directive</a>.</p>
+<p>For example:</p>
+<pre><code class="language-tsx">/** @jsx h */
+/** @jsxFrag Fragment */
+
+import { h, Fragment } from "preact";
+
+const HelloWorld = () =&gt; (
+  &lt;&gt;
+    &lt;div&gt;Hello&lt;/div&gt;
+  &lt;/&gt;
+);
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;React.Fragment&quot;</code>
@@ -848,8 +1406,75 @@
     <span class="property-name">jsxImportSource</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify module specifier used to import the JSX factory functions when using <code>jsx: react-jsx*</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#jsxImportSource</p>
+  <div class="desc-html"><p>Declares the module specifier to be used for importing the <code>jsx</code> and <code>jsxs</code> factory functions when using <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#jsx"><code>jsx</code></a> as <code>"react-jsx"</code> or <code>"react-jsxdev"</code> which were introduced in TypeScript 4.1.</p>
+<p>With <a target="_blank" rel="noopener noreferrer" href="https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html">React 17</a> the library supports a new form of JSX transformation via a separate import.</p>
+<p>For example with this code:</p>
+<pre><code class="language-tsx">import React from "react";
+
+function App() {
+  return &lt;h1&gt;Hello World&lt;/h1&gt;;
+}
+</code></pre>
+<p>Using this TSConfig:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "jsx": "react-jsx"
+  }
+}
+</code></pre>
+<p>The emitted JavaScript from TypeScript is:</p>
+<pre><code class="language-tsx">// @showEmit
+// @noErrors
+// @jsx: react-jsx
+// @module: commonjs
+// @target: esnext
+declare module JSX {
+  interface Element {}
+  interface IntrinsicElements {
+    [s: string]: any;
+  }
+}
+import React from "react";
+
+function App() {
+  return &lt;h1&gt;Hello World&lt;/h1&gt;;
+}
+</code></pre>
+<p>For example if you wanted to use <code>"jsxImportSource": "preact"</code>, you need a tsconfig like:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "types": ["preact"]
+  }
+}
+</code></pre>
+<p>Which generates code like:</p>
+<pre><code class="language-tsx">// @showEmit
+// @jsxImportSource: preact
+// @types: preact
+// @jsx: react-jsx
+// @target: esnext
+// @module: commonjs
+// @noErrors
+
+export function App() {
+  return &lt;h1&gt;Hello World&lt;/h1&gt;;
+}
+</code></pre>
+<p>Alternatively, you can use a per-file pragma to set this option, for example:</p>
+<pre><code class="language-tsx">/** @jsxImportSource preact */
+
+export function App() {
+  return &lt;h1&gt;Hello World&lt;/h1&gt;;
+}
+</code></pre>
+<p>Would add <code>preact/jsx-runtime</code> as an import for the <code>_jsx</code> factory.</p>
+<p><em>Note:</em> In order for this to work like you would expect, your <code>tsx</code> file must include an <code>export</code> or <code>import</code> so that it is considered a module.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;react&quot;</code>
@@ -861,8 +1486,31 @@
     <span class="property-name">listFiles</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Print all of the files read during the compilation.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#listFiles</p>
+  <div class="desc-html"><p>Print names of files part of the compilation. This is useful when you are not sure that TypeScript has
+included a file you expected.</p>
+<p>For example:</p>
+<pre><code>example
+├── index.ts
+├── package.json
+└── tsconfig.json
+</code></pre>
+<p>With:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "listFiles": true
+  }
+}
+</code></pre>
+<p>Would echo paths like:</p>
+<pre><code>$ npm run tsc
+path/to/example/node_modules/typescript/lib/lib.d.ts
+path/to/example/node_modules/typescript/lib/lib.es5.d.ts
+path/to/example/node_modules/typescript/lib/lib.dom.d.ts
+path/to/example/node_modules/typescript/lib/lib.webworker.importscripts.d.ts
+path/to/example/node_modules/typescript/lib/lib.scripthost.d.ts
+path/to/example/index.ts
+</code></pre>
+<p>Note if using TypeScript 4.2, prefer <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#explainFiles"><code>explainFiles</code></a> which offers an explanation of why a file was added too.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -874,8 +1522,16 @@
     <span class="property-name">mapRoot</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify the location where debugger should locate map files instead of generated locations.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#mapRoot</p>
+  <div class="desc-html"><p>Specify the location where debugger should locate map files instead of generated locations.
+This string is treated verbatim inside the source-map, for example:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "sourceMap": true,
+    "mapRoot": "https://my-website.com/debug/sourcemaps/"
+  }
+}
+</code></pre>
+<p>Would declare that <code>index.js</code> will have sourcemaps at <code>https://my-website.com/debug/sourcemaps/index.js.map</code>.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -884,8 +1540,96 @@
     <span class="property-name">module</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify what module code is generated.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#module</p>
+  <div class="desc-html"><p>Sets the module system for the program. See the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/modules/theory.html#the-module-output-format">theory behind TypeScript’s <code>module</code> option</a> and <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/modules/reference.html#the-module-compiler-option">its reference page</a> for more information. You very likely want <code>"nodenext"</code> for modern Node.js projects and <code>preserve</code> or <code>esnext</code> for code that will be bundled.</p>
+<p>Changing <code>module</code> affects <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#moduleResolution"><code>moduleResolution</code></a> which <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/modules/reference.html#the-moduleresolution-compiler-option">also has a reference page</a>.</p>
+<p>Here's some example output for this file:</p>
+<pre><code class="language-ts">// @filename: constants.ts
+export const valueOfPi = 3.142;
+// ---cut---
+// @filename: index.ts
+import { valueOfPi } from "./constants";
+
+export const twoPi = valueOfPi * 2;
+</code></pre>
+<h4><code>CommonJS</code></h4>
+<pre><code class="language-ts">// @showEmit
+// @module: commonjs
+// @noErrors
+import { valueOfPi } from "./constants";
+
+export const twoPi = valueOfPi * 2;
+</code></pre>
+<h4><code>UMD</code></h4>
+<pre><code class="language-ts">// @showEmit
+// @module: umd
+// @noErrors
+import { valueOfPi } from "./constants";
+
+export const twoPi = valueOfPi * 2;
+</code></pre>
+<h4><code>AMD</code></h4>
+<pre><code class="language-ts">// @showEmit
+// @module: amd
+// @noErrors
+import { valueOfPi } from "./constants";
+
+export const twoPi = valueOfPi * 2;
+</code></pre>
+<h4><code>System</code></h4>
+<pre><code class="language-ts">// @showEmit
+// @module: system
+// @noErrors
+import { valueOfPi } from "./constants";
+
+export const twoPi = valueOfPi * 2;
+</code></pre>
+<h4><code>ESNext</code></h4>
+<pre><code class="language-ts">// @showEmit
+// @module: esnext
+// @noErrors
+import { valueOfPi } from "./constants";
+
+export const twoPi = valueOfPi * 2;
+</code></pre>
+<h4><code>ES2015</code>/<code>ES6</code>/<code>ES2020</code>/<code>ES2022</code></h4>
+<pre><code class="language-ts">// @showEmit
+// @module: es2015
+// @noErrors
+import { valueOfPi } from "./constants";
+
+export const twoPi = valueOfPi * 2;
+</code></pre>
+<p>In addition to the base functionality of <code>ES2015</code>/<code>ES6</code>, <code>ES2020</code> adds support for <a target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import">dynamic <code>import</code>s</a>, and <a target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import.meta"><code>import.meta</code></a> while <code>ES2022</code> further adds support for <a target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await#top_level_await">top level <code>await</code></a>.</p>
+<h4><code>node16</code>/<code>node18</code>/<code>node20</code>/<code>nodenext</code></h4>
+<p>The <code>node16</code>, <code>node18</code>, <code>node20</code>, and <code>nodenext</code> modes integrate with Node's <a target="_blank" rel="noopener noreferrer" href="https://nodejs.org/api/esm.html">native ECMAScript Module support</a>. The emitted JavaScript uses either <code>CommonJS</code> or <code>ES2020</code> output depending on the file extension and the value of the <code>type</code> setting in the nearest <code>package.json</code>. Module resolution also works differently. You can learn more in the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/esm-node.html">handbook</a> and <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/modules/reference.html#node16-node18-node20-nodenext">Modules Reference</a>.</p>
+<ul>
+<li><code>node16</code> is available from TypeScript 4.7</li>
+<li><code>node18</code> is available from TypeScript 5.8 as a replacement for <code>node16</code>, with added support for import attributes.</li>
+<li><code>node20</code> adds support for require(ESM).</li>
+<li><code>nodenext</code> is available from TypeScript 4.7, but its behavior changes with the latest stable versions of Node.js. <code>--module nodenext</code> implies the floating <code>--target esnext</code>.</li>
+</ul>
+<h4><code>preserve</code></h4>
+<p>In <code>--module preserve</code> (<a target="_blank" rel="noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-4.html#support-for-require-calls-in---moduleresolution-bundler-and---module-preserve">added</a> in TypeScript 5.4), ECMAScript imports and exports written in input files are preserved in the output, and CommonJS-style <code>import x = require("...")</code> and <code>export = ...</code> statements are emitted as CommonJS <code>require</code> and <code>module.exports</code>. In other words, the format of each individual import or export statement is preserved, rather than being coerced into a single format for the whole compilation (or even a whole file).</p>
+<pre><code class="language-ts">// @showEmit
+// @module: preserve
+// @noErrors
+import { valueOfPi } from "./constants";
+import constants = require("./constants");
+
+export const piSquared = valueOfPi * constants.valueOfPi;
+</code></pre>
+<p>While it’s rare to need to mix imports and require calls in the same file, this <code>module</code> mode best reflects the capabilities of most modern bundlers, as well as the Bun runtime.</p>
+<blockquote>
+<p>Why care about TypeScript’s <code>module</code> emit with a bundler or with Bun, where you’re likely also setting <code>noEmit</code>? TypeScript’s type checking and module resolution behavior are affected by the module format that it <em>would</em> emit. Setting <code>module</code> gives TypeScript information about how your bundler or runtime will process imports and exports, which ensures that the types you see on imported values accurately reflect what will happen at runtime or after bundling.</p>
+</blockquote>
+<h4><code>None</code></h4>
+<pre><code class="language-ts">// @showEmit
+// @module: none
+// @noErrors
+import { valueOfPi } from "./constants";
+
+export const twoPi = valueOfPi * 2;
+</code></pre>
 </div>
         <div class="inline-composition">
     <span class="meta-label">Any of:</span>
@@ -901,8 +1645,14 @@
     <span class="property-name">moduleResolution</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify how TypeScript looks up a file from a given module specifier.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#moduleResolution</p>
+  <div class="desc-html"><p>Specify the module resolution strategy:</p>
+<ul>
+<li><code>'node16'</code> or <code>'nodenext'</code> for modern versions of Node.js. Node.js v12 and later supports both ECMAScript imports and CommonJS <code>require</code>, which resolve using different algorithms. These <code>moduleResolution</code> values, when combined with the corresponding <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#module"><code>module</code></a> values, picks the right algorithm for each resolution based on whether Node.js will see an <code>import</code> or <code>require</code> in the output JavaScript code.</li>
+<li><code>'node10'</code> (previously called <code>'node'</code>) for Node.js versions older than v10, which only support CommonJS <code>require</code>. You probably won't need to use <code>node10</code> in modern code.</li>
+<li><code>'bundler'</code> for use with bundlers. Like <code>node16</code> and <code>nodenext</code>, this mode supports package.json <code>"imports"</code> and <code>"exports"</code>, but unlike the Node.js resolution modes, <code>bundler</code> never requires file extensions on relative paths in imports.</li>
+<li><code>'classic'</code> was used in TypeScript before the release of 1.6. <code>classic</code> should not be used.</li>
+</ul>
+<p>There are reference pages explaining the <a target="_blank" rel="noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/modules/theory.html#module-resolution">theory behind TypeScript’s module resolution</a> and the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/modules/reference.html#the-moduleresolution-compiler-option">details of each option</a>.</p>
 </div>
         <div class="inline-composition">
     <span class="meta-label">Any of:</span>
@@ -918,8 +1668,19 @@
     <span class="property-name">moduleSuffixes</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>List of file name suffixes to search when resolving a module.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#moduleSuffixes</p>
+  <div class="desc-html"><p>Provides a way to override the default list of file name suffixes to search when resolving a module.</p>
+<pre><code class="language-json">{
+    "compilerOptions": {
+        "moduleSuffixes": [".ios", ".native", ""]
+    }
+}
+</code></pre>
+<p>Given the above configuration, an import like the following:</p>
+<pre><code class="language-ts">import * as foo from "./foo";
+</code></pre>
+<p>TypeScript will look for the relative files <code>./foo.ios.ts</code>, <code>./foo.native.ts</code>, and finally <code>./foo.ts</code>.</p>
+<p>Note the empty string <code>""</code> in <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#moduleSuffixes"><code>moduleSuffixes</code></a> which is necessary for TypeScript to also look-up <code>./foo.ts</code>.</p>
+<p>This feature can be useful for React Native projects where each target platform can use a separate tsconfig.json with differing <code>moduleSuffixes</code>.</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -932,8 +1693,7 @@
     <span class="property-name">newLine</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Set the newline character for emitting files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#newLine</p>
+  <div class="desc-html"><p>Specify the end of line sequence to be used when emitting files: 'CRLF' (dos) or 'LF' (unix).</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;lf&quot;</code>
@@ -952,8 +1712,9 @@
     <span class="property-name">noEmit</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable emitting files from a compilation.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noEmit</p>
+  <div class="desc-html"><p>Do not emit compiler output files like JavaScript source code, source-maps or declarations.</p>
+<p>This makes room for another tool like <a target="_blank" rel="noopener noreferrer" href="https://babeljs.io/">Babel</a>, or <a target="_blank" rel="noopener noreferrer" href="https://github.com/swc-project/swc">swc</a> to handle converting the TypeScript file to a file which can run inside a JavaScript environment.</p>
+<p>You can then use TypeScript as a tool for providing editor integration, and as a source code type-checker.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -965,8 +1726,30 @@
     <span class="property-name">noEmitHelpers</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable generating custom helper functions like <code>__extends</code> in compiled output.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noEmitHelpers</p>
+  <div class="desc-html"><p>Instead of importing helpers with <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#importHelpers"><code>importHelpers</code></a>, you can provide implementations in the global scope for the helpers you use and completely turn off emitting of helper functions.</p>
+<p>For example, using this <code>async</code> function in ES5 requires a <code>await</code>-like function and <code>generator</code>-like function to run:</p>
+<pre><code class="language-ts">const getAPI = async (url: string) =&gt; {
+  // Get API
+  return {};
+};
+</code></pre>
+<p>Which creates quite a lot of JavaScript:</p>
+<pre><code class="language-ts">// @showEmit
+// @target: ES5
+const getAPI = async (url: string) =&gt; {
+  // Get API
+  return {};
+};
+</code></pre>
+<p>Which can be switched out with your own globals via this flag:</p>
+<pre><code class="language-ts">// @showEmit
+// @target: ES5
+// @noEmitHelpers
+const getAPI = async (url: string) =&gt; {
+  // Get API
+  return {};
+};
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -978,8 +1761,8 @@
     <span class="property-name">noEmitOnError</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable emitting files if any type checking errors are reported.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noEmitOnError</p>
+  <div class="desc-html"><p>Do not emit compiler output files like JavaScript source code, source-maps or declarations if any errors were reported.</p>
+<p>This defaults to <code>false</code>, making it easier to work with TypeScript in a watch-like environment where you may want to see results of changes to your code in another environment before making sure all errors are resolved.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -991,8 +1774,21 @@
     <span class="property-name">noImplicitAny</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable error reporting for expressions and declarations with an implied <code>any</code> type.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noImplicitAny</p>
+  <div class="desc-html"><p>In some cases where no type annotations are present, TypeScript will fall back to a type of <code>any</code> for a variable when it cannot infer the type.</p>
+<p>This can cause some errors to be missed, for example:</p>
+<pre><code class="language-ts">// @noImplicitAny: false
+function fn(s) {
+  // No error?
+  console.log(s.subtr(3));
+}
+fn(42);
+</code></pre>
+<p>Turning on <code>noImplicitAny</code> however TypeScript will issue an error whenever it would have inferred <code>any</code>:</p>
+<pre><code class="language-ts">// @errors: 7006
+function fn(s) {
+  console.log(s.subtr(3));
+}
+</code></pre>
 </div>
        </div>    <div
   class="property-item"
@@ -1001,8 +1797,26 @@
     <span class="property-name">noImplicitThis</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable error reporting when <code>this</code> is given the type <code>any</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noImplicitThis</p>
+  <div class="desc-html"><p>Raise error on 'this' expressions with an implied 'any' type.</p>
+<p>For example, the class below returns a function which tries to access <code>this.width</code> and <code>this.height</code> – but the context
+for <code>this</code> inside the function inside <code>getAreaFunction</code> is not the instance of the Rectangle.</p>
+<pre><code class="language-ts">// @errors: 2683
+class Rectangle {
+  width: number;
+  height: number;
+
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+  }
+
+  getAreaFunction() {
+    return function () {
+      return this.width * this.height;
+    };
+  }
+}
+</code></pre>
 </div>
        </div>    <div
   class="property-item"
@@ -1011,8 +1825,14 @@
     <span class="property-name">noUnusedLocals</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable error reporting when local variables aren't read.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noUnusedLocals</p>
+  <div class="desc-html"><p>Report errors on unused local variables.</p>
+<pre><code class="language-ts">// @noUnusedLocals
+// @errors: 6133
+const createKeyboard = (modelID: number) =&gt; {
+  const defaultModelID = 23;
+  return { type: "keyboard", modelID };
+};
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1024,8 +1844,20 @@
     <span class="property-name">noUnusedParameters</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Raise an error when a function parameter isn't read.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noUnusedParameters</p>
+  <div class="desc-html"><p>Report errors on unused parameters in functions.</p>
+<pre><code class="language-ts">// @noUnusedParameters
+// @errors: 6133
+const createDefaultKeyboard = (modelID: number) =&gt; {
+  const defaultModelID = 23;
+  return { type: "keyboard", modelID: defaultModelID };
+};
+</code></pre>
+<p>Parameters declaration with names starting with an underscore (<code>_</code>) are exempt from the unused parameter checking. e.g.:</p>
+<pre><code class="language-ts">// @noUnusedParameters
+const createDefaultKeyboard = (_modelID: number) =&gt; {
+  return { type: "keyboard" };
+};
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1037,8 +1869,9 @@
     <span class="property-name">noLib</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable including any library files, including the default lib.d.ts.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noLib</p>
+  <div class="desc-html"><p>Disables the automatic inclusion of any library files.
+If this option is set, <code>lib</code> is ignored.</p>
+<p>TypeScript <em>cannot</em> compile anything without a set of interfaces for key primitives like: <code>Array</code>, <code>Boolean</code>, <code>Function</code>, <code>IArguments</code>, <code>Number</code>, <code>Object</code>, <code>RegExp</code>, and <code>String</code>. It is expected that if you use <code>noLib</code> you will be including your own type definitions for these.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1050,8 +1883,9 @@
     <span class="property-name">noResolve</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disallow <code>import</code>s, <code>require</code>s or <code>&lt;reference&gt;</code>s from expanding the number of files TypeScript should add to a project.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noResolve</p>
+  <div class="desc-html"><p>By default, TypeScript will examine the initial set of files for <code>import</code> and <code>&lt;reference</code> directives and add these resolved files to your program.</p>
+<p>If <code>noResolve</code> is set, this process doesn't happen.
+However, <code>import</code> statements are still checked to see if they resolve to a valid module, so you'll need to make sure this is satisfied by some other means.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1063,8 +1897,18 @@
     <span class="property-name">noStrictGenericChecks</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable strict checking of generic signatures in function types.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noStrictGenericChecks</p>
+  <div class="desc-html"><p>TypeScript will unify type parameters when comparing two generic functions.</p>
+<pre><code class="language-ts">// @errors: 2322
+
+type A = &lt;T, U&gt;(x: T, y: U) =&gt; [T, U];
+type B = &lt;S&gt;(x: S, y: S) =&gt; [S, S];
+
+function f(a: A, b: B) {
+  b = a; // Ok
+  a = b; // Error
+}
+</code></pre>
+<p>This flag can be used to remove that check.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1086,8 +1930,7 @@
     <span class="property-name">skipDefaultLibCheck</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Skip type checking .d.ts files that are included with TypeScript.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#skipDefaultLibCheck</p>
+  <div class="desc-html"><p>Use <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#skipLibCheck"><code>skipLibCheck</code></a> instead. Skip type checking of default library declaration files.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1099,8 +1942,16 @@
     <span class="property-name">skipLibCheck</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Skip type checking all .d.ts files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#skipLibCheck</p>
+  <div class="desc-html"><p>Skip type checking of declaration files.</p>
+<p>This can save time during compilation at the expense of type-system accuracy. For example, two libraries could
+define two copies of the same <code>type</code> in an inconsistent way. Rather than doing a full check of all <code>d.ts</code> files, TypeScript
+will type check the code you specifically refer to in your app's source code.</p>
+<p>A common case where you might think to use <code>skipLibCheck</code> is when there are two copies of a library's types in
+your <code>node_modules</code>. In these cases, you should consider using a feature like <a target="_blank" rel="noopener noreferrer" href="https://yarnpkg.com/lang/en/docs/selective-version-resolutions/">yarn's resolutions</a>
+to ensure there is only one copy of that dependency in your tree or investigate how to ensure there is
+only one copy by understanding the dependency resolution to fix the issue without additional tooling.</p>
+<p>Another possibility is when you are migrating between TypeScript releases and the changes cause breakages in node_modules and the JS standard libraries which you do not want to deal with during the TypeScript update.</p>
+<p>Note, that if these issues come from the TypeScript standard library you can replace the library using <a target="_blank" rel="noopener noreferrer" href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-5.html#supporting-lib-from-node_modules">TypeScript 4.5's lib replacement</a> technique.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1112,8 +1963,10 @@
     <span class="property-name">outFile</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify a file that bundles all outputs into one JavaScript file. If <code>declaration</code> is true, also designates a file that bundles all .d.ts output.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#outFile</p>
+  <div class="desc-html"><p>If specified, all <em>global</em> (non-module) files will be concatenated into the single output file specified.</p>
+<p>If <code>module</code> is <code>system</code> or <code>amd</code>, all module files will also be concatenated into this file after all global content.</p>
+<p>Note: <code>outFile</code> cannot be used unless <code>module</code> is <code>None</code>, <code>System</code>, or <code>AMD</code>.
+This option <em>cannot</em> be used to bundle CommonJS or ES6 modules.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1122,8 +1975,31 @@
     <span class="property-name">outDir</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify an output folder for all emitted files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#outDir</p>
+  <div class="desc-html"><p>If specified, <code>.js</code> (as well as <code>.d.ts</code>, <code>.js.map</code>, etc.) files will be emitted into this directory.
+The directory structure of the original source files is preserved; see <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#rootDir"><code>rootDir</code></a> if the computed root is not what you intended.</p>
+<p>If not specified, <code>.js</code> files will be emitted in the same directory as the <code>.ts</code> files they were generated from:</p>
+<pre><code class="language-sh">$ tsc
+
+example
+├── index.js
+└── index.ts
+</code></pre>
+<p>With a <code>tsconfig.json</code> like this:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "outDir": "dist"
+  }
+}
+</code></pre>
+<p>Running <code>tsc</code> with these settings moves the files into the specified <code>dist</code> folder:</p>
+<pre><code class="language-sh">$ tsc
+
+example
+├── dist
+│   └── index.js
+├── index.ts
+└── tsconfig.json
+</code></pre>
 </div>
        </div>    <div
   class="property-item"
@@ -1132,8 +2008,49 @@
     <span class="property-name">preserveConstEnums</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable erasing <code>const enum</code> declarations in generated code.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#preserveConstEnums</p>
+  <div class="desc-html"><p>Do not erase <code>const enum</code> declarations in generated code. <code>const enum</code>s provide a way to reduce the overall memory footprint
+of your application at runtime by emitting the enum value instead of a reference.</p>
+<p>For example with this TypeScript:</p>
+<pre><code class="language-ts">const enum Album {
+  JimmyEatWorldFutures = 1,
+  TubRingZooHypothesis = 2,
+  DogFashionDiscoAdultery = 3,
+}
+
+const selectedAlbum = Album.JimmyEatWorldFutures;
+if (selectedAlbum === Album.JimmyEatWorldFutures) {
+  console.log("That is a great choice.");
+}
+</code></pre>
+<p>The default <code>const enum</code> behavior is to convert any <code>Album.Something</code> to the corresponding number literal, and to remove a reference
+to the enum from the JavaScript completely.</p>
+<pre><code class="language-ts">// @showEmit
+const enum Album {
+  JimmyEatWorldFutures = 1,
+  TubRingZooHypothesis = 2,
+  DogFashionDiscoAdultery = 3,
+}
+
+const selectedAlbum = Album.JimmyEatWorldFutures;
+if (selectedAlbum === Album.JimmyEatWorldFutures) {
+  console.log("That is a great choice.");
+}
+</code></pre>
+<p>With <code>preserveConstEnums</code> set to <code>true</code>, the <code>enum</code> exists at runtime and the numbers are still emitted.</p>
+<pre><code class="language-ts">// @preserveConstEnums: true
+// @showEmit
+const enum Album {
+  JimmyEatWorldFutures = 1,
+  TubRingZooHypothesis = 2,
+  DogFashionDiscoAdultery = 3,
+}
+
+const selectedAlbum = Album.JimmyEatWorldFutures;
+if (selectedAlbum === Album.JimmyEatWorldFutures) {
+  console.log("That is a great choice.");
+}
+</code></pre>
+<p>This essentially makes such <code>const enums</code> a source-code feature only, with no runtime traces.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1145,8 +2062,9 @@
     <span class="property-name">preserveSymlinks</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable resolving symlinks to their realpath. This correlates to the same flag in node.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#preserveSymlinks</p>
+  <div class="desc-html"><p>This is to reflect the same flag in Node.js; which does not resolve the real path of symlinks.</p>
+<p>This flag also exhibits the opposite behavior to Webpack’s <code>resolve.symlinks</code> option (i.e. setting TypeScript’s <code>preserveSymlinks</code> to true parallels setting Webpack’s <code>resolve.symlinks</code> to false, and vice-versa).</p>
+<p>With this enabled, references to modules and packages (e.g. <code>import</code>s and <code>/// &lt;reference type="..." /&gt;</code> directives) are all resolved relative to the location of the symbolic link file, rather than relative to the path that the symbolic link resolves to.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1158,8 +2076,14 @@
     <span class="property-name">preserveValueImports</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Preserve unused imported values in the JavaScript output that would otherwise be removed.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#preserveValueImports</p>
+  <div class="desc-html"><p>Deprecated in favor of <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#verbatimModuleSyntax"><code>verbatimModuleSyntax</code></a>.</p>
+<p>There are some cases where TypeScript can't detect that you're using an import. For example, take the following code:</p>
+<pre><code class="language-ts">import { Animal } from "./animal.js";
+
+eval("console.log(new Animal().isDangerous())");
+</code></pre>
+<p>or code using 'Compiles to HTML' languages like Svelte or Vue. <code>preserveValueImports</code> will prevent TypeScript from removing the import, even if it appears unused.</p>
+<p>When combined with <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#isolatedModules"><code>isolatedModules</code></a>: imported types <em>must</em> be marked as type-only because compilers that process single files at a time have no way of knowing whether imports are values that appear unused, or a type that must be removed in order to avoid a runtime crash.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1171,8 +2095,7 @@
     <span class="property-name">preserveWatchOutput</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable wiping the console in watch mode.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#preserveWatchOutput</p>
+  <div class="desc-html"><p>Whether to keep outdated console output in watch mode instead of clearing the screen every time a change happened.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1181,8 +2104,8 @@
     <span class="property-name">pretty</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable color and formatting in TypeScript's output to make compiler errors easier to read.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#pretty</p>
+  <div class="desc-html"><p>Stylize errors and messages using color and context, this is on by default — offers you a chance to have less terse,
+single colored messages from the compiler.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>true</code>
@@ -1194,8 +2117,24 @@
     <span class="property-name">removeComments</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable emitting comments.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#removeComments</p>
+  <div class="desc-html"><p>Strips all comments from TypeScript files when converting into JavaScript. Defaults to <code>false</code>.</p>
+<p>For example, this is a TypeScript file which has a JSDoc comment:</p>
+<pre><code class="language-ts">/** The translation of 'Hello world' into Portuguese */
+export const helloWorldPTBR = "Olá Mundo";
+</code></pre>
+<p>When <code>removeComments</code> is set to <code>true</code>:</p>
+<pre><code class="language-ts">// @showEmit
+// @removeComments: true
+/** The translation of 'Hello world' into Portuguese */
+export const helloWorldPTBR = "Olá Mundo";
+</code></pre>
+<p>Without setting <code>removeComments</code> or having it as <code>false</code>:</p>
+<pre><code class="language-ts">// @showEmit
+// @removeComments: false
+/** The translation of 'Hello world' into Portuguese */
+export const helloWorldPTBR = "Olá Mundo";
+</code></pre>
+<p>This means that your comments will show up in the JavaScript code.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1208,7 +2147,7 @@
     <span class="type-badge">boolean | null</span>
    </div>
   <div class="desc-html"><p>Rewrite <code>.ts</code>, <code>.tsx</code>, <code>.mts</code>, and <code>.cts</code> file extensions in relative import paths to their JavaScript equivalent in output files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#rewriteRelativeImportExtensions</p>
+<p>For more information, see the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/release-notes/typescript-5-7.html#path-rewriting-for-relative-paths">TypeScript 5.7 release notes</a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1220,8 +2159,50 @@
     <span class="property-name">rootDir</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify the root folder within your source files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#rootDir</p>
+  <div class="desc-html"><p><strong>Default</strong>: The longest common path of all non-declaration input files. If <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#composite"><code>composite</code></a> is set, the default is instead the directory containing the <code>tsconfig.json</code> file.</p>
+<p>When TypeScript compiles files, it keeps the same directory structure in the output directory as exists in the input directory.</p>
+<p>For example, let's say you have some input files:</p>
+<pre><code>MyProj
+├── tsconfig.json
+├── core
+│   ├── a.ts
+│   ├── b.ts
+│   ├── sub
+│   │   ├── c.ts
+├── types.d.ts
+</code></pre>
+<p>The inferred value for <code>rootDir</code> is the longest common path of all non-declaration input files, which in this case is <code>core/</code>.</p>
+<p>If your <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#outDir"><code>outDir</code></a> was <code>dist</code>, TypeScript would write this tree:</p>
+<pre><code>MyProj
+├── dist
+│   ├── a.js
+│   ├── b.js
+│   ├── sub
+│   │   ├── c.js
+</code></pre>
+<p>However, you may have intended for <code>core</code> to be part of the output directory structure.
+By setting <code>rootDir: "."</code> in <code>tsconfig.json</code>, TypeScript would write this tree:</p>
+<pre><code>MyProj
+├── dist
+│   ├── core
+│   │   ├── a.js
+│   │   ├── b.js
+│   │   ├── sub
+│   │   │   ├── c.js
+</code></pre>
+<p>Importantly, <code>rootDir</code> <strong>does not affect which files become part of the compilation</strong>.
+It has no interaction with the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#include"><code>include</code></a>, <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#exclude"><code>exclude</code></a>, or <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#files"><code>files</code></a> <code>tsconfig.json</code> settings.</p>
+<p>Note that TypeScript will never write an output file to a directory outside of <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#outDir"><code>outDir</code></a>, and will never skip emitting a file.
+For this reason, <code>rootDir</code> also enforces that all files which need to be emitted are underneath the <code>rootDir</code> path.</p>
+<p>For example, let's say you had this tree:</p>
+<pre><code>MyProj
+├── tsconfig.json
+├── core
+│   ├── a.ts
+│   ├── b.ts
+├── helpers.ts
+</code></pre>
+<p>It would be an error to specify <code>rootDir</code> as <code>core</code> <em>and</em> <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#include"><code>include</code></a> as <code>*</code> because it creates a file (<code>helpers.ts</code>) that would need to be emitted <em>outside</em> the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#outDir"><code>outDir</code></a> (i.e. <code>../helpers.js</code>).</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1230,8 +2211,54 @@
     <span class="property-name">isolatedModules</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Ensure that each file can be safely transpiled without relying on other imports.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#isolatedModules</p>
+  <div class="desc-html"><p>While you can use TypeScript to produce JavaScript code from TypeScript code, it's also common to use other transpilers such as <a target="_blank" rel="noopener noreferrer" href="https://babeljs.io/">Babel</a> to do this.
+However, other transpilers only operate on a single file at a time, which means they can't apply code transforms that depend on understanding the full type system.
+This restriction also applies to TypeScript's <code>ts.transpileModule</code> API which is used by some build tools.</p>
+<p>These limitations can cause runtime problems with some TypeScript features like <code>const enum</code>s and <code>namespace</code>s.
+Setting the <code>isolatedModules</code> flag tells TypeScript to warn you if you write certain code that can't be correctly interpreted by a single-file transpilation process.</p>
+<p>It does not change the behavior of your code, or otherwise change the behavior of TypeScript's checking and emitting process.</p>
+<p>Some examples of code which does not work when <code>isolatedModules</code> is enabled.</p>
+<h4>Exports of Non-Value Identifiers</h4>
+<p>In TypeScript, you can import a <em>type</em> and then subsequently export it:</p>
+<pre><code class="language-ts">// @noErrors
+import { someType, someFunction } from "someModule";
+
+someFunction();
+
+export { someType, someFunction };
+</code></pre>
+<p>Because there's no value for <code>someType</code>, the emitted <code>export</code> will not try to export it (this would be a runtime error in JavaScript):</p>
+<pre><code class="language-js">export { someFunction };
+</code></pre>
+<p>Single-file transpilers don't know whether <code>someType</code> produces a value or not, so it's an error to export a name that only refers to a type.</p>
+<h4>Non-Module Files</h4>
+<p>If <code>isolatedModules</code> is set, namespaces are only allowed in <em>modules</em> (which means it has some form of <code>import</code>/<code>export</code>). An error occurs if a namespace is found in a non-module file:</p>
+<pre><code class="language-ts">// @errors: 1277
+// @isolatedModules
+namespace Instantiated {
+ export const x = 1;
+}
+</code></pre>
+<p>This restriction doesn't apply to <code>.d.ts</code> files.</p>
+<h4>References to <code>const enum</code> members</h4>
+<p>In TypeScript, when you reference a <code>const enum</code> member, the reference is replaced by its actual value in the emitted JavaScript. Changing this TypeScript:</p>
+<pre><code class="language-ts">declare const enum Numbers {
+  Zero = 0,
+  One = 1,
+}
+console.log(Numbers.Zero + Numbers.One);
+</code></pre>
+<p>To this JavaScript:</p>
+<pre><code class="language-ts">// @showEmit
+// @removeComments
+declare const enum Numbers {
+  Zero = 0,
+  One = 1,
+}
+console.log(Numbers.Zero + Numbers.One);
+</code></pre>
+<p>Without knowledge of the values of these members, other transpilers can't replace the references to <code>Numbers</code>, which would be a runtime error if left alone (since there are no <code>Numbers</code> object at runtime).
+Because of this, when <code>isolatedModules</code> is set, it is an error to reference an ambient <code>const enum</code> member.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1243,8 +2270,31 @@
     <span class="property-name">sourceMap</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Create source map files for emitted JavaScript files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#sourceMap</p>
+  <div class="desc-html"><p>Enables the generation of <a target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/docs/Tools/Debugger/How_to/Use_a_source_map">sourcemap files</a>.
+These files allow debuggers and other tools to display the original TypeScript source code when actually working with the emitted JavaScript files.
+Source map files are emitted as <code>.js.map</code> (or <code>.jsx.map</code>) files next to the corresponding <code>.js</code> output file.</p>
+<p>The <code>.js</code> files will in turn contain a sourcemap comment to indicate where the files are to external tools, for example:</p>
+<pre><code class="language-ts">// helloWorld.ts
+export declare const helloWorld = "hi";
+</code></pre>
+<p>Compiling with <code>sourceMap</code> set to <code>true</code> creates the following JavaScript file:</p>
+<pre><code class="language-js">// helloWorld.js
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helloWorld = "hi";
+//# sourceMappingURL=// helloWorld.js.map
+</code></pre>
+<p>And this also generates this json map:</p>
+<pre><code class="language-json">// helloWorld.js.map
+{
+  "version": 3,
+  "file": "ex.js",
+  "sourceRoot": "",
+  "sources": ["../ex.ts"],
+  "names": [],
+  "mappings": ";;AAAa,QAAA,UAAU,GAAG,IAAI,CAAA"
+}
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1256,8 +2306,16 @@
     <span class="property-name">sourceRoot</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify the root path for debuggers to find the reference source code.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#sourceRoot</p>
+  <div class="desc-html"><p>Specify the location where a debugger should locate TypeScript files instead of relative source locations.
+This string is treated verbatim inside the source-map where you can use a path or a URL:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "sourceMap": true,
+    "sourceRoot": "https://my-website.com/debug/source/"
+  }
+}
+</code></pre>
+<p>Would declare that <code>index.js</code> will have a source file at <code>https://my-website.com/debug/source/index.ts</code>.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1266,8 +2324,13 @@
     <span class="property-name">suppressExcessPropertyErrors</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable reporting of excess property errors during the creation of object literals.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#suppressExcessPropertyErrors</p>
+  <div class="desc-html"><p>This disables reporting of excess property errors, such as the one shown in the following example:</p>
+<pre><code class="language-ts">// @errors: 2322
+type Point = { x: number; y: number };
+const p: Point = { x: 1, y: 3, m: 10 };
+</code></pre>
+<p>This flag was added to help people migrate to the stricter checking of new object literals in <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/release-notes/typescript-1-6.html#stricter-object-literal-assignment-checks">TypeScript 1.6</a>.</p>
+<p>We don't recommend using this flag in a modern codebase, you can suppress one-off cases where you need it using <code>// @ts-ignore</code>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1279,8 +2342,21 @@
     <span class="property-name">suppressImplicitAnyIndexErrors</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Suppress <code>noImplicitAny</code> errors when indexing objects that lack index signatures.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#suppressImplicitAnyIndexErrors</p>
+  <div class="desc-html"><p>Turning <code>suppressImplicitAnyIndexErrors</code> on suppresses reporting the error about implicit anys when indexing into objects, as shown in the following example:</p>
+<pre><code class="language-ts">// @noImplicitAny: true
+// @suppressImplicitAnyIndexErrors: false
+// @strict: true
+// @errors: 7053
+const obj = { x: 10 };
+console.log(obj["foo"]);
+</code></pre>
+<p>Using <code>suppressImplicitAnyIndexErrors</code> is quite a drastic approach. It is recommended to use a <code>@ts-ignore</code> comment instead:</p>
+<pre><code class="language-ts">// @noImplicitAny: true
+// @strict: true
+const obj = { x: 10 };
+// @ts-ignore
+console.log(obj["foo"]);
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1292,8 +2368,52 @@
     <span class="property-name">stripInternal</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable emitting declarations that have <code>@internal</code> in their JSDoc comments.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#stripInternal</p>
+  <div class="desc-html"><p>Do not emit declarations for code that has an <code>@internal</code> annotation in its JSDoc comment.
+This is an internal compiler option; use at your own risk, because the compiler does not check that the result is valid.
+If you are searching for a tool to handle additional levels of visibility within your <code>d.ts</code> files, look at <a target="_blank" rel="noopener noreferrer" href="https://api-extractor.com/">api-extractor</a>.</p>
+<pre><code class="language-ts">/**
+ * Days available in a week
+ * @internal
+ */
+export const daysInAWeek = 7;
+
+/** Calculate how much someone earns in a week */
+export function weeklySalary(dayRate: number) {
+  return daysInAWeek * dayRate;
+}
+</code></pre>
+<p>With the flag set to <code>false</code> (default):</p>
+<pre><code class="language-ts">// @showEmittedFile: index.d.ts
+// @showEmit
+// @declaration
+/**
+ * Days available in a week
+ * @internal
+ */
+export const daysInAWeek = 7;
+
+/** Calculate how much someone earns in a week */
+export function weeklySalary(dayRate: number) {
+  return daysInAWeek * dayRate;
+}
+</code></pre>
+<p>With <code>stripInternal</code> set to <code>true</code> the <code>d.ts</code> emitted will be redacted.</p>
+<pre><code class="language-ts">// @stripinternal
+// @showEmittedFile: index.d.ts
+// @showEmit
+// @declaration
+/**
+ * Days available in a week
+ * @internal
+ */
+export const daysInAWeek = 7;
+
+/** Calculate how much someone earns in a week */
+export function weeklySalary(dayRate: number) {
+  return daysInAWeek * dayRate;
+}
+</code></pre>
+<p>The JavaScript output is still the same.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1302,8 +2422,15 @@
     <span class="property-name">target</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Set the JavaScript language version for emitted JavaScript and include compatible library declarations.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#target</p>
+  <div class="desc-html"><p>Modern browsers support all ES6 features, so <code>ES6</code> is a good choice.
+You might choose to set a lower target if your code is deployed to older environments, or a higher target if your code is guaranteed to run in newer environments.</p>
+<p>The <code>target</code> setting changes which JS features are downleveled and which are left intact.
+For example, an arrow function <code>() =&gt; this</code> will be turned into an equivalent <code>function</code> expression if <code>target</code> is ES5 or lower.</p>
+<p>Changing <code>target</code> also changes the default value of <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#lib"><code>lib</code></a>.
+You may "mix and match" <code>target</code> and <code>lib</code> settings as desired, but you could just set <code>target</code> for convenience.</p>
+<p>For developer platforms like Node there are baselines for the <code>target</code>, depending on the type of platform and its version. You can find a set of community organized TSConfigs at <a target="_blank" rel="noopener noreferrer" href="https://github.com/tsconfig/bases#centralized-recommendations-for-tsconfig-bases">tsconfig/bases</a>, which has configurations for common platforms and their versions.</p>
+<p>The special <code>ESNext</code> value refers to the highest version your version of TypeScript supports.
+This setting should be used with caution, since it doesn't mean the same thing between different TypeScript versions and can make upgrades less predictable.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;es5&quot;</code>
@@ -1322,8 +2449,19 @@
     <span class="property-name">useUnknownInCatchVariables</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Default catch clause variables as <code>unknown</code> instead of <code>any</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#useUnknownInCatchVariables</p>
+  <div class="desc-html"><p>In TypeScript 4.0, support was added to allow changing the type of the variable in a catch clause from <code>any</code> to <code>unknown</code>. Allowing for code like:</p>
+<pre><code class="language-ts">// @useUnknownInCatchVariables
+try {
+  // ...
+} catch (err: unknown) {
+  // We have to verify err is an
+  // error before using it as one.
+  if (err instanceof Error) {
+    console.log(err.message);
+  }
+}
+</code></pre>
+<p>This pattern ensures that error handling code becomes more comprehensive because you cannot guarantee that the object being thrown <em>is</em> a Error subclass ahead of time. With the flag <code>useUnknownInCatchVariables</code> enabled, then you do not need the additional syntax (<code>: unknown</code>) nor a linter rule to try enforce this behavior.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1383,8 +2521,10 @@
     <span class="property-name">experimentalDecorators</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable experimental support for legacy experimental decorators.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#experimentalDecorators</p>
+  <div class="desc-html"><p>Enables <a target="_blank" rel="noopener noreferrer" href="https://github.com/tc39/proposal-decorators">experimental support for decorators</a>, which is a version of decorators that predates the TC39 standardization process.</p>
+<p>Decorators are a language feature which hasn't yet been fully ratified into the JavaScript specification.
+This means that the implementation version in TypeScript may differ from the implementation in JavaScript when it is decided by TC39.</p>
+<p>You can find out more about decorator support in TypeScript in <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/decorators.html">the handbook</a>.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1393,8 +2533,61 @@
     <span class="property-name">emitDecoratorMetadata</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Emit design-type metadata for decorated declarations in source files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#emitDecoratorMetadata</p>
+  <div class="desc-html"><p>Enables experimental support for emitting type metadata for decorators which works with the module <a target="_blank" rel="noopener noreferrer" href="https://www.npmjs.com/package/reflect-metadata"><code>reflect-metadata</code></a>.</p>
+<p>For example, here is the TypeScript</p>
+<pre><code class="language-ts">// @experimentalDecorators
+function LogMethod(target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+  console.log(target);
+  console.log(propertyKey);
+  console.log(descriptor);
+}
+
+class Demo {
+  @LogMethod
+  public foo(bar: number) {
+    // do nothing
+  }
+}
+
+const demo = new Demo();
+</code></pre>
+<p>With <code>emitDecoratorMetadata</code> not set to true (default) the emitted JavaScript is:</p>
+<pre><code class="language-ts">// @experimentalDecorators
+// @showEmit
+function LogMethod(target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+  console.log(target);
+  console.log(propertyKey);
+  console.log(descriptor);
+}
+
+class Demo {
+  @LogMethod
+  public foo(bar: number) {
+    // do nothing
+  }
+}
+
+const demo = new Demo();
+</code></pre>
+<p>With <code>emitDecoratorMetadata</code> set to true the emitted JavaScript is:</p>
+<pre><code class="language-ts">// @experimentalDecorators
+// @showEmit
+// @emitDecoratorMetadata
+function LogMethod(target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+  console.log(target);
+  console.log(propertyKey);
+  console.log(descriptor);
+}
+
+class Demo {
+  @LogMethod
+  public foo(bar: number) {
+    // do nothing
+  }
+}
+
+const demo = new Demo();
+</code></pre>
 </div>
        </div>    <div
   class="property-item"
@@ -1403,8 +2596,22 @@
     <span class="property-name">allowUnusedLabels</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable error reporting for unused labels.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#allowUnusedLabels</p>
+  <div class="desc-html"><p>When:</p>
+<ul>
+<li><code>undefined</code> (default) provide suggestions as warnings to editors</li>
+<li><code>true</code> unused labels are ignored</li>
+<li><code>false</code> raises compiler errors about unused labels</li>
+</ul>
+<p>Labels are very rare in JavaScript and typically indicate an attempt to write an object literal:</p>
+<pre><code class="language-ts">// @errors: 7028
+// @allowUnusedLabels: false
+function verifyAge(age: number) {
+  // Forgot 'return' statement
+  if (age &gt; 18) {
+    verified: true;
+  }
+}
+</code></pre>
 </div>
        </div>    <div
   class="property-item"
@@ -1413,8 +2620,16 @@
     <span class="property-name">noImplicitReturns</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable error reporting for codepaths that do not explicitly return in a function.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noImplicitReturns</p>
+  <div class="desc-html"><p>When enabled, TypeScript will check all code paths in a function to ensure they return a value.</p>
+<pre><code class="language-ts">// @errors: 2366 2322
+function lookupHeadphonesManufacturer(color: "blue" | "black"): string {
+  if (color === "blue") {
+    return "beats";
+  } else {
+    "bose";
+  }
+}
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1426,8 +2641,49 @@
     <span class="property-name">noUncheckedIndexedAccess</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Add <code>undefined</code> to a type when accessed using an index.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess</p>
+  <div class="desc-html"><p>TypeScript has a way to describe objects which have unknown keys but known values on an object, via index signatures.</p>
+<pre><code class="language-ts">interface EnvironmentVars {
+  NAME: string;
+  OS: string;
+
+  // Unknown properties are covered by this index signature.
+  [propName: string]: string;
+}
+
+declare const env: EnvironmentVars;
+
+// Declared as existing
+const sysName = env.NAME;
+const os = env.OS;
+//    ^?
+
+// Not declared, but because of the index
+// signature, then it is considered a string
+const nodeEnv = env.NODE_ENV;
+//    ^?
+</code></pre>
+<p>Turning on <code>noUncheckedIndexedAccess</code> will add <code>undefined</code> to any un-declared field in the type.</p>
+<pre><code class="language-ts">interface EnvironmentVars {
+  NAME: string;
+  OS: string;
+
+  // Unknown properties are covered by this index signature.
+  [propName: string]: string;
+}
+// @noUncheckedIndexedAccess
+// ---cut---
+declare const env: EnvironmentVars;
+
+// Declared as existing
+const sysName = env.NAME;
+const os = env.OS;
+//    ^?
+
+// Not declared, but because of the index
+// signature, then it is considered a string
+const nodeEnv = env.NODE_ENV;
+//    ^?
+</code></pre>
 </div>
        </div>    <div
   class="property-item"
@@ -1436,8 +2692,21 @@
     <span class="property-name">noFallthroughCasesInSwitch</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable error reporting for fallthrough cases in switch statements.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noFallthroughCasesInSwitch</p>
+  <div class="desc-html"><p>Report errors for fallthrough cases in switch statements.
+Ensures that any non-empty case inside a switch statement includes either <code>break</code>, <code>return</code>, or <code>throw</code>.
+This means you won't accidentally ship a case fallthrough bug.</p>
+<pre><code class="language-ts">// @noFallthroughCasesInSwitch
+// @errors: 7029
+const a: number = 6;
+
+switch (a) {
+  case 0:
+    console.log("even");
+  case 1:
+    console.log("odd");
+    break;
+}
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1449,8 +2718,56 @@
     <span class="property-name">noImplicitOverride</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Ensure overriding members in derived classes are marked with an override modifier.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noImplicitOverride</p>
+  <div class="desc-html"><p>When working with classes which use inheritance, it's possible for a sub-class to get "out of sync" with the functions it overloads when they are renamed in the base class.</p>
+<p>For example, imagine you are modeling a music album syncing system:</p>
+<pre><code class="language-ts">class Album {
+  download() {
+    // Default behavior
+  }
+}
+
+class SharedAlbum extends Album {
+  download() {
+    // Override to get info from many sources
+  }
+}
+</code></pre>
+<p>Then when you add support for machine-learning generated playlists, you refactor the <code>Album</code> class to have a 'setup' function instead:</p>
+<pre><code class="language-ts">class Album {
+  setup() {
+    // Default behavior
+  }
+}
+
+class MLAlbum extends Album {
+  setup() {
+    // Override to get info from algorithm
+  }
+}
+
+class SharedAlbum extends Album {
+  download() {
+    // Override to get info from many sources
+  }
+}
+</code></pre>
+<p>In this case, TypeScript has provided no warning that <code>download</code> on <code>SharedAlbum</code> <em>expected</em> to override a function in the base class.</p>
+<p>Using <code>noImplicitOverride</code> you can ensure that the sub-classes never go out of sync, by ensuring that functions which override include the keyword <code>override</code>.</p>
+<p>The following example has <code>noImplicitOverride</code> enabled, and you can see the error received when <code>override</code> is missing:</p>
+<pre><code class="language-ts">// @noImplicitOverride
+// @errors: 4114
+class Album {
+  setup() {}
+}
+
+class MLAlbum extends Album {
+  override setup() {}
+}
+
+class SharedAlbum extends Album {
+  setup() {}
+}
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1462,8 +2779,35 @@
     <span class="property-name">allowUnreachableCode</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable error reporting for unreachable code.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#allowUnreachableCode</p>
+  <div class="desc-html"><p>When:</p>
+<ul>
+<li><code>undefined</code> (default) provide suggestions as warnings to editors</li>
+<li><code>true</code> unreachable code is ignored</li>
+<li><code>false</code> raises compiler errors about unreachable code</li>
+</ul>
+<p>These warnings are only about code which is provably unreachable due to the use of JavaScript syntax, for example:</p>
+<pre><code class="language-ts">function fn(n: number) {
+  if (n &gt; 5) {
+    return true;
+  } else {
+    return false;
+  }
+  return true;
+}
+</code></pre>
+<p>With <code>"allowUnreachableCode": false</code>:</p>
+<pre><code class="language-ts">// @errors: 7027
+// @allowUnreachableCode: false
+function fn(n: number) {
+  if (n &gt; 5) {
+    return true;
+  } else {
+    return false;
+  }
+  return true;
+}
+</code></pre>
+<p>This does not affect errors on the basis of code which <em>appears</em> to be unreachable due to type analysis.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1472,8 +2816,10 @@
     <span class="property-name">forceConsistentCasingInFileNames</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Ensure that casing is correct in imports.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#forceConsistentCasingInFileNames</p>
+  <div class="desc-html"><p>TypeScript follows the case sensitivity rules of the file system it's running on.
+This can be problematic if some developers are working in a case-sensitive file system and others aren't.
+If a file attempts to import <code>fileManager.ts</code> by specifying <code>./FileManager.ts</code> the file will be found in a case-insensitive file system, but not on a case-sensitive file system.</p>
+<p>When this option is set, TypeScript will issue an error if a program tries to include a file by a casing different from the casing on disk.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>true</code>
@@ -1485,8 +2831,12 @@
     <span class="property-name">generateCpuProfile</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Emit a v8 CPU profile of the compiler run for debugging.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#generateCpuProfile</p>
+  <div class="desc-html"><p>This option gives you the chance to have TypeScript emit a v8 CPU profile during the compiler run. The CPU profile can provide insight into why your builds may be slow.</p>
+<p>This option can only be used from the CLI via: <code>--generateCpuProfile tsc-output.cpuprofile</code>.</p>
+<pre><code class="language-sh">npm run tsc --generateCpuProfile tsc-output.cpuprofile
+</code></pre>
+<p>This file can be opened in a chromium based browser like Chrome or Edge Developer in <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/web/tools/chrome-devtools/rendering-tools/js-execution">the CPU profiler</a> section.
+You can learn more about understanding the compilers performance in the <a target="_blank" rel="noopener noreferrer" href="https://github.com/microsoft/TypeScript/wiki/Performance">TypeScript wiki section on performance</a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;profile.cpuprofile&quot;</code>
@@ -1498,8 +2848,20 @@
     <span class="property-name">baseUrl</span>
     <span class="type-badge">string | null</span>
    </div>
-  <div class="desc-html"><p>Specify the base directory to resolve non-relative module names.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#baseUrl</p>
+  <div class="desc-html"><p>Sets a base directory from which to resolve bare specifier module names. For example, in the directory structure:</p>
+<pre><code>project
+├── ex.ts
+├── hello
+│   └── world.ts
+└── tsconfig.json
+</code></pre>
+<p>With <code>"baseUrl": "./"</code>, TypeScript will look for files starting at the same folder as the <code>tsconfig.json</code>:</p>
+<pre><code class="language-ts">import { helloWorld } from "hello/world";
+
+console.log(helloWorld);
+</code></pre>
+<p>This resolution has higher priority than lookups from <code>node_modules</code>.</p>
+<p>This feature was designed for use in conjunction with AMD module loaders in the browser, and is not recommended in any other context. As of TypeScript 4.1, <code>baseUrl</code> is no longer required to be set when using <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#paths"><code>paths</code></a>.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1510,8 +2872,32 @@
       >Record&lt;string, array | null&gt;</span
     >
    </div>
-  <div class="desc-html"><p>Specify a set of entries that re-map imports to additional lookup locations.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#paths</p>
+  <div class="desc-html"><p>A series of entries which re-map imports to lookup locations relative to the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#baseUrl"><code>baseUrl</code></a> if set, or to the tsconfig file itself otherwise. There is a larger coverage of <code>paths</code> in <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/modules/reference.html#paths">the <code>moduleResolution</code> reference page</a>.</p>
+<p><code>paths</code> lets you declare how TypeScript should resolve an import in your <code>require</code>/<code>import</code>s.</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "paths": {
+      "jquery": ["./vendor/jquery/dist/jquery"]
+    }
+  }
+}
+</code></pre>
+<p>This would allow you to be able to write <code>import "jquery"</code>, and get all of the correct typing locally.</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "paths": {
+        "app/*": ["./src/app/*"],
+        "config/*": ["./src/app/_config/*"],
+        "environment/*": ["./src/environments/*"],
+        "shared/*": ["./src/app/_shared/*"],
+        "helpers/*": ["./src/helpers/*"],
+        "tests/*": ["./src/tests/*"]
+    }
+  }
+}
+</code></pre>
+<p>In this case, you can tell the TypeScript file resolver to support a number of custom prefixes to find code.</p>
+<p>Note that this feature does not change how import paths are emitted by <code>tsc</code>, so <code>paths</code> should only be used to inform TypeScript that another tool has this mapping and will use it at runtime or when bundling.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1520,8 +2906,16 @@
     <span class="property-name">plugins</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Specify a list of language service plugins to include.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#plugins</p>
+  <div class="desc-html"><p>List of language service plugins to run inside the editor.</p>
+<p>Language service plugins are a way to provide additional information to a user based on existing TypeScript files. They can enhance existing messages between TypeScript and an editor, or to provide their own error messages.</p>
+<p>For example:</p>
+<ul>
+<li><a target="_blank" rel="noopener noreferrer" href="https://github.com/xialvjun/ts-sql-plugin#readme">ts-sql-plugin</a> — Adds SQL linting with a template strings SQL builder.</li>
+<li><a target="_blank" rel="noopener noreferrer" href="https://github.com/Microsoft/typescript-styled-plugin">typescript-styled-plugin</a> — Provides CSS linting inside template strings .</li>
+<li><a target="_blank" rel="noopener noreferrer" href="https://github.com/Quramy/typescript-eslint-language-service">typescript-eslint-language-service</a> — Provides eslint error messaging and fix-its inside the compiler's output.</li>
+<li><a target="_blank" rel="noopener noreferrer" href="https://github.com/Quramy/ts-graphql-plugin">ts-graphql-plugin</a> — Provides validation and auto-completion inside GraphQL query template strings.</li>
+</ul>
+<p>VS Code has the ability for a extension to <a target="_blank" rel="noopener noreferrer" href="https://code.visualstudio.com/api/references/contribution-points#contributes.typescriptServerPlugins">automatically include language service plugins</a>, and so you may have some running in your editor without needing to define them in your <code>tsconfig.json</code>.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1530,8 +2924,53 @@
     <span class="property-name">rootDirs</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Allow multiple folders to be treated as one when resolving modules.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#rootDirs</p>
+  <div class="desc-html"><p>Using <code>rootDirs</code>, you can inform the compiler that there are many "virtual" directories acting as a single root.
+This allows the compiler to resolve relative module imports within these "virtual" directories, as if they were merged in to one directory.</p>
+<p>For example:</p>
+<pre><code> src
+ └── views
+     └── view1.ts (can import "./template1", "./view2`)
+     └── view2.ts (can import "./template1", "./view1`)
+
+ generated
+ └── templates
+         └── views
+             └── template1.ts (can import "./view1", "./view2")
+</code></pre>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "rootDirs": ["src/views", "generated/templates/views"]
+  }
+}
+</code></pre>
+<p>This does not affect how TypeScript emits JavaScript, it only emulates the assumption that they will be able to
+work via those relative paths at runtime.</p>
+<p><code>rootDirs</code> can be used to provide a separate "type layer" to files that are not TypeScript or JavaScript by providing a home for generated <code>.d.ts</code> files in another folder. This technique is useful for bundled applications where you use <code>import</code> of files that aren't necessarily code:</p>
+<pre><code class="language-sh"> src
+ └── index.ts
+ └── css
+     └── main.css
+     └── navigation.css
+
+ generated
+ └── css
+     └── main.css.d.ts
+     └── navigation.css.d.ts
+</code></pre>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "rootDirs": ["src", "generated"]
+  }
+}
+</code></pre>
+<p>This technique lets you generate types ahead of time for the non-code source files. Imports then work naturally based off the source file's location.
+For example <code>./src/index.ts</code> can import the file <code>./src/css/main.css</code> and TypeScript will be aware of the bundler's behavior for that filetype via the corresponding generated declaration file.</p>
+<pre><code class="language-ts">// @filename: main.css.d.ts
+export const appClass = "mainClassF3EC2";
+// ---cut---
+// @filename: index.ts
+import { appClass } from "./main.css";
+</code></pre>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -1544,8 +2983,18 @@
     <span class="property-name">typeRoots</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Specify multiple folders that act like <code>./node_modules/@types</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#typeRoots</p>
+  <div class="desc-html"><p>By default all <em>visible</em> "<code>@types</code>" packages are included in your compilation.
+Packages in <code>node_modules/@types</code> of any enclosing folder are considered <em>visible</em>.
+For example, that means packages within <code>./node_modules/@types/</code>, <code>../node_modules/@types/</code>, <code>../../node_modules/@types/</code>, and so on.</p>
+<p>If <code>typeRoots</code> is specified, <em>only</em> packages under <code>typeRoots</code> will be included. For example:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "typeRoots": ["./typings", "./vendor/types"]
+  }
+}
+</code></pre>
+<p>This config file will include <em>all</em> packages under <code>./typings</code> and <code>./vendor/types</code>, and no packages from <code>./node_modules/@types</code>.
+All paths are relative to the <code>tsconfig.json</code>.</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -1558,8 +3007,31 @@
     <span class="property-name">types</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Specify type package names to be included without being referenced in a source file.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#types</p>
+  <div class="desc-html"><p>By default all <em>visible</em> "<code>@types</code>" packages are included in your compilation.
+Packages in <code>node_modules/@types</code> of any enclosing folder are considered <em>visible</em>.
+For example, that means packages within <code>./node_modules/@types/</code>, <code>../node_modules/@types/</code>, <code>../../node_modules/@types/</code>, and so on.</p>
+<p>If <code>types</code> is specified, only packages listed will be included in the global scope. For instance:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "types": ["node", "jest", "express"]
+  }
+}
+</code></pre>
+<p>This <code>tsconfig.json</code> file will <em>only</em> include <code>./node_modules/@types/node</code>, <code>./node_modules/@types/jest</code> and <code>./node_modules/@types/express</code>.
+Other packages under <code>node_modules/@types/*</code> will not be included.</p>
+<h3>What does this affect?</h3>
+<p>This option does not affect how <code>@types/*</code> are included in your application code, for example if you had the above <code>compilerOptions</code> example with code like:</p>
+<pre><code class="language-ts">import * as moment from "moment";
+
+moment().format("MMMM Do YYYY, h:mm:ss a");
+</code></pre>
+<p>The <code>moment</code> import would be fully typed.</p>
+<p>When you have this option set, by not including a module in the <code>types</code> array it:</p>
+<ul>
+<li>Will not add globals to your project (e.g <code>process</code> in node, or <code>expect</code> in Jest)</li>
+<li>Will not have exports appear as auto-import recommendations</li>
+</ul>
+<p>This feature differs from <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#typeRoots"><code>typeRoots</code></a> in that it is about specifying only the exact types you want included, whereas <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#typeRoots"><code>typeRoots</code></a> supports saying you want particular folders.</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -1572,8 +3044,7 @@
     <span class="property-name">traceResolution</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Log paths used during the <code>moduleResolution</code> process.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#traceResolution</p>
+  <div class="desc-html"><p>Enable tracing of the name resolution process. Requires TypeScript version 2.0 or later.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1585,8 +3056,32 @@
     <span class="property-name">allowJs</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Allow JavaScript files to be a part of your program. Use the <code>checkJs</code> option to get errors from these files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#allowJs</p>
+  <div class="desc-html"><p>Allow JavaScript files to be imported inside your project, instead of just <code>.ts</code> and <code>.tsx</code> files. For example, this JS file:</p>
+<pre><code class="language-js">// @filename: card.js
+export const defaultCardDeck = "Heart";
+</code></pre>
+<p>When imported into a TypeScript file will raise an error:</p>
+<pre><code class="language-ts">// @errors: 2307
+// @filename: card.js
+module.exports.defaultCardDeck = "Heart";
+// ---cut---
+// @filename: index.ts
+import { defaultCardDeck } from "./card";
+
+console.log(defaultCardDeck);
+</code></pre>
+<p>Imports fine with <code>allowJs</code> enabled:</p>
+<pre><code class="language-ts">// @filename: card.js
+module.exports.defaultCardDeck = "Heart";
+// ---cut---
+// @allowJs
+// @filename: index.ts
+import { defaultCardDeck } from "./card";
+
+console.log(defaultCardDeck);
+</code></pre>
+<p>This flag can be used as a way to incrementally add TypeScript files into JS projects by allowing the <code>.ts</code> and <code>.tsx</code> files to live along-side existing JavaScript files.</p>
+<p>It can also be used along-side <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#declaration"><code>declaration</code></a> and <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#emitDeclarationOnly"><code>emitDeclarationOnly</code></a> to <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/declaration-files/dts-from-js.html">create declarations for JS files</a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1598,8 +3093,40 @@
     <span class="property-name">noErrorTruncation</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable truncating types in error messages.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noErrorTruncation</p>
+  <div class="desc-html"><p>Do not truncate error messages.</p>
+<p>With <code>false</code>, the default.</p>
+<pre><code class="language-ts">// @errors: 2322 2454
+var x: {
+  propertyWithAnExceedinglyLongName1: string;
+  propertyWithAnExceedinglyLongName2: string;
+  propertyWithAnExceedinglyLongName3: string;
+  propertyWithAnExceedinglyLongName4: string;
+  propertyWithAnExceedinglyLongName5: string;
+  propertyWithAnExceedinglyLongName6: string;
+  propertyWithAnExceedinglyLongName7: string;
+  propertyWithAnExceedinglyLongName8: string;
+};
+
+// String representation of type of 'x' should be truncated in error message
+var s: string = x;
+</code></pre>
+<p>With <code>true</code></p>
+<pre><code class="language-ts">// @errors: 2322 2454
+// @noErrorTruncation: true
+var x: {
+  propertyWithAnExceedinglyLongName1: string;
+  propertyWithAnExceedinglyLongName2: string;
+  propertyWithAnExceedinglyLongName3: string;
+  propertyWithAnExceedinglyLongName4: string;
+  propertyWithAnExceedinglyLongName5: string;
+  propertyWithAnExceedinglyLongName6: string;
+  propertyWithAnExceedinglyLongName7: string;
+  propertyWithAnExceedinglyLongName8: string;
+};
+
+// String representation of type of 'x' should be truncated in error message
+var s: string = x;
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1611,8 +3138,44 @@
     <span class="property-name">allowSyntheticDefaultImports</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Allow <code>import x from y</code> when a module doesn't have a default export.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#allowSyntheticDefaultImports</p>
+  <div class="desc-html"><p>When set to true, <code>allowSyntheticDefaultImports</code> allows you to write an import like:</p>
+<pre><code class="language-ts">import React from "react";
+</code></pre>
+<p>instead of:</p>
+<pre><code class="language-ts">import * as React from "react";
+</code></pre>
+<p>When the module <strong>does not</strong> explicitly specify a default export.</p>
+<p>For example, without <code>allowSyntheticDefaultImports</code> as true:</p>
+<pre><code class="language-ts">// @errors: 1259 1192
+// @checkJs
+// @allowJs
+// @esModuleInterop: false
+// @filename: utilFunctions.js
+// @noImplicitAny: false
+const getStringLength = (str) =&gt; str.length;
+
+module.exports = {
+  getStringLength,
+};
+
+// @filename: index.ts
+import utils from "./utilFunctions";
+
+const count = utils.getStringLength("Check JS");
+</code></pre>
+<p>This code raises an error because there isn't a <code>default</code> object which you can import. Even though it feels like it should.
+For convenience, transpilers like Babel will automatically create a default if one isn't created. Making the module look a bit more like:</p>
+<pre><code class="language-js">// @filename: utilFunctions.js
+const getStringLength = (str) =&gt; str.length;
+const allFunctions = {
+  getStringLength,
+};
+
+module.exports = allFunctions;
+module.exports.default = allFunctions;
+</code></pre>
+<p>This flag does not affect the JavaScript emitted by TypeScript, it's only for the type checking.
+This option brings the behavior of TypeScript in-line with Babel, where extra code is emitted to make using a default export of a module more ergonomic.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1621,8 +3184,8 @@
     <span class="property-name">noImplicitUseStrict</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable adding <code>use strict</code> directives in emitted JavaScript files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noImplicitUseStrict</p>
+  <div class="desc-html"><p>You shouldn't need this. By default, when emitting a module file to a non-ES6 target, TypeScript emits a <code>"use strict";</code> prologue at the top of the file.
+This setting disables the prologue.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1634,8 +3197,33 @@
     <span class="property-name">listEmittedFiles</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Print the names of emitted files after a compilation.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#listEmittedFiles</p>
+  <div class="desc-html"><p>Print names of generated files part of the compilation to the terminal.</p>
+<p>This flag is useful in two cases:</p>
+<ul>
+<li>You want to transpile TypeScript as a part of a build chain in the terminal where the filenames are processed in the next command.</li>
+<li>You are not sure that TypeScript has included a file you expected, as a part of debugging the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#Project_Files_0">file inclusion settings</a>.</li>
+</ul>
+<p>For example:</p>
+<pre><code>example
+├── index.ts
+├── package.json
+└── tsconfig.json
+</code></pre>
+<p>With:</p>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "declaration": true,
+    "listEmittedFiles": true
+  }
+}
+</code></pre>
+<p>Would echo paths like:</p>
+<pre><code>$ npm run tsc
+
+path/to/example/index.js
+path/to/example/index.d.ts
+</code></pre>
+<p>Normally, TypeScript would return silently on success.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1647,8 +3235,7 @@
     <span class="property-name">disableSizeLimit</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Remove the 20mb cap on total source code size for JavaScript files in the TypeScript language server.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#disableSizeLimit</p>
+  <div class="desc-html"><p>To avoid a possible memory bloat issues when working with very large JavaScript projects, there is an upper limit to the amount of memory TypeScript will allocate. Turning this flag on will remove the limit.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1660,8 +3247,70 @@
     <span class="property-name">lib</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Specify a set of bundled library declaration files that describe the target runtime environment.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#lib</p>
+  <div class="desc-html"><p>TypeScript includes a default set of type definitions for built-in JS APIs (like <code>Math</code>), as well as type definitions for things found in browser environments (like <code>document</code>).
+TypeScript also includes APIs for newer JS features matching the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#target"><code>target</code></a> you specify; for example the definition for <code>Map</code> is available if <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#target"><code>target</code></a> is <code>ES6</code> or newer.</p>
+<p>You may want to change these for a few reasons:</p>
+<ul>
+<li>Your program doesn't run in a browser, so you don't want the <code>"dom"</code> type definitions</li>
+<li>Your runtime platform provides certain JavaScript API objects (maybe through polyfills), but doesn't yet support the full syntax of a given ECMAScript version</li>
+<li>You have polyfills or native implementations for some, but not all, of a higher level ECMAScript version</li>
+</ul>
+<p>In TypeScript 4.5, lib files can be overridden by npm modules, find out more <a target="_blank" rel="noopener noreferrer" href="https://devblogs.microsoft.com/typescript/announcing-typescript-4-5-beta/#supporting-lib-from-node_modules">in the blog</a>.</p>
+<h3>High Level libraries</h3>
+<table><thead><tr><th>Name</th><th>Contents</th></tr></thead><tbody>
+<tr><td><code>ES5</code></td><td>Core definitions for all ES5 functionality</td></tr>
+<tr><td><code>ES2015</code></td><td>Additional APIs available in ES2015 (also known as ES6) - <code>array.find</code>, <code>Promise</code>, <code>Proxy</code>, <code>Symbol</code>, <code>Map</code>, <code>Set</code>, <code>Reflect</code>, etc.</td></tr>
+<tr><td><code>ES6</code></td><td>Alias for "ES2015"</td></tr>
+<tr><td><code>ES2016</code></td><td>Additional APIs available in ES2016 - <code>array.include</code>, etc.</td></tr>
+<tr><td><code>ES7</code></td><td>Alias for "ES2016"</td></tr>
+<tr><td><code>ES2017</code></td><td>Additional APIs available in ES2017 - <code>Object.entries</code>, <code>Object.values</code>, <code>Atomics</code>, <code>SharedArrayBuffer</code>, <code>date.formatToParts</code>, typed arrays, etc.</td></tr>
+<tr><td><code>ES2018</code></td><td>Additional APIs available in ES2018 - <code>async</code> iterables, <code>promise.finally</code>, <code>Intl.PluralRules</code>, <code>regexp.groups</code>, etc.</td></tr>
+<tr><td><code>ES2019</code></td><td>Additional APIs available in ES2019 - <code>array.flat</code>, <code>array.flatMap</code>, <code>Object.fromEntries</code>, <code>string.trimStart</code>, <code>string.trimEnd</code>, etc.</td></tr>
+<tr><td><code>ES2020</code></td><td>Additional APIs available in ES2020 - <code>string.matchAll</code>, etc.</td></tr>
+<tr><td><code>ES2021</code></td><td>Additional APIs available in ES2021 - <code>promise.any</code>, <code>string.replaceAll</code> etc.</td></tr>
+<tr><td><code>ES2022</code></td><td>Additional APIs available in ES2022 - <code>array.at</code>, <code>RegExp.hasIndices</code>, etc.</td></tr>
+<tr><td><code>ES2023</code></td><td>Additional APIs available in ES2023 - <code>array.with</code>, <code>array.findLast</code>, <code>array.findLastIndex</code>, <code>array.toSorted</code>, <code>array.toReversed</code>, etc.</td></tr>
+<tr><td><code>ESNext</code></td><td>Additional APIs available in ESNext - This changes as the JavaScript specification evolves</td></tr>
+<tr><td><code>DOM</code></td><td><a target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/docs/Glossary/DOM">DOM</a> definitions - <code>window</code>, <code>document</code>, etc.</td></tr>
+<tr><td><code>WebWorker</code></td><td>APIs available in <a target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/docs/Web/API/Web_Workers_API/Using_web_workers">WebWorker</a> contexts</td></tr>
+<tr><td><code>ScriptHost</code></td><td>APIs for the <a target="_blank" rel="noopener noreferrer" href="https://wikipedia.org/wiki/Windows_Script_Host">Windows Script Hosting System</a></td></tr>
+</tbody></table>
+<h3>Individual library components</h3>
+<table><thead><tr><th>Name</th></tr></thead><tbody>
+<tr><td><code>DOM.Iterable</code></td></tr>
+<tr><td><code>ES2015.Core</code></td></tr>
+<tr><td><code>ES2015.Collection</code></td></tr>
+<tr><td><code>ES2015.Generator</code></td></tr>
+<tr><td><code>ES2015.Iterable</code></td></tr>
+<tr><td><code>ES2015.Promise</code></td></tr>
+<tr><td><code>ES2015.Proxy</code></td></tr>
+<tr><td><code>ES2015.Reflect</code></td></tr>
+<tr><td><code>ES2015.Symbol</code></td></tr>
+<tr><td><code>ES2015.Symbol.WellKnown</code></td></tr>
+<tr><td><code>ES2016.Array.Include</code></td></tr>
+<tr><td><code>ES2017.object</code></td></tr>
+<tr><td><code>ES2017.Intl</code></td></tr>
+<tr><td><code>ES2017.SharedMemory</code></td></tr>
+<tr><td><code>ES2017.String</code></td></tr>
+<tr><td><code>ES2017.TypedArrays</code></td></tr>
+<tr><td><code>ES2018.Intl</code></td></tr>
+<tr><td><code>ES2018.Promise</code></td></tr>
+<tr><td><code>ES2018.RegExp</code></td></tr>
+<tr><td><code>ES2019.Array</code></td></tr>
+<tr><td><code>ES2019.Object</code></td></tr>
+<tr><td><code>ES2019.String</code></td></tr>
+<tr><td><code>ES2019.Symbol</code></td></tr>
+<tr><td><code>ES2020.String</code></td></tr>
+<tr><td><code>ES2020.Symbol.wellknown</code></td></tr>
+<tr><td><code>ES2021.Promise</code></td></tr>
+<tr><td><code>ES2021.String</code></td></tr>
+<tr><td><code>ES2021.WeakRef</code></td></tr>
+<tr><td><code>ESNext.AsyncIterable</code></td></tr>
+<tr><td><code>ESNext.Array</code></td></tr>
+<tr><td><code>ESNext.Intl</code></td></tr>
+<tr><td><code>ESNext.Symbol</code></td></tr>
+</tbody></table>
+<p>This list may be out of date, you can see the full list in the <a target="_blank" rel="noopener noreferrer" href="https://github.com/microsoft/TypeScript/tree/main/src/lib">TypeScript source code</a>.</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"
@@ -1674,8 +3323,19 @@
     <span class="property-name">libReplacement</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable lib replacement.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#libReplacement</p>
+  <div class="desc-html"><p>TypeScript 4.5 introduced the possibility of substituting the default <code>lib</code> files with custom ones.
+All built-in library files would first try to be resolved from packages named <code>@typescript/lib-*</code>.
+For example, you could lock your <code>dom</code> libraries onto a specific version of <a target="_blank" rel="noopener noreferrer" href="https://www.npmjs.com/package/@types/web?activeTab=readme">the <code>@types/web</code> package</a> with the following <code>package.json</code>:</p>
+<pre><code class="language-json">{
+    "devDependencies": {
+       "@typescript/lib-dom": "npm:@types/web@0.0.199"
+     }
+}
+</code></pre>
+<p>When installed, a package called <code>@typescript/lib-dom</code> should exist, and TypeScript would always look there when searching for <code>lib.dom.d.ts</code>.</p>
+<p>The <code>--libReplacement</code> flag allows you to disable this behavior.
+If you're not using any <code>@typescript/lib-*</code> packages, you can now disable those package lookups with <code>--libReplacement false</code>.
+In the future, <code>--libReplacement false</code> may become the default, so if you currently rely on the behavior you should consider explicitly enabling it with <code>--libReplacement true</code>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>true</code>
@@ -1687,8 +3347,20 @@
     <span class="property-name">moduleDetection</span>
     <span class="type-badge">enum</span>
    </div>
-  <div class="desc-html"><p>Control what method is used to detect module-format JS files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#moduleDetection</p>
+  <div class="desc-html"><p>This setting controls how TypeScript determines whether a file is a
+<a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/modules/theory.html#scripts-and-modules-in-javascript">script or a module</a>.</p>
+<p>There are three choices:</p>
+<ul>
+<li>
+<p><code>"auto"</code> (default) - TypeScript will not only look for import and export statements, but it will also check whether the <code>"type"</code> field in a <code>package.json</code> is set to <code>"module"</code> when running with <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#module"><code>module</code></a>: <code>nodenext</code> or <code>node16</code>, and check whether the current file is a JSX file when running under <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#jsx"><code>jsx</code></a>:  <code>react-jsx</code>.</p>
+</li>
+<li>
+<p><code>"legacy"</code> - The same behavior as 4.6 and prior, usings import and export statements to determine whether a file is a module.</p>
+</li>
+<li>
+<p><code>"force"</code> - Ensures that every non-declaration file is treated as a module.</p>
+</li>
+</ul>
 </div>
     <div class="property-meta">
     <span class="meta-label">Values:</span> <code class="enum-value">&quot;auto&quot;</code> <code class="enum-value">&quot;legacy&quot;</code> <code class="enum-value">&quot;force&quot;</code>  </div>
@@ -1699,8 +3371,49 @@
     <span class="property-name">strictNullChecks</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>When type checking, take into account <code>null</code> and <code>undefined</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#strictNullChecks</p>
+  <div class="desc-html"><p>When <code>strictNullChecks</code> is <code>false</code>, <code>null</code> and <code>undefined</code> are effectively ignored by the language.
+This can lead to unexpected errors at runtime.</p>
+<p>When <code>strictNullChecks</code> is <code>true</code>, <code>null</code> and <code>undefined</code> have their own distinct types and you'll get a type error if you try to use them where a concrete value is expected.</p>
+<p>For example with this TypeScript code, <code>users.find</code> has no guarantee that it will actually find a user, but you can
+write code as though it will:</p>
+<pre><code class="language-ts">// @strictNullChecks: false
+// @target: ES2015
+declare const loggedInUsername: string;
+
+const users = [
+  { name: "Oby", age: 12 },
+  { name: "Heera", age: 32 },
+];
+
+const loggedInUser = users.find((u) =&gt; u.name === loggedInUsername);
+console.log(loggedInUser.age);
+</code></pre>
+<p>Setting <code>strictNullChecks</code> to <code>true</code> will raise an error that you have not made a guarantee that the <code>loggedInUser</code> exists before trying to use it.</p>
+<pre><code class="language-ts">// @errors: 2339 2532 18048
+// @target: ES2020
+// @strictNullChecks
+declare const loggedInUsername: string;
+
+const users = [
+  { name: "Oby", age: 12 },
+  { name: "Heera", age: 32 },
+];
+
+const loggedInUser = users.find((u) =&gt; u.name === loggedInUsername);
+console.log(loggedInUser.age);
+</code></pre>
+<p>The second example failed because the array's <code>find</code> function looks a bit like this simplification:</p>
+<pre><code class="language-ts">// When strictNullChecks: true
+type Array = {
+  find(predicate: (value: any, index: number) =&gt; boolean): S | undefined;
+};
+
+// When strictNullChecks: false the undefined is removed from the type system,
+// allowing you to write code which assumes it always found a result
+type Array = {
+  find(predicate: (value: any, index: number) =&gt; boolean): S;
+};
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1712,8 +3425,10 @@
     <span class="property-name">maxNodeModuleJsDepth</span>
     <span class="type-badge">number | null</span>
    </div>
-  <div class="desc-html"><p>Specify the maximum folder depth used for checking JavaScript files from <code>node_modules</code>. Only applicable with <code>allowJs</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#maxNodeModuleJsDepth</p>
+  <div class="desc-html"><p>The maximum dependency depth to search under <code>node_modules</code> and load JavaScript files.</p>
+<p>This flag can only be used when <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#allowJs"><code>allowJs</code></a> is enabled, and is used if you want to have TypeScript infer types for all of the JavaScript inside your <code>node_modules</code>.</p>
+<p>Ideally this should stay at 0 (the default), and <code>d.ts</code> files should be used to explicitly define the shape of modules.
+However, there are cases where you may want to turn this on at the expense of speed and potential accuracy.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>0</code>
@@ -1725,8 +3440,36 @@
     <span class="property-name">importHelpers</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Allow importing helper functions from tslib once per project, instead of including them per-file.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#importHelpers</p>
+  <div class="desc-html"><p>For certain downleveling operations, TypeScript uses some helper code for operations like extending class, spreading arrays or objects, and async operations.
+By default, these helpers are inserted into files which use them.
+This can result in code duplication if the same helper is used in many different modules.</p>
+<p>If the <code>importHelpers</code> flag is on, these helper functions are instead imported from the <a target="_blank" rel="noopener noreferrer" href="https://www.npmjs.com/package/tslib">tslib</a> module.
+You will need to ensure that the <code>tslib</code> module is able to be imported at runtime.
+This only affects modules; global script files will not attempt to import modules.</p>
+<p>For example, with this TypeScript:</p>
+<pre><code class="language-ts">export function fn(arr: number[]) {
+  const arr2 = [1, ...arr];
+}
+</code></pre>
+<p>Turning on <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#downlevelIteration"><code>downlevelIteration</code></a> and <code>importHelpers</code> is still false:</p>
+<pre><code class="language-ts">// @showEmit
+// @target: ES5
+// @downleveliteration
+export function fn(arr: number[]) {
+  const arr2 = [1, ...arr];
+}
+</code></pre>
+<p>Then turning on both <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#downlevelIteration"><code>downlevelIteration</code></a> and <code>importHelpers</code>:</p>
+<pre><code class="language-ts">// @showEmit
+// @target: ES5
+// @downleveliteration
+// @importhelpers
+// @noErrors
+export function fn(arr: number[]) {
+  const arr2 = [1, ...arr];
+}
+</code></pre>
+<p>You can use <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#noEmitHelpers"><code>noEmitHelpers</code></a> when you provide your own implementations of these functions.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1738,8 +3481,20 @@
     <span class="property-name">importsNotUsedAsValues</span>
     <span class="type-badge">enum</span>
    </div>
-  <div class="desc-html"><p>Specify emit/checking behavior for imports that are only used for types.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#importsNotUsedAsValues</p>
+  <div class="desc-html"><p>Deprecated in favor of <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#verbatimModuleSyntax"><code>verbatimModuleSyntax</code></a>.</p>
+<p>This flag controls how <code>import</code> works, there are 3 different options:</p>
+<ul>
+<li>
+<p><code>remove</code>: The default behavior of dropping <code>import</code> statements which only reference types.</p>
+</li>
+<li>
+<p><code>preserve</code>: Preserves all <code>import</code> statements whose values or types are never used. This can cause imports/side-effects to be preserved.</p>
+</li>
+<li>
+<p><code>error</code>: This preserves all imports (the same as the preserve option), but will error when a value import is only used as a type. This might be useful if you want to ensure no values are being accidentally imported, but still make side-effect imports explicit.</p>
+</li>
+</ul>
+<p>This flag works because you can use <code>import type</code> to explicitly create an <code>import</code> statement which should never be emitted into JavaScript.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;remove&quot;</code>
@@ -1753,8 +3508,8 @@
     <span class="property-name">alwaysStrict</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Ensure <code>use strict</code> is always emitted.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#alwaysStrict</p>
+  <div class="desc-html"><p>Ensures that your files are parsed in the ECMAScript strict mode, and emit "use strict" for each source file.</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Strict_mode">ECMAScript strict</a> mode was introduced in ES5 and provides behavior tweaks to the runtime of the JavaScript engine to improve performance, and makes a set of errors throw instead of silently ignoring them.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1763,8 +3518,11 @@
     <span class="property-name">strict</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable all strict type-checking options.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#strict</p>
+  <div class="desc-html"><p>The <code>strict</code> flag enables a wide range of type checking behavior that results in stronger guarantees of program correctness.
+Turning this on is equivalent to enabling all of the <em>strict mode family</em> options, which are outlined below.
+You can then turn off individual strict mode family checks as needed.</p>
+<p>Future versions of TypeScript may introduce additional stricter checking under this flag, so upgrades of TypeScript might result in new type errors in your program.
+When appropriate and possible, a corresponding flag will be added to disable that behavior.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1776,8 +3534,30 @@
     <span class="property-name">strictBindCallApply</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Check that the arguments for <code>bind</code>, <code>call</code>, and <code>apply</code> methods match the original function.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#strictBindCallApply</p>
+  <div class="desc-html"><p>When set, TypeScript will check that the built-in methods of functions <code>call</code>, <code>bind</code>, and <code>apply</code> are invoked with correct argument for the underlying function:</p>
+<pre><code class="language-ts">// @strictBindCallApply: true
+// @errors: 2345
+
+// With strictBindCallApply on
+function fn(x: string) {
+  return parseInt(x);
+}
+
+const n1 = fn.call(undefined, "10");
+
+const n2 = fn.call(undefined, false);
+</code></pre>
+<p>Otherwise, these functions accept any arguments and will return <code>any</code>:</p>
+<pre><code class="language-ts">// @strictBindCallApply: false
+
+// With strictBindCallApply off
+function fn(x: string) {
+  return parseInt(x);
+}
+
+// Note: No error; return type is 'any'
+const n = fn.call(undefined, false);
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1789,8 +3569,73 @@
     <span class="property-name">downlevelIteration</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Emit more compliant, but verbose and less performant JavaScript for iteration.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#downlevelIteration</p>
+  <div class="desc-html"><p>Downleveling is TypeScript's term for transpiling to an older version of JavaScript.
+This flag is to enable support for a more accurate implementation of how modern JavaScript iterates through new concepts in older JavaScript runtimes.</p>
+<p>ECMAScript 6 added several new iteration primitives: the <code>for / of</code> loop (<code>for (el of arr)</code>), Array spread (<code>[a, ...b]</code>), argument spread (<code>fn(...args)</code>), and <code>Symbol.iterator</code>.
+<code>downlevelIteration</code> allows for these iteration primitives to be used more accurately in ES5 environments if a <code>Symbol.iterator</code> implementation is present.</p>
+<h4>Example: Effects on <code>for / of</code></h4>
+<p>With this TypeScript code:</p>
+<pre><code class="language-ts">const str = "Hello!";
+for (const s of str) {
+  console.log(s);
+}
+</code></pre>
+<p>Without <code>downlevelIteration</code> enabled, a <code>for / of</code> loop on any object is downleveled to a traditional <code>for</code> loop:</p>
+<pre><code class="language-ts">// @target: ES5
+// @showEmit
+const str = "Hello!";
+for (const s of str) {
+  console.log(s);
+}
+</code></pre>
+<p>This is often what people expect, but it's not 100% compliant with ECMAScript iteration protocol.
+Certain strings, such as emoji (😜), have a <code>.length</code> of 2 (or even more!), but should iterate as 1 unit in a <code>for-of</code> loop.
+See <a target="_blank" rel="noopener noreferrer" href="https://blog.jonnew.com/posts/poo-dot-length-equals-two">this blog post by Jonathan New</a> for a longer explanation.</p>
+<p>When <code>downlevelIteration</code> is enabled, TypeScript will use a helper function that checks for a <code>Symbol.iterator</code> implementation (either native or polyfill).
+If this implementation is missing, you'll fall back to index-based iteration.</p>
+<pre><code class="language-ts">// @target: ES5
+// @downlevelIteration
+// @showEmit
+const str = "Hello!";
+for (const s of str) {
+  console.log(s);
+}
+</code></pre>
+<p>You can use <a target="_blank" rel="noopener noreferrer" href="https://www.npmjs.com/package/tslib">tslib</a> via <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#importHelpers"><code>importHelpers</code></a> to reduce the amount of inline JavaScript too:</p>
+<pre><code class="language-ts">// @target: ES5
+// @downlevelIteration
+// @importHelpers
+// @showEmit
+const str = "Hello!";
+for (const s of str) {
+  console.log(s);
+}
+</code></pre>
+<p><strong>Note:</strong> enabling <code>downlevelIteration</code> does not improve compliance if <code>Symbol.iterator</code> is not present in the runtime.</p>
+<h4>Example: Effects on Array Spreads</h4>
+<p>This is an array spread:</p>
+<pre><code class="language-js">// Make a new array whose elements are 1 followed by the elements of arr2
+const arr = [1, ...arr2];
+</code></pre>
+<p>Based on the description, it sounds easy to downlevel to ES5:</p>
+<pre><code class="language-js">// The same, right?
+const arr = [1].concat(arr2);
+</code></pre>
+<p>However, this is observably different in certain rare cases.</p>
+<p>For example, if a source array is missing one or more items (contains a hole), the spread syntax will replace each empty item with <code>undefined</code>, whereas <code>.concat</code> will leave them intact.</p>
+<pre><code class="language-js">// Make an array where the element at index 1 is missing
+let arrayWithHole = ['a', , 'c'];
+let spread = [...arrayWithHole];
+let concatenated = [].concat(arrayWithHole);
+
+console.log(arrayWithHole)
+// [ 'a', &lt;1 empty item&gt;, 'c' ]
+console.log(spread)
+// [ 'a', undefined, 'c' ]
+console.log(concatenated)
+// [ 'a', &lt;1 empty item&gt;, 'c' ]
+</code></pre>
+<p>Just as with <code>for / of</code>, <code>downlevelIteration</code> will use <code>Symbol.iterator</code> (if present) to more accurately emulate ES 6 behavior.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1802,8 +3647,32 @@
     <span class="property-name">checkJs</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable error reporting in type-checked JavaScript files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#checkJs</p>
+  <div class="desc-html"><p>Works in tandem with <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#allowJs"><code>allowJs</code></a>. When <code>checkJs</code> is enabled then errors are reported in JavaScript files. This is
+the equivalent of including <code>// @ts-check</code> at the top of all JavaScript files which are included in your project.</p>
+<p>For example, this is incorrect JavaScript according to the <code>parseFloat</code> type definition which comes with TypeScript:</p>
+<pre><code class="language-js">// parseFloat only takes a string
+module.exports.pi = parseFloat(3.142);
+</code></pre>
+<p>When imported into a TypeScript module:</p>
+<pre><code class="language-ts">// @allowJs
+// @filename: constants.js
+module.exports.pi = parseFloat(3.142);
+
+// @filename: index.ts
+import { pi } from "./constants";
+console.log(pi);
+</code></pre>
+<p>You will not get any errors. However, if you turn on <code>checkJs</code> then you will get error messages from the JavaScript file.</p>
+<pre><code class="language-ts">// @errors: 2345
+// @allowjs: true
+// @checkjs: true
+// @filename: constants.js
+module.exports.pi = parseFloat(3.142);
+
+// @filename: index.ts
+import { pi } from "./constants";
+console.log(pi);
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1815,8 +3684,47 @@
     <span class="property-name">strictFunctionTypes</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>When assigning functions, check to ensure parameters and the return values are subtype-compatible.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#strictFunctionTypes</p>
+  <div class="desc-html"><p>When enabled, this flag causes functions parameters to be checked more correctly.</p>
+<p>Here's a basic example with <code>strictFunctionTypes</code> off:</p>
+<pre><code class="language-ts">// @strictFunctionTypes: false
+function fn(x: string) {
+  console.log("Hello, " + x.toLowerCase());
+}
+
+type StringOrNumberFunc = (ns: string | number) =&gt; void;
+
+// Unsafe assignment
+let func: StringOrNumberFunc = fn;
+// Unsafe call - will crash
+func(10);
+</code></pre>
+<p>With <code>strictFunctionTypes</code> <em>on</em>, the error is correctly detected:</p>
+<pre><code class="language-ts">// @errors: 2322
+function fn(x: string) {
+  console.log("Hello, " + x.toLowerCase());
+}
+
+type StringOrNumberFunc = (ns: string | number) =&gt; void;
+
+// Unsafe assignment is prevented
+let func: StringOrNumberFunc = fn;
+</code></pre>
+<p>During development of this feature, we discovered a large number of inherently unsafe class hierarchies, including some in the DOM.
+Because of this, the setting only applies to functions written in <em>function</em> syntax, not to those in <em>method</em> syntax:</p>
+<pre><code class="language-ts">type Methodish = {
+  func(x: string | number): void;
+};
+
+function fn(x: string) {
+  console.log("Hello, " + x.toLowerCase());
+}
+
+// Ultimately an unsafe assignment, but not detected
+const m: Methodish = {
+  func: fn,
+};
+m.func(10);
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1828,8 +3736,28 @@
     <span class="property-name">strictPropertyInitialization</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Check for class properties that are declared but not set in the constructor.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#strictPropertyInitialization</p>
+  <div class="desc-html"><p>When set to true, TypeScript will raise an error when a class property was declared but not set in the constructor.</p>
+<pre><code class="language-ts">// @errors: 2564
+class UserAccount {
+  name: string;
+  accountType = "user";
+
+  email: string;
+  address: string | undefined;
+
+  constructor(name: string) {
+    this.name = name;
+    // Note that this.email is not set
+  }
+}
+</code></pre>
+<p>In the above case:</p>
+<ul>
+<li><code>this.name</code> is set specifically.</li>
+<li><code>this.accountType</code> is set by default.</li>
+<li><code>this.email</code> is not set and raises an error.</li>
+<li><code>this.address</code> is declared as potentially <code>undefined</code> which means it does not have to be set.</li>
+</ul>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1841,8 +3769,68 @@
     <span class="property-name">esModuleInterop</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Emit additional JavaScript to ease support for importing CommonJS modules. This enables <code>allowSyntheticDefaultImports</code> for type compatibility.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#esModuleInterop</p>
+  <div class="desc-html"><p>By default (with <code>esModuleInterop</code> false or not set) TypeScript treats CommonJS/AMD/UMD modules similar to ES6 modules. In doing this, there are two parts in particular which turned out to be flawed assumptions:</p>
+<ul>
+<li>
+<p>a namespace import like <code>import * as moment from "moment"</code> acts the same as <code>const moment = require("moment")</code></p>
+</li>
+<li>
+<p>a default import like <code>import moment from "moment"</code> acts the same as <code>const moment = require("moment").default</code></p>
+</li>
+</ul>
+<p>This mis-match causes these two issues:</p>
+<ul>
+<li>
+<p>the ES6 modules spec states that a namespace import (<code>import * as x</code>) can only be an object, by having TypeScript
+treating it the same as <code>= require("x")</code> then TypeScript allowed for the import to be treated as a function and be callable. That's not valid according to the spec.</p>
+</li>
+<li>
+<p>while accurate to the ES6 modules spec, most libraries with CommonJS/AMD/UMD modules didn't conform as strictly as TypeScript's implementation.</p>
+</li>
+</ul>
+<p>Turning on <code>esModuleInterop</code> will fix both of these problems in the code transpiled by TypeScript. The first changes the behavior in the compiler, the second is fixed by two new helper functions which provide a shim to ensure compatibility in the emitted JavaScript:</p>
+<pre><code class="language-ts">import * as fs from "fs";
+import _ from "lodash";
+
+fs.readFileSync("file.txt", "utf8");
+_.chunk(["a", "b", "c", "d"], 2);
+</code></pre>
+<p>With <code>esModuleInterop</code> disabled:</p>
+<pre><code class="language-ts">// @noErrors
+// @showEmit
+// @esModuleInterop: false
+// @module: commonjs
+import * as fs from "fs";
+import _ from "lodash";
+
+fs.readFileSync("file.txt", "utf8");
+_.chunk(["a", "b", "c", "d"], 2);
+</code></pre>
+<p>With <code>esModuleInterop</code> set to <code>true</code>:</p>
+<pre><code class="language-ts">// @noErrors
+// @showEmit
+// @esModuleInterop
+// @module: commonjs
+import * as fs from "fs";
+import _ from "lodash";
+
+fs.readFileSync("file.txt", "utf8");
+_.chunk(["a", "b", "c", "d"], 2);
+</code></pre>
+<p><em>Note</em>: The namespace import <code>import * as fs from "fs"</code> only accounts for properties which <a target="_blank" rel="noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty">are owned</a> (basically properties set on the object and not via the prototype chain) on the imported object. If the module you're importing defines its API using inherited properties, you need to use the default import form (<code>import fs from "fs"</code>), or disable <code>esModuleInterop</code>.</p>
+<p><em>Note</em>: You can make JS emit terser by enabling <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#importHelpers"><code>importHelpers</code></a>:</p>
+<pre><code class="language-ts">// @noErrors
+// @showEmit
+// @esModuleInterop
+// @importHelpers
+// @module: commonjs
+import * as fs from "fs";
+import _ from "lodash";
+
+fs.readFileSync("file.txt", "utf8");
+_.chunk(["a", "b", "c", "d"], 2);
+</code></pre>
+<p>Enabling <code>esModuleInterop</code> will also enable <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#allowSyntheticDefaultImports"><code>allowSyntheticDefaultImports</code></a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1854,8 +3842,8 @@
     <span class="property-name">allowUmdGlobalAccess</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Allow accessing UMD globals from modules.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#allowUmdGlobalAccess</p>
+  <div class="desc-html"><p>When set to true, <code>allowUmdGlobalAccess</code> lets you access UMD exports as globals from inside module files. A module file is a file that has imports and/or exports. Without this flag, using an export from a UMD module requires an import declaration.</p>
+<p>An example use case for this flag would be a web project where you know the particular library (like jQuery or Lodash) will always be available at runtime, but you can’t access it with an import.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1867,8 +3855,8 @@
     <span class="property-name">keyofStringsOnly</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Make keyof only return strings instead of string, numbers or symbols. Legacy option.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#keyofStringsOnly</p>
+  <div class="desc-html"><p>This flag changes the <code>keyof</code> type operator to return <code>string</code> instead of <code>string | number</code> when applied to a type with a string index signature.</p>
+<p>This flag is used to help people keep this behavior from <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/release-notes/typescript-2-9.html#support-number-and-symbol-named-properties-with-keyof-and-mapped-types">before TypeScript 2.9's release</a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1880,8 +3868,9 @@
     <span class="property-name">useDefineForClassFields</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Emit ECMAScript-standard-compliant class fields.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#useDefineForClassFields</p>
+  <div class="desc-html"><p>This flag is used as part of migrating to the upcoming standard version of class fields. TypeScript introduced class fields many years before it was ratified in TC39. The latest version of the upcoming specification has a different runtime behavior to TypeScript's implementation but the same syntax.</p>
+<p>This flag switches to the upcoming ECMA runtime behavior.</p>
+<p>You can read more about the transition in <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#the-usedefineforclassfields-flag-and-the-declare-property-modifier">the 3.7 release notes</a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1893,8 +3882,9 @@
     <span class="property-name">declarationMap</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Create sourcemaps for d.ts files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#declarationMap</p>
+  <div class="desc-html"><p>Generates a source map for <code>.d.ts</code> files which map back to the original <code>.ts</code> source file.
+This will allow editors such as VS Code to go to the original <code>.ts</code> file when using features like <em>Go to Definition</em>.</p>
+<p>You should strongly consider turning this on if you're using project references.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1906,8 +3896,39 @@
     <span class="property-name">resolveJsonModule</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Enable importing .json files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#resolveJsonModule</p>
+  <div class="desc-html"><p>Allows importing modules with a <code>.json</code> extension, which is a common practice in node projects. This includes
+generating a type for the <code>import</code> based on the static JSON shape.</p>
+<p>TypeScript does not support resolving JSON files by default:</p>
+<pre><code class="language-ts">// @errors: 2732
+// @filename: settings.json
+{
+    "repo": "TypeScript",
+    "dry": false,
+    "debug": false
+}
+// @filename: index.ts
+import settings from "./settings.json";
+
+settings.debug === true;
+settings.dry === 2;
+</code></pre>
+<p>Enabling the option allows importing JSON, and validating the types in that JSON file.</p>
+<pre><code class="language-ts">// @errors: 2367
+// @resolveJsonModule
+// @module: commonjs
+// @moduleResolution: node
+// @filename: settings.json
+{
+    "repo": "TypeScript",
+    "dry": false,
+    "debug": false
+}
+// @filename: index.ts
+import settings from "./settings.json";
+
+settings.debug === true;
+settings.dry === 2;
+</code></pre>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1919,8 +3940,8 @@
     <span class="property-name">resolvePackageJsonExports</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Use the package.json 'exports' field when resolving package imports.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#resolvePackageJsonExports</p>
+  <div class="desc-html"><p><code>--resolvePackageJsonExports</code> forces TypeScript to consult <a target="_blank" rel="noopener noreferrer" href="https://nodejs.org/api/packages.html#exports">the <code>exports</code> field of <code>package.json</code> files</a> if it ever reads from a package in <code>node_modules</code>.</p>
+<p>This option defaults to <code>true</code> under the <code>node16</code>, <code>nodenext</code>, and <code>bundler</code> options for <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#moduleResolution"><code>--moduleResolution</code></a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1932,8 +3953,8 @@
     <span class="property-name">resolvePackageJsonImports</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Use the package.json 'imports' field when resolving imports.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#resolvePackageJsonImports</p>
+  <div class="desc-html"><p><code>--resolvePackageJsonImports</code> forces TypeScript to consult <a target="_blank" rel="noopener noreferrer" href="https://nodejs.org/api/packages.html#imports">the <code>imports</code> field of <code>package.json</code> files</a> when performing a lookup that starts with <code>#</code> from a file whose ancestor directory contains a <code>package.json</code>.</p>
+<p>This option defaults to <code>true</code> under the <code>node16</code>, <code>nodenext</code>, and <code>bundler</code> options for <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/tsconfig/#moduleResolution"><code>--moduleResolution</code></a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1945,8 +3966,7 @@
     <span class="property-name">assumeChangesOnlyAffectDirectDependencies</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Have recompiles in projects that use <code>incremental</code> and <code>watch</code> mode assume that changes within a file will only affect files directly depending on it.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#assumeChangesOnlyAffectDirectDependencies</p>
+  <div class="desc-html"><p>Have recompiles in '--incremental' and '--watch' assume that changes within a file will only affect files directly depending on it. Requires TypeScript version 3.8 or later.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1955,8 +3975,9 @@
     <span class="property-name">extendedDiagnostics</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Output more detailed compiler performance information after building.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#extendedDiagnostics</p>
+  <div class="desc-html"><p>You can use this flag to discover where TypeScript is spending its time when compiling.
+This is a tool used for understanding the performance characteristics of your codebase overall.</p>
+<p>You can learn more about how to measure and understand the output in the performance <a target="_blank" rel="noopener noreferrer" href="https://github.com/microsoft/TypeScript/wiki/Performance">section of the wiki</a>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -1977,8 +3998,8 @@
     <span class="property-name">disableSourceOfProjectReferenceRedirect</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Disable preferring source files instead of declaration files when referencing composite projects.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#disableSourceOfProjectReferenceRedirect</p>
+  <div class="desc-html"><p>When working with <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/project-references.html">composite TypeScript projects</a>, this option provides a way to go <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#build-free-editing-with-project-references">back to the pre-3.7</a> behavior where d.ts files were used to as the boundaries between modules.
+In 3.7 the source of truth is now your TypeScript files.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1987,8 +4008,8 @@
     <span class="property-name">disableSolutionSearching</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Opt a project out of multi-project reference checking when editing.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#disableSolutionSearching</p>
+  <div class="desc-html"><p>When working with <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/project-references.html">composite TypeScript projects</a>, this option provides a way to declare that you do not want a project to be included when using features like <em>find all references</em> or <em>jump to definition</em> in an editor.</p>
+<p>This flag is something you can use to increase responsiveness in large composite projects.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -1997,8 +4018,111 @@
     <span class="property-name">verbatimModuleSyntax</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Do not transform or elide any imports or exports not marked as type-only, ensuring they are written in the output file's format based on the <code>module</code> setting.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#verbatimModuleSyntax</p>
+  <div class="desc-html"><p>By default, TypeScript does something called <em>import elision</em>.
+Basically, if you write something like</p>
+<pre><code class="language-ts">import { Car } from "./car";
+
+export function drive(car: Car) {
+    // ...
+}
+</code></pre>
+<p>TypeScript detects that you're only using an import for types and drops the import entirely.
+Your output JavaScript might look something like this:</p>
+<pre><code class="language-js">export function drive(car) {
+    // ...
+}
+</code></pre>
+<p>Most of the time this is good, because if <code>Car</code> isn't a value that's exported from <code>./car</code>, we'll get a runtime error.</p>
+<p>But it does add a layer of complexity for certain edge cases.
+For example, notice there's no statement like <code>import "./car";</code> - the import was dropped entirely.
+That actually makes a difference for modules that have side-effects or not.</p>
+<p>TypeScript's emit strategy for JavaScript also has another few layers of complexity - import elision isn't always just driven by how an import is used - it often consults how a value is declared as well.
+So it's not always clear whether code like the following</p>
+<pre><code class="language-ts">export { Car } from "./car";
+</code></pre>
+<p>should be preserved or dropped.
+If <code>Car</code> is declared with something like a <code>class</code>, then it can be preserved in the resulting JavaScript file.
+But if <code>Car</code> is only declared as a <code>type</code> alias or <code>interface</code>, then the JavaScript file shouldn't export <code>Car</code> at all.</p>
+<p>While TypeScript might be able to make these emit decisions based on information from across files, not every compiler can.</p>
+<p>The <code>type</code> modifier on imports and exports helps with these situations a bit.
+We can make it explicit whether an import or export is only being used for type analysis, and can be dropped entirely in JavaScript files by using the <code>type</code> modifier.</p>
+<pre><code class="language-ts">// This statement can be dropped entirely in JS output
+import type * as car from "./car";
+
+// The named import/export 'Car' can be dropped in JS output
+import { type Car } from "./car";
+export { type Car } from "./car";
+</code></pre>
+<p><code>type</code> modifiers are not quite useful on their own - by default, module elision will still drop imports, and nothing forces you to make the distinction between <code>type</code> and plain imports and exports.
+So TypeScript has the flag <code>--importsNotUsedAsValues</code> to make sure you use the <code>type</code> modifier, <code>--preserveValueImports</code> to prevent <em>some</em> module elision behavior, and <code>--isolatedModules</code> to make sure that your TypeScript code works across different compilers.
+Unfortunately, understanding the fine details of those 3 flags is hard, and there are still some edge cases with unexpected behavior.</p>
+<p>TypeScript 5.0 introduces a new option called <code>--verbatimModuleSyntax</code> to simplify the situation.
+The rules are much simpler - any imports or exports without a <code>type</code> modifier are left around.
+Anything that uses the <code>type</code> modifier is dropped entirely.</p>
+<pre><code class="language-ts">// Erased away entirely.
+import type { A } from "a";
+
+// Rewritten to 'import { b } from "bcd";'
+import { b, type c, type d } from "bcd";
+
+// Rewritten to 'import {} from "xyz";'
+import { type xyz } from "xyz";
+</code></pre>
+<p>With this new option, what you see is what you get.</p>
+<p>That does have some implications when it comes to module interop though.
+Under this flag, ECMAScript <code>import</code>s and <code>export</code>s won't be rewritten to <code>require</code> calls when your settings or file extension implied a different module system.
+Instead, you'll get an error.
+If you need to emit code that uses <code>require</code> and <code>module.exports</code>, you'll have to use TypeScript's module syntax that predates ES2015:</p>
+<table>
+<thead>
+    <tr>
+        <th>Input TypeScript</th>
+        <th>Output JavaScript</th>
+    </tr>
+</thead>
+<tr>
+<td>
+<pre><code class="language-ts">import foo = require("foo");
+</code></pre>
+</td>
+<td>
+<pre><code class="language-js">const foo = require("foo");
+</code></pre>
+</td>
+</tr>
+<tr>
+<td>
+<pre><code class="language-ts">function foo() {}
+function bar() {}
+function baz() {}
+
+export = {
+    foo,
+    bar,
+    baz
+};
+</code></pre>
+</td>
+<td>
+<pre><code class="language-js">function foo() {}
+function bar() {}
+function baz() {}
+
+module.exports = {
+    foo,
+    bar,
+    baz
+};
+</code></pre>
+</td>
+</tr>
+</table>
+<p>While this is a limitation, it does help make some issues more obvious.
+For example, it's very common to forget to set the <a target="_blank" rel="noopener noreferrer" href="https://nodejs.org/api/packages.html#type"><code>type</code> field in <code>package.json</code></a> under <code>--module node16</code>.
+As a result, developers would start writing CommonJS modules instead of ES modules without realizing it, giving surprising lookup rules and JavaScript output.
+This new flag ensures that you're intentional about the file type you're using because the syntax is intentionally different.</p>
+<p>Because <code>--verbatimModuleSyntax</code> provides a more consistent story than <code>--importsNotUsedAsValues</code> and <code>--preserveValueImports</code>, those two existing flags are being deprecated in its favor.</p>
+<p>For more details, read up on <a target="_blank" rel="noopener noreferrer" href="https://github.com/microsoft/TypeScript/pull/52203">the original pull request</a> and <a target="_blank" rel="noopener noreferrer" href="https://github.com/microsoft/TypeScript/issues/51479">its proposal issue</a>.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -2008,7 +4132,6 @@
     <span class="type-badge">boolean | null</span>
    </div>
   <div class="desc-html"><p>Disable full type checking (only critical parse and emit errors will be reported).</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noCheck</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -2021,7 +4144,7 @@
     <span class="type-badge">boolean | null</span>
    </div>
   <div class="desc-html"><p>Require sufficient annotation on exports so other tools can trivially generate declaration files.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#isolatedDeclarations</p>
+<p>For more information, see the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#isolated-declarations">5.5 release notes</a></p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -2033,8 +4156,38 @@
     <span class="property-name">noUncheckedSideEffectImports</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Check side effect imports.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#noUncheckedSideEffectImports</p>
+  <div class="desc-html"><p>In JavaScript it's possible to <code>import</code> a module without actually importing any values from it.</p>
+<pre><code class="language-ts">import "some-module";
+</code></pre>
+<p>These imports are often called <em>side effect imports</em> because the only useful behavior they can provide is by executing some side effect (like registering a global variable, or adding a polyfill to a prototype).</p>
+<p>By default, TypeScript will not check these imports for validity. If the import resolves to a valid source file, TypeScript will load and check the file.
+If no source file is found, TypeScript will silently ignore the import.</p>
+<p>This is surprising behavior, but it partially stems from modeling patterns in the JavaScript ecosystem.
+For example, this syntax has also been used with special loaders in bundlers to load CSS or other assets.
+Your bundler might be configured in such a way where you can include specific <code>.css</code> files by writing something like the following:</p>
+<pre><code class="language-tsx">import "./button-component.css";
+
+export function Button() {
+    // ...
+}
+</code></pre>
+<p>Still, this masks potential typos on side effect imports.</p>
+<p>When <code>--noUncheckedSideEffectImports</code> is enabled, TypeScript will error if it can't find a source file for a side effect import.</p>
+<pre><code class="language-ts">import "oops-this-module-does-not-exist";
+//     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// error: Cannot find module 'oops-this-module-does-not-exist' or its corresponding
+//        type declarations.
+</code></pre>
+<p>When enabling this option, some working code may now receive an error, like in the CSS example above.
+To work around this, users who want to just write side effect <code>import</code>s for assets might be better served by writing what's called an <em>ambient module declaration</em> with a wildcard specifier.
+It would go in a global file and look something like the following:</p>
+<pre><code class="language-ts">// ./src/globals.d.ts
+
+// Recognize all CSS files as module imports.
+declare module "*.css" {}
+</code></pre>
+<p>In fact, you might already have a file like this in your project!
+For example, running something like <code>vite init</code> might create a similar <code>vite-env.d.ts</code>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -2046,8 +4199,7 @@
     <span class="property-name">strictBuiltinIteratorReturn</span>
     <span class="type-badge">boolean | null</span>
    </div>
-  <div class="desc-html"><p>Built-in iterators are instantiated with a <code>TReturn</code> type of <code>undefined</code> instead of <code>any</code>.</p>
-<p>See more: https://www.typescriptlang.org/tsconfig#strictBuiltinIteratorReturn</p>
+  <div class="desc-html"><p>Built-in iterators are instantiated with a <code>TReturn</code> type of undefined instead of <code>any</code>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>false</code>
@@ -2132,6 +4284,10 @@
     <span class="type-badge">object[]</span>
    </div>
   <div class="desc-html"><p>Referenced projects. Requires TypeScript version 3.0 or later.</p>
+<hr />
+<p>Project references are a way to structure your TypeScript programs into smaller pieces.
+Using Project References can greatly improve build and editor interaction times, enforce logical separation between components, and organize your code in new and improved ways.</p>
+<p>You can read more about how references works in the <a target="_blank" rel="noopener noreferrer" href="https://typescriptlang.org/docs/handbook/project-references.html">Project References</a> section of the handbook</p>
 </div>
        <div class="property-constraints">
 <span class="constraint"

@@ -5,7 +5,7 @@
   "description": "Poe the Poet is a task runner and build tool that uses simple configuration to define project tasks. It can work as a standalone tool or as a plugin for Poetry.",
   "x-lintel": {
     "source": "https://json.schemastore.org/partial-poe.json",
-    "sourceSha256": "9a29e1730c79e9275c276c0286c5aa0c70607d5483e689a0977faa35410c3c1b"
+    "sourceSha256": "55cea32d9cde25d326e4e9592ff79e9052184332d1a1a3d34769a0accc5886b7"
   },
   "type": "object",
   "properties": {
@@ -158,6 +158,43 @@
               "$ref": "#/$defs/tasks_array"
             }
           ]
+        }
+      }
+    },
+    "groups": {
+      "description": "Define groups of tasks to be displayed together in the help output.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^\\w[\\w0-9\\-_]*$": {
+          "type": "object",
+          "properties": {
+            "heading": {
+              "description": "A human-readable name for the group displayed in the help output.",
+              "type": "string"
+            },
+            "executor": {
+              "$ref": "#/$defs/executor_option"
+            },
+            "tasks": {
+              "description": "The tasks defined within this group.",
+              "type": "object",
+              "additionalProperties": false,
+              "patternProperties": {
+                "^\\w[\\w0-9\\-_\\+:]*$": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/$defs/one_of_tasks"
+                    },
+                    {
+                      "$ref": "#/$defs/tasks_array"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "additionalProperties": false
         }
       }
     },
@@ -606,7 +643,22 @@
                 }
               }
             },
-            {}
+            {
+              "not": {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "uv",
+                      "virtualenv"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            }
           ],
           "required": [
             "type"

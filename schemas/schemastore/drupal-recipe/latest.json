@@ -4,7 +4,7 @@
   "title": "New recipe",
   "x-lintel": {
     "source": "https://www.schemastore.org/drupal-recipe.json",
-    "sourceSha256": "42082479fa00191591ba80085e254018cd85f3645a7612a488f3ba0ac8a63d25",
+    "sourceSha256": "2efa5d9e9362858ddd8f7ef144be5bbc9724308d6b700ba2b0cacf2de01439e9",
     "fileMatch": [
       "drupal-recipe.yml",
       "drupal-recipe.yaml"
@@ -212,6 +212,78 @@
       ]
     },
     "generic": {
+      "hideComponent": {
+        "type": "string",
+        "title": "Hides a component from an entity view display or entity form display.",
+        "description": "Value: The component id",
+        "default": "uid"
+      },
+      "hideComponents": {
+        "type": "array",
+        "description": "Value: The list of component ids",
+        "items": [
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "setComponent": {
+        "type": "object",
+        "description": "Allows adding a field to an entity's view or form displays.",
+        "properties": {
+          "name": {
+            "description": "The field id. i.e. field_tags",
+            "type": "string"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "description": "The field type. i.e. entity_reference_label",
+                "type": "string"
+              },
+              "label": {
+                "description": "Label position. i.e. above",
+                "type": "string",
+                "enum": [
+                  "above",
+                  "below",
+                  "hidden",
+                  "inline"
+                ]
+              },
+              "settings": {
+                "type": "object",
+                "properties": {
+                  "link": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "third_party_settings": {
+                "type": "object"
+              },
+              "weight": {
+                "type": "number"
+              },
+              "region": {
+                "$ref": "#/$defs/theme/defaultRegions",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "setComponents": {
+        "type": "array",
+        "description": "Allows adding adding the configuration for multiple fields.",
+        "items": [
+          {
+            "$ref": "#/$defs/generic/setComponent"
+          }
+        ]
+      },
       "cloneAs": {
         "description": "Creates a clone of any config entity with a new ID.",
         "type": "string"
@@ -406,80 +478,20 @@
       "core.entity_form_display.*.*.*": {
         "$comment": "",
         "type": "object",
-        "title": "Form/View display",
+        "title": "Form display",
         "description": "",
         "properties": {
           "hideComponent": {
-            "type": "string",
-            "title": "Hides a component from an entity view display or entity form display.",
-            "description": "Value: The component id",
-            "default": "uid"
+            "$ref": "#/$defs/generic/hideComponent"
           },
           "hideComponents": {
-            "type": "array",
-            "description": "Value: The list of component ids",
-            "items": [
-              {
-                "type": "string"
-              }
-            ]
+            "$ref": "#/$defs/generic/hideComponents"
           },
           "setComponent": {
-            "type": "object",
-            "description": "Allows adding a field to an entity's view or form displays.",
-            "properties": {
-              "name": {
-                "description": "The field id. i.e. field_tags",
-                "type": "string"
-              },
-              "options": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "description": "The field type. i.e. entity_reference_label",
-                    "type": "string"
-                  },
-                  "label": {
-                    "description": "Label position. i.e. above",
-                    "type": "string",
-                    "enum": [
-                      "above",
-                      "below",
-                      "hidden",
-                      "inline"
-                    ]
-                  },
-                  "settings": {
-                    "type": "object",
-                    "properties": {
-                      "link": {
-                        "type": "boolean"
-                      }
-                    }
-                  },
-                  "third_party_settings": {
-                    "type": "object"
-                  },
-                  "weight": {
-                    "type": "number"
-                  },
-                  "region": {
-                    "$ref": "#/$defs/theme/defaultRegions",
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "additionalProperties": false
+            "$ref": "#/$defs/generic/setComponent"
           },
           "setComponents": {
-            "type": "array",
-            "description": "Allows adding adding the configuration for multiple fields.",
-            "items": [
-              {
-                "$ref": "#/$defs/specific/core.entity_form_display.*.*.*/properties/setComponent"
-              }
-            ]
+            "$ref": "#/$defs/generic/setComponents"
           },
           "cloneAs": {
             "$ref": "#/$defs/generic/cloneAs"
@@ -515,7 +527,59 @@
         "additionalProperties": false
       },
       "core.entity_view_display.*.*.*": {
-        "$ref": "#/$defs/specific/core.entity_form_display.*.*.*"
+        "$comment": "",
+        "type": "object",
+        "title": "Form display",
+        "description": "",
+        "properties": {
+          "allowLayoutOverrides": {
+            "type": "boolean",
+            "title": "Sets whether layout builder overrides are allowed."
+          },
+          "hideComponent": {
+            "$ref": "#/$defs/generic/hideComponent"
+          },
+          "hideComponents": {
+            "$ref": "#/$defs/generic/hideComponents"
+          },
+          "setComponent": {
+            "$ref": "#/$defs/generic/setComponent"
+          },
+          "setComponents": {
+            "$ref": "#/$defs/generic/setComponents"
+          },
+          "cloneAs": {
+            "$ref": "#/$defs/generic/cloneAs"
+          },
+          "create": {
+            "$ref": "#/$defs/generic/create"
+          },
+          "createIfNotExists": {
+            "$ref": "#/$defs/generic/createIfNotExists"
+          },
+          "createForEach": {
+            "$ref": "#/$defs/generic/createForEach"
+          },
+          "createForEachIfNotExists": {
+            "$ref": "#/$defs/generic/createForEachIfNotExists"
+          },
+          "set": {
+            "$ref": "#/$defs/generic/set"
+          },
+          "setMultiple": {
+            "$ref": "#/$defs/generic/setMultiple"
+          },
+          "setThirdPartySetting": {
+            "$ref": "#/$defs/generic/setThirdPartySetting"
+          },
+          "setThirdPartySettings": {
+            "$ref": "#/$defs/generic/setThirdPartySettings"
+          },
+          "simpleConfigUpdate": {
+            "$ref": "#/$defs/generic/simpleConfigUpdate"
+          }
+        },
+        "additionalProperties": false
       },
       "contact.form.*": {
         "type": "object",

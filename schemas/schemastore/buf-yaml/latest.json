@@ -5,7 +5,7 @@
   "description": "buf.yaml is used to define a module. It's the primary configuration file, and is responsible for the module's name, dependencies, and lint and breaking configuration.",
   "x-lintel": {
     "source": "https://www.schemastore.org/buf.json",
-    "sourceSha256": "af0a5c159a2b0c48da69370806766ed3f389daae774cbe21d86a2fed06bfc620",
+    "sourceSha256": "53c6908884b71f1dc4ed31620547339a79c0dc2f673b3fe5dd3d7a21885b4fde",
     "fileMatch": [
       "buf.yaml"
     ],
@@ -31,6 +31,7 @@
   "else": {
     "$comment": "v2 properties",
     "properties": {
+      "version": {},
       "modules": {
         "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#modules",
         "description": "Required. Defines the list of modules that will be built together in this workspace. Any dependencies that the files have on each other are automatically taken into account when building and shouldn't be declared in the deps section.",
@@ -70,8 +71,7 @@
             "breaking": {
               "$ref": "#/$defs/v2-breaking"
             }
-          },
-          "additionalProperties": false
+          }
         }
       },
       "deps": {
@@ -87,8 +87,70 @@
       },
       "breaking": {
         "$ref": "#/$defs/v2-breaking"
+      },
+      "plugins": {
+        "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#plugins",
+        "description": "Optional. Custom lint or breaking change rule plugins applied across all modules in the workspace.",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "plugin"
+          ],
+          "properties": {
+            "plugin": {
+              "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#plugin",
+              "description": "Required. Path to a plugin binary or remote BSR plugin reference.",
+              "type": "string"
+            },
+            "options": {
+              "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#options",
+              "description": "Optional. Key-value configuration pairs for plugin customization.",
+              "type": "object"
+            }
+          }
+        }
+      },
+      "policies": {
+        "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#policies",
+        "description": "Optional. YAML-based rule sets shareable across workspaces. Each entry references a local buf.policy.yaml file or a remote BSR policy.",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "policy"
+          ],
+          "properties": {
+            "policy": {
+              "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#policy",
+              "description": "Required. Local file path or BSR policy reference.",
+              "type": "string"
+            },
+            "ignore": {
+              "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#ignore-2",
+              "description": "Optional. Files or directories excluded from all rules in this policy. Paths must be relative to the buf.yaml file.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ignore_only": {
+              "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#ignore_only-2",
+              "description": "Optional. Excludes specific policy rules for certain paths. Keys are rule IDs; values are arrays of paths relative to the buf.yaml file.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       }
-    }
+    },
+    "additionalProperties": false,
+    "type": "object"
   },
   "$comment": "https://buf.build/docs/configuration/v2/buf-yaml",
   "$defs": {
@@ -1059,9 +1121,14 @@
           "description": "Optional. Controls the behavior of the SERVICE_SUFFIX lint rule. By default, this rule verifies that all service names are suffixed with Service.",
           "type": "string",
           "default": "Service"
+        },
+        "disable_builtin": {
+          "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#disable_builtin",
+          "description": "Optional. Disables Buf's built-in lint rules when set to true. Defaults to false.",
+          "type": "boolean",
+          "default": false
         }
-      },
-      "additionalProperties": false
+      }
     },
     "v2-breaking": {
       "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#breaking",
@@ -1102,13 +1169,19 @@
           "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#ignore_unstable_packages",
           "description": "Optional. Ignores packages with a last component that's one of the unstable forms recognized by the Buf linter's PACKAGE_VERSION_SUFFIX rule.",
           "type": "boolean"
+        },
+        "disable_builtin": {
+          "$comment": "https://buf.build/docs/configuration/v2/buf-yaml#disable_builtin-1",
+          "description": "Optional. Disables Buf's built-in breaking change detection rules when set to true. Defaults to false.",
+          "type": "boolean",
+          "default": false
         }
-      },
-      "additionalProperties": false
+      }
     }
   },
   "then": {
     "properties": {
+      "version": {},
       "name": {
         "$comment": "https://buf.build/docs/configuration/v1/buf-yaml#name",
         "description": "The name is optional, and uniquely identifies your module. The name must be a valid module name and is directly associated with the repository that owns it.",
@@ -1252,12 +1325,17 @@
           }
         }
       }
-    }
+    },
+    "additionalProperties": false,
+    "type": "object"
   },
   "if": {
     "properties": {
       "version": {
-        "const": "v1"
+        "enum": [
+          "v1",
+          "v1beta1"
+        ]
       }
     }
   }
