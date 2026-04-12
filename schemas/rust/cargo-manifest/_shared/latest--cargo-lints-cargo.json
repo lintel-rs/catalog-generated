@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/rust/cargo-manifest/_shared/latest--cargo-lints-cargo.json",
+  "title": "Cargo Lints",
+  "description": "Lint settings for Cargo individual lints and lint groups.",
+  "x-lintel": {
+    "source": "https://www.schemastore.org/cargo-lints-cargo.json",
+    "sourceSha256": "e4c740358d80c1b55813f46f1c2efb2be3b2d601faf225eb84fb967602bb878f"
+  },
+  "type": "object",
+  "properties": {
+    "blanket_hint_mostly_unused": {
+      "$ref": "#/$defs/Lint",
+      "title": "Blanket Hint Mostly Unused",
+      "description": "Checks if `hint-mostly-unused` is being applied to all dependencies.",
+      "default": "warn"
+    },
+    "implicit_minimum_version_req": {
+      "$ref": "#/$defs/Lint",
+      "title": "Implicit Minimum Version Req",
+      "description": "Checks for dependency version requirements that do not explicitly specify a full `major.minor.patch` version requirement.",
+      "default": "allow"
+    },
+    "unknown_lints": {
+      "$ref": "#/$defs/Lint",
+      "title": "Unknown Lints",
+      "description": "Checks for unknown lints in the `[lints.cargo]` table.",
+      "default": "warn"
+    },
+    "complexity": {
+      "$ref": "#/$defs/Lint",
+      "title": "Complexity",
+      "description": "Code that does something simple but in a complex way.",
+      "default": "warn"
+    },
+    "correctness": {
+      "$ref": "#/$defs/Lint",
+      "title": "Correctness",
+      "description": "Code that is outright wrong or useless.",
+      "default": "deny"
+    },
+    "nursery": {
+      "$ref": "#/$defs/Lint",
+      "title": "Nursery",
+      "description": "New lints that are still under development.",
+      "default": "allow"
+    },
+    "pedantic": {
+      "$ref": "#/$defs/Lint",
+      "title": "Pedantic",
+      "description": "Lints which are rather strict or have occasional false positives.",
+      "default": "allow"
+    },
+    "perf": {
+      "$ref": "#/$defs/Lint",
+      "title": "Perf",
+      "description": "Code that can be written to run faster.",
+      "default": "warn"
+    },
+    "restriction": {
+      "$ref": "#/$defs/Lint",
+      "title": "Restriction",
+      "description": "Lints which prevent the use of Cargo features.",
+      "default": "allow"
+    },
+    "style": {
+      "$ref": "#/$defs/Lint",
+      "title": "Style",
+      "description": "Code that should be written in a more idiomatic way.",
+      "default": "warn"
+    },
+    "suspicious": {
+      "$ref": "#/$defs/Lint",
+      "title": "Suspicious",
+      "description": "Code that is most likely wrong or useless.",
+      "default": "warn"
+    }
+  },
+  "$defs": {
+    "DetailedLint": {
+      "title": "Detailed Lint",
+      "type": "object",
+      "properties": {
+        "level": {
+          "$ref": "#/$defs/LintLevel"
+        },
+        "priority": {
+          "description": "The priority that controls which lints or lint groups override other lint groups. Lower (particularly negative) numbers have lower priority, being overridden by higher numbers, and show up first on the command-line to tools like rustc.",
+          "type": "integer"
+        }
+      },
+      "x-tombi-table-keys-order": "schema"
+    },
+    "Lint": {
+      "title": "Lint",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LintLevel"
+        },
+        {
+          "$ref": "#/$defs/DetailedLint"
+        }
+      ]
+    },
+    "LintLevel": {
+      "title": "Lint Level",
+      "description": "Specify the lint level for a lint or lint group.",
+      "type": "string",
+      "enum": [
+        "forbid",
+        "deny",
+        "warn",
+        "allow"
+      ]
+    }
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/Lint"
+  },
+  "x-tombi-additional-key-label": "lint_name",
+  "x-tombi-table-keys-order": "version-sort"
+}

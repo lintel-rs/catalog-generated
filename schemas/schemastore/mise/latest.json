@@ -5,7 +5,7 @@
   "description": "config file for mise version manager (mise.toml)",
   "x-lintel": {
     "source": "https://mise.jdx.dev/schema/mise.json",
-    "sourceSha256": "dc3cbe918ff6be33778fd2ab8dbfcade02aaa0293f26fafaf2277aa2abcba382",
+    "sourceSha256": "c5d5ccd9ea21ad878c4c3490b0d717763b0fa71096285dcd8c2f29ce3c9daa2c",
     "fileMatch": [
       ".mise.toml",
       ".mise.*.toml",
@@ -83,6 +83,57 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/env"
+          }
+        }
+      ]
+    },
+    "env_file": {
+      "description": "dotenv file(s) to load",
+      "deprecated": true,
+      "oneOf": [
+        {
+          "description": "dotenv file to load",
+          "type": "string"
+        },
+        {
+          "description": "dotenv files to load",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "dotenv": {
+      "description": "dotenv file(s) to load",
+      "deprecated": true,
+      "oneOf": [
+        {
+          "description": "dotenv file to load",
+          "type": "string"
+        },
+        {
+          "description": "dotenv files to load",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "env_path": {
+      "description": "PATH entries to add",
+      "deprecated": true,
+      "oneOf": [
+        {
+          "description": "PATH entry to add",
+          "type": "string"
+        },
+        {
+          "description": "PATH entries to add",
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       ]
@@ -614,34 +665,82 @@
             "type": "object",
             "properties": {
               "age": {
+                "type": "string",
+                "description": "[experimental] age-encrypted value (simplified format)"
+              },
+              "tools": {
+                "type": "boolean",
+                "description": "load tools before resolving"
+              },
+              "redact": {
+                "type": "boolean",
+                "description": "redact the value from logs"
+              },
+              "required": {
                 "oneOf": [
                   {
-                    "type": "string",
-                    "description": "[experimental] age-encrypted value (simplified format)"
+                    "type": "boolean",
+                    "description": "require this environment variable to be defined before mise runs or in a later config file"
                   },
                   {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string",
-                        "description": "[experimental] age-encrypted value"
-                      },
-                      "format": {
-                        "type": "string",
-                        "enum": [
-                          "raw",
-                          "zstd"
-                        ],
-                        "description": "[experimental] compression format for the encrypted value"
-                      }
-                    },
-                    "required": [
-                      "value"
-                    ],
-                    "description": "[experimental] age-encrypted value (complex format)",
-                    "additionalProperties": false
+                    "type": "string",
+                    "description": "require this environment variable with user help text on how to set it"
                   }
-                ]
+                ],
+                "description": "require this environment variable to be defined before mise runs or in a later config file. Cannot be used with empty string values or value=false. Can be a boolean or a help string."
+              }
+            },
+            "required": [
+              "age"
+            ],
+            "description": "[experimental] age-encrypted environment variable",
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "age": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "description": "[experimental] age-encrypted value"
+                  },
+                  "format": {
+                    "type": "string",
+                    "enum": [
+                      "raw",
+                      "zstd"
+                    ],
+                    "description": "[experimental] compression format for the encrypted value"
+                  },
+                  "tools": {
+                    "type": "boolean",
+                    "description": "load tools before resolving"
+                  },
+                  "redact": {
+                    "type": "boolean",
+                    "description": "redact the value from logs"
+                  },
+                  "required": {
+                    "oneOf": [
+                      {
+                        "type": "boolean",
+                        "description": "require this environment variable to be defined before mise runs or in a later config file"
+                      },
+                      {
+                        "type": "string",
+                        "description": "require this environment variable with user help text on how to set it"
+                      }
+                    ],
+                    "description": "require this environment variable to be defined before mise runs or in a later config file. Cannot be used with empty string values or value=false. Can be a boolean or a help string."
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "description": "[experimental] age-encrypted value (complex format)",
+                "additionalProperties": false
               }
             },
             "required": [
@@ -2279,6 +2378,59 @@
               "description": "timeout for this task",
               "type": "string"
             },
+            "deny_all": {
+              "default": false,
+              "description": "block reads, writes, network, and env vars",
+              "type": "boolean"
+            },
+            "deny_read": {
+              "default": false,
+              "description": "block filesystem reads",
+              "type": "boolean"
+            },
+            "deny_write": {
+              "default": false,
+              "description": "block all filesystem writes",
+              "type": "boolean"
+            },
+            "deny_net": {
+              "default": false,
+              "description": "block all network access",
+              "type": "boolean"
+            },
+            "deny_env": {
+              "default": false,
+              "description": "block env var inheritance",
+              "type": "boolean"
+            },
+            "allow_read": {
+              "description": "allow reads from specific paths",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "allow_write": {
+              "description": "allow writes to specific paths",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "allow_net": {
+              "description": "allow network to specific hosts",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "allow_env": {
+              "description": "allow specific env vars through",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
             "extends": {
               "description": "name of the task template to extend",
               "type": "string"
@@ -2905,6 +3057,59 @@
         "timeout": {
           "description": "timeout for this task",
           "type": "string"
+        },
+        "deny_all": {
+          "default": false,
+          "description": "block reads, writes, network, and env vars",
+          "type": "boolean"
+        },
+        "deny_read": {
+          "default": false,
+          "description": "block filesystem reads",
+          "type": "boolean"
+        },
+        "deny_write": {
+          "default": false,
+          "description": "block all filesystem writes",
+          "type": "boolean"
+        },
+        "deny_net": {
+          "default": false,
+          "description": "block all network access",
+          "type": "boolean"
+        },
+        "deny_env": {
+          "default": false,
+          "description": "block env var inheritance",
+          "type": "boolean"
+        },
+        "allow_read": {
+          "description": "allow reads from specific paths",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "allow_write": {
+          "description": "allow writes to specific paths",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "allow_net": {
+          "description": "allow network to specific hosts",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "allow_env": {
+          "description": "allow specific env vars through",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "type": "object"
@@ -3164,6 +3369,59 @@
         "timeout": {
           "description": "timeout for this task",
           "type": "string"
+        },
+        "deny_all": {
+          "default": false,
+          "description": "block reads, writes, network, and env vars",
+          "type": "boolean"
+        },
+        "deny_read": {
+          "default": false,
+          "description": "block filesystem reads",
+          "type": "boolean"
+        },
+        "deny_write": {
+          "default": false,
+          "description": "block all filesystem writes",
+          "type": "boolean"
+        },
+        "deny_net": {
+          "default": false,
+          "description": "block all network access",
+          "type": "boolean"
+        },
+        "deny_env": {
+          "default": false,
+          "description": "block env var inheritance",
+          "type": "boolean"
+        },
+        "allow_read": {
+          "description": "allow reads from specific paths",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "allow_write": {
+          "description": "allow writes to specific paths",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "allow_net": {
+          "description": "allow network to specific hosts",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "allow_env": {
+          "description": "allow specific env vars through",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "type": "object",
