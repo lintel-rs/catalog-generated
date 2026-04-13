@@ -5,7 +5,7 @@
   "description": "The user-config file structure for `.cmakefmt.yaml`, `.cmakefmt.yml`, and\n`.cmakefmt.toml`.\n\nAll fields are optional — only specified values override the defaults.",
   "x-lintel": {
     "source": "https://cmakefmt.dev/schemas/latest/schema.json",
-    "sourceSha256": "ef493c510a3c61e8533b6aa55dcc39c799600e75a9f2a8bca0dad25ddcd1ac0b",
+    "sourceSha256": "0a16c56bac033ca119a86ccebcad2814cb8e4488ffb8c1bafac4a3b1c35cbd50",
     "fileMatch": [
       ".cmakefmt.yaml",
       ".cmakefmt.yml",
@@ -18,6 +18,11 @@
   },
   "type": "object",
   "properties": {
+    "experimental": {
+      "description": "Experimental formatting options (unstable, may change between releases).",
+      "$ref": "#/$defs/Experimental",
+      "default": {}
+    },
     "format": {
       "description": "Formatting options controlling line width, indentation, casing, and layout.",
       "$ref": "#/$defs/FormatSection"
@@ -77,6 +82,10 @@
         }
       ]
     },
+    "Experimental": {
+      "description": "Experimental formatting options gated behind `--preview` or the\n`[experimental]` config section. All options default to `false`.\n\nThese may be promoted to stable defaults in a future release, changed\nincompatibly, or removed entirely.",
+      "type": "object"
+    },
     "FormatSection": {
       "type": "object",
       "properties": {
@@ -90,6 +99,14 @@
           "items": {
             "type": "string"
           }
+        },
+        "autosort": {
+          "description": "Heuristically infer sortability for keyword sections without explicit annotation.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": null
         },
         "command_case": {
           "description": "Output casing for command names: `lower`, `upper`, or `unchanged`.",
@@ -125,6 +142,14 @@
         },
         "disable": {
           "description": "Disable formatting entirely and return the source unchanged.",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": null
+        },
+        "enable_sort": {
+          "description": "Sort arguments in keyword sections marked `sortable` in the command spec.",
           "type": [
             "boolean",
             "null"
