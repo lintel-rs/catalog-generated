@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/vercel/latest.json",
   "x-lintel": {
     "source": "https://openapi.vercel.sh/vercel.json",
-    "sourceSha256": "d64bd13210502d04f7bf302b756e87614078bbde0e7e3767dd4bc0275c927f7c",
+    "sourceSha256": "7255aa781cce4b572fa1f350ead651a43ecb4f6d3e5e2354ca5b00fd25ecbb6f",
     "fileMatch": [
       "vercel.json"
     ],
@@ -3093,257 +3093,1211 @@
             "description": "Nested services belonging to this application. Map of service name to service configuration.",
             "type": "object",
             "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "description": "Service type: web, cron, or worker. Defaults to web.",
-                  "enum": [
-                    "web",
-                    "cron",
-                    "worker"
-                  ]
-                },
-                "entrypoint": {
-                  "description": "Entry file for the service, relative to the workspace directory.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 512
-                },
-                "root": {
-                  "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 512
-                },
-                "workspace": {
-                  "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 512
-                },
-                "mount": {
-                  "description": "Preferred routing config alias for routePrefix/subdomain.",
-                  "oneOf": [
-                    {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "entrypoint": {
+                      "description": "Entry file for the service, relative to the workspace directory.",
                       "type": "string",
                       "minLength": 1,
                       "maxLength": 512
                     },
-                    {
-                      "type": "object",
-                      "anyOf": [
-                        {
-                          "required": [
-                            "path"
-                          ]
-                        },
-                        {
-                          "required": [
-                            "subdomain"
-                          ]
-                        }
-                      ],
-                      "properties": {
-                        "path": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 512
-                        },
-                        "subdomain": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 63
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  ]
-                },
-                "routePrefix": {
-                  "description": "URL prefix for routing (web services only).",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 512
-                },
-                "subdomain": {
-                  "description": "Subdomain for host-based routing (web services only).",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 63
-                },
-                "routing": {
-                  "description": "Additional routing rules for this service.",
-                  "type": "object",
-                  "properties": {
-                    "flag": {
-                      "description": "Optional feature flag gating these routing paths.",
+                    "command": {
+                      "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "root": {
+                      "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "workspace": {
+                      "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "framework": {
+                      "description": "Framework to use.",
                       "type": "string",
                       "minLength": 1,
                       "maxLength": 256
                     },
-                    "paths": {
-                      "description": "Route patterns served by this service.",
+                    "builder": {
+                      "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "runtime": {
+                      "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "buildCommand": {
+                      "description": "Build command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "installCommand": {
+                      "description": "Install command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "preDeployCommand": {
+                      "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "memory": {
+                      "description": "Memory allocation in MB (128-10240).",
+                      "type": "integer",
+                      "minimum": 128,
+                      "maximum": 10240
+                    },
+                    "maxDuration": {
+                      "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 900
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "max"
+                          ]
+                        }
+                      ]
+                    },
+                    "includeFiles": {
+                      "description": "Files to include in bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "excludeFiles": {
+                      "description": "Files to exclude from bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "deps": {
+                      "description": "Service dependency declarations for injecting service URLs into the environment.",
                       "type": "array",
                       "minItems": 1,
-                      "maxItems": 100,
                       "items": {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 512
+                        "type": "object",
+                        "properties": {
+                          "service": {
+                            "description": "The dependent service name.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256
+                          },
+                          "env": {
+                            "description": "Environment variable name to inject for this dependency.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256,
+                            "pattern": "^[A-Z][A-Z0-9_]*$"
+                          },
+                          "public": {
+                            "description": "When true, exposes the dependency URL to public/browser environments.",
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "service",
+                          "env"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "mount": {
+                      "description": "Preferred routing config alias for routePrefix/subdomain.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 512
+                        },
+                        {
+                          "type": "object",
+                          "anyOf": [
+                            {
+                              "required": [
+                                "path"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "subdomain"
+                              ]
+                            }
+                          ],
+                          "properties": {
+                            "path": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 512
+                            },
+                            "subdomain": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 63
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "routing": {
+                      "description": "Additional routing rules for this service.",
+                      "type": "object",
+                      "properties": {
+                        "flag": {
+                          "description": "Optional feature flag gating these routing paths.",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 256
+                        },
+                        "paths": {
+                          "description": "Route patterns served by this service.",
+                          "type": "array",
+                          "minItems": 1,
+                          "maxItems": 100,
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 512
+                          }
+                        }
+                      },
+                      "required": [
+                        "paths"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "routePrefix": {
+                      "description": "URL prefix for routing (web services only).",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "subdomain": {
+                      "description": "Subdomain for host-based routing (web services only).",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 63
+                    },
+                    "type": {
+                      "description": "Service type. Defaults to web when omitted.",
+                      "enum": [
+                        "web"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "entrypoint": {
+                      "description": "Entry file for the service, relative to the workspace directory.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "command": {
+                      "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "root": {
+                      "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "workspace": {
+                      "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "framework": {
+                      "description": "Framework to use.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "builder": {
+                      "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "runtime": {
+                      "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "buildCommand": {
+                      "description": "Build command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "installCommand": {
+                      "description": "Install command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "preDeployCommand": {
+                      "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "memory": {
+                      "description": "Memory allocation in MB (128-10240).",
+                      "type": "integer",
+                      "minimum": 128,
+                      "maximum": 10240
+                    },
+                    "maxDuration": {
+                      "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 900
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "max"
+                          ]
+                        }
+                      ]
+                    },
+                    "includeFiles": {
+                      "description": "Files to include in bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "excludeFiles": {
+                      "description": "Files to exclude from bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "deps": {
+                      "description": "Service dependency declarations for injecting service URLs into the environment.",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "service": {
+                            "description": "The dependent service name.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256
+                          },
+                          "env": {
+                            "description": "Environment variable name to inject for this dependency.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256,
+                            "pattern": "^[A-Z][A-Z0-9_]*$"
+                          },
+                          "public": {
+                            "description": "When true, exposes the dependency URL to public/browser environments.",
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "service",
+                          "env"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "type": {
+                      "description": "Legacy scheduled service type.",
+                      "const": "cron"
+                    },
+                    "schedule": {
+                      "description": "Cron schedule expression(s) for cron services.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 9,
+                          "maxLength": 256
+                        },
+                        {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string",
+                            "minLength": 9,
+                            "maxLength": 256
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "schedule"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "entrypoint": {
+                      "description": "Entry file for the service, relative to the workspace directory.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "command": {
+                      "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "root": {
+                      "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "workspace": {
+                      "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "framework": {
+                      "description": "Framework to use.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "builder": {
+                      "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "runtime": {
+                      "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "buildCommand": {
+                      "description": "Build command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "installCommand": {
+                      "description": "Install command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "preDeployCommand": {
+                      "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "memory": {
+                      "description": "Memory allocation in MB (128-10240).",
+                      "type": "integer",
+                      "minimum": 128,
+                      "maximum": 10240
+                    },
+                    "maxDuration": {
+                      "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 900
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "max"
+                          ]
+                        }
+                      ]
+                    },
+                    "includeFiles": {
+                      "description": "Files to include in bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "excludeFiles": {
+                      "description": "Files to exclude from bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "deps": {
+                      "description": "Service dependency declarations for injecting service URLs into the environment.",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "service": {
+                            "description": "The dependent service name.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256
+                          },
+                          "env": {
+                            "description": "Environment variable name to inject for this dependency.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256,
+                            "pattern": "^[A-Z][A-Z0-9_]*$"
+                          },
+                          "public": {
+                            "description": "When true, exposes the dependency URL to public/browser environments.",
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "service",
+                          "env"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "type": {
+                      "description": "Job service type.",
+                      "const": "job"
+                    },
+                    "trigger": {
+                      "description": "Trigger for job services.",
+                      "const": "schedule"
+                    },
+                    "schedule": {
+                      "description": "Cron schedule expression(s) for schedule-triggered job services.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 9,
+                          "maxLength": 256
+                        },
+                        {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string",
+                            "minLength": 9,
+                            "maxLength": 256
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "schedule"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "entrypoint": {
+                      "description": "Entry file for the service, relative to the workspace directory.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "command": {
+                      "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "root": {
+                      "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "workspace": {
+                      "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "framework": {
+                      "description": "Framework to use.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "builder": {
+                      "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "runtime": {
+                      "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "buildCommand": {
+                      "description": "Build command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "installCommand": {
+                      "description": "Install command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "preDeployCommand": {
+                      "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "memory": {
+                      "description": "Memory allocation in MB (128-10240).",
+                      "type": "integer",
+                      "minimum": 128,
+                      "maximum": 10240
+                    },
+                    "maxDuration": {
+                      "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 900
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "max"
+                          ]
+                        }
+                      ]
+                    },
+                    "includeFiles": {
+                      "description": "Files to include in bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "excludeFiles": {
+                      "description": "Files to exclude from bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "deps": {
+                      "description": "Service dependency declarations for injecting service URLs into the environment.",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "service": {
+                            "description": "The dependent service name.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256
+                          },
+                          "env": {
+                            "description": "Environment variable name to inject for this dependency.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256,
+                            "pattern": "^[A-Z][A-Z0-9_]*$"
+                          },
+                          "public": {
+                            "description": "When true, exposes the dependency URL to public/browser environments.",
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "service",
+                          "env"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "type": {
+                      "description": "Job service type.",
+                      "const": "job"
+                    },
+                    "trigger": {
+                      "description": "Trigger for job services.",
+                      "const": "queue"
+                    },
+                    "topics": {
+                      "description": "Queue topics for queue-triggered job services.",
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256
+                          }
+                        },
+                        {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "topic": {
+                                "description": "Queue topic name.",
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 256
+                              },
+                              "retryAfterSeconds": {
+                                "description": "Delay in seconds before retrying a failed message delivery.",
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 86400
+                              },
+                              "initialDelaySeconds": {
+                                "description": "Initial delay in seconds before first message delivery.",
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 86400
+                              }
+                            },
+                            "required": [
+                              "topic"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      ]
+                    },
+                    "beat": {
+                      "description": "Named scheduled tasks associated with this queue-driven job service.",
+                      "type": "object",
+                      "minProperties": 1,
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "schedule": {
+                            "description": "Cron schedule expression(s) for this beat entry.",
+                            "oneOf": [
+                              {
+                                "type": "string",
+                                "minLength": 9,
+                                "maxLength": 256
+                              },
+                              {
+                                "type": "array",
+                                "minItems": 1,
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 9,
+                                  "maxLength": 256
+                                }
+                              }
+                            ]
+                          },
+                          "entrypoint": {
+                            "description": "Entrypoint to invoke for this beat entry, relative to the workspace directory.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 512
+                          },
+                          "command": {
+                            "description": "Command to execute for this beat entry.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          }
+                        },
+                        "required": [
+                          "schedule"
+                        ],
+                        "anyOf": [
+                          {
+                            "required": [
+                              "entrypoint"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "command"
+                            ]
+                          }
+                        ],
+                        "additionalProperties": false
                       }
                     }
                   },
                   "required": [
-                    "paths"
+                    "type",
+                    "topics"
                   ],
                   "additionalProperties": false
                 },
-                "framework": {
-                  "description": "Framework to use.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 256
-                },
-                "builder": {
-                  "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 256
-                },
-                "runtime": {
-                  "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 256
-                },
-                "buildCommand": {
-                  "description": "Build command for the service.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 2048
-                },
-                "installCommand": {
-                  "description": "Install command for the service.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 2048
-                },
-                "memory": {
-                  "description": "Memory allocation in MB (128-10240).",
-                  "type": "integer",
-                  "minimum": 128,
-                  "maximum": 10240
-                },
-                "maxDuration": {
-                  "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
-                  "oneOf": [
-                    {
+                {
+                  "type": "object",
+                  "properties": {
+                    "entrypoint": {
+                      "description": "Entry file for the service, relative to the workspace directory.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "command": {
+                      "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "root": {
+                      "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "workspace": {
+                      "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "framework": {
+                      "description": "Framework to use.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "builder": {
+                      "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "runtime": {
+                      "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "buildCommand": {
+                      "description": "Build command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "installCommand": {
+                      "description": "Install command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "preDeployCommand": {
+                      "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "memory": {
+                      "description": "Memory allocation in MB (128-10240).",
                       "type": "integer",
-                      "minimum": 1,
-                      "maximum": 900
+                      "minimum": 128,
+                      "maximum": 10240
                     },
-                    {
-                      "type": "string",
-                      "enum": [
-                        "max"
+                    "maxDuration": {
+                      "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 900
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "max"
+                          ]
+                        }
                       ]
-                    }
-                  ]
-                },
-                "includeFiles": {
-                  "description": "Files to include in bundle.",
-                  "oneOf": [
-                    {
-                      "type": "string",
-                      "minLength": 1
                     },
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "minLength": 1
-                      }
-                    }
-                  ]
-                },
-                "excludeFiles": {
-                  "description": "Files to exclude from bundle.",
-                  "oneOf": [
-                    {
-                      "type": "string",
-                      "minLength": 1
+                    "includeFiles": {
+                      "description": "Files to include in bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
                     },
-                    {
+                    "excludeFiles": {
+                      "description": "Files to exclude from bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "deps": {
+                      "description": "Service dependency declarations for injecting service URLs into the environment.",
                       "type": "array",
+                      "minItems": 1,
                       "items": {
-                        "type": "string",
-                        "minLength": 1
+                        "type": "object",
+                        "properties": {
+                          "service": {
+                            "description": "The dependent service name.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256
+                          },
+                          "env": {
+                            "description": "Environment variable name to inject for this dependency.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256,
+                            "pattern": "^[A-Z][A-Z0-9_]*$"
+                          },
+                          "public": {
+                            "description": "When true, exposes the dependency URL to public/browser environments.",
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "service",
+                          "env"
+                        ],
+                        "additionalProperties": false
                       }
+                    },
+                    "type": {
+                      "description": "Job service type.",
+                      "const": "job"
+                    },
+                    "trigger": {
+                      "description": "Trigger for job services.",
+                      "const": "workflow"
                     }
-                  ]
-                },
-                "schedule": {
-                  "description": "Cron schedule expression (e.g., \"0 0 * * *\"). Required for cron services.",
-                  "type": "string",
-                  "minLength": 9,
-                  "maxLength": 256
-                },
-                "topic": {
-                  "description": "Topic name for worker subscription.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 256
-                },
-                "topics": {
-                  "description": "Multiple topic names for worker subscription.",
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 256
                   },
-                  "minItems": 1
+                  "required": [
+                    "type",
+                    "trigger",
+                    "entrypoint"
+                  ],
+                  "additionalProperties": false
                 },
-                "consumer": {
-                  "description": "Consumer group name for worker subscription.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 256
-                },
-                "deps": {
-                  "description": "Service dependency declarations for injecting service URLs into the environment.",
-                  "type": "array",
-                  "minItems": 1,
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "service": {
-                        "description": "The dependent service name.",
+                {
+                  "type": "object",
+                  "properties": {
+                    "entrypoint": {
+                      "description": "Entry file for the service, relative to the workspace directory.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "command": {
+                      "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "root": {
+                      "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "workspace": {
+                      "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "framework": {
+                      "description": "Framework to use.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "builder": {
+                      "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "runtime": {
+                      "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "buildCommand": {
+                      "description": "Build command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "installCommand": {
+                      "description": "Install command for the service.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "preDeployCommand": {
+                      "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    },
+                    "memory": {
+                      "description": "Memory allocation in MB (128-10240).",
+                      "type": "integer",
+                      "minimum": 128,
+                      "maximum": 10240
+                    },
+                    "maxDuration": {
+                      "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 900
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "max"
+                          ]
+                        }
+                      ]
+                    },
+                    "includeFiles": {
+                      "description": "Files to include in bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "excludeFiles": {
+                      "description": "Files to exclude from bundle.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      ]
+                    },
+                    "deps": {
+                      "description": "Service dependency declarations for injecting service URLs into the environment.",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "service": {
+                            "description": "The dependent service name.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256
+                          },
+                          "env": {
+                            "description": "Environment variable name to inject for this dependency.",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256,
+                            "pattern": "^[A-Z][A-Z0-9_]*$"
+                          },
+                          "public": {
+                            "description": "When true, exposes the dependency URL to public/browser environments.",
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "service",
+                          "env"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "type": {
+                      "description": "Worker service type.",
+                      "const": "worker"
+                    },
+                    "topics": {
+                      "description": "Topic names consumed by this worker service.",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
                         "type": "string",
                         "minLength": 1,
                         "maxLength": 256
-                      },
-                      "env": {
-                        "description": "Environment variable name to inject for this dependency.",
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 256,
-                        "pattern": "^[A-Z][A-Z0-9_]*$"
-                      },
-                      "public": {
-                        "description": "When true, exposes the dependency URL to public/browser environments.",
-                        "type": "boolean"
                       }
                     },
-                    "required": [
-                      "service",
-                      "env"
-                    ],
-                    "additionalProperties": false
-                  }
+                    "consumer": {
+                      "description": "Consumer group name for worker subscription.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ],
+                  "additionalProperties": false
                 }
-              },
-              "additionalProperties": false
+              ]
             }
           }
         },
@@ -3388,257 +4342,1211 @@
       "description": "Enables configuration of multiple services in a single deployment. Map of service name to service configuration.",
       "type": "object",
       "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "description": "Service type: web, cron, or worker. Defaults to web.",
-            "enum": [
-              "web",
-              "cron",
-              "worker"
-            ]
-          },
-          "entrypoint": {
-            "description": "Entry file for the service, relative to the workspace directory.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 512
-          },
-          "root": {
-            "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 512
-          },
-          "workspace": {
-            "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 512
-          },
-          "mount": {
-            "description": "Preferred routing config alias for routePrefix/subdomain.",
-            "oneOf": [
-              {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "entrypoint": {
+                "description": "Entry file for the service, relative to the workspace directory.",
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 512
               },
-              {
-                "type": "object",
-                "anyOf": [
-                  {
-                    "required": [
-                      "path"
-                    ]
-                  },
-                  {
-                    "required": [
-                      "subdomain"
-                    ]
-                  }
-                ],
-                "properties": {
-                  "path": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 512
-                  },
-                  "subdomain": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 63
-                  }
-                },
-                "additionalProperties": false
-              }
-            ]
-          },
-          "routePrefix": {
-            "description": "URL prefix for routing (web services only).",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 512
-          },
-          "subdomain": {
-            "description": "Subdomain for host-based routing (web services only).",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 63
-          },
-          "routing": {
-            "description": "Additional routing rules for this service.",
-            "type": "object",
-            "properties": {
-              "flag": {
-                "description": "Optional feature flag gating these routing paths.",
+              "command": {
+                "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "root": {
+                "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "workspace": {
+                "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "framework": {
+                "description": "Framework to use.",
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 256
               },
-              "paths": {
-                "description": "Route patterns served by this service.",
+              "builder": {
+                "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "runtime": {
+                "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "buildCommand": {
+                "description": "Build command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "installCommand": {
+                "description": "Install command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "preDeployCommand": {
+                "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "memory": {
+                "description": "Memory allocation in MB (128-10240).",
+                "type": "integer",
+                "minimum": 128,
+                "maximum": 10240
+              },
+              "maxDuration": {
+                "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 900
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "max"
+                    ]
+                  }
+                ]
+              },
+              "includeFiles": {
+                "description": "Files to include in bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "excludeFiles": {
+                "description": "Files to exclude from bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "deps": {
+                "description": "Service dependency declarations for injecting service URLs into the environment.",
                 "type": "array",
                 "minItems": 1,
-                "maxItems": 100,
                 "items": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 512
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "description": "The dependent service name.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "env": {
+                      "description": "Environment variable name to inject for this dependency.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "public": {
+                      "description": "When true, exposes the dependency URL to public/browser environments.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "env"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "mount": {
+                "description": "Preferred routing config alias for routePrefix/subdomain.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  {
+                    "type": "object",
+                    "anyOf": [
+                      {
+                        "required": [
+                          "path"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "subdomain"
+                        ]
+                      }
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 512
+                      },
+                      "subdomain": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 63
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "routing": {
+                "description": "Additional routing rules for this service.",
+                "type": "object",
+                "properties": {
+                  "flag": {
+                    "description": "Optional feature flag gating these routing paths.",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "paths": {
+                    "description": "Route patterns served by this service.",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    }
+                  }
+                },
+                "required": [
+                  "paths"
+                ],
+                "additionalProperties": false
+              },
+              "routePrefix": {
+                "description": "URL prefix for routing (web services only).",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "subdomain": {
+                "description": "Subdomain for host-based routing (web services only).",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 63
+              },
+              "type": {
+                "description": "Service type. Defaults to web when omitted.",
+                "enum": [
+                  "web"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "entrypoint": {
+                "description": "Entry file for the service, relative to the workspace directory.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "command": {
+                "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "root": {
+                "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "workspace": {
+                "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "framework": {
+                "description": "Framework to use.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "builder": {
+                "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "runtime": {
+                "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "buildCommand": {
+                "description": "Build command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "installCommand": {
+                "description": "Install command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "preDeployCommand": {
+                "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "memory": {
+                "description": "Memory allocation in MB (128-10240).",
+                "type": "integer",
+                "minimum": 128,
+                "maximum": 10240
+              },
+              "maxDuration": {
+                "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 900
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "max"
+                    ]
+                  }
+                ]
+              },
+              "includeFiles": {
+                "description": "Files to include in bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "excludeFiles": {
+                "description": "Files to exclude from bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "deps": {
+                "description": "Service dependency declarations for injecting service URLs into the environment.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "description": "The dependent service name.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "env": {
+                      "description": "Environment variable name to inject for this dependency.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "public": {
+                      "description": "When true, exposes the dependency URL to public/browser environments.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "env"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "type": {
+                "description": "Legacy scheduled service type.",
+                "const": "cron"
+              },
+              "schedule": {
+                "description": "Cron schedule expression(s) for cron services.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 9,
+                    "maxLength": 256
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 9,
+                      "maxLength": 256
+                    }
+                  }
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "schedule"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "entrypoint": {
+                "description": "Entry file for the service, relative to the workspace directory.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "command": {
+                "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "root": {
+                "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "workspace": {
+                "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "framework": {
+                "description": "Framework to use.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "builder": {
+                "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "runtime": {
+                "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "buildCommand": {
+                "description": "Build command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "installCommand": {
+                "description": "Install command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "preDeployCommand": {
+                "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "memory": {
+                "description": "Memory allocation in MB (128-10240).",
+                "type": "integer",
+                "minimum": 128,
+                "maximum": 10240
+              },
+              "maxDuration": {
+                "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 900
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "max"
+                    ]
+                  }
+                ]
+              },
+              "includeFiles": {
+                "description": "Files to include in bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "excludeFiles": {
+                "description": "Files to exclude from bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "deps": {
+                "description": "Service dependency declarations for injecting service URLs into the environment.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "description": "The dependent service name.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "env": {
+                      "description": "Environment variable name to inject for this dependency.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "public": {
+                      "description": "When true, exposes the dependency URL to public/browser environments.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "env"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "type": {
+                "description": "Job service type.",
+                "const": "job"
+              },
+              "trigger": {
+                "description": "Trigger for job services.",
+                "const": "schedule"
+              },
+              "schedule": {
+                "description": "Cron schedule expression(s) for schedule-triggered job services.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 9,
+                    "maxLength": 256
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 9,
+                      "maxLength": 256
+                    }
+                  }
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "schedule"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "entrypoint": {
+                "description": "Entry file for the service, relative to the workspace directory.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "command": {
+                "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "root": {
+                "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "workspace": {
+                "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "framework": {
+                "description": "Framework to use.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "builder": {
+                "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "runtime": {
+                "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "buildCommand": {
+                "description": "Build command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "installCommand": {
+                "description": "Install command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "preDeployCommand": {
+                "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "memory": {
+                "description": "Memory allocation in MB (128-10240).",
+                "type": "integer",
+                "minimum": 128,
+                "maximum": 10240
+              },
+              "maxDuration": {
+                "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 900
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "max"
+                    ]
+                  }
+                ]
+              },
+              "includeFiles": {
+                "description": "Files to include in bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "excludeFiles": {
+                "description": "Files to exclude from bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "deps": {
+                "description": "Service dependency declarations for injecting service URLs into the environment.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "description": "The dependent service name.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "env": {
+                      "description": "Environment variable name to inject for this dependency.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "public": {
+                      "description": "When true, exposes the dependency URL to public/browser environments.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "env"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "type": {
+                "description": "Job service type.",
+                "const": "job"
+              },
+              "trigger": {
+                "description": "Trigger for job services.",
+                "const": "queue"
+              },
+              "topics": {
+                "description": "Queue topics for queue-triggered job services.",
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    }
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "topic": {
+                          "description": "Queue topic name.",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 256
+                        },
+                        "retryAfterSeconds": {
+                          "description": "Delay in seconds before retrying a failed message delivery.",
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 86400
+                        },
+                        "initialDelaySeconds": {
+                          "description": "Initial delay in seconds before first message delivery.",
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 86400
+                        }
+                      },
+                      "required": [
+                        "topic"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                ]
+              },
+              "beat": {
+                "description": "Named scheduled tasks associated with this queue-driven job service.",
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "schedule": {
+                      "description": "Cron schedule expression(s) for this beat entry.",
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 9,
+                          "maxLength": 256
+                        },
+                        {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string",
+                            "minLength": 9,
+                            "maxLength": 256
+                          }
+                        }
+                      ]
+                    },
+                    "entrypoint": {
+                      "description": "Entrypoint to invoke for this beat entry, relative to the workspace directory.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "command": {
+                      "description": "Command to execute for this beat entry.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "schedule"
+                  ],
+                  "anyOf": [
+                    {
+                      "required": [
+                        "entrypoint"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "command"
+                      ]
+                    }
+                  ],
+                  "additionalProperties": false
                 }
               }
             },
             "required": [
-              "paths"
+              "type",
+              "topics"
             ],
             "additionalProperties": false
           },
-          "framework": {
-            "description": "Framework to use.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 256
-          },
-          "builder": {
-            "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 256
-          },
-          "runtime": {
-            "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 256
-          },
-          "buildCommand": {
-            "description": "Build command for the service.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 2048
-          },
-          "installCommand": {
-            "description": "Install command for the service.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 2048
-          },
-          "memory": {
-            "description": "Memory allocation in MB (128-10240).",
-            "type": "integer",
-            "minimum": 128,
-            "maximum": 10240
-          },
-          "maxDuration": {
-            "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
-            "oneOf": [
-              {
+          {
+            "type": "object",
+            "properties": {
+              "entrypoint": {
+                "description": "Entry file for the service, relative to the workspace directory.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "command": {
+                "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "root": {
+                "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "workspace": {
+                "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "framework": {
+                "description": "Framework to use.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "builder": {
+                "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "runtime": {
+                "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "buildCommand": {
+                "description": "Build command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "installCommand": {
+                "description": "Install command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "preDeployCommand": {
+                "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "memory": {
+                "description": "Memory allocation in MB (128-10240).",
                 "type": "integer",
-                "minimum": 1,
-                "maximum": 900
+                "minimum": 128,
+                "maximum": 10240
               },
-              {
-                "type": "string",
-                "enum": [
-                  "max"
+              "maxDuration": {
+                "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 900
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "max"
+                    ]
+                  }
                 ]
-              }
-            ]
-          },
-          "includeFiles": {
-            "description": "Files to include in bundle.",
-            "oneOf": [
-              {
-                "type": "string",
-                "minLength": 1
               },
-              {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              }
-            ]
-          },
-          "excludeFiles": {
-            "description": "Files to exclude from bundle.",
-            "oneOf": [
-              {
-                "type": "string",
-                "minLength": 1
+              "includeFiles": {
+                "description": "Files to include in bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
               },
-              {
+              "excludeFiles": {
+                "description": "Files to exclude from bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "deps": {
+                "description": "Service dependency declarations for injecting service URLs into the environment.",
                 "type": "array",
+                "minItems": 1,
                 "items": {
-                  "type": "string",
-                  "minLength": 1
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "description": "The dependent service name.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "env": {
+                      "description": "Environment variable name to inject for this dependency.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "public": {
+                      "description": "When true, exposes the dependency URL to public/browser environments.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "env"
+                  ],
+                  "additionalProperties": false
                 }
+              },
+              "type": {
+                "description": "Job service type.",
+                "const": "job"
+              },
+              "trigger": {
+                "description": "Trigger for job services.",
+                "const": "workflow"
               }
-            ]
-          },
-          "schedule": {
-            "description": "Cron schedule expression (e.g., \"0 0 * * *\"). Required for cron services.",
-            "type": "string",
-            "minLength": 9,
-            "maxLength": 256
-          },
-          "topic": {
-            "description": "Topic name for worker subscription.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 256
-          },
-          "topics": {
-            "description": "Multiple topic names for worker subscription.",
-            "type": "array",
-            "items": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 256
             },
-            "minItems": 1
+            "required": [
+              "type",
+              "trigger",
+              "entrypoint"
+            ],
+            "additionalProperties": false
           },
-          "consumer": {
-            "description": "Consumer group name for worker subscription.",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 256
-          },
-          "deps": {
-            "description": "Service dependency declarations for injecting service URLs into the environment.",
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "service": {
-                  "description": "The dependent service name.",
+          {
+            "type": "object",
+            "properties": {
+              "entrypoint": {
+                "description": "Entry file for the service, relative to the workspace directory.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "command": {
+                "description": "Command to execute the workload, typically for scheduled jobs or workers.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "root": {
+                "description": "Root path to the service, relative to the project root. This is used to locate the app manifest.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "workspace": {
+                "description": "Path to the directory containing the service manifest file (package.json, pyproject.toml, etc.). Defaults to \".\" (project root).",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "framework": {
+                "description": "Framework to use.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "builder": {
+                "description": "Builder to use, e.g. @vercel/node, @vercel/python.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "runtime": {
+                "description": "Specific lambda runtime to use, e.g. nodejs24.x, python3.14.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "buildCommand": {
+                "description": "Build command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "installCommand": {
+                "description": "Install command for the service.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "preDeployCommand": {
+                "description": "Command to execute after build is completed but before the deployment outputs are uploaded.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "memory": {
+                "description": "Memory allocation in MB (128-10240).",
+                "type": "integer",
+                "minimum": 128,
+                "maximum": 10240
+              },
+              "maxDuration": {
+                "description": "Max duration in seconds (1-900), or \"max\" to use the maximum allowed by your plan.",
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 900
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "max"
+                    ]
+                  }
+                ]
+              },
+              "includeFiles": {
+                "description": "Files to include in bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "excludeFiles": {
+                "description": "Files to exclude from bundle.",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                ]
+              },
+              "deps": {
+                "description": "Service dependency declarations for injecting service URLs into the environment.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "description": "The dependent service name.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "env": {
+                      "description": "Environment variable name to inject for this dependency.",
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "public": {
+                      "description": "When true, exposes the dependency URL to public/browser environments.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "env"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "type": {
+                "description": "Worker service type.",
+                "const": "worker"
+              },
+              "topics": {
+                "description": "Topic names consumed by this worker service.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
                   "type": "string",
                   "minLength": 1,
                   "maxLength": 256
-                },
-                "env": {
-                  "description": "Environment variable name to inject for this dependency.",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 256,
-                  "pattern": "^[A-Z][A-Z0-9_]*$"
-                },
-                "public": {
-                  "description": "When true, exposes the dependency URL to public/browser environments.",
-                  "type": "boolean"
                 }
               },
-              "required": [
-                "service",
-                "env"
-              ],
-              "additionalProperties": false
-            }
+              "consumer": {
+                "description": "Consumer group name for worker subscription.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
           }
-        },
-        "additionalProperties": false
+        ]
       }
     },
     "experimentalServiceGroups": {
