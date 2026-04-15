@@ -5,7 +5,7 @@
   "description": "Schema for the Cloud.gov Workshop configuration files. Top level keys `subgroups` and `projects` are valid for Customer configs. Top level keys `namespaces` and `users` are valid for the Workshop-controlled configurations.",
   "x-lintel": {
     "source": "https://workshop.cloud.gov/workshop/workshop-schemas/-/raw/main/cg-workshop.schema.json",
-    "sourceSha256": "893619de8041202a9c960e98460c50a15fc7cd623157dbe1d17896f55f86c749",
+    "sourceSha256": "ee320c56ebc4b2340a7f76541fe3803711459e81c8172baa9389f066b3649d77",
     "fileMatch": [
       "cg-workshop.yml",
       "**/cg-workshop/*.yml"
@@ -513,6 +513,20 @@
             }
           }
         },
+        "mr_review_groups": {
+          "description": "Configure required reviews for Merge Requests. Each key gives the name to the approval group, and the list of roles or teams defines who may grant an approval for this approval group.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "array",
+              "items": {
+                "description": "A list of groups that must approve Merge Requests against this project's default and protected branches, e.g. 'teams/platform-developers'",
+                "type": "string",
+                "pattern": "^([\\w\\-\\.\\/]+)$"
+              }
+            }
+          }
+        },
         "shared_runners_enabled": {
           "description": "",
           "type": "boolean"
@@ -622,6 +636,32 @@
             }
           },
           "additionalProperties": false
+        },
+        "security_policy_project_scope": {
+          "description": "When given, this project will be set up as a Security Policy project. 'namespace' will register it on the entire namespace. 'assigned' will make it available for assignment via security_policy_project_key.",
+          "type": "string",
+          "enum": [
+            "namespace",
+            "assigned"
+          ]
+        },
+        "security_policy_project": {
+          "description": "If given, the project at the key will provide security policies to this project.",
+          "type": "object",
+          "properties": {
+            "key": {
+              "description": "The key of the security policy project in the `projects:` section of the config file. The security policy project must also have `security_policy_project_scope` set to 'assigned' to be assignable to other projects.",
+              "type": "string",
+              "pattern": "^([\\w\\-\\.]+)$"
+            },
+            "import": {
+              "description": "Whether to import the connection of this project with thesecurity policy project given by key. Defaults to false.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "key"
+          ]
         }
       },
       "additionalProperties": false
@@ -697,6 +737,24 @@
             "disabled",
             "enabled",
             "private"
+          ]
+        },
+        "security_policy_project": {
+          "description": "If given, the project at the key will provide security policies to this project.",
+          "type": "object",
+          "properties": {
+            "key": {
+              "description": "The key of the security policy project in the `projects:` section of the config file. The security policy project must also have `security_policy_project_scope` set to 'assigned' to be assignable to other projects.",
+              "type": "string",
+              "pattern": "^([\\w\\-\\.]+)$"
+            },
+            "import": {
+              "description": "Whether to import the connection of this project with thesecurity policy project given by key. Defaults to false.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "key"
           ]
         }
       },

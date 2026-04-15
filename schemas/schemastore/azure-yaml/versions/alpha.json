@@ -5,7 +5,7 @@
   "description": "Configuration file for the Azure Developer CLI (azd)",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/alpha/azure.yaml.json",
-    "sourceSha256": "b7fa5a0eda4daea59d1526b20509307f0f655c8c10718db4a90da9999ac823de",
+    "sourceSha256": "2ad9349ce5e386bcb77c4c7d18d7adad37a04c0f06112b57625cca5257779ef7",
     "fileMatch": [
       "azure.yaml",
       "azure.yml"
@@ -1050,7 +1050,8 @@
               "dir": false,
               "interactive": false,
               "continueOnError": false,
-              "secrets": false
+              "secrets": false,
+              "config": false
             }
           }
         },
@@ -1086,6 +1087,11 @@
                 "required": [
                   "dir"
                 ]
+              },
+              {
+                "required": [
+                  "config"
+                ]
               }
             ]
           },
@@ -1093,6 +1099,92 @@
             "required": [
               "run"
             ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "js",
+                  "ts"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "$ref": "#/$defs/jsHookConfig"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "python"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "$ref": "#/$defs/pythonHookConfig"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "dotnet"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "$ref": "#/$defs/dotnetHookConfig"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "sh",
+                  "pwsh"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "$ref": "#/$defs/emptyHookConfig"
+              }
+            }
           }
         }
       ],
@@ -1166,6 +1258,11 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "config": {
+          "type": "object",
+          "title": "Executor-specific configuration",
+          "description": "Optional configuration specific to the hook executor kind."
         }
       },
       "additionalProperties": false
@@ -2116,6 +2213,61 @@
           "default": false
         }
       },
+      "additionalProperties": false
+    },
+    "jsHookConfig": {
+      "type": "object",
+      "title": "JavaScript/TypeScript hook configuration",
+      "description": "Configuration options for JS and TS hook executors.",
+      "properties": {
+        "packageManager": {
+          "type": "string",
+          "title": "Package manager",
+          "description": "The package manager to use for dependency installation. Overrides auto-detection from lock files.",
+          "enum": [
+            "npm",
+            "pnpm",
+            "yarn"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "pythonHookConfig": {
+      "type": "object",
+      "title": "Python hook configuration",
+      "description": "Configuration options for the Python hook executor.",
+      "properties": {
+        "virtualEnvName": {
+          "type": "string",
+          "title": "Virtual environment name",
+          "description": "The directory name for the Python virtual environment. Defaults to auto-detection (.venv, venv) or {baseName}_env."
+        }
+      },
+      "additionalProperties": false
+    },
+    "dotnetHookConfig": {
+      "type": "object",
+      "title": ".NET hook configuration",
+      "description": "Configuration options for the .NET hook executor.",
+      "properties": {
+        "configuration": {
+          "type": "string",
+          "title": "Build configuration",
+          "description": "The MSBuild configuration for building the hook script (e.g., Debug, Release)."
+        },
+        "framework": {
+          "type": "string",
+          "title": "Target framework",
+          "description": "The target framework moniker for building and running the hook script (e.g., net8.0, net10.0)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "emptyHookConfig": {
+      "type": "object",
+      "title": "Shell hook configuration",
+      "description": "Shell executors (sh, pwsh) do not currently support config properties.",
       "additionalProperties": false
     }
   }
