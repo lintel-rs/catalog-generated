@@ -5,7 +5,7 @@
   "description": "config file for mise version manager (mise.toml)",
   "x-lintel": {
     "source": "https://mise.jdx.dev/schema/mise.json",
-    "sourceSha256": "c5d5ccd9ea21ad878c4c3490b0d717763b0fa71096285dcd8c2f29ce3c9daa2c",
+    "sourceSha256": "d98452feef1a03df97fa709cd2cb478db513e0c53c70bcb789bf0825eb1a6b69",
     "fileMatch": [
       ".mise.toml",
       ".mise.*.toml",
@@ -326,6 +326,32 @@
             "task"
           ],
           "additionalProperties": false
+        }
+      ]
+    },
+    "os_filter_item": {
+      "description": "operating system or os/arch pair to install on",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.+-]+(/[A-Za-z0-9_.+-]+)?$",
+      "examples": [
+        "linux",
+        "macos",
+        "windows",
+        "macos/arm64",
+        "linux/x64"
+      ]
+    },
+    "os_filter": {
+      "description": "operating system filters to install on",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/os_filter_item"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/os_filter_item"
+          }
         }
       ]
     },
@@ -2142,8 +2168,39 @@
               ]
             },
             "confirm": {
-              "description": "confirmation message before running this task",
-              "type": "string"
+              "oneOf": [
+                {
+                  "description": "confirmation message before running this task",
+                  "type": "string"
+                },
+                {
+                  "description": "confirmation message before running this task with default value",
+                  "properties": {
+                    "message": {
+                      "description": "confirmation message before running this task",
+                      "type": "string"
+                    },
+                    "default": {
+                      "description": "default value for confirmation (yes/no/true/false)",
+                      "enum": [
+                        "yes",
+                        "no",
+                        "y",
+                        "n",
+                        "true",
+                        "false"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "default"
+                  ],
+                  "type": "object",
+                  "additionalProperties": false
+                }
+              ]
             },
             "depends": {
               "oneOf": [
@@ -2221,20 +2278,7 @@
                         "type": "string"
                       },
                       "os": {
-                        "oneOf": [
-                          {
-                            "description": "operating system to install on",
-                            "type": "array"
-                          },
-                          {
-                            "description": "option to pass to tool",
-                            "type": "string"
-                          },
-                          {
-                            "description": "option to pass to tool",
-                            "type": "boolean"
-                          }
-                        ]
+                        "$ref": "#/$defs/os_filter"
                       }
                     },
                     "required": [
@@ -2540,20 +2584,7 @@
               "type": "string"
             },
             "os": {
-              "oneOf": [
-                {
-                  "description": "operating system to install on",
-                  "type": "array"
-                },
-                {
-                  "description": "option to pass to tool",
-                  "type": "string"
-                },
-                {
-                  "description": "option to pass to tool",
-                  "type": "boolean"
-                }
-              ]
+              "$ref": "#/$defs/os_filter"
             },
             "install_env": {
               "type": "object",
@@ -2822,8 +2853,39 @@
           ]
         },
         "confirm": {
-          "description": "confirmation message before running this task",
-          "type": "string"
+          "oneOf": [
+            {
+              "description": "confirmation message before running this task",
+              "type": "string"
+            },
+            {
+              "description": "confirmation message before running this task with default value",
+              "properties": {
+                "message": {
+                  "description": "confirmation message before running this task",
+                  "type": "string"
+                },
+                "default": {
+                  "description": "default value for confirmation (yes/no/true/false)",
+                  "enum": [
+                    "yes",
+                    "no",
+                    "y",
+                    "n",
+                    "true",
+                    "false"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message",
+                "default"
+              ],
+              "type": "object",
+              "additionalProperties": false
+            }
+          ]
         },
         "depends": {
           "oneOf": [
@@ -2901,20 +2963,7 @@
                     "type": "string"
                   },
                   "os": {
-                    "oneOf": [
-                      {
-                        "description": "operating system to install on",
-                        "type": "array"
-                      },
-                      {
-                        "description": "option to pass to tool",
-                        "type": "string"
-                      },
-                      {
-                        "description": "option to pass to tool",
-                        "type": "boolean"
-                      }
-                    ]
+                    "$ref": "#/$defs/os_filter"
                   }
                 },
                 "required": [
@@ -3134,8 +3183,39 @@
           ]
         },
         "confirm": {
-          "description": "confirmation message before running this task",
-          "type": "string"
+          "oneOf": [
+            {
+              "description": "confirmation message before running this task",
+              "type": "string"
+            },
+            {
+              "description": "confirmation message before running this task with default value",
+              "properties": {
+                "message": {
+                  "description": "confirmation message before running this task",
+                  "type": "string"
+                },
+                "default": {
+                  "description": "default value for confirmation (yes/no/true/false)",
+                  "enum": [
+                    "yes",
+                    "no",
+                    "y",
+                    "n",
+                    "true",
+                    "false"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message",
+                "default"
+              ],
+              "type": "object",
+              "additionalProperties": false
+            }
+          ]
         },
         "depends": {
           "oneOf": [
@@ -3213,20 +3293,7 @@
                     "type": "string"
                   },
                   "os": {
-                    "oneOf": [
-                      {
-                        "description": "operating system to install on",
-                        "type": "array"
-                      },
-                      {
-                        "description": "option to pass to tool",
-                        "type": "string"
-                      },
-                      {
-                        "description": "option to pass to tool",
-                        "type": "boolean"
-                      }
-                    ]
+                    "$ref": "#/$defs/os_filter"
                   }
                 },
                 "required": [

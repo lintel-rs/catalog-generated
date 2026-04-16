@@ -7,7 +7,7 @@ Source repository: <https://github.com/lintel-rs/catalog>
 
 ## Stats
 
-- **1272** schemas
+- **1273** schemas
 - **11** groups
 - **1** external sources
 

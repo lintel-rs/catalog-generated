@@ -464,15 +464,15 @@ If <code>all</code> is specified, ty will assume that the source code can run on
     <span class="property-name">python-version</span>
     <span class="type-badge"
       ><a
-        href="#def-PythonVersion"
+        href="#def-SupportedPythonVersion"
         class="type-badge-link"
-        >PythonVersion</a
+        >SupportedPythonVersion</a
       > | null</span
     >
    </div>
   <div class="desc-html"><p>Specifies the version of Python that will be used to analyze the source code.
 The version should be specified as a string in the format <code>M.m</code> where <code>M</code> is the major version
-and <code>m</code> is the minor (e.g. <code>"3.0"</code> or <code>"3.6"</code>).
+and <code>m</code> is the minor (e.g. <code>"3.7"</code> or <code>"3.12"</code>).
 If a version is provided, ty will generate errors if the source code makes use of language features
 that are not supported in that version.</p>
 <p>If a version is not specified, ty will try the following techniques in order of preference
@@ -664,15 +664,6 @@ possibly-unresolved-reference = "ignore"
     <div class="definition-body">
       <div class="desc-html"><p>The target platform to assume when resolving types.</p>
 </div>
-      </div>
-  </div>
-  <div class="definition-block" id="def-PythonVersion">
-    <div class="definition-header">
-      <span class="def-name">PythonVersion</span>
-<span class="type-badge"
-        >string | const: &quot;3.7&quot; | const: &quot;3.8&quot; | const: &quot;3.9&quot; | const: &quot;3.10&quot; | const: &quot;3.11&quot; | const: &quot;3.12&quot; | const: &quot;3.13&quot; | const: &quot;3.14&quot; | const: &quot;3.15&quot;</span
-      >    </div>
-    <div class="definition-body">
       </div>
   </div>
   <div class="definition-block" id="def-RelativePathBuf">
@@ -2462,6 +2453,45 @@ AttributeError: Cannot overwrite NamedTuple attribute _asdict
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">invalid-named-tuple-override</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><h2>What it does</h2>
+<p>Checks for subclass members that override inherited <code>NamedTuple</code> fields.</p>
+<h2>Why is this bad?</h2>
+<p>Reusing an inherited <code>NamedTuple</code> field name in a subclass creates a
+class where tuple indexing and <code>repr()</code> still reflect the original
+field, while attribute access follows the subclass member.</p>
+<h2>Default level</h2>
+<p>This rule is a warning by default because these overrides do not make
+the class invalid at runtime.</p>
+<h2>Examples</h2>
+<pre><code class="language-python">from typing import NamedTuple
+
+class User(NamedTuple):
+    name: str
+
+class Admin(User):
+    name = "shadowed"  # error: [invalid-named-tuple-override]
+
+admin = Admin("Alice")
+admin.name  # "shadowed"
+admin[0]  # "Alice"
+</code></pre>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;warn&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">invalid-newtype</span>
     <span class="type-badge"
       ><a
@@ -3360,6 +3390,42 @@ def g(arg: object):
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">mismatched-type-name</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><h2>What it does</h2>
+<p>Checks for functional typing definitions whose declared name does not match
+the variable they are assigned to.</p>
+<h2>Why is this bad?</h2>
+<p>Constructors like <code>TypeVar</code>, <code>ParamSpec</code>, <code>NewType</code>, <code>NamedTuple</code>,
+<code>TypedDict</code>, and <code>TypeAliasType</code> all take a name argument that is
+normally expected to match the assigned variable. A mismatch is usually a
+typo and makes later diagnostics harder to understand.</p>
+<h2>Default level</h2>
+<p>This rule is a warning by default because ty can usually recover and
+continue understanding the resulting type.</p>
+<h2>Examples</h2>
+<pre><code class="language-python">from typing import NewType, TypeVar
+from typing_extensions import TypedDict
+
+T = TypeVar("U")  # error: [mismatched-type-name]
+UserId = NewType("Id", int)  # error: [mismatched-type-name]
+Movie = TypedDict("Film", {"title": str})  # error: [mismatched-type-name]
+</code></pre>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;warn&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">missing-argument</span>
     <span class="type-badge"
       ><a
@@ -3439,6 +3505,39 @@ def func(x: int): ...
 def func(x: bool): ...
 func("string")  # error: [no-matching-overload]
 </code></pre>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;error&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">non-callable-init-subclass</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><h2>What it does</h2>
+<p>Checks for class definitions that will fail due to non-callable <code>__init_subclass__</code>
+methods.</p>
+<h2>Why is this bad?</h2>
+<p>If a class defines a non-callable <code>__init_subclass__</code> method/attribute, any attempt
+to subclass that class will raise a <code>TypeError</code> at runtime.</p>
+<h2>Examples</h2>
+<pre><code class="language-python">class Super:
+    __init_subclass__ = None
+
+class Sub(Super): ...  # error: [non-callable-init-subclass]
+</code></pre>
+<h2>References</h2>
+<ul>
+<li><a target="_blank" rel="noopener noreferrer" href="https://docs.python.org/3/reference/datamodel.html#customizing-class-creation">Python data model: Customizing class creation</a></li>
+</ul>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;error&quot;</code>
@@ -4743,6 +4842,17 @@ if they exist and are not packages (i.e. they do not contain <code>__init__.py</
 </div>
        </div>        </div>
     </div>
+  </div>
+  <div class="definition-block" id="def-SupportedPythonVersion">
+    <div class="definition-header">
+      <span class="def-name">SupportedPythonVersion</span>
+<span class="type-badge"
+        >string | string | string | string | string | string | string | string | string</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>A Python version explicitly supported by ty configuration and CLI parsing.</p>
+</div>
+      </div>
   </div>
   <div class="definition-block" id="def-SystemPathBuf">
     <div class="definition-header">

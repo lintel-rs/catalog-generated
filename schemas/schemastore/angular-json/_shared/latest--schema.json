@@ -1,22 +1,37 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Angular Enum Options Schema",
-  "description": "Creates a new enum in your project. Enums (enumerations) are a way to define a set of named constants, making your code more readable and maintainable. This schematic generates a new enum with the specified name and type.",
+  "title": "Angular Resolver Options Schema",
+  "description": "Creates a new resolver in your project. Resolvers are used to pre-fetch data before a route is activated, ensuring that the necessary data is available before the component is displayed. This can improve the user experience by preventing delays and loading states. This schematic generates a new resolver with the specified name and options.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/enum/schema.json",
-    "sourceSha256": "c8b9733eb56e27018e761d3a3eaf10c1591d87e5ba56996aab17a3071b44da31"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/resolver/schema.json",
+    "sourceSha256": "5ff57ade15a12dcb0ef89ada8558dde72b1cb2447584040c50da6b432d363053"
   },
   "type": "object",
   "properties": {
     "name": {
       "type": "string",
-      "description": "The name for the new enum. This will be used to create the enum file (e.g., `my-enum.enum.ts`).",
+      "description": "The name for the new resolver. This will be used to create the resolver's class and spec files (e.g., `my-resolver.resolver.ts` and `my-resolver.resolver.spec.ts`).",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use for the enum?"
+      "x-prompt": "What name would you like to use for the resolver?"
+    },
+    "skipTests": {
+      "type": "boolean",
+      "description": "Skip the generation of a unit test file `spec.ts` for the new resolver.",
+      "default": false
+    },
+    "flat": {
+      "type": "boolean",
+      "description": "Creates the new resolver files at the top level of the current project. If set to false, a new folder with the resolver's name will be created to contain the files.",
+      "default": true
+    },
+    "functional": {
+      "type": "boolean",
+      "description": "Creates the resolver as a function `ResolveFn` instead of a class. Functional resolvers can be simpler for basic scenarios.",
+      "default": true
     },
     "path": {
       "type": "string",
@@ -24,19 +39,24 @@
       "$default": {
         "$source": "workingDirectory"
       },
-      "description": "The path where the enum file should be created, relative to the current workspace. If not specified, the enum will be created in the current directory.",
+      "description": "The path where the resolver files should be created, relative to the current workspace. If not provided, the resolver will be created in the current directory.",
       "visible": false
     },
     "project": {
       "type": "string",
-      "description": "The name of the project where the enum should be created. If not specified, the CLI will determine the project from the current directory.",
+      "description": "The name of the project where the resolver should be created. If not specified, the CLI will determine the project from the current directory.",
       "$default": {
         "$source": "projectName"
       }
     },
-    "type": {
+    "typeSeparator": {
       "type": "string",
-      "description": "Adds a custom type to the filename, allowing you to create more descriptive enum names. For example, if you set the type to `status`, the filename will be `my-enum.status.ts`."
+      "default": "-",
+      "enum": [
+        "-",
+        "."
+      ],
+      "description": "The separator character to use before the type within the generated file's name. For example, if you set the option to `.`, the file will be named `example.resolver.ts`."
     }
   },
   "required": [

@@ -5,7 +5,7 @@
   "description": "Base config deserialized from ~/.codex/config.toml.",
   "x-lintel": {
     "source": "https://developers.openai.com/codex/config-schema.json",
-    "sourceSha256": "1f280b8cee4f9bdc2ca5548a3e8addfbaadd0d14e76a147ed1397298d96c4acd",
+    "sourceSha256": "853e826aa12abedc82158691f17c78bca8819d3afebee4ccdf349dae4412eb0e",
     "fileMatch": [
       "**/.codex/config.toml"
     ],
@@ -300,6 +300,9 @@
         "steer": {
           "type": "boolean"
         },
+        "telepathy": {
+          "type": "boolean"
+        },
         "tool_call_mcp_elicitation": {
           "type": "boolean"
         },
@@ -318,6 +321,9 @@
         "unified_exec": {
           "type": "boolean"
         },
+        "use_agent_identity": {
+          "type": "boolean"
+        },
         "use_legacy_landlock": {
           "type": "boolean"
         },
@@ -331,6 +337,9 @@
           "type": "boolean"
         },
         "web_search_request": {
+          "type": "boolean"
+        },
+        "workspace_dependencies": {
           "type": "boolean"
         }
       },
@@ -426,6 +435,14 @@
         }
       ],
       "description": "Directory where Codex writes log files, for example `codex-tui.log`. Defaults to `$CODEX_HOME/log`."
+    },
+    "marketplaces": {
+      "type": "object",
+      "default": {},
+      "description": "User-level marketplace entries keyed by marketplace name.",
+      "additionalProperties": {
+        "$ref": "#/$defs/MarketplaceConfig"
+      }
     },
     "mcp_oauth_callback_port": {
       "description": "Optional fixed port for the local HTTP callback server used during MCP OAuth login. When unset, Codex will bind to an ephemeral port chosen by the OS.",
@@ -1242,6 +1259,9 @@
             "steer": {
               "type": "boolean"
             },
+            "telepathy": {
+              "type": "boolean"
+            },
             "tool_call_mcp_elicitation": {
               "type": "boolean"
             },
@@ -1260,6 +1280,9 @@
             "unified_exec": {
               "type": "boolean"
             },
+            "use_agent_identity": {
+              "type": "boolean"
+            },
             "use_legacy_landlock": {
               "type": "boolean"
             },
@@ -1273,6 +1296,9 @@
               "type": "boolean"
             },
             "web_search_request": {
+              "type": "boolean"
+            },
+            "workspace_dependencies": {
               "type": "boolean"
             }
           },
@@ -1520,6 +1546,51 @@
           "type": "string"
         }
       ]
+    },
+    "MarketplaceConfig": {
+      "type": "object",
+      "properties": {
+        "last_updated": {
+          "default": null,
+          "description": "Last time Codex successfully added or refreshed this marketplace.",
+          "type": "string"
+        },
+        "ref": {
+          "default": null,
+          "description": "Git ref to check out when `source_type` is `git`.",
+          "type": "string"
+        },
+        "source": {
+          "default": null,
+          "description": "Source location used when the marketplace was added.",
+          "type": "string"
+        },
+        "source_type": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/MarketplaceSourceType"
+            }
+          ],
+          "default": null,
+          "description": "Source kind used to install this marketplace."
+        },
+        "sparse_paths": {
+          "default": null,
+          "description": "Sparse checkout paths used when `source_type` is `git`.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false
+    },
+    "MarketplaceSourceType": {
+      "enum": [
+        "git",
+        "local"
+      ],
+      "type": "string"
     },
     "McpServerToolConfig": {
       "type": "object",
@@ -2231,6 +2302,10 @@
           "default": null,
           "format": "double",
           "type": "number"
+        },
+        "supports_parallel_tool_calls": {
+          "default": null,
+          "type": "boolean"
         },
         "tool_timeout_sec": {
           "default": null,
