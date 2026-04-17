@@ -4,7 +4,7 @@
   "title": "DstackConfigurationRequest",
   "x-lintel": {
     "source": "https://dstack-runner-downloads.s3.eu-west-1.amazonaws.com/latest/schemas/configuration.json",
-    "sourceSha256": "ee4dda45eaa2f6c833a68a6f5521a4564a9e3aea842365c39283c1551b52ad6b",
+    "sourceSha256": "8fbc8bc0c50e94e2a52b1beae4e7c546ed4a6c1132d74353d056d41e75bb999c",
     "fileMatch": [
       "*.dstack.yml",
       "*.dstack.yaml"
@@ -1963,6 +1963,22 @@
       ],
       "additionalProperties": false
     },
+    "ReplicaGroupRouterConfigRequest": {
+      "title": "ReplicaGroupRouterConfigRequest",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "description": "The router implementation for this replica group.",
+          "default": "sglang",
+          "enum": [
+            "sglang"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
     "ReplicaGroupRequest": {
       "title": "ReplicaGroupRequest",
       "type": "object",
@@ -2035,6 +2051,15 @@
           "items": {
             "type": "string"
           }
+        },
+        "router": {
+          "title": "Router",
+          "description": "When set, replicas in this group run the in-service HTTP router (e.g. SGLang).",
+          "allOf": [
+            {
+              "$ref": "#/$defs/ReplicaGroupRouterConfigRequest"
+            }
+          ]
         }
       },
       "required": [
@@ -2870,34 +2895,6 @@
         "resources": {
           "title": "Resources",
           "description": "The resources requirements",
-          "default": {
-            "cpu": {
-              "min": 2,
-              "max": null
-            },
-            "memory": {
-              "min": 8.0,
-              "max": null
-            },
-            "shm_size": null,
-            "gpu": {
-              "vendor": null,
-              "name": null,
-              "count": {
-                "min": 0,
-                "max": null
-              },
-              "memory": null,
-              "total_memory": null,
-              "compute_capability": null
-            },
-            "disk": {
-              "size": {
-                "min": 100.0,
-                "max": null
-              }
-            }
-          },
           "allOf": [
             {
               "$ref": "#/$defs/ResourcesSpecRequest"
@@ -3162,8 +3159,8 @@
       ],
       "additionalProperties": false
     },
-    "VolumeConfigurationRequest": {
-      "title": "VolumeConfigurationRequest",
+    "AWSVolumeConfigurationRequest": {
+      "title": "AWSVolumeConfigurationRequest",
       "type": "object",
       "properties": {
         "type": {
@@ -3174,27 +3171,18 @@
           ],
           "type": "string"
         },
+        "backend": {
+          "title": "Backend",
+          "description": "The volume backend",
+          "default": "aws",
+          "enum": [
+            "aws"
+          ],
+          "type": "string"
+        },
         "name": {
           "title": "Name",
           "description": "The volume name",
-          "type": "string"
-        },
-        "backend": {
-          "description": "The volume backend",
-          "allOf": [
-            {
-              "$ref": "#/$defs/BackendType"
-            }
-          ]
-        },
-        "region": {
-          "title": "Region",
-          "description": "The volume region",
-          "type": "string"
-        },
-        "availability_zone": {
-          "title": "Availability Zone",
-          "description": "The volume availability zone",
           "type": "string"
         },
         "size": {
@@ -3202,14 +3190,9 @@
           "description": "The volume size. Must be specified when creating new volumes",
           "type": "number"
         },
-        "volume_id": {
-          "title": "Volume Id",
-          "description": "The volume ID. Must be specified when registering external volumes",
-          "type": "string"
-        },
         "auto_cleanup_duration": {
           "title": "Auto Cleanup Duration",
-          "description": "Time to wait after volume is no longer used by any job before deleting it. Defaults to keep the volume indefinitely. Use the value 'off' or -1 to disable auto-cleanup.",
+          "description": "Time to wait after volume is no longer used by any job before deleting it. Defaults to keep the volume indefinitely. Use the value `off` or `-1` to disable auto-cleanup",
           "anyOf": [
             {
               "type": "integer"
@@ -3226,11 +3209,270 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "volume_id": {
+          "title": "Volume Id",
+          "description": "The volume ID. Must be specified when registering external volumes",
+          "type": "string"
+        },
+        "region": {
+          "title": "Region",
+          "description": "The volume region",
+          "type": "string"
+        },
+        "availability_zone": {
+          "title": "Availability Zone",
+          "description": "The volume availability zone",
+          "type": "string"
         }
       },
       "required": [
-        "backend",
         "region"
+      ],
+      "additionalProperties": false
+    },
+    "GCPVolumeConfigurationRequest": {
+      "title": "GCPVolumeConfigurationRequest",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "default": "volume",
+          "enum": [
+            "volume"
+          ],
+          "type": "string"
+        },
+        "backend": {
+          "title": "Backend",
+          "description": "The volume backend",
+          "default": "gcp",
+          "enum": [
+            "gcp"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "description": "The volume name",
+          "type": "string"
+        },
+        "size": {
+          "title": "Size",
+          "description": "The volume size. Must be specified when creating new volumes",
+          "type": "number"
+        },
+        "auto_cleanup_duration": {
+          "title": "Auto Cleanup Duration",
+          "description": "Time to wait after volume is no longer used by any job before deleting it. Defaults to keep the volume indefinitely. Use the value `off` or `-1` to disable auto-cleanup",
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "tags": {
+          "title": "Tags",
+          "description": "The custom tags to associate with the volume. The tags are also propagated to the underlying backend resources. If there is a conflict with backend-level tags, does not override them",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "volume_id": {
+          "title": "Volume Id",
+          "description": "The volume ID. Must be specified when registering external volumes",
+          "type": "string"
+        },
+        "region": {
+          "title": "Region",
+          "description": "The volume region",
+          "type": "string"
+        },
+        "availability_zone": {
+          "title": "Availability Zone",
+          "description": "The volume availability zone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "region"
+      ],
+      "additionalProperties": false
+    },
+    "RunpodVolumeConfigurationRequest": {
+      "title": "RunpodVolumeConfigurationRequest",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "default": "volume",
+          "enum": [
+            "volume"
+          ],
+          "type": "string"
+        },
+        "backend": {
+          "title": "Backend",
+          "description": "The volume backend",
+          "default": "runpod",
+          "enum": [
+            "runpod"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "description": "The volume name",
+          "type": "string"
+        },
+        "size": {
+          "title": "Size",
+          "description": "The volume size. Must be specified when creating new volumes",
+          "type": "number"
+        },
+        "auto_cleanup_duration": {
+          "title": "Auto Cleanup Duration",
+          "description": "Time to wait after volume is no longer used by any job before deleting it. Defaults to keep the volume indefinitely. Use the value `off` or `-1` to disable auto-cleanup",
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "tags": {
+          "title": "Tags",
+          "description": "The custom tags to associate with the volume. The tags are also propagated to the underlying backend resources. If there is a conflict with backend-level tags, does not override them",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "volume_id": {
+          "title": "Volume Id",
+          "description": "The volume ID. Must be specified when registering external volumes",
+          "type": "string"
+        },
+        "region": {
+          "title": "Region",
+          "description": "The volume region",
+          "type": "string"
+        },
+        "availability_zone": {
+          "title": "Availability Zone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "region"
+      ],
+      "additionalProperties": false
+    },
+    "KubernetesVolumeConfigurationRequest": {
+      "title": "KubernetesVolumeConfigurationRequest",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "default": "volume",
+          "enum": [
+            "volume"
+          ],
+          "type": "string"
+        },
+        "backend": {
+          "title": "Backend",
+          "description": "The volume backend",
+          "default": "kubernetes",
+          "enum": [
+            "kubernetes"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "description": "The volume name",
+          "type": "string"
+        },
+        "size": {
+          "title": "Size",
+          "description": "The requested volume size. Must be specified when creating new PVCs. Ignored if `claim_name` is set",
+          "type": "number"
+        },
+        "auto_cleanup_duration": {
+          "title": "Auto Cleanup Duration",
+          "description": "Time to wait after volume is no longer used by any job before deleting it. Defaults to keep the volume indefinitely. Use the value `off` or `-1` to disable auto-cleanup",
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "tags": {
+          "title": "Tags",
+          "description": "The custom tags to associate with the volume. The tags are also propagated to the underlying backend resources. If there is a conflict with backend-level tags, does not override them",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "claim_name": {
+          "title": "Claim Name",
+          "description": "The `PersistentVolumeClaim` name. Must be specified when registering the existing PVC instead of creating a new one",
+          "type": "string"
+        },
+        "storage_class_name": {
+          "title": "Storage Class Name",
+          "description": "The `StorageClass` name. Ignored if `claim_name` is set",
+          "type": "string"
+        },
+        "access_modes": {
+          "title": "Access Modes",
+          "description": "A list of accepted access modes. Ignored if `claim_name` is set",
+          "default": [
+            "ReadWriteOnce"
+          ],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "VolumeConfigurationRequest": {
+      "title": "VolumeConfigurationRequest",
+      "discriminator": {
+        "propertyName": "backend",
+        "mapping": {
+          "aws": "#/definitions/AWSVolumeConfigurationRequest",
+          "gcp": "#/definitions/GCPVolumeConfigurationRequest",
+          "runpod": "#/definitions/RunpodVolumeConfigurationRequest",
+          "kubernetes": "#/definitions/KubernetesVolumeConfigurationRequest"
+        }
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AWSVolumeConfigurationRequest"
+        },
+        {
+          "$ref": "#/$defs/GCPVolumeConfigurationRequest"
+        },
+        {
+          "$ref": "#/$defs/RunpodVolumeConfigurationRequest"
+        },
+        {
+          "$ref": "#/$defs/KubernetesVolumeConfigurationRequest"
+        }
       ],
       "additionalProperties": false
     }
