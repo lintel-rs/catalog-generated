@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/coderabbit/latest.json",
   "x-lintel": {
     "source": "https://coderabbit.ai/integrations/schema.v2.json",
-    "sourceSha256": "f83e41b2ad9612bdd18b86c055f93c88d6abf489d3243f10a458c90a89b81c25",
+    "sourceSha256": "818092af0d2ad4d1828c865d085d8381f34e00f514d9b47592c88f9b40ed6315",
     "fileMatch": [
       ".coderabbit.yaml"
     ],
@@ -389,6 +389,55 @@
               "type": "boolean",
               "default": false,
               "description": "Automatically assign the suggested reviewers to the PR."
+            },
+            "suggested_reviewers_instructions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "reviewers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "handle": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Reviewer username or team slug to assign. Example: security-pdl"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "group"
+                          ],
+                          "default": "user",
+                          "description": "Whether the reviewer is an individual user or a team/group."
+                        }
+                      },
+                      "required": [
+                        "handle"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "minItems": 1,
+                    "description": "List of reviewers to assign when the PR matches the instructions below. Each entry pairs a handle (username or team slug) with its type (user or group)."
+                  },
+                  "instructions": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 3000,
+                    "description": "Instructions for when to assign these reviewers. Example: Assign when the PR contains Windows registry changes."
+                  }
+                },
+                "required": [
+                  "reviewers",
+                  "instructions"
+                ],
+                "additionalProperties": false
+              },
+              "default": [],
+              "description": "Reviewer Instructions | Map groups of reviewers (users and/or teams) to the PR scenarios where they should be assigned. When empty, suggestions rely entirely on prior PRs. GitHub only."
             },
             "in_progress_fortune": {
               "type": "boolean",
@@ -1302,6 +1351,10 @@
                       "type": "boolean",
                       "default": true,
                       "description": "Enable SQLFluff | SQLFluff is an open source, dialect-flexible and configurable SQL linter. | v4.1.0"
+                    },
+                    "config_file": {
+                      "type": "string",
+                      "description": "Optional path to the SQLFluff configuration file relative to the repository. Use this when the config file is not named one of SQLFluff's default filenames."
                     }
                   },
                   "description": "SQLFluff is an open source, dialect-flexible and configurable SQL linter.",
