@@ -1814,8 +1814,58 @@ For HTTP: sent as HTTP headers. For gRPC: sent as metadata entries
 (keys must be lowercase ASCII, e.g. use <code>authorization</code> not <code>Authorization</code>).
 Values support secret replacement syntax (e.g., <code>${secrets:api_key}</code>).</p>
 </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">temporality</span>
+    <span class="type-badge"
+      >string | string | string</span
+    >
+   </div>
+  <div class="desc-html"><p>Aggregation temporality preference for the OTEL metrics push exporter.</p>
+<p>Controls how counter and histogram values are encoded on the wire:</p>
+<ul>
+<li><strong><code>Delta</code></strong> (default): each export contains the change since the previous
+export. Required by Datadog's OTLP intake and recommended by AWS
+<code>CloudWatch</code>, New Relic, and most push-based <code>SaaS</code> backends. Aligns with the
+<code>OpenTelemetry</code> guidance for push exporters.</li>
+<li><strong><code>Cumulative</code></strong>: each export carries the running total since process
+start. Use this for <code>OTel</code> collectors that downstream into Prometheus or
+other pull-based / cumulative-native backends.</li>
+<li><strong><code>LowMemory</code></strong>: counters use cumulative, histograms use delta. Reduces
+the SDK's in-process state for histogram-heavy workloads.</li>
+</ul>
+<p>This setting only affects the OTLP push exporter; the runtime's Prometheus
+scrape endpoint always exposes cumulative metrics regardless of this value.</p>
+</div>
        </div>        </div>
     </div>
+  </div>
+  <div class="definition-block" id="def-OtelTemporality">
+    <div class="definition-header">
+      <span class="def-name">OtelTemporality</span>
+<span class="type-badge"
+        >string | string | string</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>Aggregation temporality preference for the OTEL metrics push exporter.</p>
+<p>Controls how counter and histogram values are encoded on the wire:</p>
+<ul>
+<li><strong><code>Delta</code></strong> (default): each export contains the change since the previous
+export. Required by Datadog's OTLP intake and recommended by AWS
+<code>CloudWatch</code>, New Relic, and most push-based <code>SaaS</code> backends. Aligns with the
+<code>OpenTelemetry</code> guidance for push exporters.</li>
+<li><strong><code>Cumulative</code></strong>: each export carries the running total since process
+start. Use this for <code>OTel</code> collectors that downstream into Prometheus or
+other pull-based / cumulative-native backends.</li>
+<li><strong><code>LowMemory</code></strong>: counters use cumulative, histograms use delta. Reduces
+the SDK's in-process state for histogram-heavy workloads.</li>
+</ul>
+<p>This setting only affects the OTLP push exporter; the runtime's Prometheus
+scrape endpoint always exposes cumulative metrics regardless of this value.</p>
+</div>
+      </div>
   </div>
   <div class="definition-block" id="def-TaskHistory">
     <div class="definition-header">
@@ -5808,7 +5858,9 @@ example <code>{ year: "YEAR(created_at)" }</code>.</li>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;false&quot;</code>
   </div>
-       </div>   <div
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;true&quot;</code> <code class="enum-value">&quot;false&quot;</code>  </div>
+     </div>   <div
   class="property-item"
 >
   <div class="property-header">
@@ -5837,6 +5889,191 @@ example <code>{ year: "YEAR(created_at)" }</code>.</li>
     <span class="type-badge">string</span>
    </div>
   <div class="desc-html"><p>Maximum size (bytes) for an individual file when fetching content. Files larger than this value are skipped. Default: 524288. Maximum: 5242880 (5 MiB).</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_username</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Username for HTTP(S) basic authentication.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_password</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Password or personal access token for HTTP(S) basic authentication.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_token</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Personal access token used for HTTP(S) authentication. Equivalent to providing a username of 'x-access-token' with the token as the password.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_ssh_key</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Absolute path to an SSH private key used to authenticate to the remote repository.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_ssh_passphrase</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Passphrase for the SSH private key identified by 'ssh_key'.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_ssh_use_agent</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>When 'true', attempt to authenticate via the running ssh-agent when no explicit ssh_key is provided. Defaults to 'true'.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;true&quot;</code>
+  </div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;true&quot;</code> <code class="enum-value">&quot;false&quot;</code>  </div>
+     </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">enable_lfs</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Whether to fetch git-lfs objects after clone/fetch. Requires the 'git-lfs' CLI to be available on PATH.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;false&quot;</code>
+  </div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;true&quot;</code> <code class="enum-value">&quot;false&quot;</code>  </div>
+     </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">max_concurrent_requests</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Maximum number of concurrent Git network operations (clone/fetch) across datasets that share the same repository URL.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;4&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_max_retries</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Maximum number of retries when the connector encounters a transient error cloning or fetching from the remote.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;3&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">backoff_method</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Backoff strategy for retries on transient errors.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;exponential&quot;</code>
+  </div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;exponential&quot;</code> <code class="enum-value">&quot;fibonacci&quot;</code>  </div>
+     </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">disable_on_permanent_error</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>When true, a permanent error (authentication failure, access denied) will disable the connector to prevent a thundering herd of failed requests.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;true&quot;</code>
+  </div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;true&quot;</code> <code class="enum-value">&quot;false&quot;</code>  </div>
+     </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_include</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p><strong>DEPRECATED</strong>: Rename 'git_include' to 'include'.</p>
+<p>[deprecated] Use unprefixed 'include'.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_fetch_content</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p><strong>DEPRECATED</strong>: Rename 'git_fetch_content' to 'fetch_content'.</p>
+<p>[deprecated] Use unprefixed 'fetch_content'.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_cache_path</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p><strong>DEPRECATED</strong>: Rename 'git_cache_path' to 'cache_path'.</p>
+<p>[deprecated] Use unprefixed 'cache_path'.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_max_files</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p><strong>DEPRECATED</strong>: Rename 'git_max_files' to 'max_files'.</p>
+<p>[deprecated] Use unprefixed 'max_files'.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_max_file_bytes</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p><strong>DEPRECATED</strong>: Rename 'git_max_file_bytes' to 'max_file_bytes'.</p>
+<p>[deprecated] Use unprefixed 'max_file_bytes'.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">git_enable_lfs</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p><strong>DEPRECATED</strong>: Rename 'git_enable_lfs' to 'enable_lfs'.</p>
+<p>[deprecated] Use unprefixed 'enable_lfs'.</p>
 </div>
        </div>        </div>
     </div>
@@ -6895,6 +7132,60 @@ example <code>{ year: "YEAR(created_at)" }</code>.</li>
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">auth_token_url</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>OAuth2 token endpoint URL. When set together with http_auth_refresh_token, the connector exchanges the refresh token for short-lived access tokens (RFC 6749 §6) and attaches 'Authorization: Bearer <token>' to all data requests. Applies to JSON API endpoints only.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">http_auth_refresh_token</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>OAuth2 refresh token exchanged against auth_token_url to obtain access tokens. Required when auth_token_url is set.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">http_auth_client_id</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>OAuth2 client_id presented to the token endpoint. Required for confidential clients; optional for public clients. Paired with http_auth_client_secret.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">http_auth_client_secret</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>OAuth2 client_secret presented to the token endpoint. Required when the client is confidential; must be set together with http_auth_client_id.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">auth_scopes</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Space-separated OAuth2 scopes to request when refreshing. Omit to inherit the scopes bound to the refresh token. Optional.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">auth_client_auth</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>How client credentials are sent to the token endpoint: 'basic' (HTTP Basic header, default per RFC 6749 §2.3.1) or 'body' (client_id/client_secret in the form body). Case-insensitive.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">file_format</span>
     <span class="type-badge">string</span>
    </div>
@@ -7362,6 +7653,60 @@ example <code>{ year: "YEAR(created_at)" }</code>.</li>
     <span class="type-badge">string</span>
    </div>
   <div class="desc-html"><p>Number of items per page for query-parameter pagination. Must be a positive integer greater than 0. Used to expand {limit} in pagination_query_params and to detect the last page (fewer results than page_size = done).</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">auth_token_url</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>OAuth2 token endpoint URL. When set together with http_auth_refresh_token, the connector exchanges the refresh token for short-lived access tokens (RFC 6749 §6) and attaches 'Authorization: Bearer <token>' to all data requests. Applies to JSON API endpoints only.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">http_auth_refresh_token</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>OAuth2 refresh token exchanged against auth_token_url to obtain access tokens. Required when auth_token_url is set.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">http_auth_client_id</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>OAuth2 client_id presented to the token endpoint. Required for confidential clients; optional for public clients. Paired with http_auth_client_secret.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">http_auth_client_secret</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>OAuth2 client_secret presented to the token endpoint. Required when the client is confidential; must be set together with http_auth_client_id.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">auth_scopes</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Space-separated OAuth2 scopes to request when refreshing. Omit to inherit the scopes bound to the refresh token. Optional.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">auth_client_auth</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>How client credentials are sent to the token endpoint: 'basic' (HTTP Basic header, default per RFC 6749 §2.3.1) or 'body' (client_id/client_secret in the form body). Case-insensitive.</p>
 </div>
        </div>   <div
   class="property-item"
