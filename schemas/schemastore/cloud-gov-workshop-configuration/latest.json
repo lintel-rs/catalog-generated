@@ -5,7 +5,7 @@
   "description": "Schema for the Cloud.gov Workshop configuration files. Top level keys `subgroups` and `projects` are valid for Customer configs. Top level keys `namespaces` and `users` are valid for the Workshop-controlled configurations.",
   "x-lintel": {
     "source": "https://workshop.cloud.gov/workshop/workshop-schemas/-/raw/main/cg-workshop.schema.json",
-    "sourceSha256": "ee320c56ebc4b2340a7f76541fe3803711459e81c8172baa9389f066b3649d77",
+    "sourceSha256": "545e5e4ca362c91176f38bee3adc307baf997093ad67fe832bdafdd29a7ed586",
     "fileMatch": [
       "cg-workshop.yml",
       "**/cg-workshop/*.yml"
@@ -61,7 +61,7 @@
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
-        "^([a-z0-9_\\-\\.\\+]+@[a-z0-9\\-.]+\\.gov)$": {
+        "^([a-z0-9_\\-\\.\\+]+@[a-z0-9\\-.]+\\.[a-z0-9\\-]{2,63})$": {
           "$ref": "#/$defs/user"
         }
       }
@@ -423,6 +423,28 @@
         },
         "lfs_enabled": {
           "description": "",
+          "type": "boolean"
+        },
+        "merge_access_level": {
+          "description": "Specify the role that can merge Merge Requests to the default branch. Defaults to 'developer'",
+          "type": "string",
+          "enum": [
+            "no one",
+            "developer",
+            "maintainer"
+          ]
+        },
+        "push_access_level": {
+          "description": "Specify the role that can push directly to the default branch. Defaults to 'no one'",
+          "type": "string",
+          "enum": [
+            "no one",
+            "developer",
+            "maintainer"
+          ]
+        },
+        "skip_branch_protection": {
+          "description": "Whether to skip branch protection rules on the default branch. Defaults to false, which applies Workshop's branch protection rules.",
           "type": "boolean"
         },
         "model_registry_access_level": {
@@ -799,7 +821,7 @@
       "additionalProperties": false
     },
     "user": {
-      "description": "User object - The key must be the user's US government email address under a .gov domain",
+      "description": "User object - The key must be the user's email address",
       "type": "object",
       "properties": {
         "custom_attributes": {

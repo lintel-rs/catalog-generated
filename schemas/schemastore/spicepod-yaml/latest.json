@@ -5,7 +5,7 @@
   "description": "A Spicepod definition is a YAML file that describes a Spicepod.",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/spiceai/spiceai/trunk/.schema/spicepod.schema.json",
-    "sourceSha256": "172463c18cd5a197a599f41dfd76248b0c73d67c97ea528a60d527290d04b1b6",
+    "sourceSha256": "508797f4fcf4303ce7ad2d24f659048e24dfa7ba23d953e6392960e8d8054e25",
     "fileMatch": [
       "spicepod.yml",
       "spicepod.yaml"
@@ -667,6 +667,13 @@
           "description": "Aggregation temporality preference for exported metrics.\n\nDefaults to `delta`, which is required by Datadog and recommended for\nmost push-based OTLP backends (`CloudWatch`, New Relic, etc.). Set to\n`cumulative` when forwarding to an `OTel` collector that feeds Prometheus\nor another cumulative-native backend. See [`OtelTemporality`] for\ndetails.",
           "$ref": "#/$defs/OtelTemporality",
           "default": "delta"
+        },
+        "prefix": {
+          "description": "Optional prefix prepended to every exported metric name.\n\nUseful for namespacing Spice metrics in shared backends so they don't\ncollide with metrics from other services. For example, with\n`prefix: \"spiceai.\"` the runtime metric `query_duration_ms` is exported\nas `spiceai.query_duration_ms`.\n\nThe prefix is applied via an `OpenTelemetry` `View` on the runtime's\n`MeterProvider`, so it affects every metric reader attached to that\nprovider (the `otel_exporter` push reader, the Prometheus scrape\nendpoint, and the cluster on-demand OTLP reader). In practice users\ntypically enable only one of these at a time, so the prefix appears on\nexactly the destination they configured it for.",
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "required": [

@@ -4283,14 +4283,20 @@ emitted remotely in the cluster.</li>
     <div class="definition-header">
       <span class="def-name">ParamSource</span>
 <span class="type-badge"
-        >string | object</span
+        >string | object | object</span
       >    </div>
     <div class="definition-body">
       <div class="desc-html"><!--${internal}-->
-<p>A connection parameter source: either a plain env var name (string) or a Kubernetes Secret
-reference (object).</p>
-<p>As a string: <code>"DB_HOST"</code> — resolved using the parent <code>type</code> field (env or env_from).</p>
-<p>As an object: <code>{ "secret": "my-secret", "key": "password" }</code> — read directly from a
+<p>A connection parameter source: a plain env var name (string), an env var with a literal
+value override (object with <code>variable</code> and optional <code>value</code>), or a Kubernetes Secret
+reference.</p>
+<p>As a string: <code>"DB_HOST"</code> - resolved using the parent <code>type</code> field (env or env_from).</p>
+<p>As an object with a literal value: <code>{ "variable": "DB_HOST", "value": "myhost.com" }</code> -
+uses the provided <code>value</code> directly instead of reading the env var from the target pod.
+The <code>variable</code> names the key in the credential Secret that the CLI creates.</p>
+<p>As a value-only object: <code>{ "value": "myhost.com" }</code> - provides the value directly without
+referencing any env var on the target pod.</p>
+<p>As a Secret ref: <code>{ "secret": "my-secret", "key": "password" }</code> - read directly from a
 Kubernetes Secret.</p>
 </div>
       </div>
