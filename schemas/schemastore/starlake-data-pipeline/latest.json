@@ -5,7 +5,7 @@
   "description": "JSON Schema for Starlake Data Pipeline",
   "x-lintel": {
     "source": "https://www.schemastore.org/starlake.json",
-    "sourceSha256": "63c82227fff46ce5ff5f81a5d2de5ab33cab5128cde61854d59307b568612a72",
+    "sourceSha256": "37aa355d518c536f2a2d31d3bf500f6bbcd50b2d7cfaa0b79da9af8f28a6f66c",
     "fileMatch": [
       "*.sl.yml"
     ],
@@ -1691,8 +1691,17 @@
             }
           },
           "not": {
-            "required": [
-              "openAPI"
+            "anyOf": [
+              {
+                "required": [
+                  "openAPI"
+                ]
+              },
+              {
+                "required": [
+                  "restAPI"
+                ]
+              }
             ]
           },
           "type": "object"
@@ -1874,6 +1883,260 @@
           },
           "required": [
             "openAPI"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "RestAPIAuthV1": {
+      "type": "object",
+      "description": "Authentication configuration for REST API extraction",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Authentication type",
+          "enum": [
+            "bearer",
+            "api_key",
+            "basic",
+            "oauth2_client_credentials"
+          ]
+        },
+        "token": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Bearer token value. Supports {{ENV_VAR}} syntax."
+        },
+        "key": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "API key value for api_key auth."
+        },
+        "header": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Header name for api_key auth. Defaults to X-API-Key."
+        },
+        "username": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Username for basic auth."
+        },
+        "password": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Password for basic auth."
+        },
+        "tokenUrl": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Token endpoint URL for OAuth2 client credentials."
+        },
+        "clientId": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Client ID for OAuth2."
+        },
+        "clientSecret": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Client secret for OAuth2."
+        },
+        "scope": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "OAuth2 scope (optional)."
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "RestAPIPaginationV1": {
+      "type": "object",
+      "description": "Pagination strategy for REST API endpoints",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Pagination strategy type",
+          "enum": [
+            "offset",
+            "cursor",
+            "link_header",
+            "page_number"
+          ]
+        },
+        "limitParam": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Query parameter name for page size limit."
+        },
+        "offsetParam": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Query parameter name for offset (offset pagination)."
+        },
+        "cursorParam": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Query parameter name for cursor value (cursor pagination)."
+        },
+        "cursorPath": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "JSONPath to extract cursor from response (e.g. $.meta.next_cursor)."
+        },
+        "pageParam": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Query parameter name for page number (page_number pagination)."
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Number of records per page. Defaults to 100.",
+          "default": 100
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "RestAPIEndpointV1": {
+      "type": "object",
+      "description": "REST API endpoint definition for data extraction",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "API endpoint path (e.g. /api/v2/customers)."
+        },
+        "method": {
+          "type": "string",
+          "description": "HTTP method. Defaults to GET.",
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "default": "GET"
+        },
+        "as": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Table name override. If not set, derived from the last path segment."
+        },
+        "domain": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Domain name to group this endpoint under. Defaults to 'default'.",
+          "default": "default"
+        },
+        "headers": {
+          "$ref": "#/$defs/MapString",
+          "description": "Additional HTTP headers for this endpoint."
+        },
+        "queryParams": {
+          "$ref": "#/$defs/MapString",
+          "description": "Additional query parameters for this endpoint."
+        },
+        "requestBody": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "JSON request body for POST endpoints."
+        },
+        "pagination": {
+          "$ref": "#/$defs/RestAPIPaginationV1",
+          "description": "Pagination strategy for this endpoint. Overrides defaults."
+        },
+        "responsePath": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "JSONPath to the data array in the response (e.g. $.data or $.results)."
+        },
+        "incrementalField": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Field name used for incremental extraction. The max value is saved between runs."
+        },
+        "children": {
+          "type": "array",
+          "description": "Child endpoints that depend on parent records. Use {parent.fieldName} in path.",
+          "items": {
+            "$ref": "#/$defs/RestAPIEndpointV1"
+          }
+        },
+        "excludeFields": {
+          "type": "array",
+          "description": "List of regex patterns to exclude fields from extraction.",
+          "items": {
+            "$ref": "#/$defs/ConvertibleToString"
+          }
+        }
+      },
+      "required": [
+        "path"
+      ]
+    },
+    "RestAPIDefaultsV1": {
+      "type": "object",
+      "description": "Default settings applied to all endpoints",
+      "properties": {
+        "pagination": {
+          "$ref": "#/$defs/RestAPIPaginationV1",
+          "description": "Default pagination strategy for all endpoints."
+        },
+        "headers": {
+          "$ref": "#/$defs/MapString",
+          "description": "Default headers applied to all endpoints."
+        },
+        "queryParams": {
+          "$ref": "#/$defs/MapString",
+          "description": "Default query parameters applied to all endpoints."
+        }
+      }
+    },
+    "RestAPIRateLimitV1": {
+      "type": "object",
+      "properties": {
+        "requestsPerSecond": {
+          "type": "integer",
+          "description": "Maximum number of requests per second. Defaults to 10.",
+          "default": 10
+        }
+      }
+    },
+    "RestAPIV1": {
+      "type": "object",
+      "description": "REST API extraction configuration",
+      "properties": {
+        "baseUrl": {
+          "$ref": "#/$defs/ConvertibleToString",
+          "description": "Base URL of the REST API (e.g. <https://api.example.com/v2)>."
+        },
+        "auth": {
+          "$ref": "#/$defs/RestAPIAuthV1",
+          "description": "Authentication configuration."
+        },
+        "headers": {
+          "$ref": "#/$defs/MapString",
+          "description": "Global HTTP headers applied to all requests."
+        },
+        "rateLimit": {
+          "$ref": "#/$defs/RestAPIRateLimitV1",
+          "description": "Rate limiting configuration."
+        },
+        "defaults": {
+          "$ref": "#/$defs/RestAPIDefaultsV1",
+          "description": "Default settings applied to all endpoints."
+        },
+        "endpoints": {
+          "type": "array",
+          "description": "List of API endpoints to extract data from.",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/RestAPIEndpointV1"
+          }
+        }
+      },
+      "required": [
+        "baseUrl",
+        "endpoints"
+      ]
+    },
+    "RestAPIsV1": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ExtractV1Base"
+        },
+        {
+          "properties": {
+            "restAPI": {
+              "$ref": "#/$defs/RestAPIV1",
+              "description": "Describe how to extract data from REST API endpoints"
+            }
+          },
+          "required": [
+            "restAPI"
           ],
           "type": "object"
         }
@@ -2465,6 +2728,10 @@
             {
               "$ref": "#/$defs/OpenAPIsV1",
               "description": "Defines OpenAPI schemas extraction"
+            },
+            {
+              "$ref": "#/$defs/RestAPIsV1",
+              "description": "Defines REST API data extraction"
             }
           ]
         },
