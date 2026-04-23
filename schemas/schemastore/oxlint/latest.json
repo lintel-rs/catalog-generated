@@ -5,7 +5,7 @@
   "description": "Oxlint Configuration File\n\nThis configuration is aligned with ESLint v8's configuration schema (`eslintrc.json`).\n\nUsage: `oxlint -c oxlintrc.json`\n\nExample\n\n`.oxlintrc.json`\n\n```json\n{\n\"$schema\": \"./node_modules/oxlint/configuration_schema.json\",\n\"plugins\": [\"import\", \"typescript\", \"unicorn\"],\n\"env\": {\n\"browser\": true\n},\n\"globals\": {\n\"foo\": \"readonly\"\n},\n\"settings\": {\n\"react\": {\n\"version\": \"18.2.0\"\n},\n\"custom\": { \"option\": true }\n},\n\"rules\": {\n\"eqeqeq\": \"warn\",\n\"import/no-cycle\": \"error\",\n\"react/self-closing-comp\": [\"error\", { \"html\": false }]\n},\n\"overrides\": [\n{\n\"files\": [\"*.test.ts\", \"*.spec.ts\"],\n\"rules\": {\n\"@typescript-eslint/no-explicit-any\": \"off\"\n}\n}\n]\n}\n```\n\n`oxlint.config.ts`\n\n```ts\nimport { defineConfig } from \"oxlint\";\n\nexport default defineConfig({\nplugins: [\"import\", \"typescript\", \"unicorn\"],\nenv: {\n\"browser\": true\n},\nglobals: {\n\"foo\": \"readonly\"\n},\nsettings: {\nreact: {\nversion: \"18.2.0\"\n},\ncustom: { option: true }\n},\nrules: {\n\"eqeqeq\": \"warn\",\n\"import/no-cycle\": \"error\",\n\"react/self-closing-comp\": [\"error\", { \"html\": false }]\n},\noverrides: [\n{\nfiles: [\"*.test.ts\", \"*.spec.ts\"],\nrules: {\n\"@typescript-eslint/no-explicit-any\": \"off\"\n}\n}\n]\n});\n```",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
-    "sourceSha256": "8eba4288d0d717e89f9b70c964006b1ea304fc6116cd14b8be059280213ff593",
+    "sourceSha256": "702631c5c239cf1f8ccf5fe33671616d5d5e6de6b8d09d007c591f9a467807eb",
     "fileMatch": [
       "**/.oxlintrc.json"
     ],
@@ -398,13 +398,27 @@
         "version": {
           "description": "Jest version — accepts a number (`29`) or a semver string (`\"29.1.0\"` or `\"v29.1.0\"`),\nstoring only the major version.\n::: warning\nUsing this config will override the `no-deprecated-functions`' config set.",
           "default": null,
-          "type": "integer",
-          "format": "uint",
-          "minimum": 0.0,
+          "allOf": [
+            {
+              "$ref": "#/$defs/JestVersionSchema"
+            }
+          ],
           "markdownDescription": "Jest version — accepts a number (`29`) or a semver string (`\"29.1.0\"` or `\"v29.1.0\"`),\nstoring only the major version.\n::: warning\nUsing this config will override the `no-deprecated-functions`' config set."
         }
       },
       "markdownDescription": "Configure Jest plugin rules.\n\nSee [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest)'s\nconfiguration for a full reference."
+    },
+    "JestVersionSchema": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "LintPluginOptionsSchema": {
       "type": "string",

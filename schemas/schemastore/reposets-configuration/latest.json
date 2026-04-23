@@ -1,0 +1,1725 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/reposets-configuration/latest.json",
+  "title": "reposets Configuration",
+  "description": "Configuration for syncing GitHub repository settings, secrets, variables, rulesets, and deployment environments",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/spencerbeggs/reposets/main/package/schemas/reposets.config.schema.json",
+    "sourceSha256": "01265f54505ce51624f55cabdab9e5941dd0cefe920dc7b894bfced2d2a53124",
+    "fileMatch": [
+      "reposets.config.toml",
+      "reposets.config.json"
+    ],
+    "parsers": [
+      "json",
+      "toml"
+    ]
+  },
+  "type": "object",
+  "properties": {
+    "owner": {
+      "type": "string",
+      "description": "Default GitHub user or organization for all groups. Can be overridden per group.",
+      "title": "Default owner",
+      "examples": [
+        "spencerbeggs",
+        "savvy-web"
+      ]
+    },
+    "log_level": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/LogLevel"
+        }
+      ],
+      "title": "Log level",
+      "description": "Default output verbosity. Can be overridden with --log-level CLI flag."
+    },
+    "settings": {
+      "type": "object",
+      "x-tombi-additional-key-label": "setting_group",
+      "description": "Named groups of GitHub repository settings to apply",
+      "title": "Settings groups",
+      "additionalProperties": {
+        "$ref": "#/$defs/SettingsGroup"
+      }
+    },
+    "secrets": {
+      "type": "object",
+      "x-tombi-additional-key-label": "secret_group",
+      "description": "Named groups of secrets. Each group is one kind: file, value, or resolved.",
+      "title": "Secret groups",
+      "additionalProperties": {
+        "$ref": "#/$defs/SecretGroup"
+      }
+    },
+    "variables": {
+      "type": "object",
+      "x-tombi-additional-key-label": "variable_group",
+      "description": "Named groups of variables. Each group is one kind: file, value, or resolved.",
+      "title": "Variable groups",
+      "additionalProperties": {
+        "$ref": "#/$defs/VariableGroup"
+      }
+    },
+    "rulesets": {
+      "type": "object",
+      "x-tombi-additional-key-label": "ruleset_name",
+      "description": "Named rulesets defining branch and tag protection rules",
+      "title": "Rulesets",
+      "additionalProperties": {
+        "$ref": "#/$defs/Ruleset"
+      }
+    },
+    "environments": {
+      "type": "object",
+      "x-tombi-additional-key-label": "environment_name",
+      "description": "Named deployment environment configurations",
+      "title": "Environments",
+      "additionalProperties": {
+        "$ref": "#/$defs/Environment"
+      }
+    },
+    "groups": {
+      "type": "object",
+      "x-tombi-additional-key-label": "group_name",
+      "description": "Named groups of repositories with their settings, secrets, variables, rulesets, and environment assignments",
+      "title": "Groups",
+      "additionalProperties": {
+        "$ref": "#/$defs/Group"
+      }
+    }
+  },
+  "x-tombi-table-keys-order": "schema",
+  "additionalProperties": false,
+  "$defs": {
+    "LogLevel": {
+      "type": "string",
+      "enum": [
+        "silent",
+        "info",
+        "verbose",
+        "debug"
+      ],
+      "description": "Controls output verbosity: silent (none), info (summaries), verbose (per-operation), debug (with sources)",
+      "title": "Log level"
+    },
+    "SettingsGroup": {
+      "type": "object",
+      "properties": {
+        "is_template": {
+          "type": "boolean",
+          "description": "Whether the repository is a template that can be used to generate new repositories",
+          "title": "Template repository"
+        },
+        "has_wiki": {
+          "type": "boolean",
+          "description": "Enable the wiki feature for the repository",
+          "title": "Wikis"
+        },
+        "has_issues": {
+          "type": "boolean",
+          "description": "Enable the issues feature for the repository",
+          "title": "Issues"
+        },
+        "has_projects": {
+          "type": "boolean",
+          "description": "Enable the projects feature for the repository",
+          "title": "Projects"
+        },
+        "has_discussions": {
+          "type": "boolean",
+          "description": "Enable the discussions feature for the repository",
+          "title": "Discussions"
+        },
+        "has_sponsorships": {
+          "type": "boolean",
+          "description": "Display a Sponsor button for the repository (synced via GraphQL)",
+          "title": "Sponsorships"
+        },
+        "has_pull_requests": {
+          "type": "boolean",
+          "description": "Enable the pull requests feature for the repository (synced via GraphQL)",
+          "title": "Pull requests"
+        },
+        "allow_forking": {
+          "type": "boolean",
+          "description": "Allow forking of the repository",
+          "title": "Allow forking"
+        },
+        "allow_merge_commit": {
+          "type": "boolean",
+          "description": "Allow merge commits when merging pull requests",
+          "title": "Allow merge commits"
+        },
+        "allow_squash_merge": {
+          "type": "boolean",
+          "description": "Allow squash merging when merging pull requests",
+          "title": "Allow squash merging"
+        },
+        "allow_rebase_merge": {
+          "type": "boolean",
+          "description": "Allow rebase merging when merging pull requests",
+          "title": "Allow rebase merging"
+        },
+        "allow_auto_merge": {
+          "type": "boolean",
+          "description": "Allow pull requests to be automatically merged once all requirements are met",
+          "title": "Allow auto-merge"
+        },
+        "allow_update_branch": {
+          "type": "boolean",
+          "description": "Show the update branch button on pull requests",
+          "title": "Always suggest updating pull request branches"
+        },
+        "squash_merge_commit_title": {
+          "type": "string",
+          "enum": [
+            "PR_TITLE",
+            "COMMIT_OR_PR_TITLE"
+          ],
+          "description": "Default title for squash merge commits: PR_TITLE uses the pull request title, COMMIT_OR_PR_TITLE uses the commit message if only one commit, otherwise the PR title",
+          "title": "Squash merge commit title"
+        },
+        "squash_merge_commit_message": {
+          "type": "string",
+          "enum": [
+            "PR_BODY",
+            "COMMIT_MESSAGES",
+            "BLANK"
+          ],
+          "description": "Default message body for squash merge commits: PR_BODY uses the pull request body, COMMIT_MESSAGES concatenates all commit messages, BLANK leaves it empty",
+          "title": "Squash merge commit message"
+        },
+        "merge_commit_title": {
+          "type": "string",
+          "enum": [
+            "PR_TITLE",
+            "MERGE_MESSAGE"
+          ],
+          "description": "Default title for merge commits: PR_TITLE uses the pull request title, MERGE_MESSAGE uses the classic merge message",
+          "title": "Merge commit title"
+        },
+        "merge_commit_message": {
+          "type": "string",
+          "enum": [
+            "PR_BODY",
+            "PR_TITLE",
+            "BLANK"
+          ],
+          "description": "Default message body for merge commits: PR_BODY uses the pull request body, PR_TITLE uses the PR title, BLANK leaves it empty",
+          "title": "Merge commit message"
+        },
+        "delete_branch_on_merge": {
+          "type": "boolean",
+          "description": "Automatically delete head branches after pull requests are merged",
+          "title": "Automatically delete head branches"
+        },
+        "web_commit_signoff_required": {
+          "type": "boolean",
+          "description": "Require contributors to sign off on web-based commits",
+          "title": "Require commit signoff"
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/configuration.md"
+        }
+      },
+      "description": "GitHub repository settings to apply. Known fields are typed; additional fields are passed through to the API.",
+      "title": "Settings group",
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": {}
+    },
+    "SecretGroup": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "file"
+          ],
+          "properties": {
+            "file": {
+              "type": "object",
+              "x-tombi-additional-key-label": "name",
+              "description": "Named entries with file path values, resolved relative to config directory",
+              "title": "File entries",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "type": "object",
+              "x-tombi-additional-key-label": "name",
+              "description": "Named entries with inline values. Strings used as-is, objects JSON-stringified.",
+              "title": "Value entries",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "resolved"
+          ],
+          "properties": {
+            "resolved": {
+              "type": "object",
+              "x-tombi-additional-key-label": "name",
+              "description": "Named entries mapped to credential labels. Values come from the active credential profile.",
+              "title": "Resolved entries",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ],
+      "description": "A group of secrets. Must be exactly one kind: file, value, or resolved.",
+      "title": "Secret group",
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/secrets-and-variables.md"
+        }
+      }
+    },
+    "VariableGroup": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "file"
+          ],
+          "properties": {
+            "file": {
+              "type": "object",
+              "x-tombi-additional-key-label": "name",
+              "description": "Named entries with file path values, resolved relative to config directory",
+              "title": "File entries",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "type": "object",
+              "x-tombi-additional-key-label": "name",
+              "description": "Named entries with inline values. Strings used as-is, objects JSON-stringified.",
+              "title": "Value entries",
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "resolved"
+          ],
+          "properties": {
+            "resolved": {
+              "type": "object",
+              "x-tombi-additional-key-label": "name",
+              "description": "Named entries mapped to credential labels. Values come from the active credential profile.",
+              "title": "Resolved entries",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ],
+      "description": "A group of variables. Must be exactly one kind: file, value, or resolved.",
+      "title": "Variable group",
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/secrets-and-variables.md"
+        }
+      }
+    },
+    "Ruleset": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BranchRuleset"
+        },
+        {
+          "$ref": "#/$defs/TagRuleset"
+        }
+      ],
+      "description": "A set of rules to apply when specified conditions are met",
+      "title": "Repository ruleset",
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/rulesets.md"
+        }
+      }
+    },
+    "BranchRuleset": {
+      "type": "object",
+      "required": [
+        "name",
+        "enforcement",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the ruleset (used for matching when creating or updating)",
+          "title": "Ruleset name"
+        },
+        "enforcement": {
+          "type": "string",
+          "enum": [
+            "disabled",
+            "active",
+            "evaluate"
+          ],
+          "description": "disabled = off, active = enforced, evaluate = test mode (GitHub Enterprise only)",
+          "title": "Enforcement level"
+        },
+        "conditions": {
+          "$ref": "#/$defs/RulesetConditions"
+        },
+        "bypass_actors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BypassActor"
+          }
+        },
+        "creation": {
+          "type": "boolean",
+          "description": "When true, adds a creation rule",
+          "title": "Restrict creation"
+        },
+        "update": {
+          "type": "boolean",
+          "description": "When true, adds an update rule with update_allows_fetch_and_merge: true",
+          "title": "Restrict updates"
+        },
+        "deletion": {
+          "type": "boolean",
+          "description": "When true, adds a deletion rule",
+          "title": "Restrict deletion"
+        },
+        "required_linear_history": {
+          "type": "boolean",
+          "description": "When true, adds a required_linear_history rule",
+          "title": "Require linear history"
+        },
+        "required_signatures": {
+          "type": "boolean",
+          "description": "When true, adds a required_signatures rule",
+          "title": "Require signatures"
+        },
+        "non_fast_forward": {
+          "type": "boolean",
+          "description": "When true, adds a non_fast_forward rule",
+          "title": "Prevent non-fast-forward"
+        },
+        "deployments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Deployment environments that must succeed; converts to required_deployments rule",
+          "title": "Required deployments"
+        },
+        "targets": {
+          "$ref": "#/$defs/Targets"
+        },
+        "status_checks": {
+          "$ref": "#/$defs/StatusChecksShorthand"
+        },
+        "commit_message": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PatternEntry"
+          },
+          "description": "Commit message pattern rules",
+          "title": "Commit message patterns"
+        },
+        "commit_author_email": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PatternEntry"
+          },
+          "description": "Commit author email pattern rules",
+          "title": "Commit author email patterns"
+        },
+        "committer_email": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PatternEntry"
+          },
+          "description": "Committer email pattern rules",
+          "title": "Committer email patterns"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "branch"
+          ],
+          "description": "This ruleset applies to branches",
+          "title": "Ruleset type"
+        },
+        "pull_requests": {
+          "$ref": "#/$defs/PullRequestsShorthand"
+        },
+        "merge_queue": {
+          "$ref": "#/$defs/MergeQueueShorthand"
+        },
+        "copilot_review": {
+          "$ref": "#/$defs/CopilotReviewShorthand"
+        },
+        "code_scanning": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CodeScanningEntry"
+          },
+          "description": "Code scanning tool requirements",
+          "title": "Code scanning tools"
+        },
+        "workflows": {
+          "$ref": "#/$defs/WorkflowsShorthand"
+        },
+        "branch_name": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PatternEntry"
+          },
+          "description": "Branch name pattern rules",
+          "title": "Branch name patterns"
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/rulesets.md"
+        },
+        "initKeys": [
+          "name",
+          "type",
+          "enforcement",
+          "targets"
+        ]
+      },
+      "description": "A ruleset that applies to branches",
+      "title": "Branch ruleset",
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "RulesetConditions": {
+      "type": "object",
+      "properties": {
+        "ref_name": {
+          "$ref": "#/$defs/RefNameCondition"
+        }
+      },
+      "title": "Ruleset conditions",
+      "description": "Conditions that determine when the ruleset applies",
+      "additionalProperties": false
+    },
+    "RefNameCondition": {
+      "type": "object",
+      "properties": {
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ref name patterns to include. Accepts ~DEFAULT_BRANCH, ~ALL, or glob patterns.",
+          "title": "Include patterns",
+          "examples": [
+            [
+              "~DEFAULT_BRANCH"
+            ]
+          ]
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ref name patterns to exclude",
+          "title": "Exclude patterns"
+        }
+      },
+      "title": "Ref name condition",
+      "description": "Conditions for matching ref names (branches or tags)",
+      "additionalProperties": false
+    },
+    "BypassActor": {
+      "type": "object",
+      "required": [
+        "actor_type"
+      ],
+      "properties": {
+        "actor_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Int"
+            },
+            {
+              "$ref": "#/$defs/ResolvedRef"
+            }
+          ],
+          "description": "The ID of the actor, or a { resolved } reference to a credential label.",
+          "title": "Actor ID"
+        },
+        "actor_type": {
+          "type": "string",
+          "enum": [
+            "Integration",
+            "OrganizationAdmin",
+            "RepositoryRole",
+            "Team",
+            "DeployKey"
+          ],
+          "description": "The type of actor that can bypass a ruleset",
+          "title": "Actor type"
+        },
+        "bypass_mode": {
+          "type": "string",
+          "enum": [
+            "always",
+            "pull_request",
+            "exempt"
+          ],
+          "description": "When the specified actor can bypass the ruleset",
+          "title": "Bypass mode"
+        }
+      },
+      "title": "Bypass actor",
+      "description": "An actor that can bypass rules in a ruleset",
+      "additionalProperties": false
+    },
+    "Int": {
+      "type": "integer",
+      "description": "an integer",
+      "title": "int"
+    },
+    "ResolvedRef": {
+      "type": "object",
+      "required": [
+        "resolved"
+      ],
+      "properties": {
+        "resolved": {
+          "type": "string",
+          "description": "Reference to a named value in the active credential profile's resolve section",
+          "title": "Credential label"
+        }
+      },
+      "title": "Resolved reference",
+      "description": "A reference to a credential-resolved value",
+      "additionalProperties": false
+    },
+    "Targets": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "default",
+            "all"
+          ],
+          "description": "'default' targets the default branch; 'all' targets all branches/tags",
+          "title": "Target preset"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TargetPattern"
+          },
+          "description": "Array of include/exclude patterns for fine-grained ref targeting",
+          "title": "Custom target patterns"
+        }
+      ],
+      "description": "Shorthand for specifying ref_name conditions: 'default', 'all', or custom patterns",
+      "title": "Targets shorthand"
+    },
+    "TargetPattern": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "include"
+          ],
+          "properties": {
+            "include": {
+              "type": "string",
+              "description": "Glob pattern to include",
+              "title": "Include pattern"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "exclude"
+          ],
+          "properties": {
+            "exclude": {
+              "type": "string",
+              "description": "Glob pattern to exclude",
+              "title": "Exclude pattern"
+            }
+          },
+          "additionalProperties": false
+        }
+      ],
+      "description": "An include or exclude pattern for ref matching",
+      "title": "Target pattern"
+    },
+    "StatusChecksShorthand": {
+      "type": "object",
+      "required": [
+        "required"
+      ],
+      "properties": {
+        "update_branch": {
+          "type": "boolean",
+          "description": "PRs must be tested with the latest code",
+          "title": "Strict status checks"
+        },
+        "on_creation": {
+          "type": "boolean",
+          "description": "When false, allows branch creation even if checks would prohibit it",
+          "title": "Enforce on create"
+        },
+        "default_integration_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Int"
+            },
+            {
+              "$ref": "#/$defs/ResolvedRef"
+            }
+          ],
+          "description": "Default integration ID applied to all checks that do not specify one",
+          "title": "Default integration ID"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "context"
+            ],
+            "properties": {
+              "context": {
+                "type": "string",
+                "description": "The status check context name that must be present on the commit",
+                "title": "Context"
+              },
+              "integration_id": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Int"
+                  },
+                  {
+                    "$ref": "#/$defs/ResolvedRef"
+                  }
+                ],
+                "description": "The integration ID, or a { resolved } reference to a credential label",
+                "title": "Integration ID"
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Status checks that must pass",
+          "title": "Required checks"
+        }
+      },
+      "title": "Status checks shorthand",
+      "description": "Simplified status checks configuration",
+      "additionalProperties": false
+    },
+    "PatternEntry": {
+      "type": "object",
+      "required": [
+        "operator",
+        "pattern"
+      ],
+      "properties": {
+        "operator": {
+          "type": "string",
+          "enum": [
+            "starts_with",
+            "ends_with",
+            "contains",
+            "regex"
+          ],
+          "description": "The operator to use for matching",
+          "title": "Operator"
+        },
+        "pattern": {
+          "type": "string",
+          "description": "The pattern to match",
+          "title": "Pattern"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name for this pattern rule",
+          "title": "Rule name"
+        },
+        "negate": {
+          "type": "boolean",
+          "description": "If true, the rule fails when the pattern matches",
+          "title": "Negate"
+        }
+      },
+      "title": "Pattern entry",
+      "description": "A pattern matching rule with operator, pattern, and optional name/negate",
+      "additionalProperties": false
+    },
+    "PullRequestsShorthand": {
+      "type": "object",
+      "properties": {
+        "approvals": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Int",
+              "description": "Number of approving reviews required (0-10)",
+              "title": "Required approvals",
+              "minimum": 0,
+              "maximum": 10
+            }
+          ],
+          "title": "Required approvals",
+          "description": "Number of approving reviews required (0-10)"
+        },
+        "dismiss_stale_reviews": {
+          "type": "boolean",
+          "description": "Dismiss previous approvals when new commits are pushed",
+          "title": "Dismiss stale reviews"
+        },
+        "code_owner_review": {
+          "type": "boolean",
+          "description": "Require review from code owners for files they own",
+          "title": "Code owner review"
+        },
+        "last_push_approval": {
+          "type": "boolean",
+          "description": "Most recent push must be approved by someone other than the pusher",
+          "title": "Last push approval"
+        },
+        "resolve_threads": {
+          "type": "boolean",
+          "description": "All review conversations must be resolved before merging",
+          "title": "Resolve threads"
+        },
+        "merge_methods": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "merge",
+              "squash",
+              "rebase"
+            ]
+          },
+          "description": "Allowed merge methods. At least one must be enabled.",
+          "title": "Merge methods"
+        },
+        "reviewers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "file_patterns",
+              "minimum_approvals",
+              "reviewer"
+            ],
+            "properties": {
+              "file_patterns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "File patterns this reviewer must approve (fnmatch syntax)",
+                "title": "File patterns"
+              },
+              "minimum_approvals": {
+                "type": "integer",
+                "description": "Minimum approvals required from this team (0 = optional)",
+                "title": "Minimum approvals"
+              },
+              "reviewer": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "type"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Team ID",
+                    "title": "Team ID"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "Team"
+                    ]
+                  }
+                },
+                "title": "Reviewer team",
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Teams that must approve specific file patterns",
+          "title": "Required reviewers"
+        }
+      },
+      "title": "Pull requests shorthand",
+      "description": "Simplified pull request configuration (branch rulesets only)",
+      "additionalProperties": false
+    },
+    "MergeQueueShorthand": {
+      "type": "object",
+      "required": [
+        "check_timeout",
+        "grouping",
+        "max_build",
+        "max_merge",
+        "merge_method",
+        "min_merge",
+        "min_wait"
+      ],
+      "properties": {
+        "check_timeout": {
+          "$ref": "#/$defs/Int",
+          "description": "Max time for status checks to report",
+          "title": "Check timeout (minutes)",
+          "minimum": 1,
+          "maximum": 360
+        },
+        "grouping": {
+          "type": "string",
+          "enum": [
+            "ALLGREEN",
+            "HEADGREEN"
+          ],
+          "description": "Whether all commits or only the head commit must pass checks",
+          "title": "Grouping strategy"
+        },
+        "max_build": {
+          "$ref": "#/$defs/Int",
+          "description": "Max queued PRs requesting checks simultaneously",
+          "title": "Max entries to build",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "max_merge": {
+          "$ref": "#/$defs/Int",
+          "description": "Max PRs merged together in a group",
+          "title": "Max entries to merge",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "merge_method": {
+          "type": "string",
+          "enum": [
+            "MERGE",
+            "SQUASH",
+            "REBASE"
+          ],
+          "description": "Merge method for queued PRs",
+          "title": "Merge method"
+        },
+        "min_merge": {
+          "$ref": "#/$defs/Int",
+          "description": "Min PRs merged together in a group",
+          "title": "Min entries to merge",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "min_wait": {
+          "$ref": "#/$defs/Int",
+          "description": "Wait time for min group size after first PR is added",
+          "title": "Min wait time (minutes)",
+          "minimum": 0,
+          "maximum": 360
+        }
+      },
+      "title": "Merge queue",
+      "description": "Merge queue configuration",
+      "additionalProperties": false
+    },
+    "CopilotReviewShorthand": {
+      "type": "object",
+      "properties": {
+        "draft_prs": {
+          "type": "boolean",
+          "description": "Review draft PRs before they are marked ready",
+          "title": "Review draft PRs"
+        },
+        "on_push": {
+          "type": "boolean",
+          "description": "Review each new push to the PR",
+          "title": "Review on push"
+        }
+      },
+      "title": "Copilot review",
+      "description": "Copilot code review configuration",
+      "additionalProperties": false
+    },
+    "CodeScanningEntry": {
+      "type": "object",
+      "required": [
+        "tool",
+        "alerts",
+        "security_alerts"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "description": "Name of the code scanning tool",
+          "title": "Tool name"
+        },
+        "alerts": {
+          "type": "string",
+          "enum": [
+            "none",
+            "errors",
+            "errors_and_warnings",
+            "all"
+          ],
+          "description": "Severity level at which alerts block updates",
+          "title": "Alerts threshold"
+        },
+        "security_alerts": {
+          "type": "string",
+          "enum": [
+            "none",
+            "critical",
+            "high_or_higher",
+            "medium_or_higher",
+            "all"
+          ],
+          "description": "Severity level at which security alerts block updates",
+          "title": "Security alerts threshold"
+        }
+      },
+      "title": "Code scanning tool",
+      "description": "A code scanning tool with alert thresholds",
+      "additionalProperties": false
+    },
+    "WorkflowsShorthand": {
+      "type": "object",
+      "required": [
+        "required"
+      ],
+      "properties": {
+        "on_creation": {
+          "type": "boolean",
+          "description": "Enforce workflows when a branch is created (false = skip on creation)",
+          "title": "Enforce on creation"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "repository_id"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path to the workflow file",
+                "title": "Workflow path"
+              },
+              "ref": {
+                "type": "string",
+                "description": "Branch or tag of the workflow file",
+                "title": "Ref"
+              },
+              "repository_id": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Int"
+                  },
+                  {
+                    "$ref": "#/$defs/ResolvedRef"
+                  }
+                ],
+                "description": "Repository ID, or a { resolved } reference to a credential label",
+                "title": "Repository ID"
+              },
+              "sha": {
+                "type": "string",
+                "description": "Commit SHA of the workflow file",
+                "title": "SHA"
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Workflows that must pass for this rule",
+          "title": "Required workflows"
+        }
+      },
+      "title": "Workflows",
+      "description": "Required workflow configuration",
+      "additionalProperties": false
+    },
+    "TagRuleset": {
+      "type": "object",
+      "required": [
+        "name",
+        "enforcement",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the ruleset (used for matching when creating or updating)",
+          "title": "Ruleset name"
+        },
+        "enforcement": {
+          "type": "string",
+          "enum": [
+            "disabled",
+            "active",
+            "evaluate"
+          ],
+          "description": "disabled = off, active = enforced, evaluate = test mode (GitHub Enterprise only)",
+          "title": "Enforcement level"
+        },
+        "conditions": {
+          "$ref": "#/$defs/RulesetConditions"
+        },
+        "bypass_actors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BypassActor"
+          }
+        },
+        "creation": {
+          "type": "boolean",
+          "description": "When true, adds a creation rule",
+          "title": "Restrict creation"
+        },
+        "update": {
+          "type": "boolean",
+          "description": "When true, adds an update rule with update_allows_fetch_and_merge: true",
+          "title": "Restrict updates"
+        },
+        "deletion": {
+          "type": "boolean",
+          "description": "When true, adds a deletion rule",
+          "title": "Restrict deletion"
+        },
+        "required_linear_history": {
+          "type": "boolean",
+          "description": "When true, adds a required_linear_history rule",
+          "title": "Require linear history"
+        },
+        "required_signatures": {
+          "type": "boolean",
+          "description": "When true, adds a required_signatures rule",
+          "title": "Require signatures"
+        },
+        "non_fast_forward": {
+          "type": "boolean",
+          "description": "When true, adds a non_fast_forward rule",
+          "title": "Prevent non-fast-forward"
+        },
+        "deployments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Deployment environments that must succeed; converts to required_deployments rule",
+          "title": "Required deployments"
+        },
+        "targets": {
+          "$ref": "#/$defs/Targets"
+        },
+        "status_checks": {
+          "$ref": "#/$defs/StatusChecksShorthand"
+        },
+        "commit_message": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PatternEntry"
+          },
+          "description": "Commit message pattern rules",
+          "title": "Commit message patterns"
+        },
+        "commit_author_email": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PatternEntry"
+          },
+          "description": "Commit author email pattern rules",
+          "title": "Commit author email patterns"
+        },
+        "committer_email": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PatternEntry"
+          },
+          "description": "Committer email pattern rules",
+          "title": "Committer email patterns"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "tag"
+          ],
+          "description": "This ruleset applies to tags",
+          "title": "Ruleset type"
+        },
+        "tag_name": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PatternEntry"
+          },
+          "description": "Tag name pattern rules",
+          "title": "Tag name patterns"
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/rulesets.md"
+        },
+        "initKeys": [
+          "name",
+          "type",
+          "enforcement",
+          "targets"
+        ]
+      },
+      "description": "A ruleset that applies to tags",
+      "title": "Tag ruleset",
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "Environment": {
+      "type": "object",
+      "properties": {
+        "wait_timer": {
+          "$ref": "#/$defs/Int",
+          "description": "Number of minutes to wait before allowing deployments to proceed (0-43200)",
+          "title": "Wait timer (minutes)",
+          "minimum": 0,
+          "maximum": 43200
+        },
+        "prevent_self_review": {
+          "type": "boolean",
+          "description": "Prevent the user who triggered the deployment from approving it",
+          "title": "Prevent self-review"
+        },
+        "reviewers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reviewer"
+          },
+          "description": "Users or teams required to approve deployments to this environment",
+          "title": "Required reviewers"
+        },
+        "deployment_branches": {
+          "$ref": "#/$defs/DeploymentBranches"
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/environments.md"
+        }
+      },
+      "description": "Configuration for a GitHub deployment environment",
+      "title": "Deployment environment",
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "Reviewer": {
+      "type": "object",
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Team"
+          ],
+          "description": "Whether the reviewer is an individual user or a team",
+          "title": "Reviewer type"
+        },
+        "id": {
+          "type": "integer",
+          "description": "The numeric GitHub ID of the user or team",
+          "title": "Reviewer ID"
+        }
+      },
+      "title": "Reviewer",
+      "description": "A user or team required to review deployments",
+      "additionalProperties": false
+    },
+    "DeploymentBranches": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "all",
+            "protected"
+          ],
+          "description": "\"all\" allows any branch, \"protected\" allows only protected branches",
+          "title": "Deployment branch preset"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DeploymentBranchPolicy"
+          },
+          "description": "Array of branch or tag name patterns allowed to deploy to this environment",
+          "title": "Custom deployment policies"
+        }
+      ],
+      "description": "Controls which branches can deploy. Use \"all\", \"protected\", or a list of custom policies.",
+      "title": "Deployment branches"
+    },
+    "DeploymentBranchPolicy": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name pattern (branch name, tag name, or glob) to allow deployments from",
+          "title": "Pattern"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "branch",
+            "tag"
+          ],
+          "description": "Whether this policy matches branches or tags. Defaults to \"branch\".",
+          "title": "Policy type"
+        }
+      },
+      "title": "Deployment branch policy",
+      "description": "A custom branch or tag pattern that deployments are allowed from",
+      "additionalProperties": false
+    },
+    "Group": {
+      "type": "object",
+      "required": [
+        "repos"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "GitHub user or organization that owns these repos. Overrides the top-level owner.",
+          "title": "Owner override",
+          "examples": [
+            "savvy-web"
+          ]
+        },
+        "repos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of repository names (without owner prefix) to sync in this group",
+          "title": "Repository names",
+          "examples": [
+            [
+              "repo-one",
+              "repo-two",
+              "repo-three"
+            ]
+          ],
+          "x-tombi-array-values-order": "ascending"
+        },
+        "credentials": {
+          "type": "string",
+          "description": "Name of the credential profile to use. If only one profile exists, it is used automatically.",
+          "title": "Credential profile",
+          "examples": [
+            "personal",
+            "work"
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Names of settings groups to apply to these repos",
+          "title": "Settings groups",
+          "examples": [
+            [
+              "oss-defaults"
+            ]
+          ]
+        },
+        "environments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Names of environment definitions to create/update for these repos",
+          "title": "Environments",
+          "examples": [
+            [
+              "staging",
+              "production"
+            ]
+          ]
+        },
+        "secrets": {
+          "$ref": "#/$defs/SecretScopes"
+        },
+        "variables": {
+          "$ref": "#/$defs/VariableScopes"
+        },
+        "rulesets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Names of rulesets to apply to these repos",
+          "title": "Rulesets",
+          "examples": [
+            [
+              "workflow",
+              "release"
+            ]
+          ]
+        },
+        "cleanup": {
+          "$ref": "#/$defs/Cleanup"
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/configuration.md"
+        },
+        "initKeys": [
+          "repos"
+        ]
+      },
+      "description": "A named group of repositories with their resource assignments",
+      "title": "Repository group",
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "SecretScopes": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Secret groups to sync as GitHub Actions repository secrets",
+          "title": "Action secret groups",
+          "examples": [
+            [
+              "deploy",
+              "app"
+            ]
+          ]
+        },
+        "dependabot": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Secret groups to sync as Dependabot secrets",
+          "title": "Dependabot secret groups",
+          "examples": [
+            [
+              "deploy"
+            ]
+          ]
+        },
+        "codespaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Secret groups to sync as Codespaces secrets",
+          "title": "Codespaces secret groups",
+          "examples": [
+            [
+              "deploy"
+            ]
+          ]
+        },
+        "environments": {
+          "type": "object",
+          "x-tombi-additional-key-label": "environment_name",
+          "description": "Map of environment names to secret group references",
+          "title": "Environment secret scopes",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Secret groups to sync as environment secrets",
+            "title": "Environment secret groups"
+          }
+        }
+      },
+      "title": "Secret scopes",
+      "description": "Assign secret groups to GitHub secret scopes (actions, dependabot, codespaces, environments)",
+      "additionalProperties": false
+    },
+    "VariableScopes": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Variable groups to sync as GitHub Actions repository variables",
+          "title": "Action variable groups",
+          "examples": [
+            [
+              "common"
+            ]
+          ]
+        },
+        "environments": {
+          "type": "object",
+          "x-tombi-additional-key-label": "environment_name",
+          "description": "Map of environment names to variable group references",
+          "title": "Environment variable scopes",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Variable groups to sync as environment variables",
+            "title": "Environment variable groups"
+          }
+        }
+      },
+      "title": "Variable scopes",
+      "description": "Assign variable groups to GitHub variable scopes (actions, environments)",
+      "additionalProperties": false
+    },
+    "Cleanup": {
+      "type": "object",
+      "properties": {
+        "secrets": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupSecrets"
+            }
+          ],
+          "title": "Secrets cleanup",
+          "description": "Controls cleanup of secrets by scope"
+        },
+        "variables": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupVariables"
+            }
+          ],
+          "title": "Variables cleanup",
+          "description": "Controls cleanup of variables by scope"
+        },
+        "rulesets": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupScope"
+            }
+          ],
+          "title": "Clean up rulesets",
+          "description": "Delete repository rulesets not declared in any referenced ruleset group",
+          "default": false
+        },
+        "environments": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupScope"
+            }
+          ],
+          "title": "Clean up environments",
+          "description": "Delete repository environments not declared in config",
+          "default": false
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/cleanup.md"
+        }
+      },
+      "description": "Controls deletion of resources not declared in config. All disabled by default.",
+      "title": "Cleanup configuration",
+      "additionalProperties": false
+    },
+    "CleanupSecrets": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupScope"
+            }
+          ],
+          "title": "Clean up Actions secrets",
+          "description": "Delete Actions secrets not declared in any referenced secret group",
+          "default": false
+        },
+        "dependabot": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupScope"
+            }
+          ],
+          "title": "Clean up Dependabot secrets",
+          "description": "Delete Dependabot secrets not declared in any referenced secret group",
+          "default": false
+        },
+        "codespaces": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupScope"
+            }
+          ],
+          "title": "Clean up Codespaces secrets",
+          "description": "Delete Codespaces secrets not declared in any referenced secret group",
+          "default": false
+        },
+        "environments": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupScope"
+            }
+          ],
+          "title": "Clean up environment secrets",
+          "description": "Delete environment secrets not declared in any referenced secret group",
+          "default": false
+        }
+      },
+      "title": "Secrets cleanup configuration",
+      "description": "Controls deletion of secrets by scope (Actions, Dependabot, Codespaces, environments).",
+      "additionalProperties": false
+    },
+    "CleanupScope": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "required": [
+            "preserve"
+          ],
+          "properties": {
+            "preserve": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Resource names that should never be deleted during cleanup",
+              "title": "Preserve list",
+              "examples": [
+                [
+                  "LEGACY_TOKEN",
+                  "DEPLOY_KEY"
+                ]
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      ],
+      "description": "Controls cleanup for a single resource scope. false disables cleanup, true enables full cleanup, or specify names to preserve.",
+      "title": "Cleanup scope"
+    },
+    "CleanupVariables": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupScope"
+            }
+          ],
+          "title": "Clean up Actions variables",
+          "description": "Delete Actions variables not declared in any referenced variable group",
+          "default": false
+        },
+        "environments": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CleanupScope"
+            }
+          ],
+          "title": "Clean up environment variables",
+          "description": "Delete environment variables not declared in any referenced variable group",
+          "default": false
+        }
+      },
+      "title": "Variables cleanup configuration",
+      "description": "Controls deletion of variables by scope (Actions, environments).",
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "groups"
+  ],
+  "x-taplo": {
+    "links": {
+      "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/configuration.md"
+    },
+    "initKeys": [
+      "owner",
+      "groups"
+    ]
+  },
+  "x-tombi-toml-version": "v1.1.0"
+}

@@ -5,7 +5,7 @@
   "description": "Base config deserialized from ~/.codex/config.toml.",
   "x-lintel": {
     "source": "https://developers.openai.com/codex/config-schema.json",
-    "sourceSha256": "8ec216678a7357751e108760491527cb4b7fcaad97bb7b64208f54636efa2713",
+    "sourceSha256": "1ccd4fba8c0c08e6e0cb8a35c72a0b480974f1cc108fbf20498276d73ad072ed",
     "fileMatch": [
       "**/.codex/config.toml"
     ],
@@ -134,6 +134,10 @@
     },
     "experimental_realtime_ws_startup_context": {
       "description": "Experimental / do not use. Replaces the synthesized realtime startup context appended to websocket session instructions. An empty string disables startup context injection entirely.",
+      "type": "string"
+    },
+    "experimental_thread_store_endpoint": {
+      "description": "Experimental / do not use. When set, app-server uses a remote thread store at this endpoint instead of the local filesystem/SQLite store.",
       "type": "string"
     },
     "experimental_use_freeform_apply_patch": {
@@ -1819,6 +1823,17 @@
       ],
       "additionalProperties": false
     },
+    "ModelProviderAwsAuthInfo": {
+      "type": "object",
+      "description": "AWS SigV4 auth configuration for a model provider.",
+      "properties": {
+        "profile": {
+          "description": "AWS profile name to use. When unset, the AWS SDK default chain decides.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
     "ModelProviderInfo": {
       "type": "object",
       "description": "Serializable representation of a provider definition.",
@@ -1830,6 +1845,14 @@
             }
           ],
           "description": "Command-backed bearer-token configuration for this provider."
+        },
+        "aws": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ModelProviderAwsAuthInfo"
+            }
+          ],
+          "description": "AWS SigV4 auth configuration for this provider."
         },
         "base_url": {
           "description": "Base URL for the provider's OpenAI-compatible API.",
@@ -1862,6 +1885,7 @@
           }
         },
         "name": {
+          "default": "",
           "description": "Friendly display name.",
           "type": "string"
         },
@@ -1916,9 +1940,6 @@
           "description": "Which wire protocol this provider expects."
         }
       },
-      "required": [
-        "name"
-      ],
       "additionalProperties": false
     },
     "MultiAgentV2ConfigToml": {

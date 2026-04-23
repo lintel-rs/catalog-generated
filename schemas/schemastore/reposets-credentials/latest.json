@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.lintel.tools/schemas/schemastore/reposets-credentials/latest.json",
+  "title": "reposets Credentials",
+  "description": "Authentication profiles for reposets. This file should be gitignored.",
+  "x-lintel": {
+    "source": "https://raw.githubusercontent.com/spencerbeggs/reposets/main/package/schemas/reposets.credentials.schema.json",
+    "sourceSha256": "fd4dee2dd895137cd7de7017c3f646235043b798e7ad22e6fec2b3b9f9c12125",
+    "fileMatch": [
+      "reposets.credentials.toml",
+      "reposets.credentials.json"
+    ],
+    "parsers": [
+      "json",
+      "toml"
+    ]
+  },
+  "type": "object",
+  "properties": {
+    "profiles": {
+      "type": "object",
+      "x-tombi-additional-key-label": "profile_name",
+      "description": "Named credential profiles. If only one profile is defined, it is used automatically for all repo groups.",
+      "title": "Credential profiles",
+      "additionalProperties": {
+        "$ref": "#/$defs/CredentialProfile"
+      }
+    }
+  },
+  "$defs": {
+    "CredentialProfile": {
+      "type": "object",
+      "required": [
+        "github_token"
+      ],
+      "properties": {
+        "github_token": {
+          "type": "string",
+          "description": "A GitHub personal access token (fine-grained) with administration, secrets, variables, environments, and GPG keys permissions",
+          "title": "GitHub token",
+          "examples": [
+            "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          ]
+        },
+        "op_service_account_token": {
+          "type": "string",
+          "description": "A 1Password service account token for resolving op:// secret references",
+          "title": "1Password service account token",
+          "examples": [
+            "ops_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          ]
+        },
+        "resolve": {
+          "$ref": "#/$defs/ResolveSection"
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/credentials.md"
+        },
+        "initKeys": [
+          "github_token"
+        ]
+      },
+      "description": "Authentication credentials for a GitHub account with optional named values for secret and variable resolution",
+      "title": "Credential profile",
+      "additionalProperties": false
+    },
+    "ResolveSection": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "type": "object",
+          "x-tombi-additional-key-label": "label",
+          "description": "Named values resolved via 1Password SDK. Values are op:// reference strings.",
+          "title": "1Password references",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "file": {
+          "type": "object",
+          "x-tombi-additional-key-label": "label",
+          "description": "Named values read from files. Values are file paths relative to the credentials directory.",
+          "title": "File references",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "value": {
+          "type": "object",
+          "x-tombi-additional-key-label": "label",
+          "description": "Named inline values. Strings are used as-is, objects are JSON-stringified.",
+          "title": "Inline values",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            ]
+          }
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/credentials.md"
+        }
+      },
+      "description": "Named values resolved from 1Password, files, or inline. Referenced by resolved entries in secret and variable groups.",
+      "title": "Resolve section",
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "x-taplo": {
+    "links": {
+      "key": "https://github.com/spencerbeggs/reposets/blob/main/docs/credentials.md"
+    },
+    "initKeys": [
+      "profiles"
+    ]
+  },
+  "x-tombi-toml-version": "v1.1.0"
+}
