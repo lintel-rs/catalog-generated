@@ -5,7 +5,7 @@
   "description": "Schema for a single action entry used inside a section",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/em-al-wi/proactions-schema/main/schema/partial-action.schema.json",
-    "sourceSha256": "687ed5f92953fe89a24661e44b5c3efd79bf9d9186c4b934f3c8774bd6d3b557"
+    "sourceSha256": "ff648e63f407dee36b0b44b995c477686c6e8f6ed44c422a12beef5c26402de1"
   },
   "type": "object",
   "properties": {
@@ -30,7 +30,10 @@
             "report",
             "story",
             "dwp",
-            "dashboard"
+            "dashboard",
+            "page",
+            "picture",
+            "planner"
           ]
         },
         {
@@ -42,7 +45,10 @@
               "report",
               "story",
               "dwp",
-              "dashboard"
+              "dashboard",
+              "page",
+              "picture",
+              "planner"
             ]
           }
         }
@@ -62,6 +68,103 @@
       "description": "List of steps to execute",
       "items": {
         "$ref": "https://catalog.lintel.tools/schemas/schemastore/proactions-ai-kit-configuration-for-sections/_shared/latest--partial-step.schema.json"
+      }
+    },
+    "imports": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Reusable block modules imported into this action scope.",
+          "items": {
+            "type": "object",
+            "required": [
+              "from",
+              "as"
+            ],
+            "properties": {
+              "from": {
+                "type": "string",
+                "description": "Path to the module file. Supports template resolution."
+              },
+              "as": {
+                "type": "string",
+                "description": "Alias used under imports.<alias> namespace."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "type": "string",
+          "description": "Path to an external imports file using !include directive"
+        }
+      ]
+    },
+    "blocks": {
+      "oneOf": [
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/proactions-ai-kit-configuration-for-sections/_shared/latest--partial-blocks.schema.json"
+        },
+        {
+          "type": "string",
+          "description": "Path to an external blocks file using !include directive"
+        }
+      ]
+    },
+    "events": {
+      "type": "array",
+      "description": "Optional event subscriptions that automatically trigger this action.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Event source namespace.",
+            "enum": [
+              "aikit",
+              "system",
+              "custom"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "description": "Event name to subscribe to."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Enable or disable this subscription.",
+            "default": true
+          },
+          "condition": {
+            "type": "string",
+            "description": "Optional condition expression evaluated for each trigger event."
+          },
+          "ifRunning": {
+            "type": "string",
+            "description": "Behavior when trigger fires while action is already running.",
+            "enum": [
+              "skip",
+              "queue",
+              "parallel"
+            ],
+            "default": "skip"
+          },
+          "debounceMs": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Optional debounce window in milliseconds to suppress bursts."
+          },
+          "allowSelfTrigger": {
+            "type": "boolean",
+            "description": "Allow this action to trigger itself from its own emitted events.",
+            "default": false
+          }
+        },
+        "required": [
+          "source",
+          "name"
+        ],
+        "additionalProperties": false
       }
     },
     "onError": {
@@ -132,6 +235,25 @@
             "isActive": {
               "type": "string",
               "description": "Nunjucks expression for button visibility"
+            },
+            "showIn": {
+              "type": "object",
+              "description": "Optional source-level visibility gates evaluated before isActive.",
+              "properties": {
+                "inlinetoolbar": {
+                  "type": "boolean",
+                  "description": "Show action when triggered from inline text selection toolbar"
+                },
+                "slashmenu": {
+                  "type": "boolean",
+                  "description": "Show action when triggered from contextual slash menu"
+                },
+                "blockmenu": {
+                  "type": "boolean",
+                  "description": "Show action when triggered from contextual block menu"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "required": [
@@ -163,8 +285,110 @@
           "required": [
             "enable"
           ]
+        },
+        "onBlockDrop": {
+          "type": "object",
+          "description": "Trigger action when a block element is dropped in the editor (e.g., drag and drop between stories)",
+          "properties": {
+            "enable": {
+              "type": "boolean",
+              "description": "Enable this integration"
+            },
+            "runWhen": {
+              "type": "object",
+              "description": "Simple conditions that must match for the action to run. All conditions must be true.",
+              "properties": {
+                "isCrossStory": {
+                  "type": "boolean",
+                  "description": "Only run when block is dropped between different stories"
+                },
+                "fromOldVersion": {
+                  "type": "boolean",
+                  "description": "Only run when content is being restored from a previous version"
+                },
+                "betweenChannelCopy": {
+                  "type": "boolean",
+                  "description": "Only run when block is copied between different channels"
+                },
+                "isSameContainer": {
+                  "type": "boolean",
+                  "description": "Only run when block is moved within the same container"
+                },
+                "blockType": {
+                  "type": "string",
+                  "description": "Only run for specific block types (e.g., 'image', 'video')"
+                }
+              },
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            "when": {
+              "type": "string",
+              "description": "Custom JavaScript expression for complex conditions. Has access to 'options' (block drop info) and 'ctx' (editor context). Must return true for the action to run.",
+              "examples": [
+                "options.sourceLanguage !== options.targetLanguage",
+                "options.blockType === 'image' && options.textContent.length > 100"
+              ]
+            }
+          },
+          "required": [
+            "enable"
+          ]
         }
       }
+    },
+    "monitor": {
+      "type": "object",
+      "description": "Monitor configuration override for this action",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable monitor for this action"
+        },
+        "showProgress": {
+          "type": "boolean",
+          "description": "Show progress bar"
+        },
+        "showStepNames": {
+          "type": "boolean",
+          "description": "Show current step name"
+        },
+        "showElapsedTime": {
+          "type": "boolean",
+          "description": "Show elapsed time"
+        },
+        "enableCancellation": {
+          "type": "boolean",
+          "description": "Allow cancelling this flow"
+        },
+        "confirmCancellation": {
+          "type": "boolean",
+          "description": "Confirm before cancelling"
+        },
+        "renderMarkdown": {
+          "type": "boolean",
+          "description": "Render markdown in feedback messages"
+        },
+        "defaultWidth": {
+          "type": "number",
+          "minimum": 200,
+          "description": "Override default width of the monitor in pixels for this action"
+        },
+        "defaultHeight": {
+          "type": "number",
+          "minimum": 100,
+          "description": "Override default height of the monitor in pixels for this action"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [

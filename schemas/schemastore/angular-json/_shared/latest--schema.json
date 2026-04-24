@@ -1,211 +1,381 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/schemastore/angular-json/_shared/latest--schema.json",
-  "title": "Angular Ng New Options Schema",
-  "description": "Creates a new Angular workspace and an initial project. This schematic sets up the foundation for your Angular development, generating the workspace configuration files and an optional starter application. You can customize various aspects of the workspace and the initial project, such as routing, styling, and testing.",
+  "title": "Karma Target",
+  "description": "Karma target options for Build Facade.",
   "x-lintel": {
-    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/schematics/angular/ng-new/schema.json",
-    "sourceSha256": "801c9987845ff8c8ebc15643e555df558fd149647628fb7fa501f13284781f09"
+    "source": "https://raw.githubusercontent.com/angular/angular-cli/master/packages/angular/build/src/builders/karma/schema.json",
+    "sourceSha256": "a379fe68d78c96a949c2183a17417cbea3fc70ff4c99d2faaa1fb1db6fa86f9b"
   },
   "type": "object",
   "properties": {
-    "directory": {
+    "main": {
       "type": "string",
-      "description": "The directory where the new workspace and project should be created. If not specified, the workspace will be created in the current directory."
+      "description": "The name of the main entry-point file."
     },
-    "name": {
-      "description": "The name for the new workspace and the initial project. This name will be used for the root directory and various identifiers throughout the project.",
+    "tsConfig": {
       "type": "string",
-      "$default": {
-        "$source": "argv",
-        "index": 0
-      },
-      "x-prompt": "What name would you like to use for the new workspace and initial project?"
+      "description": "The name of the TypeScript configuration file."
     },
-    "skipInstall": {
-      "description": "Skip the automatic installation of packages. You will need to manually install the dependencies later.",
-      "type": "boolean",
-      "default": false
-    },
-    "skipGit": {
-      "description": "Do not initialize a Git repository in the new workspace. By default, a Git repository is initialized to help you track changes to your project.",
-      "type": "boolean",
-      "default": false,
-      "alias": "g"
-    },
-    "commit": {
-      "description": "Configure the initial Git commit for the new repository.",
-      "oneOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "email": {
-              "type": "string",
-              "format": "email"
-            },
-            "message": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name",
-            "email"
-          ]
-        }
-      ],
-      "default": true
-    },
-    "newProjectRoot": {
-      "description": "The path where new projects will be created within the workspace, relative to the workspace root. By default, new projects are created in the `projects` directory.",
+    "karmaConfig": {
       "type": "string",
-      "default": "projects"
+      "description": "The name of the Karma configuration file."
     },
-    "inlineStyle": {
-      "description": "Include the styles for the initial application's root component directly within the `app.ts` file. By default, a separate stylesheet file (e.g., `app.css`) is created.",
-      "type": "boolean",
-      "alias": "s",
-      "x-user-analytics": "ep.ng_inline_style"
-    },
-    "inlineTemplate": {
-      "description": "Include the HTML template for the initial application's root component directly within the `app.ts` file. By default, a separate template file (e.g., `app.html`) is created.",
-      "type": "boolean",
-      "alias": "t",
-      "x-user-analytics": "ep.ng_inline_template"
-    },
-    "viewEncapsulation": {
-      "description": "Sets the view encapsulation mode for components in the initial project. This determines how component styles are scoped and applied. Options include: `Emulated` (default, styles are scoped to the component), `None` (styles are global), and `ShadowDom` (styles are encapsulated using Shadow DOM).",
-      "enum": [
-        "Emulated",
-        "None",
-        "ShadowDom"
-      ],
-      "type": "string"
-    },
-    "version": {
-      "type": "string",
-      "description": "The version of the Angular CLI to use.",
-      "visible": false,
-      "$default": {
-        "$source": "ng-cli-version"
-      }
-    },
-    "routing": {
-      "type": "boolean",
-      "description": "Enable routing in the initial application project. This sets up the necessary files and modules for managing navigation between different views in your application.",
-      "x-user-analytics": "ep.ng_routing"
-    },
-    "prefix": {
-      "type": "string",
-      "format": "html-selector",
-      "description": "The prefix to apply to generated selectors for the initial project. For example, if the prefix is `my-app` and you generate a component named `my-component`, the selector will be `my-app-my-component`.",
-      "minLength": 1,
-      "default": "app",
-      "alias": "p"
-    },
-    "style": {
-      "description": "The type of stylesheet files to be created for components in the initial project.",
-      "type": "string",
-      "enum": [
-        "css",
-        "scss",
-        "sass",
-        "less",
-        "tailwind"
-      ],
-      "x-user-analytics": "ep.ng_style"
-    },
-    "skipTests": {
-      "description": "Skip the generation of unit test files `spec.ts`.",
-      "type": "boolean",
-      "default": false,
-      "alias": "S"
-    },
-    "testRunner": {
-      "description": "The unit testing runner to use.",
-      "type": "string",
-      "enum": [
-        "vitest",
-        "karma"
-      ],
-      "default": "vitest"
-    },
-    "createApplication": {
-      "description": "Create a new initial application project in the new workspace. When false, creates an empty workspace with no initial application. You can then use the `ng generate application` command to create applications in the `projects` directory.",
-      "type": "boolean",
-      "default": true
-    },
-    "minimal": {
-      "description": "Generate a minimal Angular workspace without any testing frameworks. This is intended for learning purposes and simple experimentation, not for production applications.",
-      "type": "boolean",
-      "default": false
-    },
-    "strict": {
-      "description": "Enable stricter type checking and stricter bundle budgets settings. This setting helps improve maintainability and catch bugs ahead of time. For more information, see <https://angular.dev/tools/cli/template-typecheck#strict-mode>",
-      "type": "boolean",
-      "default": true
-    },
-    "packageManager": {
-      "description": "The package manager used to install dependencies.",
-      "type": "string",
-      "enum": [
-        "npm",
-        "yarn",
-        "pnpm",
-        "bun"
-      ]
-    },
-    "standalone": {
-      "description": "Creates an application based upon the standalone API, without NgModules.",
-      "type": "boolean",
-      "default": true,
-      "x-user-analytics": "ep.ng_standalone"
-    },
-    "ssr": {
-      "description": "Configure the initial application for Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering).",
-      "type": "boolean",
-      "x-user-analytics": "ep.ng_ssr"
-    },
-    "zoneless": {
-      "description": "Create an initial application that does not utilize `zone.js`.",
-      "type": "boolean"
-    },
-    "aiConfig": {
+    "polyfills": {
+      "description": "A list of polyfills to include in the build. Can be a full path for a file, relative to the current workspace or module specifier. Example: 'zone.js'.",
       "type": "array",
-      "uniqueItems": true,
-      "description": "Specifies which AI tools to generate configuration files for. These file are used to improve the outputs of AI tools by following the best practices.",
       "items": {
         "type": "string",
-        "enum": [
-          "none",
-          "gemini",
-          "copilot",
-          "claude",
-          "cursor",
-          "jetbrains",
-          "windsurf",
-          "agents"
+        "uniqueItems": true
+      },
+      "default": []
+    },
+    "assets": {
+      "type": "array",
+      "description": "List of static application assets.",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/assetPattern"
+      }
+    },
+    "scripts": {
+      "description": "Global scripts to be included in the build.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "input": {
+                "type": "string",
+                "description": "The file to include.",
+                "pattern": "\\.[cm]?jsx?$"
+              },
+              "bundleName": {
+                "type": "string",
+                "pattern": "^[\\w\\-.]*$",
+                "description": "The bundle name for this extra entry point."
+              },
+              "inject": {
+                "type": "boolean",
+                "description": "If the bundle will be referenced in the HTML file.",
+                "default": true
+              }
+            },
+            "required": [
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "string",
+            "description": "The file to include.",
+            "pattern": "\\.[cm]?jsx?$"
+          }
         ]
       }
     },
-    "fileNameStyleGuide": {
+    "styles": {
+      "description": "Global styles to be included in the build.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "input": {
+                "type": "string",
+                "description": "The file to include.",
+                "pattern": "\\.(?:css|scss|sass|less)$"
+              },
+              "bundleName": {
+                "type": "string",
+                "pattern": "^[\\w\\-.]*$",
+                "description": "The bundle name for this extra entry point."
+              },
+              "inject": {
+                "type": "boolean",
+                "description": "If the bundle will be referenced in the HTML file.",
+                "default": true
+              }
+            },
+            "required": [
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "string",
+            "description": "The file to include.",
+            "pattern": "\\.(?:css|scss|sass|less)$"
+          }
+        ]
+      }
+    },
+    "inlineStyleLanguage": {
+      "description": "The stylesheet language to use for the application's inline component styles.",
       "type": "string",
+      "default": "css",
       "enum": [
-        "2016",
-        "2025"
+        "css",
+        "less",
+        "sass",
+        "scss"
+      ]
+    },
+    "stylePreprocessorOptions": {
+      "description": "Options to pass to style preprocessors.",
+      "type": "object",
+      "properties": {
+        "includePaths": {
+          "description": "Paths to include. Paths will be resolved to workspace root.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "sass": {
+          "description": "Options to pass to the sass preprocessor.",
+          "type": "object",
+          "properties": {
+            "fatalDeprecations": {
+              "description": "A set of deprecations to treat as fatal. If a deprecation warning of any provided type is encountered during compilation, the compiler will error instead. If a Version is provided, then all deprecations that were active in that compiler version will be treated as fatal.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "silenceDeprecations": {
+              "description": " A set of active deprecations to ignore. If a deprecation warning of any provided type is encountered during compilation, the compiler will ignore it instead.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "futureDeprecations": {
+              "description": "A set of future deprecations to opt into early. Future deprecations passed here will be treated as active by the compiler, emitting warnings as necessary.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "externalDependencies": {
+      "description": "Exclude the listed external dependencies from being bundled into the bundle. Instead, the created bundle relies on these dependencies to be available during runtime.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "loader": {
+      "description": "Defines the type of loader to use with a specified file extension when used with a JavaScript `import`. `text` inlines the content as a string; `binary` inlines the content as a Uint8Array; `file` emits the file and provides the runtime location of the file; `dataurl` inlines the content as a data URL with best guess of MIME type; `base64` inlines the content as a Base64-encoded string; `empty` considers the content to be empty and not include it in bundles.",
+      "type": "object",
+      "patternProperties": {
+        "^\\.\\S+$": {
+          "enum": [
+            "text",
+            "binary",
+            "file",
+            "dataurl",
+            "base64",
+            "empty"
+          ]
+        }
+      }
+    },
+    "define": {
+      "description": "Defines global identifiers that will be replaced with a specified constant value when found in any JavaScript or TypeScript code including libraries. The value will be used directly. String values must be put in quotes. Identifiers within Angular metadata such as Component Decorators will not be replaced.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "**/*.spec.ts"
       ],
-      "default": "2025",
-      "description": "The file naming convention to use for generated files. The '2025' style guide (default) uses a concise format (e.g., `app.ts` for the root component), while the '2016' style guide includes the type in the file name (e.g., `app.component.ts`). For more information, see the Angular Style Guide (https://angular.dev/style-guide)."
+      "description": "Globs of files to include, relative to project root. \nThere are 2 special cases:\n - when a path to directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists it will be included instead."
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Globs of files to exclude, relative to the project root."
+    },
+    "sourceMap": {
+      "description": "Output source maps for scripts and styles. For more information, see <https://angular.dev/reference/configs/workspace-config#source-map-configuration>.",
+      "default": true,
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "scripts": {
+              "type": "boolean",
+              "description": "Output source maps for all scripts.",
+              "default": true
+            },
+            "styles": {
+              "type": "boolean",
+              "description": "Output source maps for all styles.",
+              "default": true
+            },
+            "vendor": {
+              "type": "boolean",
+              "description": "Resolve vendor packages source maps.",
+              "default": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    },
+    "progress": {
+      "type": "boolean",
+      "description": "Log progress to the console while building.",
+      "default": true
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "Re-run tests when source files change.",
+      "default": true
+    },
+    "poll": {
+      "type": "number",
+      "description": "Enable and define the file watching poll time period in milliseconds."
+    },
+    "preserveSymlinks": {
+      "type": "boolean",
+      "description": "Do not use the real path when resolving modules. If unset then will default to `true` if NodeJS option --preserve-symlinks is set."
+    },
+    "browsers": {
+      "description": "Override which browsers tests are run against. Set to `false` to not use any browser.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "A comma seperate list of browsers to run tests against."
+        },
+        {
+          "const": false,
+          "type": "boolean",
+          "description": "Does use run tests against a browser."
+        }
+      ]
+    },
+    "codeCoverage": {
+      "type": "boolean",
+      "description": "Output a code coverage report.",
+      "default": false
+    },
+    "codeCoverageExclude": {
+      "type": "array",
+      "description": "Globs to exclude from code coverage.",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "fileReplacements": {
+      "description": "Replace compilation source files with other compilation source files in the build.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fileReplacement"
+      },
+      "default": []
+    },
+    "reporters": {
+      "type": "array",
+      "description": "Karma reporters to use. Directly passed to the karma runner.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "webWorkerTsConfig": {
+      "type": "string",
+      "description": "TypeScript configuration for Web Worker modules."
+    },
+    "aot": {
+      "type": "boolean",
+      "description": "Run tests using Ahead of Time compilation.",
+      "default": false
     }
   },
+  "$defs": {
+    "assetPattern": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "glob": {
+              "type": "string",
+              "description": "The pattern to match."
+            },
+            "input": {
+              "type": "string",
+              "description": "The input directory path in which to apply 'glob'. Defaults to the project root."
+            },
+            "output": {
+              "type": "string",
+              "default": "",
+              "description": "Absolute path within the output."
+            },
+            "ignore": {
+              "description": "An array of globs to ignore.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "glob",
+            "input"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "fileReplacement": {
+      "type": "object",
+      "properties": {
+        "replace": {
+          "type": "string",
+          "pattern": "\\.(([cm]?[jt])sx?|json)$"
+        },
+        "with": {
+          "type": "string",
+          "pattern": "\\.(([cm]?[jt])sx?|json)$"
+        }
+      },
+      "required": [
+        "replace",
+        "with"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
   "required": [
-    "name",
-    "version"
-  ],
-  "additionalProperties": false
+    "tsConfig"
+  ]
 }

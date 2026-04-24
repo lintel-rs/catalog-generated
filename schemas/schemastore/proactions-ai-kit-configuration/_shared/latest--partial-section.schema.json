@@ -5,7 +5,7 @@
   "description": "A logical section containing grouped actions",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/em-al-wi/proactions-schema/main/schema/partial-section.schema.json",
-    "sourceSha256": "26da8e2ddecfbfc13b7031c04ac51b9996fad2a4201843f76a1c9e3c420bec98"
+    "sourceSha256": "cda9969104a63d587d9a2827315ed912d9d184ece4b96a220aae02450a02aef2"
   },
   "type": "object",
   "properties": {
@@ -39,7 +39,10 @@
             "report",
             "story",
             "dwp",
-            "dashboard"
+            "dashboard",
+            "page",
+            "picture",
+            "planner"
           ]
         },
         {
@@ -51,7 +54,10 @@
               "report",
               "story",
               "dwp",
-              "dashboard"
+              "dashboard",
+              "page",
+              "picture",
+              "planner"
             ]
           }
         }
@@ -65,6 +71,92 @@
     "icon": {
       "type": "string",
       "description": "Icon html for this section"
+    },
+    "monitor": {
+      "type": "object",
+      "description": "Monitor configuration override for this section",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable monitor for this section"
+        },
+        "showProgress": {
+          "type": "boolean",
+          "description": "Show progress bar"
+        },
+        "showStepNames": {
+          "type": "boolean",
+          "description": "Show current step name"
+        },
+        "showElapsedTime": {
+          "type": "boolean",
+          "description": "Show elapsed time"
+        },
+        "enableCancellation": {
+          "type": "boolean",
+          "description": "Allow cancelling this flow"
+        },
+        "confirmCancellation": {
+          "type": "boolean",
+          "description": "Confirm before cancelling"
+        },
+        "renderMarkdown": {
+          "type": "boolean",
+          "description": "Render markdown in feedback messages"
+        },
+        "defaultWidth": {
+          "type": "number",
+          "minimum": 200,
+          "description": "Override default width of the monitor in pixels for this section"
+        },
+        "defaultHeight": {
+          "type": "number",
+          "minimum": 100,
+          "description": "Override default height of the monitor in pixels for this section"
+        }
+      },
+      "additionalProperties": false
+    },
+    "imports": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Reusable block modules imported into the section scope.",
+          "items": {
+            "type": "object",
+            "required": [
+              "from",
+              "as"
+            ],
+            "properties": {
+              "from": {
+                "type": "string",
+                "description": "Path to the module file. Supports template resolution."
+              },
+              "as": {
+                "type": "string",
+                "description": "Alias used under imports.<alias> namespace."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "type": "string",
+          "description": "Path to an external imports file using !include directive"
+        }
+      ]
+    },
+    "blocks": {
+      "oneOf": [
+        {
+          "$ref": "https://catalog.lintel.tools/schemas/schemastore/proactions-ai-kit-configuration/_shared/latest--partial-blocks.schema.json"
+        },
+        {
+          "type": "string",
+          "description": "Path to an external blocks file using !include directive"
+        }
+      ]
     },
     "actions": {
       "type": "array",
