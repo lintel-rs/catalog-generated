@@ -5,7 +5,7 @@
   "description": "Configuration schema for ReleaseKit - Automated versioning, changelog generation, and publishing",
   "x-lintel": {
     "source": "https://goosewobbler.github.io/releasekit/schema.json",
-    "sourceSha256": "87e3b2e76a42f8aa4b77eeaf99b472d26681dd5148b71c0d2a8fd4d6122c084c",
+    "sourceSha256": "dea28cc9d71ae4d7892e20c1fdfadf5cfc50b5bca2f0f312728af447dc617546",
     "fileMatch": [
       "releasekit.config.json"
     ],
@@ -911,6 +911,30 @@
               "type": "boolean",
               "default": true,
               "description": "Whether to auto-delete the release branch after the PR is merged."
+            },
+            "editableNotes": {
+              "type": "boolean",
+              "default": false,
+              "description": "Allow teams to edit the release notes section in the PR body before publishing. When enabled, the notes section is wrapped in editable markers and preserved across updates if manually changed."
+            },
+            "mergeMethod": {
+              "type": "string",
+              "enum": [
+                "merge",
+                "squash",
+                "rebase"
+              ],
+              "default": "merge",
+              "description": "Merge method to use when merging the standing release PR via CLI."
+            },
+            "minAge": {
+              "type": "string",
+              "description": "Minimum age of the standing PR before it can be merged. Duration string, e.g. '6h', '30m', '1d'. Gate enforced via the releasekit/standing-pr commit status check; configure it as a required status check in branch protection to block merges."
+            },
+            "minPackages": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Minimum number of packages with releasable changes required to create or maintain the standing PR. Below this threshold the PR is closed and no new PR is opened."
             }
           },
           "additionalProperties": false
