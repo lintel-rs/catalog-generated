@@ -5,7 +5,7 @@
   "description": "**Tombi** (鳶 `/toɴbi/`) is a toolkit for TOML; providing a formatter/linter and language server.\nSee the [GitHub repository](https://github.com/tombi-toml/tombi) for more information.",
   "x-lintel": {
     "source": "https://www.schemastore.org/tombi.json",
-    "sourceSha256": "eb79c013643f514f87afb5df23e1692108bc909bccd9f250b58624150dccb8b8",
+    "sourceSha256": "860f7205d050ec8df559c58c44ea753f05b3c065d29d32b1705635b9d08d8603",
     "fileMatch": [
       "tombi.toml",
       "**/tombi/config.toml"
@@ -98,6 +98,16 @@
       "items": {
         "$ref": "#/$defs/OverrideItem"
       }
+    },
+    "extensions": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Extensions"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "$defs": {
@@ -295,6 +305,7 @@
         },
         "string-quote-style": {
           "title": "The preferred quote character for strings",
+          "description": "Choose which quote style the formatter prefers for basic strings.",
           "anyOf": [
             {
               "$ref": "#/$defs/StringQuoteStyle"
@@ -930,6 +941,38 @@
             "type": "string"
           },
           "minItems": 1
+        },
+        "format": {
+          "title": "Schema-specific format options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaFormatOptions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lint": {
+          "title": "Schema-specific lint options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaLintOptions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "overrides": {
+          "title": "Schema-specific overrides",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/SchemaOverrideItem"
+          }
         }
       },
       "x-tombi-table-keys-order": "schema",
@@ -937,6 +980,305 @@
         "path",
         "include"
       ],
+      "additionalProperties": false
+    },
+    "SchemaFormatOptions": {
+      "title": "Schema-specific format options",
+      "type": "object",
+      "properties": {
+        "rules": {
+          "title": "Schema-specific format rules",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaFormatRules"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "SchemaFormatRules": {
+      "title": "Schema-specific format rules",
+      "type": "object",
+      "properties": {
+        "array-values-order": {
+          "title": "Whether schema-defined array values ordering is enabled",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaArrayValuesOrderRule"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "table-keys-order": {
+          "title": "Whether schema-defined table key ordering is enabled",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaTableKeysOrderRule"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "SchemaArrayValuesOrderRule": {
+      "title": "Schema-defined array values ordering",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Whether schema-defined array values ordering is enabled",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoolDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "SchemaTableKeysOrderRule": {
+      "title": "Schema-defined table key ordering",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Whether schema-defined table key ordering is enabled",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoolDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "SchemaLintOptions": {
+      "title": "Schema-specific lint options",
+      "type": "object",
+      "properties": {
+        "rules": {
+          "title": "Schema-specific lint rules",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaLintRules"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "SchemaLintRules": {
+      "title": "Schema-specific lint rules",
+      "type": "object",
+      "properties": {
+        "deprecated": {
+          "title": "Deprecated",
+          "description": "Override the deprecated diagnostic level for this schema.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SeverityLevelDefaultWarn"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "SchemaOverrideItem": {
+      "title": "Schema-specific override item",
+      "type": "object",
+      "properties": {
+        "targets": {
+          "title": "Accessor patterns to override",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PatternAccessor"
+          },
+          "minItems": 1
+        },
+        "format": {
+          "title": "Format options to override",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaOverrideFormatOptions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lint": {
+          "title": "Lint options to override",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaOverrideLintOptions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "required": [
+        "targets"
+      ],
+      "additionalProperties": false
+    },
+    "PatternAccessor": {
+      "title": "Accessor pattern",
+      "description": "To apply it to the Root Table, use `\"\"`.\n\nArray indices are matched as wildcards. That means `[*]` and numeric\nindices such as `[0]` are treated the same and will match any array\nelement, so `items[0].name` behaves like `items[*].name`.\n\n**Example**:\n  - `\"\"`\n  - `\"tool.*\"`\n  - `\"items[*].name\"`",
+      "type": "string",
+      "minLength": 0
+    },
+    "SchemaOverrideFormatOptions": {
+      "title": "Schema-specific override format options",
+      "type": "object",
+      "properties": {
+        "rules": {
+          "title": "Schema-specific override format rules",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaOverrideFormatRules"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "SchemaOverrideFormatRules": {
+      "title": "Schema-specific override format rules",
+      "type": "object",
+      "properties": {
+        "array-values-order": {
+          "title": "Override array values ordering for matched roots",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaOverrideArrayValuesOrderRule"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "table-keys-order": {
+          "title": "Override table key ordering for matched roots",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaOverrideTableKeysOrderRule"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "SchemaOverrideArrayValuesOrderRule": {
+      "title": "Override array values ordering for matched roots",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArrayValuesOrder"
+        },
+        {
+          "$ref": "#/$defs/SchemaArrayValuesOrderRule"
+        }
+      ]
+    },
+    "ArrayValuesOrder": {
+      "type": "string",
+      "enum": [
+        "ascending",
+        "descending",
+        "version-sort"
+      ]
+    },
+    "SchemaOverrideTableKeysOrderRule": {
+      "title": "Override table key ordering for matched roots",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TableKeysOrder"
+        },
+        {
+          "$ref": "#/$defs/SchemaTableKeysOrderRule"
+        }
+      ]
+    },
+    "TableKeysOrder": {
+      "type": "string",
+      "enum": [
+        "ascending",
+        "descending",
+        "schema",
+        "version-sort"
+      ]
+    },
+    "SchemaOverrideLintOptions": {
+      "title": "Schema-specific override lint options",
+      "type": "object",
+      "properties": {
+        "rules": {
+          "title": "Schema-specific override lint rules",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaOverrideLintRules"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "SchemaOverrideLintRules": {
+      "title": "Schema-specific override lint rules",
+      "type": "object",
+      "properties": {
+        "deprecated": {
+          "title": "Override deprecated diagnostics for matched roots",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SeverityLevelDefaultWarn"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "schema",
       "additionalProperties": false
     },
     "SubSchema": {
@@ -964,6 +1306,38 @@
             "type": "string"
           },
           "minItems": 1
+        },
+        "format": {
+          "title": "Schema-specific format options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaFormatOptions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lint": {
+          "title": "Schema-specific lint options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SchemaLintOptions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "overrides": {
+          "title": "Schema-specific overrides",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/SchemaOverrideItem"
+          }
         }
       },
       "x-tombi-table-keys-order": "schema",
@@ -1103,6 +1477,1113 @@
         }
       },
       "x-tombi-table-keys-order": "schema",
+      "additionalProperties": false
+    },
+    "Extensions": {
+      "title": "Extension options",
+      "description": "🚧 Currently, third-party extensions are not supported,\nand only built-in extensions are provided. 🚧",
+      "type": "object",
+      "properties": {
+        "tombi-toml/cargo": {
+          "title": "Cargo Extension",
+          "description": "Configure built-in support for `Cargo.toml`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CargoExtensionFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tombi-toml/pyproject": {
+          "title": "Pyproject Extension",
+          "description": "Configure built-in support for `pyproject.toml`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PyprojectExtensionFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tombi-toml/tombi": {
+          "title": "Tombi Extension",
+          "description": "Configure built-in support for `tombi.toml`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TombiExtensionFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "CargoExtensionFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/CargoExtensionFeatureTree"
+        }
+      ]
+    },
+    "EnabledOnly": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enable feature",
+          "description": "Whether this feature is enabled.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/BoolDefaultTrue"
+            }
+          ]
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "CargoExtensionFeatureTree": {
+      "type": "object",
+      "properties": {
+        "lsp": {
+          "title": "Cargo LSP feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CargoLspFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "CargoLspFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/CargoLspFeatureTree"
+        }
+      ]
+    },
+    "CargoLspFeatureTree": {
+      "type": "object",
+      "properties": {
+        "completion": {
+          "title": "Completion feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CargoCompletionFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inlay-hint": {
+          "title": "Inlay hint feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CargoInlayHintFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "goto-definition": {
+          "title": "Goto definition feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CargoNavigationFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "goto-declaration": {
+          "title": "Goto declaration feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CargoNavigationFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document-link": {
+          "title": "Document link feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CargoDocumentLinkFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hover": {
+          "title": "Hover feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CargoHoverFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "code-action": {
+          "title": "Code action feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CargoCodeActionFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "CargoCompletionFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/CargoCompletionFeatureTree"
+        }
+      ]
+    },
+    "CargoCompletionFeatureTree": {
+      "type": "object",
+      "properties": {
+        "dependency-version": {
+          "title": "Dependency version completion feature",
+          "description": "Whether completion suggests dependency versions.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dependency-feature": {
+          "title": "Dependency feature completion feature",
+          "description": "Whether completion suggests dependency features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "title": "Path completion feature",
+          "description": "Whether completion suggests filesystem paths.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "ToggleFeatureDefaultTrue": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enable feature",
+          "description": "Whether this nested feature is enabled.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoolDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "CargoInlayHintFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/CargoInlayHintFeatureTree"
+        }
+      ],
+      "x-tombi-table-keys-order": "ascending"
+    },
+    "CargoInlayHintFeatureTree": {
+      "type": "object",
+      "properties": {
+        "dependency-version": {
+          "title": "Dependency version inlay hint feature",
+          "description": "Whether inlay hints show dependency versions.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "default-features": {
+          "title": "Default features inlay hint feature",
+          "description": "Whether inlay hints show `default-features` values.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace-value": {
+          "title": "Workspace value inlay hint feature",
+          "description": "Whether inlay hints show values inherited from the Cargo workspace.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "CargoNavigationFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/CargoNavigationFeatureTree"
+        }
+      ]
+    },
+    "CargoNavigationFeatureTree": {
+      "type": "object",
+      "properties": {
+        "dependency": {
+          "title": "Dependency navigation feature",
+          "description": "Whether navigation resolves dependency definitions and declarations.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "member": {
+          "title": "Member navigation feature",
+          "description": "Whether navigation resolves workspace member targets.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "title": "Path navigation feature",
+          "description": "Whether navigation resolves filesystem paths.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "CargoDocumentLinkFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/CargoDocumentLinkFeatureTree"
+        }
+      ]
+    },
+    "CargoDocumentLinkFeatureTree": {
+      "type": "object",
+      "properties": {
+        "cargo-toml": {
+          "title": "Cargo.toml document link feature",
+          "description": "Whether document links are created for `Cargo.toml` references.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultFalse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "crates-io": {
+          "title": "crates.io document link feature",
+          "description": "Whether document links are created for crates.io package references.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "git": {
+          "title": "Git document link feature",
+          "description": "Whether document links are created for Git references.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultFalse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "title": "Path document link feature",
+          "description": "Whether document links are created for filesystem paths.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultFalse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workspace": {
+          "title": "Workspace document link feature",
+          "description": "Whether document links are created for `workspace = true` references.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultFalse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "ToggleFeatureDefaultFalse": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enable feature",
+          "description": "Whether this nested feature is enabled.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoolDefaultFalse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "BoolDefaultFalse": {
+      "type": "boolean",
+      "default": false
+    },
+    "CargoHoverFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/CargoHoverFeatureTree"
+        }
+      ],
+      "x-tombi-table-keys-order": "ascending"
+    },
+    "CargoHoverFeatureTree": {
+      "type": "object",
+      "properties": {
+        "dependency-detail": {
+          "title": "Dependency detail hover feature",
+          "description": "Whether hover shows detailed dependency metadata.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "CargoCodeActionFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/CargoCodeActionFeatureTree"
+        }
+      ]
+    },
+    "CargoCodeActionFeatureTree": {
+      "type": "object",
+      "properties": {
+        "inherit-from-workspace": {
+          "title": "Inherit-from-workspace code action feature",
+          "description": "Whether code actions can replace a value with `workspace = true`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inherit-dependency-from-workspace": {
+          "title": "Inherit-dependency-from-workspace code action feature",
+          "description": "Whether code actions can inherit dependency settings from the workspace.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "convert-dependency-to-table-format": {
+          "title": "Convert-dependency-to-table-format code action feature",
+          "description": "Whether code actions can rewrite inline dependencies to table format.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "add-to-workspace-and-inherit-dependency": {
+          "title": "Add-to-workspace-and-inherit-dependency code action feature",
+          "description": "Whether code actions can add a dependency to the workspace and inherit it.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "PyprojectExtensionFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/PyprojectExtensionFeatureTree"
+        }
+      ]
+    },
+    "PyprojectExtensionFeatureTree": {
+      "type": "object",
+      "properties": {
+        "lsp": {
+          "title": "Pyproject LSP feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PyprojectLspFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "PyprojectLspFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/PyprojectLspFeatureTree"
+        }
+      ]
+    },
+    "PyprojectLspFeatureTree": {
+      "type": "object",
+      "properties": {
+        "completion": {
+          "title": "Completion feature options",
+          "description": "Configure pyproject completion features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PyprojectCompletionFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inlay-hint": {
+          "title": "Inlay hint feature options",
+          "description": "Configure pyproject inlay hint features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PyprojectInlayHintFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "goto-definition": {
+          "title": "Goto definition feature options",
+          "description": "Configure pyproject go-to-definition features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PyprojectNavigationFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "goto-declaration": {
+          "title": "Goto declaration feature options",
+          "description": "Configure pyproject go-to-declaration features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PyprojectNavigationFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document-link": {
+          "title": "Document link feature options",
+          "description": "Configure pyproject document link features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PyprojectDocumentLinkFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hover": {
+          "title": "Hover feature options",
+          "description": "Configure pyproject hover features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PyprojectHoverFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "code-action": {
+          "title": "Code action feature options",
+          "description": "Configure pyproject code action features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PyprojectCodeActionFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "PyprojectCompletionFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/PyprojectCompletionFeatureTree"
+        }
+      ]
+    },
+    "PyprojectCompletionFeatureTree": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "title": "Path completion feature",
+          "description": "Whether completion suggests filesystem paths.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "PyprojectInlayHintFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/PyprojectInlayHintFeatureTree"
+        }
+      ],
+      "x-tombi-table-keys-order": "ascending"
+    },
+    "PyprojectInlayHintFeatureTree": {
+      "type": "object",
+      "properties": {
+        "dependency-version": {
+          "title": "Dependency version inlay hint feature",
+          "description": "Whether inlay hints show resolved dependency versions.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "PyprojectNavigationFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/PyprojectNavigationFeatureTree"
+        }
+      ]
+    },
+    "PyprojectNavigationFeatureTree": {
+      "type": "object",
+      "properties": {
+        "dependency": {
+          "title": "Dependency navigation feature",
+          "description": "Whether navigation resolves dependency definitions and declarations.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "member": {
+          "title": "Member navigation feature",
+          "description": "Whether navigation resolves workspace member targets.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "title": "Path navigation feature",
+          "description": "Whether navigation resolves filesystem paths.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "PyprojectDocumentLinkFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/PyprojectDocumentLinkFeatureTree"
+        }
+      ]
+    },
+    "PyprojectDocumentLinkFeatureTree": {
+      "type": "object",
+      "properties": {
+        "pyproject-toml": {
+          "title": "pyproject.toml document link feature",
+          "description": "Whether document links are created for `pyproject.toml` references.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultFalse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pypi-org": {
+          "title": "PyPI document link feature",
+          "description": "Whether document links are created for `pypi.org` package references.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "PyprojectHoverFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/PyprojectHoverFeatureTree"
+        }
+      ],
+      "x-tombi-table-keys-order": "ascending"
+    },
+    "PyprojectHoverFeatureTree": {
+      "type": "object",
+      "properties": {
+        "dependency-detail": {
+          "title": "Dependency detail hover feature",
+          "description": "Whether hover shows detailed dependency metadata.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "PyprojectCodeActionFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/PyprojectCodeActionFeatureTree"
+        }
+      ]
+    },
+    "PyprojectCodeActionFeatureTree": {
+      "type": "object",
+      "properties": {
+        "use-workspace-dependency": {
+          "title": "Use-workspace-dependency code action feature",
+          "description": "Whether code actions can reuse a dependency declared in the workspace.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "add-to-workspace-and-use-workspace-dependency": {
+          "title": "Add-to-workspace-and-use-workspace-dependency code action feature",
+          "description": "Whether code actions can add a dependency to the workspace and reuse it.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "TombiExtensionFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/TombiExtensionFeatureTree"
+        }
+      ],
+      "x-tombi-table-keys-order": "ascending"
+    },
+    "TombiExtensionFeatureTree": {
+      "type": "object",
+      "properties": {
+        "lsp": {
+          "title": "Tombi LSP feature options",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TombiLspFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "TombiLspFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/TombiLspFeatureTree"
+        }
+      ]
+    },
+    "TombiLspFeatureTree": {
+      "type": "object",
+      "properties": {
+        "completion": {
+          "title": "Completion feature options",
+          "description": "Configure Tombi completion features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TombiCompletionFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "goto-definition": {
+          "title": "Goto definition feature options",
+          "description": "Configure Tombi go-to-definition features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TombiGotoDefinitionFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document-link": {
+          "title": "Document link feature options",
+          "description": "Configure Tombi document link features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TombiDocumentLinkFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hover": {
+          "title": "Hover feature options",
+          "description": "Configure Tombi hover features.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TombiHoverFeatures"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "TombiCompletionFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/TombiCompletionFeatureTree"
+        }
+      ],
+      "x-tombi-table-keys-order": "ascending"
+    },
+    "TombiCompletionFeatureTree": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "title": "Path completion feature",
+          "description": "Whether completion suggests filesystem paths.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "TombiGotoDefinitionFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/TombiGotoDefinitionFeatureTree"
+        }
+      ],
+      "x-tombi-table-keys-order": "ascending"
+    },
+    "TombiGotoDefinitionFeatureTree": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "title": "Path goto-definition feature",
+          "description": "Whether go-to-definition resolves filesystem paths.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultTrue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "TombiDocumentLinkFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/TombiDocumentLinkFeatureTree"
+        }
+      ]
+    },
+    "TombiDocumentLinkFeatureTree": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "title": "Path document link feature",
+          "description": "Whether document links are created for filesystem paths.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleFeatureDefaultFalse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "x-tombi-table-keys-order": "ascending",
+      "additionalProperties": false
+    },
+    "TombiHoverFeatures": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnabledOnly"
+        },
+        {
+          "$ref": "#/$defs/TombiHoverFeatureTree"
+        }
+      ]
+    },
+    "TombiHoverFeatureTree": {
+      "type": "object",
       "additionalProperties": false
     }
   },
