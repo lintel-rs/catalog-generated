@@ -4,7 +4,7 @@
   "title": "InfrahubRepositoryConfig",
   "x-lintel": {
     "source": "https://schema.infrahub.app/python-sdk/repository-config/latest.json",
-    "sourceSha256": "bdc468ab0e49c5fbfdb252abed7669a1aca72a119a7491c2f094d2ea5280f314",
+    "sourceSha256": "40634b5421a36e268fc468f217bcd763fcceefe533d29549288603f3ab44fab5",
     "fileMatch": [
       ".infrahub.yml",
       ".infrahub.yaml"
@@ -70,6 +70,14 @@
         "$ref": "#/$defs/InfrahubRepositoryGraphQLConfig"
       },
       "title": "Queries",
+      "type": "array"
+    },
+    "graphql_fragments": {
+      "description": "GraphQL fragment files declared for this repository",
+      "items": {
+        "$ref": "#/$defs/InfrahubRepositoryFragmentConfig"
+      },
+      "title": "Graphql Fragments",
       "type": "array"
     },
     "objects": {
@@ -160,36 +168,36 @@
         },
         "parameters": {
           "type": "object",
-          "description": "The input parameters required to run this check",
+          "description": "Maps GraphQL query variable names to target object attribute paths using double-underscore notation.",
           "title": "Parameters",
           "additionalProperties": true
         },
         "targets": {
-          "description": "The group to target when running this generator",
+          "description": "Name of the CoreStandardGroup whose members become individual Generator targets. One run is created per group member.",
           "title": "Targets",
           "type": "string"
         },
         "class_name": {
           "default": "Generator",
-          "description": "The name of the generator class to run.",
+          "description": "The name of the Python class within file_path that extends InfrahubGenerator.",
           "title": "Class Name",
           "type": "string"
         },
         "convert_query_response": {
           "default": false,
-          "description": "Decide if the generator should convert the result of the GraphQL query to SDK InfrahubNode objects.",
+          "description": "When true, converts the raw GraphQL dict into SDK InfrahubNode objects accessible via self.nodes and self.store.",
           "title": "Convert Query Response",
           "type": "boolean"
         },
         "execute_in_proposed_change": {
           "default": true,
-          "description": "Decide if the generator should execute in a proposed change.",
+          "description": "When true (default), the Generator runs as a CI check during proposed changes.",
           "title": "Execute In Proposed Change",
           "type": "boolean"
         },
         "execute_after_merge": {
           "default": true,
-          "description": "Decide if the generator should execute after a merge.",
+          "description": "When true (default), the Generator runs after a branch merge. Set to false for Generators that only run via event triggers.",
           "title": "Execute After Merge",
           "type": "boolean"
         }
@@ -269,6 +277,19 @@
           "description": "Decide if the transform should convert the result of the GraphQL query to SDK InfrahubNode objects.",
           "title": "Convert Query Response",
           "type": "boolean"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description for this transform",
+          "title": "Description"
         }
       },
       "required": [
@@ -329,6 +350,28 @@
         "transformation"
       ],
       "title": "InfrahubRepositoryArtifactDefinitionConfig",
+      "additionalProperties": false
+    },
+    "InfrahubRepositoryFragmentConfig": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Logical name for this fragment file or directory",
+          "title": "Name",
+          "type": "string"
+        },
+        "file_path": {
+          "description": "Path to a .gql fragment file or a directory of .gql files, relative to repo root",
+          "format": "path",
+          "title": "File Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "file_path"
+      ],
+      "title": "InfrahubRepositoryFragmentConfig",
       "additionalProperties": false
     },
     "InfrahubRepositoryGraphQLConfig": {
