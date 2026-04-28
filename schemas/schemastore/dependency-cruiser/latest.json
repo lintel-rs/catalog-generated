@@ -5,7 +5,7 @@
   "description": "A set of properties describing what dependencies are forbidden and what dependencies are allowed + options on how to cruise through the code",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/sverweij/dependency-cruiser/main/src/schema/configuration.schema.json",
-    "sourceSha256": "f28978a0ecaea3a8665ce3ed9a233e81b99f196f49980b0ce36eaac4780c0409",
+    "sourceSha256": "03da382b5e3dd5630695cb35de60321a447a4ce83e955393f8493514e77b71b2",
     "fileMatch": [
       "dependency-cruiser.config.json"
     ],
@@ -438,12 +438,12 @@
           "$ref": "#/$defs/MiniDependencyRestrictionType"
         },
         "viaNot": {
-          "description": "This attribute is deprecated. Use 'viaOnly' with a 'pathNot' attribute in stead.",
+          "description": "This attribute is deprecated. Use 'viaOnly' with a 'pathNot' attribute instead.",
           "deprecated": true,
           "$ref": "#/$defs/REAsStringsType"
         },
         "viaSomeNot": {
-          "description": "This attribute is deprecated. Use 'via' with a 'pathNot' attribute in stead.",
+          "description": "This attribute is deprecated. Use 'via' with a 'pathNot' attribute instead.",
           "deprecated": true,
           "$ref": "#/$defs/REAsStringsType"
         },
@@ -817,7 +817,7 @@
         "forceDeriveDependents": {
           "type": "boolean",
           "deprecated": true,
-          "description": "Hasn't had any effect on dependency-cruiser's behaviour since a few major versions ago. If there's a need to manipulate this use the `skipAnalysisNotInRules` option in stead. Previously documented behaviour: When true includes de-normalized dependents in the cruise-result, even though there's no rule in the rule set that requires them. Defaults to false."
+          "description": "Hasn't had any effect on dependency-cruiser's behaviour since a few major versions ago. If there's a need to manipulate this use the `skipAnalysisNotInRules` option instead. Previously documented behaviour: When true includes de-normalized dependents in the cruise-result, even though there's no rule in the rule set that requires them. Defaults to false."
         },
         "webpackConfig": {
           "type": "object",
@@ -1124,6 +1124,15 @@
         },
         "text": {
           "$ref": "#/$defs/TextReporterOptionsType"
+        },
+        "err": {
+          "$ref": "#/$defs/ErrorReporterOptionsType"
+        },
+        "err-long": {
+          "$ref": "#/$defs/ErrorReporterOptionsType"
+        },
+        "err-html": {
+          "$ref": "#/$defs/ErrorReporterOptionsType"
         }
       },
       "additionalProperties": false
@@ -1134,7 +1143,7 @@
       "properties": {
         "wordlist": {
           "type": "array",
-          "description": "List of words to use to replace path elements of file names in the output with so the output isn't directly traceable to its intended purpose. When the list is exhausted, the anon reporter will use random strings patterned after the original file name in stead. The list is empty by default. Read more in <https://github.com/sverweij/dependency-cruiser/blob/main/doc/cli.md#anon---obfuscated-json>",
+          "description": "List of words to use to replace path elements of file names in the output with so the output isn't directly traceable to its intended purpose. When the list is exhausted, the anon reporter will use random strings patterned after the original file name instead. The list is empty by default. Read more in <https://github.com/sverweij/dependency-cruiser/blob/main/doc/cli.md#anon---obfuscated-json>",
           "items": {
             "type": "string"
           }
@@ -1230,6 +1239,16 @@
           "type": "string",
           "description": "The text to in the <summary> section of the <details> block. E.g. 'click to see all violations'. When left out shows a default value."
         },
+        "showExternalModulesUnresolved": {
+          "type": "boolean",
+          "description": "For external modules (typically those in node_modules) show the unresolved module name instead of the resolved one in the error overview. E.g 'snodash' instead of 'node_modules/snodash/dist/esm/bundle.mjs'.",
+          "default": false
+        },
+        "showAliasedModulesUnresolved": {
+          "type": "boolean",
+          "description": "For aliased modules (either subpath imports in package.json or via legacy tsconfig/ jsconfig/ webpack/ babel constructs) show the unresolved module name instead of the resolved one in the error overview. E.g. '#utils' instead of 'libs/shared/utils/lib/src/main.cjs'.",
+          "default": false
+        },
         "noViolationsMessage": {
           "type": "string",
           "description": "The text to show when no violations were found. E.g. 'No violations found'. When left out shows a default value."
@@ -1259,6 +1278,23 @@
         "highlightFocused": {
           "type": "boolean",
           "description": "Whether or not to highlight modules that are focused with the --focus command line option (/ general option). Defaults to false"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ErrorReporterOptionsType": {
+      "type": "object",
+      "description": "Options that influence rendition of the err style reporters (like err, err-html, markdown)",
+      "properties": {
+        "showExternalModulesUnresolved": {
+          "type": "boolean",
+          "description": "For external modules (typically those in node_modules) show the unresolved module name instead of the resolved one in the error overview. E.g 'snodash' instead of 'node_modules/snodash/dist/esm/bundle.mjs'.",
+          "default": false
+        },
+        "showAliasedModulesUnresolved": {
+          "type": "boolean",
+          "description": "For aliased modules (either subpath imports in package.json or via legacy tsconfig/ jsconfig/ webpack/ babel constructs) show the unresolved module name instead of the resolved one in the error overview. E.g. '#utils' instead of 'libs/shared/utils/lib/src/main.cjs",
+          "default": false
         }
       },
       "additionalProperties": false

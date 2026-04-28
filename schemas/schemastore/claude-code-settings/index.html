@@ -252,7 +252,7 @@ Schema - Lintel Catalog"
     <span class="property-name">autoUpdatesChannel</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Release channel to follow for updates. Use "stable" for a version that is typically about one week old and skips versions with major regressions, or "latest" (default) for the most recent release. Set DISABLE_AUTOUPDATER=1 to disable updates entirely.</p>
+  <div class="desc-html"><p>Release channel to follow for updates. Use "stable" for a version that is typically about one week old and skips versions with major regressions, or "latest" (default) for the most recent release. Set DISABLE_AUTOUPDATER=1 to disable background auto-updates, or DISABLE_UPDATES=1 (added in v2.1.118) to block all update paths including manual <code>claude update</code>.</p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>&quot;latest&quot;</code>
@@ -299,7 +299,7 @@ Schema - Lintel Catalog"
     <span class="property-name">claudeMdExcludes</span>
     <span class="type-badge">string[]</span>
    </div>
-  <div class="desc-html"><p>Glob patterns for CLAUDE.md files to exclude from loading. Useful in monorepos to skip irrelevant instructions from other teams. Patterns match against absolute file paths. Arrays merge across settings layers. Managed policy CLAUDE.md files cannot be excluded. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/memory#exclude-specific-claudemd-files">https://code.claude.com/docs/en/memory#exclude-specific-claudemd-files</a></p>
+  <div class="desc-html"><p>Glob patterns for CLAUDE.md files to exclude from loading. Useful in monorepos to skip irrelevant instructions from other teams. Patterns match against absolute file paths. Arrays merge across settings layers. Managed policy CLAUDE.md files cannot be excluded. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/memory#exclude-specific-claude-md-files">https://code.claude.com/docs/en/memory#exclude-specific-claude-md-files</a></p>
 </div>
       <div class="property-meta">
     <span class="meta-label">Examples:</span> <code>[&quot;**/monorepo/CLAUDE.md&quot;,&quot;/home/user/monorepo/other-team/.claude/rules/**&quot;]</code>  </div>
@@ -311,7 +311,7 @@ Schema - Lintel Catalog"
     <span class="property-name">cleanupPeriodDays</span>
     <span class="type-badge">integer</span>
    </div>
-  <div class="desc-html"><p>Number of days to retain chat transcripts (0 to disable cleanup)</p>
+  <div class="desc-html"><p>Number of days to retain sessions, orphaned subagent worktrees, tasks, shell snapshots, and backups. Minimum is 1; setting 0 is rejected with a validation error. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
 </div>
     <div class="property-meta">
     <span class="meta-label">Default:</span> <code>30</code>
@@ -320,7 +320,7 @@ Schema - Lintel Catalog"
     <span class="meta-label">Examples:</span> <code>20</code>, <code>30</code>, <code>60</code>  </div>
    <div class="property-constraints">
 <span class="constraint"
-      >min=0</span
+      >min=1</span
     >  </div>
   </div>    <div
   class="property-item"
@@ -435,12 +435,12 @@ UNDOCUMENTED: ENABLE_CLAUDEAI_MCP_SERVERS (set to false to opt out of claude.ai 
    </div>
   <div class="desc-html"><p>Tool usage permissions configuration.
 See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/permissions">https://code.claude.com/docs/en/permissions</a> and <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings#permission-settings">https://code.claude.com/docs/en/settings#permission-settings</a>
-See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings#tools-available-to-claude">https://code.claude.com/docs/en/settings#tools-available-to-claude</a> for full list of tools available to Claude.</p>
+See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/tools-reference">https://code.claude.com/docs/en/tools-reference</a> for full list of tools available to Claude.</p>
 </div>
       <div class="property-meta">
     <span class="meta-label">Examples:</span> <code>{&quot;allow&quot;:[&quot;Bash(git add:*)&quot;],&quot;ask&quot;:[&quot;Bash(gh pr create:*)&quot;,&quot;Bash(git commit:*)&quot;],&quot;deny&quot;:[&quot;Read(*.env)&quot;,&quot;Bash(rm:*)&quot;,&quot;Bash(curl:*)&quot;],&quot;defaultMode&quot;:&quot;default&quot;}</code>  </div>
      <details class="nested-properties">
-    <summary>6 nested properties</summary>
+    <summary>7 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -521,6 +521,17 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">disableAutoMode</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Set to "disable" to prevent auto mode from being activated. Removes <code>auto</code> from the Shift+Tab cycle and rejects <code>--permission-mode auto</code> at startup. Most useful in managed settings where users cannot override it. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/permissions">https://code.claude.com/docs/en/permissions</a></p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;disable&quot;</code>  </div>
+     </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">additionalDirectories</span>
     <span class="type-badge">string[]</span>
    </div>
@@ -590,10 +601,10 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
     <span class="property-name">effortLevel</span>
     <span class="type-badge">string</span>
    </div>
-  <div class="desc-html"><p>Control Opus 4.6 adaptive reasoning effort. Lower effort is faster and cheaper for straightforward tasks, higher effort provides deeper reasoning. Defaults vary by model and plan (Opus 4.6 defaults to medium for Max and Team subscribers). Use /effort auto to reset to model default. Also configurable via CLAUDE_CODE_EFFORT_LEVEL environment variable. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/model-config#adjust-effort-level">https://code.claude.com/docs/en/model-config#adjust-effort-level</a></p>
+  <div class="desc-html"><p>Persist adaptive reasoning effort across sessions. Effort is supported on Opus 4.7, Opus 4.6, and Sonnet 4.6. Opus 4.7 supports low/medium/high/xhigh/max (xhigh sits between high and max, added in v2.1.111); Opus 4.6 and Sonnet 4.6 support low/medium/high/max (xhigh falls back to high). Defaults: Opus 4.6 and Sonnet 4.6 default to high on all plans (Pro/Max raised from medium to high in v2.1.117); Opus 4.7 defaults to xhigh on Max plan. The max value is session-only unless set via CLAUDE_CODE_EFFORT_LEVEL. Use /effort auto to reset to model default. Also configurable via CLAUDE_CODE_EFFORT_LEVEL environment variable. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/model-config#adjust-effort-level">https://code.claude.com/docs/en/model-config#adjust-effort-level</a></p>
 </div>
     <div class="property-meta">
-    <span class="meta-label">Values:</span> <code class="enum-value">&quot;low&quot;</code> <code class="enum-value">&quot;medium&quot;</code> <code class="enum-value">&quot;high&quot;</code> <code class="enum-value">&quot;xhigh&quot;</code>  </div>
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;low&quot;</code> <code class="enum-value">&quot;medium&quot;</code> <code class="enum-value">&quot;high&quot;</code> <code class="enum-value">&quot;xhigh&quot;</code> <code class="enum-value">&quot;max&quot;</code>  </div>
      </div>    <div
   class="property-item"
   id="prop-fastMode"
@@ -719,7 +730,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
       <div class="property-meta">
     <span class="meta-label">Examples:</span> <code>{&quot;PostToolUse&quot;:[{&quot;matcher&quot;:&quot;Edit|Write&quot;,&quot;hooks&quot;:[{&quot;type&quot;:&quot;command&quot;,&quot;command&quot;:&quot;prettier --write&quot;,&quot;timeout&quot;:5}]}]}</code>  </div>
      <details class="nested-properties">
-    <summary>24 nested properties</summary>
+    <summary>25 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -797,6 +808,17 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
     >
    </div>
   <div class="desc-html"><p>Hooks that run when agents finish responding. Does not run on user interrupt</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">StopFailure</span>
+    <a href="#def-hookMatcher" class="type-badge type-badge-link"
+      >hookMatcher[]</a
+    >
+   </div>
+  <div class="desc-html"><p>Hooks that run when a turn ends due to an API error (e.g., rate_limit, authentication_failed, billing_error, invalid_request, server_error, max_output_tokens, unknown). Matcher can scope to specific error types. Hook output and exit code are ignored. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/hooks">https://code.claude.com/docs/en/hooks</a></p>
 </div>
        </div>    <div
   class="property-item"
@@ -999,6 +1021,16 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
 </div>
        </div>    <div
   class="property-item"
+  id="prop-allowedChannelPlugins"
+>
+  <div class="property-header">
+    <span class="property-name">allowedChannelPlugins</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>(Managed settings only) Allowlist of plugin IDs whose MCP servers may advertise channel notifications when channelsEnabled is true. When set, only the listed plugins can push inbound messages. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/mcp">https://code.claude.com/docs/en/mcp</a></p>
+</div>
+       </div>    <div
+  class="property-item"
   id="prop-allowedHttpHookUrls"
 >
   <div class="property-header">
@@ -1042,7 +1074,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
       <div class="property-meta">
     <span class="meta-label">Examples:</span> <code>{&quot;type&quot;:&quot;command&quot;,&quot;command&quot;:&quot;~/.claude/statusline.sh&quot;}</code>  </div>
      <details class="nested-properties">
-    <summary>3 nested properties</summary>
+    <summary>4 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -1079,7 +1111,20 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
    </div>
   <div class="desc-html"><p>Optional number of extra horizontal spacing characters added to the status line content; defaults to 0.</p>
 </div>
-       </div>      </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">refreshInterval</span>
+    <span class="type-badge">integer</span>
+   </div>
+  <div class="desc-html"><p>Re-run the status line command every N seconds in addition to event-driven updates. Leave unset to run only on events. Useful for time-based data like clocks, or when background subagents change git state while the main session is idle. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/statusline">https://code.claude.com/docs/en/statusline</a></p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >min=1</span
+    >  </div>
+  </div>      </div>
   </details>
 </div>    <div
   class="property-item"
@@ -1261,7 +1306,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
   <div class="desc-html"><p>Sandbox execution configuration. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/sandboxing">https://code.claude.com/docs/en/sandboxing</a></p>
 </div>
          <details class="nested-properties">
-    <summary>9 nested properties</summary>
+    <summary>10 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -1273,7 +1318,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
   <div class="desc-html"><p>Configures network isolation settings for the sandboxed bash environment, including domain restrictions, Unix socket access, and custom proxy configuration.</p>
 </div>
          <details class="nested-properties">
-    <summary>7 nested properties</summary>
+    <summary>9 nested properties</summary>
     <div class="property-list">
   <div
   class="property-item"
@@ -1345,12 +1390,32 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">deniedDomains</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Blocklist of network domains for sandboxed commands. Blocks specific domains even when a broader allowedDomains wildcard would otherwise permit them. Supports wildcard patterns like *.example.com. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/sandboxing">https://code.claude.com/docs/en/sandboxing</a></p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">allowManagedDomainsOnly</span>
     <span class="type-badge">boolean</span>
    </div>
   <div class="desc-html"><p>(Managed settings only) Only allowedDomains and WebFetch(domain:...) allow rules from managed settings are respected. User, project, local, and flag settings domains are ignored. Denied domains are still respected from all sources. Non-allowed domains are automatically blocked without user prompts.</p>
 </div>
-       </div>      </div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">allowMachLookup</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>macOS only. Additional XPC/Mach service names the sandbox may look up. Supports a single trailing * for prefix matching. Needed for tools that communicate via XPC such as the iOS Simulator or Playwright. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+      <div class="property-meta">
+    <span class="meta-label">Examples:</span> <code>[&quot;com.apple.coresimulator.*&quot;]</code>  </div>
+   </div>      </div>
   </details>
 </div>    <div
   class="property-item"
@@ -1479,6 +1544,44 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
     <span class="type-badge">boolean</span>
    </div>
   <div class="desc-html"><p>When true (managed settings only), only allowRead paths from managed settings are used</p>
+</div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">ripgrep</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>Custom ripgrep configuration for Claude Code's bundled ripgrep support. Overrides the bundled binary and arguments.</p>
+</div>
+         <details class="nested-properties">
+    <summary>2 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">command</span>
+    <span class="type-badge">string</span>
+ <span class="required-badge"
+      >required</span
+    >  </div>
+  <div class="desc-html"><p>Path to the ripgrep binary to use</p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minLength=1</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">args</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Additional arguments to pass to the ripgrep binary</p>
 </div>
        </div>      </div>
   </details>
@@ -1621,6 +1724,18 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
   </div>
        </div>    <div
   class="property-item"
+  id="prop-prUrlTemplate"
+>
+  <div class="property-header">
+    <span class="property-name">prUrlTemplate</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>URL template for the PR badge shown in the footer and in tool-result summaries. Substitutes placeholders {host}, {owner}, {repo}, {number}, {url} from the gh-reported PR URL. Use this to point PR links at an internal code-review tool instead of github.com. Does not affect #123 autolinks in Claude's prose. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+      <div class="property-meta">
+    <span class="meta-label">Examples:</span> <code>&quot;https://reviews.example.com/{owner}/{repo}/pull/{number}&quot;</code>  </div>
+   </div>    <div
+  class="property-item"
   id="prop-alwaysThinkingEnabled"
 >
   <div class="property-header">
@@ -1704,7 +1819,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
       >Record&lt;string, object&gt;</span
     >
    </div>
-  <div class="desc-html"><p>Per-plugin configuration including MCP server user configs, keyed by plugin ID (plugin@marketplace format). See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/plugins">https://code.claude.com/docs/en/plugins</a></p>
+  <div class="desc-html"><p>Per-plugin configuration including MCP server user configs and plugin options, keyed by plugin ID (plugin@marketplace format). See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/plugins">https://code.claude.com/docs/en/plugins</a></p>
 </div>
        </div>    <div
   class="property-item"
@@ -1726,6 +1841,251 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
    </div>
   <div class="desc-html"><p>(Managed settings only) Blocklist of marketplace sources. These exact sources are blocked from being added as marketplaces. The check happens before downloading, so blocked sources never touch the filesystem.</p>
 </div>
+       </div>    <div
+  class="property-item"
+  id="prop-agent"
+>
+  <div class="property-header">
+    <span class="property-name">agent</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Name of an agent (built-in or custom) to use for the main thread. Applies the agent's system prompt, tool restrictions, and model. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/sub-agents">https://code.claude.com/docs/en/sub-agents</a></p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minLength=1</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+  id="prop-autoMemoryDirectory"
+>
+  <div class="property-header">
+    <span class="property-name">autoMemoryDirectory</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Custom directory path for auto-memory storage. Supports ~/ prefix for home-directory expansion. Ignored if set in checked-in project settings (.claude/settings.json) for security. Defaults to ~/.claude/projects/<sanitized-cwd>/memory/ when unset. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/memory">https://code.claude.com/docs/en/memory</a></p>
+</div>
+       <div class="property-constraints">
+<span class="constraint"
+      >minLength=1</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+  id="prop-autoMode"
+>
+  <div class="property-header">
+    <span class="property-name">autoMode</span>
+    <span class="type-badge">object</span>
+   </div>
+  <div class="desc-html"><p>Customization for the auto mode classifier prompt. Typically configured in managed settings to tune the allow/deny rules used when permissions.defaultMode is "auto". By default, allow, soft_deny, and environment REPLACE the corresponding built-in classifier section entirely. Include the literal string "$defaults" as an array entry (added in v2.1.118) to splice the built-in defaults in at that position alongside your custom rules. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/permissions">https://code.claude.com/docs/en/permissions</a></p>
+</div>
+         <details class="nested-properties">
+    <summary>3 nested properties</summary>
+    <div class="property-list">
+  <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">allow</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Rules for the auto mode classifier allow section. Replaces the built-in allow rules entirely unless the literal string "$defaults" is included as an entry, which splices the built-in defaults in at that position.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">soft_deny</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Rules for the auto mode classifier soft-deny section. Replaces the built-in soft-deny rules entirely unless the literal string "$defaults" is included as an entry, which splices the built-in defaults in at that position.</p>
+</div>
+       </div>    <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">environment</span>
+    <span class="type-badge">string[]</span>
+   </div>
+  <div class="desc-html"><p>Entries for the auto mode classifier environment section. Replaces the built-in environment context entirely unless the literal string "$defaults" is included as an entry, which splices the built-in defaults in at that position.</p>
+</div>
+       </div>      </div>
+  </details>
+</div>    <div
+  class="property-item"
+  id="prop-channelsEnabled"
+>
+  <div class="property-header">
+    <span class="property-name">channelsEnabled</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>(Teams/Enterprise) Opt-in for channel notifications — MCP servers with the claude/channel capability pushing inbound messages. Default off. When true, users can select servers via --channels. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/mcp">https://code.claude.com/docs/en/mcp</a></p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
+       </div>    <div
+  class="property-item"
+  id="prop-defaultShell"
+>
+  <div class="property-header">
+    <span class="property-name">defaultShell</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Default shell for input-box ! commands. Default: bash. Using "powershell" routes ! commands through PowerShell on Windows and requires CLAUDE_CODE_USE_POWERSHELL_TOOL=1 with pwsh on PATH. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;bash&quot;</code> <code class="enum-value">&quot;powershell&quot;</code>  </div>
+     </div>    <div
+  class="property-item"
+  id="prop-disableDeepLinkRegistration"
+>
+  <div class="property-header">
+    <span class="property-name">disableDeepLinkRegistration</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Set to "disable" to prevent Claude Code from registering the <code>claude://</code> deep-link protocol handler on startup. Most useful in managed settings where users cannot override it. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;disable&quot;</code>  </div>
+     </div>    <div
+  class="property-item"
+  id="prop-disableSkillShellExecution"
+>
+  <div class="property-header">
+    <span class="property-name">disableSkillShellExecution</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Disable inline shell execution for <code>!`...`</code> and <code>```!</code> blocks in skills and custom slash commands from user, project, plugin, or additional-directory sources. Commands are replaced with [shell command execution disabled by policy] instead of being run. Bundled and managed skills are not affected. Most useful in managed settings where users cannot override it. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+       </div>    <div
+  class="property-item"
+  id="prop-forceRemoteSettingsRefresh"
+>
+  <div class="property-header">
+    <span class="property-name">forceRemoteSettingsRefresh</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>(Managed settings only) Block CLI startup until remote managed settings are freshly fetched from the server. If the fetch fails, the CLI exits (fail-closed) rather than continuing with cached settings. When not set, startup continues without waiting for remote settings. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/server-managed-settings">https://code.claude.com/docs/en/server-managed-settings</a></p>
+</div>
+       </div>    <div
+  class="property-item"
+  id="prop-minimumVersion"
+>
+  <div class="property-header">
+    <span class="property-name">minimumVersion</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Minimum Claude Code version to stay on. Prevents downgrades when switching release channels. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+      <div class="property-meta">
+    <span class="meta-label">Examples:</span> <code>&quot;2.1.0&quot;</code>  </div>
+   <div class="property-constraints">
+<span class="constraint"
+      >minLength=1</span
+    >  </div>
+  </div>    <div
+  class="property-item"
+  id="prop-showClearContextOnPlanAccept"
+>
+  <div class="property-header">
+    <span class="property-name">showClearContextOnPlanAccept</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>When true, the plan-approval dialog offers a "clear context" option. Defaults to false.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
+       </div>    <div
+  class="property-item"
+  id="prop-showThinkingSummaries"
+>
+  <div class="property-header">
+    <span class="property-name">showThinkingSummaries</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Show thinking summaries in the transcript view (Ctrl+O). Thinking summaries are not generated by default in interactive sessions; set to true to restore. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
+       </div>    <div
+  class="property-item"
+  id="prop-skipDangerousModePermissionPrompt"
+>
+  <div class="property-header">
+    <span class="property-name">skipDangerousModePermissionPrompt</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Whether the user has accepted the bypass permissions mode dialog. Typically managed by the CLI rather than set by hand.</p>
+</div>
+       </div>    <div
+  class="property-item"
+  id="prop-strictPluginOnlyCustomization"
+>
+  <div class="property-header">
+    <span class="property-name">strictPluginOnlyCustomization</span>
+    <span class="type-badge"
+      >boolean | string[]</span
+    >
+   </div>
+  <div class="desc-html"><p>(Managed settings) Block non-plugin customization sources for the listed surfaces. Array form locks specific surfaces (e.g., ["skills", "hooks"]); true locks all four; false is an explicit no-op. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/plugins-reference">https://code.claude.com/docs/en/plugins-reference</a></p>
+</div>
+       </div>    <div
+  class="property-item"
+  id="prop-tui"
+>
+  <div class="property-header">
+    <span class="property-name">tui</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>TUI rendering mode. Use "fullscreen" for the flicker-free alt-screen renderer with virtualized scrollback; "default" for the classic main-screen renderer. Corresponds to the /tui command. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;fullscreen&quot;</code> <code class="enum-value">&quot;default&quot;</code>  </div>
+     </div>    <div
+  class="property-item"
+  id="prop-viewMode"
+>
+  <div class="property-header">
+    <span class="property-name">viewMode</span>
+    <span class="type-badge">string</span>
+   </div>
+  <div class="desc-html"><p>Transcript view mode. "default" shows standard interactive view; "verbose" shows expanded tool details; "focus" shows prompt, one-line tool summaries, and final response only (Ctrl+O toggle). See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Values:</span> <code class="enum-value">&quot;default&quot;</code> <code class="enum-value">&quot;verbose&quot;</code> <code class="enum-value">&quot;focus&quot;</code>  </div>
+     </div>    <div
+  class="property-item"
+  id="prop-useAutoModeDuringPlan"
+>
+  <div class="property-header">
+    <span class="property-name">useAutoModeDuringPlan</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>When true, apply the auto mode classifier during plan mode to auto-approve safe read-only tool calls while planning. Has no effect unless permissions.defaultMode allows auto. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/permissions">https://code.claude.com/docs/en/permissions</a></p>
+</div>
+       </div>    <div
+  class="property-item"
+  id="prop-voiceEnabled"
+>
+  <div class="property-header">
+    <span class="property-name">voiceEnabled</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Enable push-to-talk voice dictation. Typically written automatically when /voice is used. Requires a Claude.ai account. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
+       </div>    <div
+  class="property-item"
+  id="prop-wslInheritsWindowsSettings"
+>
+  <div class="property-header">
+    <span class="property-name">wslInheritsWindowsSettings</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>(Windows managed settings only) When true, Claude Code on WSL reads managed settings from the Windows policy chain in addition to /etc/claude-code, with Windows sources taking priority. Only honored when set in the HKLM registry key or C:\Program Files\ClaudeCode\managed-settings.json, both of which require Windows admin to write. For HKCU policy to also apply on WSL, the flag must additionally be set in HKCU itself. Has no effect on native Windows. See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings">https://code.claude.com/docs/en/settings</a></p>
+</div>
        </div>    </div>
      <h2 id="definitions">Definitions</h2>
   <div class="definition-block" id="def-permissionRule">
@@ -1737,7 +2097,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
     <div class="definition-body">
       <div class="desc-html"><p>Tool permission rule.
 See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings#permission-rule-syntax">https://code.claude.com/docs/en/settings#permission-rule-syntax</a>
-See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/settings#tools-available-to-claude">https://code.claude.com/docs/en/settings#tools-available-to-claude</a> for full list of tools available to Claude.</p>
+See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/docs/en/tools-reference">https://code.claude.com/docs/en/tools-reference</a> for full list of tools available to Claude.</p>
 </div>
        <div class="definition-examples">
         <span class="meta-label">Examples:</span>
@@ -1767,7 +2127,7 @@ See <a target="_blank" rel="noopener noreferrer" href="https://code.claude.com/d
     <div class="definition-header">
       <span class="def-name">hookCommand</span>
 <span class="type-badge"
-        >object | object | object | object</span
+        >object | object | object | object | object</span
       >    </div>
     <div class="definition-body">
       </div>
