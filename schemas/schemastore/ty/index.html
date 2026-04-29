@@ -1670,6 +1670,44 @@ C.instance_var = 3  # error: Cannot assign to instance variable
   class="property-item"
 >
   <div class="property-header">
+    <span class="property-name">invalid-attribute-override</span>
+    <span class="type-badge"
+      ><a
+        href="#def-Level"
+        class="type-badge-link"
+        >Level</a
+      ></span
+    >
+   </div>
+  <div class="desc-html"><h2>What it does</h2>
+<p>Detects attribute overrides that change whether an inherited attribute
+is a class variable or an instance variable.</p>
+<p>This rule currently only covers class-variable and instance-variable
+category changes.</p>
+<h2>Why is this bad?</h2>
+<p>Pure class variables and instance variables have different access and
+assignment behavior. Overriding one with the other violates the
+<a target="_blank" rel="noopener noreferrer" href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov Substitution Principle</a> ("LSP"), because code that is valid for
+the superclass may no longer be valid for the subclass.</p>
+<h2>Example</h2>
+<pre><code class="language-python">from typing import ClassVar
+
+class Base:
+    instance_attr: int
+    class_attr: ClassVar[int]
+
+class Sub(Base):
+    instance_attr: ClassVar[int]  # error: [invalid-attribute-override]
+    class_attr: int  # error: [invalid-attribute-override]
+</code></pre>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>&quot;error&quot;</code>
+  </div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
     <span class="property-name">invalid-await</span>
     <span class="type-badge"
       ><a

@@ -4,7 +4,7 @@
   "title": "Options",
   "x-lintel": {
     "source": "https://www.schemastore.org/ty.json",
-    "sourceSha256": "fe0cb83c87ccfe830abfdda66b0e70724d235315cf4f2c36c3959b2e5301ee97",
+    "sourceSha256": "a994fd65de43bc044dc282db74cf2261d9cb82384a4819bf7109adb1f43268b2",
     "fileMatch": [
       "ty.toml"
     ],
@@ -623,6 +623,16 @@
         "invalid-attribute-access": {
           "title": "Invalid attribute access",
           "description": "## What it does\nChecks for assignments to class variables from instances\nand assignments to instance variables from its class.\n\n## Why is this bad?\nIncorrect assignments break the rules of the type system and\nweaken a type checker's ability to accurately reason about your code.\n\n## Examples\n```python\nclass C:\n    class_var: ClassVar[int] = 1\n    instance_var: int\n\nC.class_var = 3  # okay\nC().class_var = 3  # error: Cannot assign to class variable\n\nC().instance_var = 3  # okay\nC.instance_var = 3  # error: Cannot assign to instance variable\n```",
+          "default": "error",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Level"
+            }
+          ]
+        },
+        "invalid-attribute-override": {
+          "title": "detects attribute overrides that change class-variable or instance-variable behavior",
+          "description": "## What it does\nDetects attribute overrides that change whether an inherited attribute\nis a class variable or an instance variable.\n\nThis rule currently only covers class-variable and instance-variable\ncategory changes.\n\n## Why is this bad?\nPure class variables and instance variables have different access and\nassignment behavior. Overriding one with the other violates the\n[Liskov Substitution Principle] (\"LSP\"), because code that is valid for\nthe superclass may no longer be valid for the subclass.\n\n## Example\n```python\nfrom typing import ClassVar\n\nclass Base:\n    instance_attr: int\n    class_attr: ClassVar[int]\n\nclass Sub(Base):\n    instance_attr: ClassVar[int]  # error: [invalid-attribute-override]\n    class_attr: int  # error: [invalid-attribute-override]\n```\n\n[Liskov Substitution Principle]: <https://en.wikipedia.org/wiki/Liskov_substitution_principle>",
           "default": "error",
           "oneOf": [
             {
