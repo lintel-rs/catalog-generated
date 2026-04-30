@@ -4,7 +4,7 @@
   "title": "MergifyConfigModel",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/Mergifyio/docs/main/public/mergify-configuration-schema.json",
-    "sourceSha256": "17f042037d122b0c688acd050c39160141079fc1f15a8e1b5e3bea332dd7402b",
+    "sourceSha256": "ce6b1f5b5983246a6ab1c61d3da911e25ee65a2d48f99664e0dc02eb3cdc971d",
     "fileMatch": [
       ".mergify.yml",
       "**/.github/mergify.yml",
@@ -333,6 +333,27 @@
       },
       "title": "AssignActionModel",
       "additionalProperties": false
+    },
+    "AutoMergeConditionsModel": {
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AndCondition"
+          },
+          {
+            "$ref": "#/$defs/OrCondition"
+          },
+          {
+            "$ref": "#/$defs/NegationCondition"
+          },
+          {
+            "$ref": "#/$defs/RuleConditionModel"
+          }
+        ]
+      },
+      "maxItems": 500,
+      "title": "List of conditions",
+      "type": "array"
     },
     "BackportActionModel": {
       "type": "object",
@@ -798,6 +819,44 @@
       ],
       "title": "CommitAuthor",
       "type": "object"
+    },
+    "CommitMessageFormatModel": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "default": "inherit",
+          "enum": [
+            "inherit",
+            "pr-title"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "default": "inherit",
+          "enum": [
+            "inherit",
+            "pr-body",
+            "empty"
+          ],
+          "title": "Body",
+          "type": "string"
+        },
+        "trailers": {
+          "items": {
+            "enum": [
+              "co-authored-by",
+              "approved-by",
+              "merged-by"
+            ],
+            "type": "string"
+          },
+          "title": "Trailers",
+          "type": "array"
+        }
+      },
+      "title": "CommitMessageFormatModel",
+      "additionalProperties": false
     },
     "CopyActionModel": {
       "type": "object",
@@ -1312,6 +1371,18 @@
           "default": null,
           "description": "Template to use as the commit message when using the merge or squash merge method.",
           "title": "Commit Message Template"
+        },
+        "commit_message_format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CommitMessageFormatModel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Declarative commit message format configuration. Use this instead of the Jinja2 `commit_message_template` for the common merge-commit shapes. Mutually exclusive with `commit_message_template` on the same rule."
         }
       },
       "title": "MergeActionModel",
@@ -1408,6 +1479,19 @@
           "description": "Automatically merge or queue PRs when all merge protection conditions pass",
           "title": "Auto Merge",
           "type": "boolean"
+        },
+        "auto_merge_conditions": {
+          "anyOf": [
+            {
+              "const": true,
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/AutoMergeConditionsModel"
+            }
+          ],
+          "default": null,
+          "description": "Conditions that gate auto-merge. Accepts `true` as shorthand for unconditional auto-merge, or a list of conditions to restrict the audience. Omit the field to disable auto-merge."
         }
       },
       "title": "MergeProtections",
@@ -2858,6 +2942,18 @@
           "description": "Template to use as the commit message when using the merge or squash merge method.",
           "title": "Commit Message Template"
         },
+        "commit_message_format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CommitMessageFormatModel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Declarative commit message format configuration. Use this instead of the Jinja2 `commit_message_template` for the common merge-commit shapes. Mutually exclusive with `commit_message_template` on the same rule."
+        },
         "merge_bot_account": {
           "anyOf": [
             {
@@ -3088,6 +3184,18 @@
           "default": null,
           "description": "Template to use as the commit message when using the merge or squash merge method.",
           "title": "Commit Message Template"
+        },
+        "commit_message_format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CommitMessageFormatModel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Declarative commit message format configuration. Use this instead of the Jinja2 `commit_message_template` for the common merge-commit shapes. Mutually exclusive with `commit_message_template` on the same rule."
         },
         "merge_bot_account": {
           "anyOf": [

@@ -5,7 +5,7 @@
   "description": "JSON Schema root for `ryl` TOML configuration.",
   "x-lintel": {
     "source": "https://www.schemastore.org/ryl.json",
-    "sourceSha256": "2a4f3b2d70b4a6655e051d58d5cbb08f4d99381be916f378b1046611a6a9f054",
+    "sourceSha256": "061e2e8017222eecb22f7ab1bfc02ebdfbe5cd09b1003134ec508383277dbc0b",
     "fileMatch": [
       "ryl.toml",
       ".ryl.toml"
@@ -25,7 +25,7 @@
           "type": "null"
         }
       ],
-      "description": "Native fix policy, available only in TOML config."
+      "description": "Native fix policy."
     },
     "ignore": {
       "anyOf": [
@@ -55,6 +55,19 @@
         "string",
         "null"
       ]
+    },
+    "per-file-ignores": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Per-file rule ignores.",
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/RuleName"
+        },
+        "type": "array"
+      }
     },
     "rules": {
       "anyOf": [
@@ -176,7 +189,8 @@
       "enum": [
         "any",
         "single",
-        "double"
+        "double",
+        "consistent"
       ],
       "type": "string"
     },
@@ -434,7 +448,7 @@
       ],
       "description": "Common rule entry shape used by TOML config."
     },
-    "RuleEntryForQuotedStringsOptions": {
+    "RuleEntryForTomlQuotedStringsOptions": {
       "anyOf": [
         {
           "type": "boolean"
@@ -443,7 +457,7 @@
           "$ref": "#/$defs/RuleSwitch"
         },
         {
-          "$ref": "#/$defs/RuleOptionsForQuotedStringsOptions"
+          "$ref": "#/$defs/RuleOptionsForTomlQuotedStringsOptions"
         }
       ],
       "description": "Common rule entry shape used by TOML config."
@@ -467,6 +481,35 @@
       "enum": [
         "error",
         "warning"
+      ],
+      "type": "string"
+    },
+    "RuleName": {
+      "description": "A built-in lint rule name.",
+      "enum": [
+        "anchors",
+        "braces",
+        "brackets",
+        "colons",
+        "commas",
+        "comments",
+        "comments-indentation",
+        "document-end",
+        "document-start",
+        "empty-lines",
+        "empty-values",
+        "float-values",
+        "hyphens",
+        "indentation",
+        "key-duplicates",
+        "key-ordering",
+        "line-length",
+        "new-line-at-end-of-file",
+        "new-lines",
+        "octal-values",
+        "quoted-strings",
+        "trailing-spaces",
+        "truthy"
       ],
       "type": "string"
     },
@@ -1352,10 +1395,16 @@
       },
       "additionalProperties": false
     },
-    "RuleOptionsForQuotedStringsOptions": {
+    "RuleOptionsForTomlQuotedStringsOptions": {
       "type": "object",
       "description": "Common rule fields plus rule-specific options.",
       "properties": {
+        "allow-double-quotes-for-escaping": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "allow-quoted-quotes": {
           "type": [
             "boolean",
@@ -1705,7 +1754,7 @@
         "quoted-strings": {
           "anyOf": [
             {
-              "$ref": "#/$defs/RuleEntryForQuotedStringsOptions"
+              "$ref": "#/$defs/RuleEntryForTomlQuotedStringsOptions"
             },
             {
               "type": "null"

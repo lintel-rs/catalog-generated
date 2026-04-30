@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://catalog.lintel.tools/schemas/github/renovate/latest.json",
-  "title": "JSON schema for Renovate 43.152.0 config files (https://renovatebot.com/)",
+  "title": "JSON schema for Renovate 43.158.0 config files (https://renovatebot.com/)",
   "x-lintel": {
     "source": "https://docs.renovatebot.com/renovate-schema.json",
-    "sourceSha256": "0b7e4536fe19db508a8fb128809ae328ff7bb5b3c2eddaf710b3ef8aeb3967a3",
+    "sourceSha256": "b6cc261a97193e22884f5e91211346cb967dd29021f9937fc73fabe6ebd6bec8",
     "fileMatch": [
       "renovate.json",
       "renovate.json5",
@@ -1968,6 +1968,10 @@
           "type": "string",
           "description": "A constraint for the `corepack` Containerbase tool"
         },
+        "deno": {
+          "type": "string",
+          "description": "A constraint for the `deno` Containerbase tool"
+        },
         "devbox": {
           "type": "string",
           "description": "A constraint for the `devbox` Containerbase tool"
@@ -2143,6 +2147,10 @@
         "perl": {
           "type": "string",
           "description": "Used in the `cpanfile` manager to track Perl version required."
+        },
+        "%goMod": {
+          "type": "string",
+          "description": "Used in the `gomod` manager to determine the [minimum version of Go required to use this module](https://go.dev/ref/mod#go-mod-file-go).\n\nNote that this is prefixed with a `%` to explicilty note that this is not a tool that Containerbase knows."
         }
       },
       "additionalProperties": false
@@ -2156,6 +2164,55 @@
         "strict"
       ],
       "default": "none"
+    },
+    "constraintsVersioning": {
+      "description": "Override the versioning scheme used when filtering releases by specific constraint names. Does not apply to tools.",
+      "markdownDescription": "Override the versioning scheme used when filtering releases by specific constraint names. Does not apply to tools.",
+      "type": "object",
+      "default": {},
+      "properties": {
+        "go": {
+          "type": "string",
+          "description": "Used in the `gomod` manager to specify the version of the Go toolchain to use.\n\nIn precedence order:\n\n1. config: `constraints.go`\n1. `go.mod`: `toolchain` directive\n1. `go.mod`: `go` directive\n\nNOTE that the `constraints.golang` is not used (https://github.com/renovatebot/renovate/issues/42601)\n  "
+        },
+        "gomodMod": {
+          "type": "string",
+          "description": "Used in the `gomod` manager to specify a tag for [`github.com/marwan-at-work/mod`](https://github.com/marwan-at-work/mod).\n\nMust be prefixed with `v`."
+        },
+        "jenkins": {
+          "type": "string",
+          "description": "Used in the `jenkins-plugins` datasource to specify a minimum version of Jenkins that a plugin must support."
+        },
+        "pipTools": {
+          "type": "string",
+          "description": "Used in the `pip-compile` manager to specify a version of `pip-tools` to use. @deprecated TODO remove in #42599"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Used in the `rubygems` datasource to specify the `platform` that the Gem dependency supports."
+        },
+        "rubygems": {
+          "type": "string",
+          "description": "Used in the `rubygems` datasource to specify the version of the `rubygems` tool that is needed to use this Gem."
+        },
+        "vscode": {
+          "type": "string",
+          "description": "Used in the `npm` manager to track the version of VSCode that the package is compatible with."
+        },
+        "dotnet-sdk": {
+          "type": "string",
+          "description": "Used in the `nuget` manager to track .NET SDK version required."
+        },
+        "perl": {
+          "type": "string",
+          "description": "Used in the `cpanfile` manager to track Perl version required."
+        },
+        "%goMod": {
+          "type": "string",
+          "description": "Used in the `gomod` manager to determine the [minimum version of Go required to use this module](https://go.dev/ref/mod#go-mod-file-go).\n\nNote that this is prefixed with a `%` to explicilty note that this is not a tool that Containerbase knows."
+        }
+      },
+      "additionalProperties": false
     },
     "copier": {
       "description": "Configuration object for the copier manager",
@@ -2602,6 +2659,71 @@
         "type": "string"
       },
       "default": null
+    },
+    "deno": {
+      "description": "Configuration object for the deno manager",
+      "markdownDescription": "Configuration object for the deno manager",
+      "type": "object",
+      "default": {
+        "managerFilePatterns": [
+          "/(^|/)deno\\.lock$/",
+          "/(^|/)deno\\.(json|jsonc)$/"
+        ],
+        "digest": {
+          "prBodyDefinitions": {
+            "Change": "{{#if displayFrom}}`{{{displayFrom}}}` -> {{else}}{{#if currentValue}}`{{{currentValue}}}` -> {{/if}}{{/if}}{{#if displayTo}}`{{{displayTo}}}`{{else}}`{{{newValue}}}`{{/if}}"
+          }
+        },
+        "prBodyDefinitions": {
+          "Change": "{{#if (equals datasource \"npm\")}}[{{#if displayFrom}}`{{{displayFrom}}}` -> {{else}}{{#if currentValue}}`{{{currentValue}}}` -> {{/if}}{{/if}}{{#if displayTo}}`{{{displayTo}}}`{{else}}`{{{newValue}}}`{{/if}}]({{#if depName}}https://renovatebot.com/diffs/npm/{{replace '/' '%2f' depName}}/{{{currentVersion}}}/{{{newVersion}}}{{/if}}){{else}}{{#if displayFrom}}`{{{displayFrom}}}` -> {{else}}{{#if currentValue}}`{{{currentValue}}}` -> {{/if}}{{/if}}{{#if displayTo}}`{{{displayTo}}}`{{else}}`{{{newValue}}}`{{/if}}{{/if}}"
+        }
+      },
+      "$ref": "#",
+      "items": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "description": {
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "A custom description for this configuration object"
+                    }
+                  },
+                  {
+                    "type": "string",
+                    "description": "A custom description for this configuration object"
+                  }
+                ]
+              },
+              "enabled": {
+                "description": "Enable or disable corresponding functionality.",
+                "markdownDescription": "Enable or disable corresponding functionality.",
+                "type": "boolean",
+                "default": true
+              },
+              "managerFilePatterns": {
+                "description": "RegEx (`re2`) and glob patterns for matching manager files.",
+                "markdownDescription": "RegEx (`re2`) and glob patterns for matching manager files.",
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
     },
     "dependencyDashboard": {
       "description": "Whether to create a \"Dependency Dashboard\" issue in the repository.",
@@ -7291,6 +7413,11 @@
                     "description": "Install the `corepack` Containerbase tool",
                     "additionalProperties": false
                   },
+                  "deno": {
+                    "type": "object",
+                    "description": "Install the `deno` Containerbase tool",
+                    "additionalProperties": false
+                  },
                   "devbox": {
                     "type": "object",
                     "description": "Install the `devbox` Containerbase tool",
@@ -8042,9 +8169,9 @@
       },
       "default": null
     },
-    "renovate-config-presets": {
-      "description": "Configuration object for the renovate-config-presets manager",
-      "markdownDescription": "Configuration object for the renovate-config-presets manager",
+    "renovate-config": {
+      "description": "Configuration object for the renovate-config manager",
+      "markdownDescription": "Configuration object for the renovate-config manager",
       "type": "object",
       "default": {
         "managerFilePatterns": [
@@ -10255,6 +10382,6 @@
       }
     ]
   },
-  "x-renovate-version": "43.152.0",
+  "x-renovate-version": "43.158.0",
   "allowComments": true
 }
