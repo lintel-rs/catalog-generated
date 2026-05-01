@@ -5,7 +5,7 @@
   "description": "A JSON schema for render.yaml files. See <https://render.com/docs/blueprint-spec> for more information",
   "x-lintel": {
     "source": "https://render.com/schema/render.yaml.json",
-    "sourceSha256": "a561ece0a8d2af67aad65312ef5ab6645ab5cac667980d3d83cbf9a79c65e27d",
+    "sourceSha256": "cf3a9c372e0eed6a5825ba6c2ef3f0ae5163860a6f7e2ed9cd63661ac7101b2a",
     "fileMatch": [
       "**/*render.yaml"
     ],
@@ -133,6 +133,10 @@
         },
         "autoDeployTrigger": {
           "$ref": "#/definitions/autoDeployTrigger"
+        },
+        "preDeployCommand": {
+          "type": "string",
+          "description": "Command that runs after the build command but before the start command. Recommended for database migrations."
         }
       },
       "required": [
@@ -522,6 +526,9 @@
           "description": "The name of the read replica."
         }
       },
+      "required": [
+        "name"
+      ],
       "additionalProperties": false
     },
     "ipAllowList": {
@@ -956,7 +963,7 @@
         },
         "initialDeployHook": {
           "type": "string",
-          "description": "A command to run during the service's first deploy."
+          "description": "A command that Render runs once after the service's first successful deploy. Does not run on subsequent deploys."
         },
         "disk": {
           "$ref": "#/definitions/disk"
@@ -976,6 +983,22 @@
           "$ref": "#/definitions/plan",
           "deprecated": true,
           "description": "The instance type to use for previews. Deprecated - use previews.plan instead."
+        },
+        "maintenanceMode": {
+          "type": "object",
+          "description": "Configuration for service maintenance mode. Requires a paid web service instance.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether maintenance mode is enabled for the service."
+            },
+            "uri": {
+              "type": "string",
+              "format": "uri",
+              "description": "An absolute URL for a custom maintenance page."
+            }
+          },
+          "additionalProperties": false
         },
         "maxShutdownDelaySeconds": {
           "type": "integer",
@@ -1105,13 +1128,26 @@
         "autoDeployTrigger": {
           "$ref": "#/definitions/autoDeployTrigger"
         },
+        "preDeployCommand": {
+          "type": "string",
+          "description": "Command that runs after the build command. Recommended for database migrations."
+        },
         "ipAllowList": {
           "$ref": "#/definitions/ipAllowList"
+        },
+        "renderSubdomainPolicy": {
+          "type": "string",
+          "enum": [
+            "enabled",
+            "disabled"
+          ],
+          "description": "Controls whether the static site is reachable at its onrender.com subdomain. If 'disabled', the static site is reachable exclusively at its custom domain(s)."
         }
       },
       "required": [
         "type",
-        "name"
+        "name",
+        "runtime"
       ],
       "additionalProperties": false
     }

@@ -5,7 +5,7 @@
   "description": "JSON schema for KSail cluster configuration (ksail.yaml)",
   "x-lintel": {
     "source": "https://raw.githubusercontent.com/devantler-tech/ksail/refs/heads/main/schemas/ksail-config.schema.json",
-    "sourceSha256": "f3871c0271f18f5f021f5571fab3e3aba366fb47b016739f3a3dc6bcede249c7",
+    "sourceSha256": "370769ce70da41d444451afa769cfac1ffb0637d5c631fe936b96d2226b6c5ee",
     "fileMatch": [
       "ksail-*.yaml",
       "ksail-*.yml",
@@ -210,7 +210,97 @@
               "enum": [
                 "Enabled",
                 "Disabled"
-              ]
+              ],
+              "description": "Deprecated. Use autoscaler.node.enabled instead. Do not set both nodeAutoscaling and autoscaler."
+            },
+            "autoscaler": {
+              "properties": {
+                "pod": {
+                  "properties": {
+                    "horizontal": {
+                      "type": "string",
+                      "enum": [
+                        "Enabled",
+                        "Disabled"
+                      ]
+                    },
+                    "vertical": {
+                      "type": "string",
+                      "enum": [
+                        "Enabled",
+                        "Disabled"
+                      ]
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "node": {
+                  "properties": {
+                    "enabled": {
+                      "type": "string",
+                      "enum": [
+                        "Enabled",
+                        "Disabled"
+                      ]
+                    },
+                    "pools": {
+                      "items": {
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+                          },
+                          "serverType": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "location": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "min": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "max": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": false
+                      },
+                      "type": "array"
+                    },
+                    "maxNodesTotal": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Maximum total nodes allowed across all node pools. Set to 0 to disable the global cap; when the global cap is disabled the effective cap is the sum of all pool max values"
+                    },
+                    "expander": {
+                      "type": "string",
+                      "enum": [
+                        "Price",
+                        "LeastWaste",
+                        "LeastNodes",
+                        "Random"
+                      ]
+                    },
+                    "scaleDownUnneededTime": {
+                      "type": "string",
+                      "description": "How long a node should be unneeded before it is eligible for scale down (e.g. 10m)"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                }
+              },
+              "description": "Pod and node autoscaling configuration (supersedes deprecated nodeAutoscaling)",
+              "type": "object",
+              "additionalProperties": false
             },
             "importImages": {
               "type": "string",
@@ -255,6 +345,9 @@
                 },
                 "iso": {
                   "type": "integer"
+                },
+                "schematicId": {
+                  "type": "string"
                 },
                 "extraPortMappings": {
                   "items": {
@@ -344,6 +437,17 @@
                     "Enabled",
                     "Disabled"
                   ]
+                },
+                "serverLimit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Maximum total Hetzner servers allowed for this cluster (control-planes + workers + autoscaler pool capacity). Set to 0 to use the default limit of 10"
+                },
+                "autoscalerNodePoolNames": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
                 }
               },
               "type": "object",

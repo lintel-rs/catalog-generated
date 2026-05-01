@@ -3,7 +3,7 @@
   "$id": "https://catalog.lintel.tools/schemas/schemastore/graphql-code-generator/latest.json",
   "x-lintel": {
     "source": "https://www.graphql-code-generator.com/config.schema.json",
-    "sourceSha256": "4fb8c9738121e678460a3db3ea3c2bc85f5e88d9d56799627b33e79a66bbc3c4",
+    "sourceSha256": "3345e9febbd3b9f62c3533b748e6f8c315e3008d42c7f42fc76f60c4278a0a35",
     "fileMatch": [
       "codegen.yml",
       "codegen.yaml",
@@ -417,10 +417,6 @@
           "description": "Suffixes all the generated types.\nDefault value: \"\"",
           "type": "string"
         },
-        "nonOptionalTypename": {
-          "description": "Automatically adds `__typename` field to the generated types, even when they are not specified\nin the selection set, and makes it non-optional\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "inlineFragmentTypes": {
           "description": "Whether fragment types should be inlined into other operations.\n\"inline\" is the default behavior and will perform deep inlining fragment types within operation type definitions.\n\"combine\" is the previous behavior that uses fragment type references without inlining the types (and might cause issues with deeply nested fragment that uses list types).\nDefault value: \"inline\"",
           "type": "string"
@@ -439,6 +435,10 @@
         },
         "skipTypename": {
           "description": "Does not add `__typename` to the generated types, unless it was specified in the selection set.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "nonOptionalTypename": {
+          "description": "Automatically adds `__typename` field to the generated types, even when they are not specified\nin the selection set, and makes it non-optional\nDefault value: \"false\"",
           "type": "boolean"
         },
         "dedupeFragments": {
@@ -772,6 +772,10 @@
           "$ref": "#/$defs/EnumValuesMap",
           "description": "Overrides the default value of enum values declared in your GraphQL schema.\nYou can also map the entire enum to an external type by providing a string that of `module#type`."
         },
+        "ignoreEnumValuesFromSchema": {
+          "description": "This will cause the generator to ignore enum values defined in GraphQLSchema\nDefault value: \"false\"",
+          "type": "boolean"
+        },
         "declarationKind": {
           "description": "Overrides the default output for various GraphQL elements.",
           "anyOf": [
@@ -789,24 +793,12 @@
             }
           ]
         },
-        "enumPrefix": {
-          "description": "Allow you to disable prefixing for generated enums, works in combination with `typesPrefix`.\nDefault value: \"true\"",
-          "type": "boolean"
-        },
-        "enumSuffix": {
-          "description": "Allow you to disable suffixing for generated enums, works in combination with `typesSuffix`.\nDefault value: \"true\"",
-          "type": "boolean"
-        },
         "fieldWrapperValue": {
           "description": "Allow you to add wrapper for field type, use T as the generic value. Make sure to set `wrapFieldDefinitions` to `true` in order to make this flag work.\nDefault value: \"T\"",
           "type": "string"
         },
         "wrapFieldDefinitions": {
           "description": "Set to `true` in order to wrap field definitions with `FieldWrapper`.\nThis is useful to allow return types such as Promises and functions.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
-        "ignoreEnumValuesFromSchema": {
-          "description": "This will cause the generator to ignore enum values defined in GraphQLSchema\nDefault value: \"false\"",
           "type": "boolean"
         },
         "directiveArgumentAndInputFieldMappings": {
@@ -817,12 +809,20 @@
           "description": "Adds a suffix to the imported names to prevent name clashes.",
           "type": "string"
         },
+        "skipTypename": {
+          "description": "Does not add `__typename` to the generated types, unless it was specified in the selection set.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "nonOptionalTypename": {
+          "description": "Automatically adds `__typename` field to the generated types, even when they are not specified\nin the selection set, and makes it non-optional\nDefault value: \"false\"",
+          "type": "boolean"
+        },
         "strictScalars": {
           "description": "Makes scalars strict.\n\nIf scalars are found in the schema that are not defined in `scalars`\nan error will be thrown during codegen.\nDefault value: \"false\"",
           "type": "boolean"
         },
         "defaultScalarType": {
-          "description": "Allows you to override the type that unknown scalars will have.\nDefault value: \"any\"",
+          "description": "Allows you to override the type that unknown scalars will have.\nDefault value: \"unknown\"",
           "type": "string"
         },
         "scalars": {
@@ -841,12 +841,12 @@
           "description": "Suffixes all the generated types.\nDefault value: \"\"",
           "type": "string"
         },
-        "skipTypename": {
-          "description": "Does not add `__typename` to the generated types, unless it was specified in the selection set.\nDefault value: \"false\"",
+        "enumPrefix": {
+          "description": "Allow you to disable prefixing for generated enums, works in combination with `typesPrefix`.\nDefault value: \"true\"",
           "type": "boolean"
         },
-        "nonOptionalTypename": {
-          "description": "Automatically adds `__typename` field to the generated types, even when they are not specified\nin the selection set, and makes it non-optional\nDefault value: \"false\"",
+        "enumSuffix": {
+          "description": "Allow you to disable suffixing for generated enums, works in combination with `typesSuffix`.\nDefault value: \"true\"",
           "type": "boolean"
         },
         "useTypeImports": {
@@ -878,10 +878,6 @@
             }
           ]
         },
-        "extractAllFieldsToTypes": {
-          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
         "printFieldsOnNewLines": {
           "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
           "type": "boolean"
@@ -893,23 +889,12 @@
       }
     },
     "TypeScriptDocumentsPluginConfig": {
-      "description": "This plugin generates TypeScript types based on your GraphQLSchema _and_ your GraphQL operations and fragments.\nIt generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment.\n\nNote: In most configurations, this plugin requires you to use `typescript as well, because it depends on its base types.",
+      "description": "This plugin generates TypeScript types based on your GraphQLSchema _and_ your GraphQL operations and fragments.\nIt generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment.",
       "type": "object",
       "properties": {
         "arrayInputCoercion": {
           "description": "The [GraphQL spec](https://spec.graphql.org/draft/#sel-FAHjBJFCAACE_Gh7d)\nallows arrays and a single primitive value for list input. This allows to\ndeactivate that behavior to only accept arrays instead of single values. If\nset to `false`, the definition: `query foo(bar: [Int!]!): Foo` will output\n`bar: Array<Int>` instead of `bar: Array<Int> | Int` for the variable part.\nDefault value: \"true\"",
           "type": "boolean"
-        },
-        "avoidOptionals": {
-          "description": "This will cause the generator to avoid using TypeScript optionals (`?`) on types,\nso the following definition: `type A { myField: String }` will output `myField: Maybe<string>`\ninstead of `myField?: Maybe<string>`.\nDefault value: \"false\"",
-          "anyOf": [
-            {
-              "$ref": "#/$defs/AvoidOptionalsConfig"
-            },
-            {
-              "type": "boolean"
-            }
-          ]
         },
         "immutableTypes": {
           "description": "Generates immutable types by adding `readonly` to properties and uses `ReadonlyArray`.\nDefault value: \"false\"",
@@ -927,15 +912,16 @@
           "description": "Set to `true` in order to generate output without `export` modifier.\nThis is useful if you are generating `.d.ts` file and want it to be globally available.\nDefault value: \"false\"",
           "type": "boolean"
         },
-        "globalNamespace": {
-          "type": "boolean"
-        },
         "addOperationExport": {
           "type": "boolean",
           "description": "Add const export of the operation name to output file. Pay attention that the file should be `d.ts`.\nYou can combine it with `near-operation-file preset` and therefore the types will be generated along with graphql file. Then you need to set extension in `presetConfig` to be `.gql.d.ts` and by that you can import `gql` file in `ts` files.\nIt will allow you to get everything with one import:\n\n```ts\nimport { GetClient, GetClientQuery, GetClientQueryVariables } from './GetClient.gql.js'\n```\nDefault value: \"false\""
         },
         "maybeValue": {
-          "description": "Allow to override the type value of `Maybe`.\nDefault value: \"T | null\"",
+          "description": "Allows overriding the type value of nullable fields to match GraphQL client's runtime behaviour.\nDefault value: \"T | null\"",
+          "type": "string"
+        },
+        "inputMaybeValue": {
+          "description": "Allows overriding the type of Input and Variables nullable types.\nDefault value: \"T | null | undefined\"",
           "type": "string"
         },
         "allowUndefinedQueryVariables": {
@@ -951,12 +937,50 @@
             }
           }
         },
-        "preResolveTypes": {
-          "description": "Uses primitive types where possible.\nSet to `false` in order to use `Pick` and take use the types generated by `typescript` plugin.\nDefault value: \"true\"",
+        "enumType": {
+          "description": "Controls the enum output type. Options: `string-literal` | `native-numeric` | `const` | `native-const` | `native`;\nDefault value: \"`string-literal`\"",
+          "enum": [
+            "const",
+            "native",
+            "native-const",
+            "native-numeric",
+            "string-literal"
+          ],
+          "type": "string"
+        },
+        "enumValues": {
+          "$ref": "#/$defs/EnumValuesMap",
+          "description": "Overrides the default value of enum values declared in your GraphQL schema.\nYou can also map the entire enum to an external type by providing a string that of `module#type`."
+        },
+        "ignoreEnumValuesFromSchema": {
+          "description": "This will cause the generator to ignore enum values defined in GraphQLSchema\nDefault value: \"false\"",
           "type": "boolean"
+        },
+        "futureProofEnums": {
+          "description": "This option controls whether or not a catch-all entry is added to enum type definitions for values that may be added in the future.\nThis is useful if you are using `relay`.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "avoidOptionals": {
+          "description": "This will cause the generator to avoid using TypeScript optionals (`?`) on types,\nso the following definition: `type A { myField: String }` will output `myField: Maybe<string>`\ninstead of `myField?: Maybe<string>`.\nDefault value: \"false\"",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OperationAvoidOptionalsConfig"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
         },
         "skipTypeNameForRoot": {
           "description": "Avoid adding `__typename` for root types. This is ignored when a selection explicitly specifies `__typename`.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "nonOptionalTypename": {
+          "description": "Automatically adds `__typename` field to the generated types, even when they are not specified\nin the selection set, and makes it non-optional\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "globalNamespace": {
+          "description": "Puts all generated code under `global` namespace. Useful for Stencil integration.\nDefault value: \"false\"",
           "type": "boolean"
         },
         "operationResultSuffix": {
@@ -983,28 +1007,38 @@
           "description": "If set to true, merge equal fragment interfaces.\nDefault value: \"false\"",
           "type": "boolean"
         },
+        "namespacedImportName": {
+          "description": "Prefixes all GraphQL related generated types with that value, as namespaces import.\nYou can use this feature to allow separation of plugins to different files (See `importSchemaTypesFrom`)\nDefault value: \"'Types' (if `importSchemaTypesFrom` is set)\"",
+          "type": "string"
+        },
         "customDirectives": {
           "$ref": "#/$defs/CustomDirectivesConfig",
           "description": "Configures behavior for use with custom directives from\nvarious GraphQL libraries."
         },
-        "addUnderscoreToArgsType": {
-          "description": "Adds `_` to generated `Args` types in order to avoid duplicate identifiers.",
+        "generateOperationTypes": {
+          "description": "Whether to generate operation types such as Variables, Query/Mutation/Subscription selection set, and Fragment types\nThis can be used with `importSchemaTypesFrom` to generate shared used Enums and Input.\nDefault value: \"true\"",
           "type": "boolean"
         },
-        "enumValues": {
-          "$ref": "#/$defs/EnumValuesMap",
-          "description": "Overrides the default value of enum values declared in your GraphQL schema.\nYou can also map the entire enum to an external type by providing a string that of `module#type`."
+        "importSchemaTypesFrom": {
+          "description": "The absolute (prefixed with `~`) or relative path from `cwd` to the shared used Enums and Input (See `generateOperationTypes`).\nDefault value: \"true\"",
+          "type": "string"
+        },
+        "extractAllFieldsToTypes": {
+          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
+          "type": "boolean"
+        },
+        "extractAllFieldsToTypesCompact": {
+          "description": "Generates type names using only field names, omitting GraphQL type names.\nThis matches the naming convention used by Apollo Tooling.\nFor example, instead of `Query_company_Company_office_Office_location_Location`,\nit generates `Query_company_office_location`.\n\nWhen this option is enabled, `extractAllFieldsToTypes` is automatically enabled as well.\nDefault value: \"false\"",
+          "type": "boolean"
         },
         "declarationKind": {
-          "description": "Overrides the default output for various GraphQL elements.",
+          "description": "Overrides the default output for various GraphQL types.\nDefault value: \"'type'\"",
           "anyOf": [
             {
-              "$ref": "#/$defs/DeclarationKindConfig"
+              "$ref": "#/$defs/OperationDeclarationKindConfig"
             },
             {
               "enum": [
-                "abstract class",
-                "class",
                 "interface",
                 "type"
               ],
@@ -1012,56 +1046,12 @@
             }
           ]
         },
-        "enumPrefix": {
-          "description": "Allow you to disable prefixing for generated enums, works in combination with `typesPrefix`.\nDefault value: \"true\"",
-          "type": "boolean"
-        },
-        "enumSuffix": {
-          "description": "Allow you to disable suffixing for generated enums, works in combination with `typesSuffix`.\nDefault value: \"true\"",
-          "type": "boolean"
-        },
-        "fieldWrapperValue": {
-          "description": "Allow you to add wrapper for field type, use T as the generic value. Make sure to set `wrapFieldDefinitions` to `true` in order to make this flag work.\nDefault value: \"T\"",
-          "type": "string"
-        },
-        "wrapFieldDefinitions": {
-          "description": "Set to `true` in order to wrap field definitions with `FieldWrapper`.\nThis is useful to allow return types such as Promises and functions.\nDefault value: \"false\"",
-          "type": "boolean"
-        },
-        "onlyEnums": {
-          "description": "This will cause the generator to emit types for enums only\nDefault value: \"false\"",
-          "type": "boolean"
-        },
-        "onlyOperationTypes": {
-          "description": "This will cause the generator to emit types for operations only (basically only enums and scalars)\nDefault value: \"false\"",
-          "type": "boolean"
-        },
-        "ignoreEnumValuesFromSchema": {
-          "description": "This will cause the generator to ignore enum values defined in GraphQLSchema\nDefault value: \"false\"",
-          "type": "boolean"
-        },
-        "wrapEntireFieldDefinitions": {
-          "type": "boolean",
-          "description": "Set to `true` in order to wrap field definitions with `EntireFieldWrapper`.\nThis is useful to allow return types such as Promises and functions for fields.\nDiffers from `wrapFieldDefinitions` in that this wraps the entire field definition if i.e. the field is an Array, while\n`wrapFieldDefinitions` will wrap every single value inside the array.\nDefault value: \"true\""
-        },
-        "entireFieldWrapperValue": {
-          "type": "string",
-          "description": "Allow to override the type value of `EntireFieldWrapper`. This wrapper applies outside of Array and Maybe\nunlike `fieldWrapperValue`, that will wrap the inner type.\nDefault value: \"T | Promise<T> | (() => T | Promise<T>)\""
-        },
-        "directiveArgumentAndInputFieldMappings": {
-          "$ref": "#/$defs/DirectiveArgumentAndInputFieldMappings",
-          "description": "Replaces a GraphQL scalar with a custom type based on the applied directive on an argument or input field.\n\nYou can use both `module#type` and `module#namespace#type` syntax.\nWill NOT work with introspected schemas since directives are not exported.\nOnly works with directives on ARGUMENT_DEFINITION or INPUT_FIELD_DEFINITION.\n\n**WARNING:** Using this option does only change the type definitions.\n\nFor actually ensuring that a type is correct at runtime you will have to use schema transforms (e.g. with [@graphql-tools/utils mapSchema](https://graphql-tools.com/docs/schema-directives)) that apply those rules!\nOtherwise, you might end up with a runtime type mismatch which could cause unnoticed bugs or runtime errors.\n\nPlease use this configuration option with care!"
-        },
-        "directiveArgumentAndInputFieldMappingTypeSuffix": {
-          "description": "Adds a suffix to the imported names to prevent name clashes.",
-          "type": "string"
-        },
         "strictScalars": {
           "description": "Makes scalars strict.\n\nIf scalars are found in the schema that are not defined in `scalars`\nan error will be thrown during codegen.\nDefault value: \"false\"",
           "type": "boolean"
         },
         "defaultScalarType": {
-          "description": "Allows you to override the type that unknown scalars will have.\nDefault value: \"any\"",
+          "description": "Allows you to override the type that unknown scalars will have.\nDefault value: \"unknown\"",
           "type": "string"
         },
         "scalars": {
@@ -1080,12 +1070,12 @@
           "description": "Suffixes all the generated types.\nDefault value: \"\"",
           "type": "string"
         },
-        "skipTypename": {
-          "description": "Does not add `__typename` to the generated types, unless it was specified in the selection set.\nDefault value: \"false\"",
+        "enumPrefix": {
+          "description": "Allow you to disable prefixing for generated enums, works in combination with `typesPrefix`.\nDefault value: \"true\"",
           "type": "boolean"
         },
-        "nonOptionalTypename": {
-          "description": "Automatically adds `__typename` field to the generated types, even when they are not specified\nin the selection set, and makes it non-optional\nDefault value: \"false\"",
+        "enumSuffix": {
+          "description": "Allow you to disable suffixing for generated enums, works in combination with `typesSuffix`.\nDefault value: \"true\"",
           "type": "boolean"
         },
         "useTypeImports": {
@@ -1116,10 +1106,6 @@
               "type": "string"
             }
           ]
-        },
-        "extractAllFieldsToTypes": {
-          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
-          "type": "boolean"
         },
         "printFieldsOnNewLines": {
           "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
@@ -2038,14 +2024,6 @@
           "description": "Supports Apollo Federation\nDefault value: \"false\"",
           "type": "boolean"
         },
-        "enumPrefix": {
-          "description": "Allow you to disable prefixing for generated enums, works in combination with `typesPrefix`.\nDefault value: \"true\"",
-          "type": "boolean"
-        },
-        "enumSuffix": {
-          "description": "Allow you to disable suffixing for generated enums, works in combination with `typesSuffix`.\nDefault value: \"true\"",
-          "type": "boolean"
-        },
         "customDirectives": {
           "description": "Configures behavior for custom directives from various GraphQL libraries.",
           "type": "object",
@@ -2103,7 +2081,7 @@
           "type": "boolean"
         },
         "defaultScalarType": {
-          "description": "Allows you to override the type that unknown scalars will have.\nDefault value: \"any\"",
+          "description": "Allows you to override the type that unknown scalars will have.\nDefault value: \"unknown\"",
           "type": "string"
         },
         "scalars": {
@@ -2122,12 +2100,12 @@
           "description": "Suffixes all the generated types.\nDefault value: \"\"",
           "type": "string"
         },
-        "skipTypename": {
-          "description": "Does not add `__typename` to the generated types, unless it was specified in the selection set.\nDefault value: \"false\"",
+        "enumPrefix": {
+          "description": "Allow you to disable prefixing for generated enums, works in combination with `typesPrefix`.\nDefault value: \"true\"",
           "type": "boolean"
         },
-        "nonOptionalTypename": {
-          "description": "Automatically adds `__typename` field to the generated types, even when they are not specified\nin the selection set, and makes it non-optional\nDefault value: \"false\"",
+        "enumSuffix": {
+          "description": "Allow you to disable suffixing for generated enums, works in combination with `typesSuffix`.\nDefault value: \"true\"",
           "type": "boolean"
         },
         "useTypeImports": {
@@ -2158,10 +2136,6 @@
               "type": "string"
             }
           ]
-        },
-        "extractAllFieldsToTypes": {
-          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
-          "type": "boolean"
         },
         "printFieldsOnNewLines": {
           "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
@@ -3483,7 +3457,7 @@
           "type": "boolean"
         },
         "defaultScalarType": {
-          "description": "Allows you to override the type that unknown scalars will have.\nDefault value: \"any\"",
+          "description": "Allows you to override the type that unknown scalars will have.\nDefault value: \"unknown\"",
           "type": "string"
         },
         "scalars": {
@@ -3498,12 +3472,12 @@
           "description": "Suffixes all the generated types.\nDefault value: \"\"",
           "type": "string"
         },
-        "skipTypename": {
-          "description": "Does not add `__typename` to the generated types, unless it was specified in the selection set.\nDefault value: \"false\"",
+        "enumPrefix": {
+          "description": "Allow you to disable prefixing for generated enums, works in combination with `typesPrefix`.\nDefault value: \"true\"",
           "type": "boolean"
         },
-        "nonOptionalTypename": {
-          "description": "Automatically adds `__typename` field to the generated types, even when they are not specified\nin the selection set, and makes it non-optional\nDefault value: \"false\"",
+        "enumSuffix": {
+          "description": "Allow you to disable suffixing for generated enums, works in combination with `typesSuffix`.\nDefault value: \"true\"",
           "type": "boolean"
         },
         "useTypeImports": {
@@ -3534,10 +3508,6 @@
               "type": "string"
             }
           ]
-        },
-        "extractAllFieldsToTypes": {
-          "description": "Extract all field types to their own types, instead of inlining them.\nThis helps to reduce type duplication, and makes type errors more readable.\nIt can also significantly reduce the size of the generated code, the generation time,\nand the typechecking time.\nDefault value: \"false\"",
-          "type": "boolean"
         },
         "printFieldsOnNewLines": {
           "description": "If you prefer to have each field in generated types printed on a new line, set this to true.\nThis can be useful for improving readability of the resulting types,\nwithout resorting to running tools like Prettier on the output.\nDefault value: \"false\"",
@@ -8391,6 +8361,20 @@
       "type": "object",
       "additionalProperties": false
     },
+    "OperationAvoidOptionalsConfig": {
+      "type": "object",
+      "properties": {
+        "variableValue": {
+          "type": "boolean"
+        },
+        "inputValue": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "type": "boolean"
+        }
+      }
+    },
     "CustomDirectivesConfig": {
       "type": "object",
       "properties": {
@@ -8399,6 +8383,27 @@
           "type": "boolean"
         }
       }
+    },
+    "__type_17": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "$ref": "#/$defs/OperationDeclarationKind"
+        },
+        "result": {
+          "$ref": "#/$defs/OperationDeclarationKind"
+        }
+      }
+    },
+    "OperationDeclarationKind": {
+      "enum": [
+        "interface",
+        "type"
+      ],
+      "type": "string"
+    },
+    "OperationDeclarationKindConfig": {
+      "$ref": "#/$defs/__type_17"
     },
     "EnumValuesMap_1": {
       "description": "A raw configuration for enumValues map - can be represented with a single string value for a file path,\na map between enum name and a file path, or a map between enum name and an object with explicit enum values.",
@@ -8444,7 +8449,7 @@
       ],
       "type": "string"
     },
-    "__type_17": {
+    "__type_18": {
       "description": "Make all properties in T optional",
       "type": "object",
       "properties": {
@@ -8466,7 +8471,7 @@
       }
     },
     "Partial_1": {
-      "$ref": "#/$defs/__type_17"
+      "$ref": "#/$defs/__type_18"
     },
     "AvoidOptionalsConfig_1": {
       "type": "object",
@@ -8557,7 +8562,7 @@
       ],
       "type": "string"
     },
-    "__type_18": {
+    "__type_19": {
       "description": "A map between the GraphQL directive name and the identifier that should be used",
       "type": "object",
       "additionalProperties": {
@@ -8565,7 +8570,7 @@
       }
     },
     "DirectiveArgumentAndInputFieldMappings_1": {
-      "$ref": "#/$defs/__type_18"
+      "$ref": "#/$defs/__type_19"
     },
     "ScalarsMap_3": {
       "description": "Scalars map or a string, a map between the GraphQL scalar name and the identifier that should be used",
@@ -8594,11 +8599,11 @@
         }
       ]
     },
-    "__type_19": {
+    "__type_20": {
       "type": "object"
     },
     "NamingConventionFn_3": {
-      "$ref": "#/$defs/__type_19"
+      "$ref": "#/$defs/__type_20"
     },
     "NamingConventionMap_3": {
       "properties": {
@@ -8705,11 +8710,11 @@
       ],
       "type": "number"
     },
-    "__type_20": {
+    "__type_21": {
       "type": "object"
     },
     "FragmentImportFromFn": {
-      "$ref": "#/$defs/__type_20"
+      "$ref": "#/$defs/__type_21"
     },
     "GeneratedPluginsMap": {
       "anyOf": [
@@ -9100,11 +9105,11 @@
             },
             {
               "const": "typescript-operations",
-              "description": "This plugin generates TypeScript types based on your GraphQLSchema _and_ your GraphQL operations and fragments.\nIt generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment.\n\nNote: In most configurations, this plugin requires you to use `typescript as well, because it depends on its base types.\n\nFor more details and documentation: <https://the-guild.dev/graphql/codegen/docs/plugins/typescript-operations>\n\n=> Make sure to include \"@graphql-codegen/typescript-operations\" in your package.json file and install your dependencies.\n\n"
+              "description": "This plugin generates TypeScript types based on your GraphQLSchema _and_ your GraphQL operations and fragments.\nIt generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment.\n\nFor more details and documentation: <https://the-guild.dev/graphql/codegen/docs/plugins/typescript-operations>\n\n=> Make sure to include \"@graphql-codegen/typescript-operations\" in your package.json file and install your dependencies.\n\n"
             },
             {
               "const": "@graphql-codegen/typescript-operations",
-              "description": "This plugin generates TypeScript types based on your GraphQLSchema _and_ your GraphQL operations and fragments.\nIt generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment.\n\nNote: In most configurations, this plugin requires you to use `typescript as well, because it depends on its base types.\n\nFor more details and documentation: <https://the-guild.dev/graphql/codegen/docs/plugins/typescript-operations>\n\n=> Make sure to include \"@graphql-codegen/typescript-operations\" in your package.json file and install your dependencies.\n\n"
+              "description": "This plugin generates TypeScript types based on your GraphQLSchema _and_ your GraphQL operations and fragments.\nIt generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment.\n\nFor more details and documentation: <https://the-guild.dev/graphql/codegen/docs/plugins/typescript-operations>\n\n=> Make sure to include \"@graphql-codegen/typescript-operations\" in your package.json file and install your dependencies.\n\n"
             },
             {
               "const": "c-sharp",

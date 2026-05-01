@@ -279,13 +279,24 @@ Schema - Lintel Catalog"
 </div>
        </div>    <div
   class="property-item"
+  id="prop-editable-profile"
+>
+  <div class="property-header">
+    <span class="property-name">editable-profile</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Same as <code>profile</code> but for "editable" builds</p>
+</div>
+       </div>    <div
+  class="property-item"
   id="prop-exclude"
 >
   <div class="property-header">
     <span class="property-name">exclude</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Exclude files matching the given glob pattern(s)</p>
+  <div class="desc-html"><p>Exclude files matching the given glob pattern(s).
+Patterns are resolved relative to the directory containing <code>pyproject.toml</code>.</p>
 </div>
        </div>    <div
   class="property-item"
@@ -311,14 +322,46 @@ with <code>feature</code> and <code>python-version</code> keys.</p>
 </div>
        </div>    <div
   class="property-item"
+  id="prop-generate-ci"
+>
+  <div class="property-header">
+    <span class="property-name">generate-ci</span>
+    <span class="type-badge"
+      ><a
+        href="#def-GenerateCIConfig"
+        class="type-badge-link"
+        >GenerateCIConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>CI generation configuration</p>
+</div>
+       </div>    <div
+  class="property-item"
   id="prop-include"
 >
   <div class="property-header">
     <span class="property-name">include</span>
     <span class="type-badge">array | null</span>
    </div>
-  <div class="desc-html"><p>Include files matching the given glob pattern(s)</p>
+  <div class="desc-html"><p>Include files matching the given glob pattern(s).
+Patterns are resolved relative to the directory containing <code>pyproject.toml</code>.
+When <code>python-source</code> is configured, patterns are also tried relative to
+that directory if no matches are found.</p>
 </div>
+       </div>    <div
+  class="property-item"
+  id="prop-include-import-lib"
+>
+  <div class="property-header">
+    <span class="property-name">include-import-lib</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Include the import library (.dll.lib) in the wheel on Windows</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
        </div>    <div
   class="property-item"
   id="prop-locked"
@@ -401,26 +444,33 @@ with <code>feature</code> and <code>python-version</code> keys.</p>
 </div>
        </div>    <div
   class="property-item"
+  id="prop-sbom"
+>
+  <div class="property-header">
+    <span class="property-name">sbom</span>
+    <span class="type-badge"
+      ><a
+        href="#def-SbomConfig"
+        class="type-badge-link"
+        >SbomConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>SBOM configuration</p>
+</div>
+       </div>    <div
+  class="property-item"
   id="prop-sdist-generator"
 >
   <div class="property-header">
     <span class="property-name">sdist-generator</span>
+    <span class="type-badge"
+      >string | string</span
+    >
    </div>
   <div class="desc-html"><p>Source distribution generator</p>
 </div>
-    <div class="property-meta">
-    <span class="meta-label">Default:</span> <code>&quot;cargo&quot;</code>
-  </div>
-        <div class="inline-composition">
-    <span class="meta-label">All of:</span>
-    <span class="inline-variant"
-      ><a
-        href="#def-SdistGenerator"
-        class="type-badge-link"
-        >SdistGenerator</a
-      >      <span class="type-badge">string | string</span></span
-    >   </div>
- </div>    <div
+       </div>    <div
   class="property-item"
   id="prop-skip-auditwheel"
 >
@@ -484,13 +534,26 @@ with <code>feature</code> and <code>python-version</code> keys.</p>
    </div>
   <div class="desc-html"><p>Unstable (nightly-only) flags to Cargo, see 'cargo -Z help' for details</p>
 </div>
+       </div>    <div
+  class="property-item"
+  id="prop-use-base-python"
+>
+  <div class="property-header">
+    <span class="property-name">use-base-python</span>
+    <span class="type-badge">boolean</span>
+   </div>
+  <div class="desc-html"><p>Use base Python executable instead of venv Python executable in PEP 517 build.</p>
+</div>
+    <div class="property-meta">
+    <span class="meta-label">Default:</span> <code>false</code>
+  </div>
        </div>    </div>
      <h2 id="definitions">Definitions</h2>
   <div class="definition-block" id="def-AuditWheelMode">
     <div class="definition-header">
       <span class="def-name">AuditWheelMode</span>
 <span class="type-badge"
-        >string | string | string</span
+        >string | string | string | string</span
       >    </div>
     <div class="definition-body">
       <div class="desc-html"><p>Auditwheel mode</p>
@@ -562,6 +625,8 @@ features = [
   "some-feature",
   { feature = "pyo3/abi3-py311", python-version = "&gt;=3.11" },
   { feature = "pyo3/abi3-py38", python-version = "&lt;3.11" },
+  { feature = "pyo3/abi3-py311", python-version = "&gt;=3.11", python-implementation = "cpython" },
+  { feature = "pypy-compat", python-implementation = "pypy" },
 ]
 </code></pre>
 </div>
@@ -583,18 +648,185 @@ features = [
     <div class="definition-header">
       <span class="def-name">Formats</span>
 <span class="type-badge"
-        >Format[]</span
+        >Format | Format[]</span
       >    </div>
     <div class="definition-body">
       <div class="desc-html"><p>A single [Format] or multiple [Format] values for a [GlobPattern].</p>
 </div>
       </div>
   </div>
+  <div class="definition-block" id="def-GenerateCIConfig">
+    <div class="definition-header">
+      <span class="def-name">GenerateCIConfig</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>The <code>[tool.maturin.generate-ci]</code> section</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">github</span>
+    <span class="type-badge"
+      ><a
+        href="#def-GitHubCIConfig"
+        class="type-badge-link"
+        >GitHubCIConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>GitHub Actions configuration</p>
+</div>
+       </div>        </div>
+    </div>
+  </div>
+  <div class="definition-block" id="def-GitHubCIConfig">
+    <div class="definition-header">
+      <span class="def-name">GitHubCIConfig</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>The <code>[tool.maturin.generate-ci.github]</code> section</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">android</span>
+    <span class="type-badge"
+      ><a
+        href="#def-PlatformCIConfig"
+        class="type-badge-link"
+        >PlatformCIConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Android platform configuration</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">args</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Extra arguments to pass to maturin (applies to all platforms)</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">emscripten</span>
+    <span class="type-badge"
+      ><a
+        href="#def-PlatformCIConfig"
+        class="type-badge-link"
+        >PlatformCIConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Emscripten platform configuration</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">linux</span>
+    <span class="type-badge"
+      ><a
+        href="#def-PlatformCIConfig"
+        class="type-badge-link"
+        >PlatformCIConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Linux (manylinux) platform configuration</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">macos</span>
+    <span class="type-badge"
+      ><a
+        href="#def-PlatformCIConfig"
+        class="type-badge-link"
+        >PlatformCIConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>macOS platform configuration</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">musllinux</span>
+    <span class="type-badge"
+      ><a
+        href="#def-PlatformCIConfig"
+        class="type-badge-link"
+        >PlatformCIConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Musllinux platform configuration</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">pytest</span>
+    <span class="type-badge">boolean | null</span>
+   </div>
+  <div class="desc-html"><p>Enable pytest</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">skip-attestation</span>
+    <span class="type-badge">boolean | null</span>
+   </div>
+  <div class="desc-html"><p>Skip artifact attestation</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">windows</span>
+    <span class="type-badge"
+      ><a
+        href="#def-PlatformCIConfig"
+        class="type-badge-link"
+        >PlatformCIConfig</a
+      > | null</span
+    >
+   </div>
+  <div class="desc-html"><p>Windows platform configuration</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">zig</span>
+    <span class="type-badge">boolean | null</span>
+   </div>
+  <div class="desc-html"><p>Use zig for cross compilation</p>
+</div>
+       </div>        </div>
+    </div>
+  </div>
   <div class="definition-block" id="def-GlobPattern">
     <div class="definition-header">
       <span class="def-name">GlobPattern</span>
 <span class="type-badge"
-        >string | object</span
+        >string | object | object</span
       >    </div>
     <div class="definition-body">
       <div class="desc-html"><p>A glob pattern for the include and exclude configuration.</p>
@@ -603,16 +835,174 @@ features = [
 </div>
       </div>
   </div>
+  <div class="definition-block" id="def-IncludeFrom">
+    <div class="definition-header">
+      <span class="def-name">IncludeFrom</span>
+<span class="type-badge"
+        >string</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>Supported values for the <code>from</code> field in include patterns.</p>
+</div>
+      </div>
+  </div>
+  <div class="definition-block" id="def-PlatformCIConfig">
+    <div class="definition-header">
+      <span class="def-name">PlatformCIConfig</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>Per-platform CI configuration</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">args</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Extra arguments to pass to maturin</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">before-script-linux</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Script to run before build on Linux</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">container</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Container image to use</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">docker-options</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Docker options</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">manylinux</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Manylinux version (e.g. "auto", "2_28", "musllinux_1_2")</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">runner</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Default runner for this platform</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">rust-toolchain</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Rust toolchain (e.g. "nightly", "stable")</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">rustup-components</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Rustup components to install</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">target</span>
+    <span class="type-badge">array | null</span>
+   </div>
+  <div class="desc-html"><p>Detailed per-target configuration (mutually exclusive with <code>targets</code>)</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">targets</span>
+    <span class="type-badge">array | null</span>
+   </div>
+  <div class="desc-html"><p>Simple list of target architectures (mutually exclusive with <code>target</code>)</p>
+</div>
+       </div>        </div>
+    </div>
+  </div>
   <div class="definition-block" id="def-PlatformTag">
     <div class="definition-header">
       <span class="def-name">PlatformTag</span>
 <span class="type-badge"
-        >object | object | string</span
+        >object | object | string | string</span
       >    </div>
     <div class="definition-body">
       <div class="desc-html"><p>Decides how to handle manylinux and musllinux compliance</p>
 </div>
       </div>
+  </div>
+  <div class="definition-block" id="def-SbomConfig">
+    <div class="definition-header">
+      <span class="def-name">SbomConfig</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>SBOM configuration</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">auditwheel</span>
+    <span class="type-badge">boolean | null</span>
+   </div>
+  <div class="desc-html"><p>Generate a CycloneDX SBOM for external shared libraries grafted during
+auditwheel repair. Defaults to <code>true</code> when repair copies libraries.</p>
+<p>The SBOM is written to <code>&lt;dist-info&gt;/sboms/auditwheel.cdx.json</code> and
+records which OS packages (deb, rpm, apk) provided the grafted
+libraries, following the same convention as Python's auditwheel.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">include</span>
+    <span class="type-badge">array | null</span>
+   </div>
+  <div class="desc-html"><p>Additional SBOM files to include in the <code>.dist-info/sboms</code> directory.</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">rust</span>
+    <span class="type-badge">boolean | null</span>
+   </div>
+  <div class="desc-html"><p>Generate an SBOM for Rust crates. Defaults to <code>true</code>.</p>
+</div>
+       </div>        </div>
+    </div>
   </div>
   <div class="definition-block" id="def-SdistGenerator">
     <div class="definition-header">
@@ -624,6 +1014,102 @@ features = [
       <div class="desc-html"><p>Source distribution generator</p>
 </div>
       </div>
+  </div>
+  <div class="definition-block" id="def-TargetCIConfig">
+    <div class="definition-header">
+      <span class="def-name">TargetCIConfig</span>
+<span class="type-badge"
+        >object</span
+      >    </div>
+    <div class="definition-body">
+      <div class="desc-html"><p>Per-target CI configuration within a platform</p>
+</div>
+        <div class="property-list">
+ <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">arch</span>
+    <span class="type-badge">string</span>
+ <span class="required-badge"
+      >required</span
+    >  </div>
+  <div class="desc-html"><p>Target architecture (e.g. "x86_64", "aarch64")</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">args</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Extra arguments to pass to maturin</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">before-script-linux</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Before-script-linux override</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">container</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Container image override</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">docker-options</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Docker options override</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">manylinux</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Manylinux version override</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">runner</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Runner override for this target</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">rust-toolchain</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Rust toolchain override</p>
+</div>
+       </div>   <div
+  class="property-item"
+>
+  <div class="property-header">
+    <span class="property-name">rustup-components</span>
+    <span class="type-badge">string | null</span>
+   </div>
+  <div class="desc-html"><p>Rustup components override</p>
+</div>
+       </div>        </div>
+    </div>
   </div>
   <div class="definition-block" id="def-TargetConfig">
     <div class="definition-header">
